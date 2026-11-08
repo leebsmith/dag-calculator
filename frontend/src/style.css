@@ -817,6 +817,37 @@ samp {
   border-bottom: 1px solid var(--sys-border-subtle);
 }
 
+.segmented-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.segmented-item {
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.segmented-item:hover:not(.is-active, :disabled) {
+  border-color: var(--sys-border-default);
+  color: var(--sys-text-primary);
+}
+
+.segmented-item.is-active {
+  background-color: var(--sys-color-action-subtle);
+  border-color: var(--sys-border-selected);
+}
+
+.segmented-item.is-active.segmented-item--solid {
+  color: var(--sys-text-on-action);
+  background-color: var(--sys-color-action-primary);
+  border-color: var(--sys-color-action-primary);
+}
+
 .filter-pills-container {
   display: flex;
   flex-wrap: wrap;
@@ -839,17 +870,6 @@ samp {
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
-}
-
-.filter-pill:hover {
-  border-color: var(--sys-border-default);
-  color: var(--sys-text-primary);
-}
-
-.filter-pill.is-active {
-  color: var(--sys-text-on-action);
-  background-color: var(--sys-color-action-primary);
-  border-color: var(--sys-color-action-primary);
 }
 
 .inspector-form {
@@ -2542,11 +2562,6 @@ samp {
   margin-bottom: var(--space-3);
 }
 
-.setup-mode-switch .is-active {
-  border-color: var(--sys-border-selected);
-  background: var(--sys-color-action-subtle);
-}
-
 .import-doc-header {
   display: flex;
   justify-content: space-between;
@@ -2660,11 +2675,6 @@ samp {
   padding: 0 var(--space-2);
 }
 
-.import-stages .is-active {
-  border-color: var(--sys-border-selected);
-  background: var(--sys-color-action-subtle);
-}
-
 .map-section {
   margin-bottom: var(--space-4);
 }
@@ -2732,12 +2742,6 @@ samp {
 
 .map-search .form-input {
   margin: var(--space-1) 0;
-}
-
-.map-chip.is-chosen,
-.map-chip:hover {
-  border-color: var(--sys-border-selected);
-  background: var(--sys-color-action-subtle);
 }
 
 /* --- Reading the document --------------------------------------------------- */

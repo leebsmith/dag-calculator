@@ -158,24 +158,27 @@
                         a pool is not a hop: pick the one the imported recipe named
                       </span>
                     </div>
-                    <div class="map-suggestions">
+                    <div class="segmented-control map-suggestions">
                       <button
                         type="button"
-                        class="map-chip is-chosen"
+                        class="map-chip segmented-item is-active"
+                        aria-pressed="true"
                         x-show="$store.importReview.rowState(row).picked"
                         x-text="$store.importReview.refLabel(row)"
                         @click="$store.importReview.chooseRef(row.line_id, { id: $store.importReview.rowState(row).ref, name: $store.importReview.refLabel(row) })"
                       ></button>
                       <span
-                        class="map-chip is-deleted"
+                        class="map-chip segmented-item is-deleted"
+                        aria-disabled="true"
                         x-show="$store.importReview.rowState(row).state === 'broken'"
                         x-text="$store.importReview.refLabel(row) + ' (deleted)'"
                       ></span>
                       <template x-for="chip in $store.importReview.chipsFor(row)" :key="chip.id">
                         <button
                           type="button"
-                          class="map-chip"
-                          :class="{ 'is-chosen': chip.id === $store.importReview.rowState(row).ref }"
+                          class="map-chip segmented-item"
+                          :class="{ 'is-active': chip.id === $store.importReview.rowState(row).ref }"
+                          :aria-pressed="chip.id === $store.importReview.rowState(row).ref ? 'true' : 'false'"
                           :title="chip.manufacturer || chip.category || chip.composition || ''"
                           @click="$store.importReview.chooseRef(row.line_id, chip)"
                           x-text="chip.name"
@@ -196,7 +199,7 @@
                         <template x-for="hit in $store.importReview.search(row)" :key="hit.id">
                           <button
                             type="button"
-                            class="map-chip"
+                            class="map-chip segmented-item"
                             @click="$store.importReview.chooseRef(row.line_id, hit)"
                             x-text="hit.name"
                           ></button>
@@ -261,8 +264,9 @@
             <template x-for="chip in $store.importReview.blendCandidates()" :key="chip.id">
               <button
                 type="button"
-                class="map-chip"
-                :class="{ 'is-chosen': chip.id === $store.importReview.blendOutcome?.ref }"
+                class="map-chip segmented-item"
+                :class="{ 'is-active': chip.id === $store.importReview.blendOutcome?.ref }"
+                :aria-pressed="chip.id === $store.importReview.blendOutcome?.ref ? 'true' : 'false'"
                 :title="chip.composition"
                 @click="$store.importReview.chooseBlend(chip)"
                 x-text="chip.name"
@@ -344,26 +348,29 @@
               >Add back</button>
             </div>
 
-            <div class="map-suggestions"
+            <div class="segmented-control map-suggestions"
               x-show="!$store.importReview.rowState(row).leftOut
                 && $store.importReview.rowState(row).state !== 'component'">
               <button
                 type="button"
-                class="map-chip is-chosen"
+                class="map-chip segmented-item is-active"
+                aria-pressed="true"
                 x-show="$store.importReview.rowState(row).picked"
                 x-text="$store.importReview.refLabel(row)"
                 @click="$store.importReview.chooseRef(row.line_id, { id: $store.importReview.rowState(row).ref, name: $store.importReview.refLabel(row) })"
               ></button>
               <span
-                class="map-chip is-deleted"
+                class="map-chip segmented-item is-deleted"
+                aria-disabled="true"
                 x-show="$store.importReview.rowState(row).state === 'broken'"
                 x-text="$store.importReview.refLabel(row) + ' (deleted)'"
               ></span>
               <template x-for="chip in $store.importReview.chipsFor(row)" :key="chip.id">
                 <button
                   type="button"
-                  class="map-chip"
-                  :class="{ 'is-chosen': chip.id === $store.importReview.rowState(row).ref, 'is-proposed': $store.importReview.rowState(row).proposed }"
+                  class="map-chip segmented-item"
+                  :class="{ 'is-active': chip.id === $store.importReview.rowState(row).ref, 'is-proposed': $store.importReview.rowState(row).proposed }"
+                  :aria-pressed="chip.id === $store.importReview.rowState(row).ref ? 'true' : 'false'"
                   :title="chip.maltster || chip.manufacturer || chip.category || chip.composition || ''"
                   @click="$store.importReview.chooseRef(row.line_id, chip)"
                   x-text="chip.name"
@@ -387,7 +394,7 @@
                 <template x-for="hit in $store.importReview.search(row)" :key="hit.id">
                   <button
                     type="button"
-                    class="map-chip"
+                    class="map-chip segmented-item"
                     @click="$store.importReview.chooseRef(row.line_id, hit)"
                     x-text="hit.name"
                   ></button>

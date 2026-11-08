@@ -28,17 +28,17 @@
 
   <template x-teleport="#new-batch-body">
     <div class="modal-workspace-main">
-        <div class="setup-mode-switch" role="group" aria-label="How to start">
+        <div class="segmented-control setup-mode-switch" role="group" aria-label="How to start">
           <button
             type="button"
-            class="btn-outline btn-sm"
+            class="btn-outline btn-sm segmented-item"
             :class="{ 'is-active': $store.setup.state.mode === 'scratch' }"
             :aria-pressed="$store.setup.state.mode === 'scratch'"
             @click="$store.setup.setMode('scratch')"
           >From scratch</button>
           <button
             type="button"
-            class="btn-outline btn-sm"
+            class="btn-outline btn-sm segmented-item"
             :class="{ 'is-active': $store.setup.state.mode === 'recipe' }"
             :aria-pressed="$store.setup.state.mode === 'recipe'"
             @click="$store.setup.setMode('recipe')"
