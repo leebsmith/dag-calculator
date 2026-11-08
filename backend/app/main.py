@@ -21,6 +21,7 @@ from app.auth.deps import (
     session_payload,
 )
 from app.auth.throttle import RateLimitedError, RateLimitedLlmUser, RateLimitedUser
+from app.routers.dev import router as dev_router
 from app.schemas.batch import (
     BatchPatch,
     BatchRecord,
@@ -91,6 +92,7 @@ from app.services.report_render import (
 )
 
 app = FastAPI(title="dag-calculator backend")
+app.include_router(dev_router, include_in_schema=False)
 logging.getLogger("app.artifact").info(
     "Resolved artifact data directory: %s", data_dir()
 )

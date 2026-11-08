@@ -20,5 +20,8 @@ firebase-export-*/
 # Local report scratch (downloaded bundles, rendered pages)
 .local/
 
+# Locally rendered DAG graph (the committed source is docs/artifact_dag.dot)
+docs/artifact_dag.svg
+
 # Local agent tooling configuration
 .opencode/

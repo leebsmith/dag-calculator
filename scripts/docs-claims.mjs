@@ -41,6 +41,8 @@ const FILE_EXTENSIONS = new Set([
   "css",
   "html",
   "txt",
+  "dot",
+  "svg",
 ]);
 
 const STRUCTURAL = new Set(["fields", "outputs", "schema", "item_schema", "identity", "nodes"]);

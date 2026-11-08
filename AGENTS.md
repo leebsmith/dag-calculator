@@ -37,6 +37,7 @@ seam, solvers, Firebase auth, and Firestore persistence.
 | `frontend/src/` | views, adapters, stores (Vite + Alpine) |
 | `backend/` | FastAPI app (Python 3.12, `uv`) |
 | `tests/` | frontend engine/conformance/guards + backend pytest |
+| `tools/` | developer tooling: artifact graph generator, one-off migrators |
 | `docs/` | living spec + frozen historical |
 | `docs/hops/` | living hop index + model; background transcripts under `reference/` |
 | `docs/mashing/` | mash index; background transcript under `reference/` |
@@ -46,6 +47,7 @@ seam, solvers, Firebase auth, and Firestore persistence.
 ## Commands
 
     make local-dev      # Vite + Firebase emulators + uvicorn (http://localhost:5173)
+    make dot            # generate docs/artifact_dag.dot (+ .svg when GraphViz is installed)
     make save-data      # snapshot emulator data (Firestore + Auth) to emulator-data/
     make check          # eslint/stylelint (src, tests, scripts) + ruff + tach + repo hygiene
     make test           # frontend (node --test) + backend pytest — the gate

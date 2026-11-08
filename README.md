@@ -22,6 +22,7 @@ backend with Firebase auth and Firestore persistence.
 | [`frontend/`](frontend/) | engine, views, adapters, stores (Vite + Alpine) |
 | [`backend/`](backend/) | FastAPI JSON seam, solvers, auth, persistence |
 | [`tests/`](tests/) | frontend engine/conformance/guards + backend pytest |
+| `tools/` | developer tooling — artifact graph generator, one-off migrators |
 | [`docs/dag-artifacts/`](docs/dag-artifacts/) | **living spec** — grammar, semantics, dimensions, domain equations, expression language, seed substrate |
 | [`docs/engine.md`](docs/engine.md) | **living** — how the reference engine works (data structures + interpreter) |
 | [`docs/adding-a-node.md`](docs/adding-a-node.md) | **living** — recipe: add an input / derived value to the artifact |
@@ -49,6 +50,7 @@ backend with Firebase auth and Firestore persistence.
 
 ```
 make local-dev   # Vite + Firebase emulators + uvicorn
+make dot         # generate docs/artifact_dag.dot (+ .svg when GraphViz is installed)
 make save-data   # snapshot emulator data (Firestore + Auth) to emulator-data/
 make check       # eslint/stylelint + ruff + tach
 make test        # frontend (node --test) + backend pytest
@@ -104,6 +106,22 @@ deletes the directory and is the only destructive clear.
 Unit preferences are the exception: they are device-local `localStorage`
 (`brew_unit_preferences`) and never reach the emulator, so they survive a data
 reset and do not travel between browsers.
+
+## Artifact graph
+
+`make dot` writes `docs/artifact_dag.dot` from the artifact and, when the
+GraphViz `dot` binary is installed, also renders the local
+`docs/artifact_dag.svg`. The dot file is committed and guarded; the SVG is
+gitignored. Solid edges are data inputs, dotted edges are selection references,
+dashed grey edges are read-side collection fields, and dashed diamonds are
+relations.
+
+`make local-dev` refreshes both before starting the backend. While it runs, open
+<http://localhost:8000/dev/dag-visualizer> for a local-only inspector: the
+sidebar groups every node by namespace, and clicking a node highlights it in the
+SVG and scrolls it into view. The endpoint is gated by `APP_ENV=development`
+and returns `404` in every other environment; it is not part of the OpenAPI
+schema.
 
 ## Auth & deployment
 

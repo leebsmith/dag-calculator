@@ -37,18 +37,16 @@ export const RULES = [
     ["frontend", "backend"],
     "a global input the suites read by path; the import map cannot see it"
   ),
-  full(
-    ["scripts/run-tests.mjs", "scripts/test-affected.mjs", "Makefile", "eslint.config.js"],
-    ["frontend", "backend"],
-    "the harness decides what runs; mapping a harness change cannot be trusted"
-  ),
+  full(["scripts/run-tests.mjs", "scripts/test-affected.mjs", "scripts/local-dev.mjs", "Makefile", "eslint.config.js"], ["frontend", "backend"], "the harness decides what runs; mapping a harness change cannot be trusted"),
   full(["frontend/package.json"], ["frontend"], "the frontend's dependencies and build configuration"),
   full(["backend/pyproject.toml", "backend/uv.lock"], ["backend"], "the backend's dependencies"),
+  full(["backend/app/main.py", "backend/app/routers/**"], ["backend"], "route modules are read by the auth-coverage guard, not imported by it"),
   full(
     ["backend/app/core/**", "backend/app/schemas/**", "backend/app/templates/**"],
     ["backend"],
     "core, schemas and templates sit under every boundary test"
   ),
+  coupled(["tools/**"], ["artifact-dot-sync", "precommit-contract"], "the dot generator is run by the pre-commit harness and compared by its guard"),
   coupled(
     ["frontend/index.html", "frontend/src/**/*.html", "frontend/src/**/*.css"],
     [

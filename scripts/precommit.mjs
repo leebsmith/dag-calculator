@@ -14,6 +14,12 @@ export const GENERATORS = [
     outputs: ["docs/dag-artifacts/inventory.md"],
   },
   {
+    name: "artifact graph",
+    command: "make",
+    args: ["--no-print-directory", "dot"],
+    outputs: ["docs/artifact_dag.dot"],
+  },
+  {
     name: "frontend ownership",
     command: process.execPath,
     args: ["scripts/emit-ownership-index.mjs"],

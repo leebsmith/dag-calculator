@@ -171,6 +171,7 @@ start("uvicorn", "uv", ["run", "uvicorn", "app.main:app", "--reload", "--reload-
     FIREBASE_AUTH_EMULATOR_HOST: "127.0.0.1:9099",
     FIRESTORE_EMULATOR_HOST: "127.0.0.1:8080",
     ALLOWED_EMAILS: "dev@localhost",
+    APP_ENV: "development",
   },
 });
 

@@ -29,7 +29,7 @@ BJCP_EDITION ?= 2021
 .PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products seeds-whirlpool-notes \
         scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
-        report-dev report-pages
+        report-dev report-pages dot
 
 help:
 	@echo "Usage: make <target>"
@@ -47,6 +47,7 @@ help:
 	@echo "  coverage        Frontend + backend coverage reports"
 	@echo "  verify          check + test + production build (hermetic)"
 	@echo "  verify-full     verify + test-oracle (needs the legacy checkout)"
+	@echo "  dot             Generate docs/artifact_dag.dot (and .svg when GraphViz is installed)"
 	@echo "  generate        Regenerate every locally computable generated artifact"
 	@echo "  hooks           Install the committed git hooks (core.hooksPath)"
 	@echo "  build           Production frontend bundle + dist assertions"
@@ -71,7 +72,7 @@ help:
 # saves every SAVE_INTERVAL_MINUTES (default 5) and once more on Ctrl+C, before
 # the emulator is stopped. `make save-data` and `make clean` remain for an
 # on-demand snapshot and for reclaiming ports.
-local-dev: local-data
+local-dev: local-data dot
 	@echo "Starting local emulators and development servers..."
 	@echo "Access the app at http://localhost:5173"
 	@node scripts/local-dev.mjs
@@ -139,7 +140,7 @@ check:
 	@echo "Checking artifact expressions..."
 	node scripts/check-expressions.mjs
 	@echo "Checking backend linting and architectural boundaries..."
-	cd backend && uv run ruff check . ../tests/backend ../scripts
+	cd backend && uv run ruff check . ../tests/backend ../scripts ../tools
 	cd backend && uv run tach check
 	@echo "Checking repo hygiene..."
 	node scripts/check-hygiene.mjs
@@ -185,6 +186,9 @@ build:
 	cd frontend && npm run build
 	node scripts/check-build.mjs
 
+dot:
+	python3 tools/generate_artifact_dot.py --svg-out docs/artifact_dag.svg
+
 verify: check test build
 	@echo "verify: all gates passed"
 
@@ -202,6 +206,7 @@ generate:
 	node scripts/emit-report-bundle-glossary.mjs
 	node scripts/emit-report-sections.mjs
 	node scripts/emit-sources-manifest.mjs
+	$(MAKE) --no-print-directory dot
 	$(MAKE) --no-print-directory seeds
 	cd backend && PYTHONPATH=. uv run python scripts/emit_report_bundle_fixture.py
 
