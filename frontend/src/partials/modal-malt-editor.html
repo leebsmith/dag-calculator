@@ -15,96 +15,98 @@
   <load src="src/partials/ui-modal-shell.html" />
 
   <template x-teleport="#malt-editor-body">
-    <div class="modal-workspace-main">
-      <load src="src/partials/draft-table.html" />
-    </div>
-
-      <div
-        class="modal-drawer-scrim"
-        x-show="maltDrawer !== null"
-        x-transition.opacity.duration.200ms
-        @click="closeMaltDrawer()"
-      ></div>
-
-      <div
-        class="modal-workspace-drawer"
-        id="malt-drawer"
-        x-show="maltDrawer !== null"
-        x-transition:enter="modal-drawer-enter"
-        x-transition:enter-start="modal-drawer-enter-start"
-        x-transition:enter-end="modal-drawer-enter-end"
-        x-transition:leave="modal-drawer-leave"
-        x-transition:leave-start="modal-drawer-leave-start"
-        x-transition:leave-end="modal-drawer-leave-end"
-      >
-        <div class="modal-drawer-header">
-          <h3
-            class="section-title"
-            x-text="maltDrawer === 'search' ? 'Malt Catalog Browser' : 'Row Inspector'"
-          ></h3>
-          <button type="button" class="btn-close text-xs" @click="closeMaltDrawer()">✕</button>
-        </div>
-
-        <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': maltDrawer === 'search' }">
-          <template x-if="draftDrawer === 'search'">
-            <load src="src/partials/draft-search-pane.html" />
-          </template>
-
-          <template x-if="maltDrawer === 'inspect'">
-            <template x-if="maltActiveRow">
-              <div class="inspector-form">
-                <div
-                  x-data="formBuilder({
-                    schema: [{ id: 'malt-row-name', type: 'text', label: 'Malt name', modelKey: 'name', default: '' }],
-                    onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
-                  })"
-                  x-effect="setModel(maltActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div
-                  x-data="formBuilder({
-                    schema: [{ id: 'malt-row-category', type: 'select', label: 'Category', modelKey: 'category', options: maltCategories.map((c) => ({ value: c, label: c })), lazy: true }],
-                    onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
-                  })"
-                  x-effect="setModel(maltActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div class="inspector-grid-2col">
-                  <div
-                    x-data="formBuilder({
-                      schema: [{ id: 'malt-row-yield', type: 'number', label: 'Extract yield (%)', read: () => fmt.toPercentValue(maltActiveRow.yield_fraction, 0), min: 0, max: 100, step: 1, lazy: true }],
-                      onChange: (field, value) => setMaltField(maltActiveIndex, 'yield_fraction', value, 0.01)
-                    })"
-                    x-effect="setModel(maltActiveRow)"
-                  >
-                    <load src="src/partials/ui-form-fields.html" />
-                  </div>
-                  <div
-                    x-data="formBuilder({
-                      schema: [{ id: 'malt-row-color', type: 'number', label: () => 'Color (' + colorUnit() + ')', read: () => colorDisplay(maltActiveRow.color_lovibond), min: 0, step: 0.1, lazy: true }],
-                      onChange: (field, value) => setColorField(maltActiveIndex, value)
-                    })"
-                    x-effect="setModel(maltActiveRow)"
-                  >
-                    <load src="src/partials/ui-form-fields.html" />
-                  </div>
-                </div>
-                <div
-                  x-data="formBuilder({
-                    schema: [{ id: 'malt-row-notes', type: 'textarea', label: 'Notes', modelKey: 'notes', default: '', rows: 3 }],
-                    onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
-                  })"
-                  x-effect="setModel(maltActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-              </div>
-            </template>
-          </template>
-        </div>
+    <div class="modal-teleport-root">
+      <div class="modal-workspace-main">
+        <load src="src/partials/draft-table.html" />
       </div>
+
+        <div
+          class="modal-drawer-scrim"
+          x-show="maltDrawer !== null"
+          x-transition.opacity.duration.200ms
+          @click="closeMaltDrawer()"
+        ></div>
+
+        <div
+          class="modal-workspace-drawer"
+          id="malt-drawer"
+          x-show="maltDrawer !== null"
+          x-transition:enter="modal-drawer-enter"
+          x-transition:enter-start="modal-drawer-enter-start"
+          x-transition:enter-end="modal-drawer-enter-end"
+          x-transition:leave="modal-drawer-leave"
+          x-transition:leave-start="modal-drawer-leave-start"
+          x-transition:leave-end="modal-drawer-leave-end"
+        >
+          <div class="modal-drawer-header">
+            <h3
+              class="section-title"
+              x-text="maltDrawer === 'search' ? 'Malt Catalog Browser' : 'Row Inspector'"
+            ></h3>
+            <button type="button" class="btn-close text-xs" @click="closeMaltDrawer()">✕</button>
+          </div>
+
+          <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': maltDrawer === 'search' }">
+            <template x-if="draftDrawer === 'search'">
+              <load src="src/partials/draft-search-pane.html" />
+            </template>
+
+            <template x-if="maltDrawer === 'inspect'">
+              <template x-if="maltActiveRow">
+                <div class="inspector-form">
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'malt-row-name', type: 'text', label: 'Malt name', modelKey: 'name', default: '' }],
+                      onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
+                    })"
+                    x-effect="setModel(maltActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'malt-row-category', type: 'select', label: 'Category', modelKey: 'category', options: maltCategories.map((c) => ({ value: c, label: c })), lazy: true }],
+                      onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
+                    })"
+                    x-effect="setModel(maltActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div class="inspector-grid-2col">
+                    <div
+                      x-data="formBuilder({
+                        schema: [{ id: 'malt-row-yield', type: 'number', label: 'Extract yield (%)', read: () => fmt.toPercentValue(maltActiveRow.yield_fraction, 0), min: 0, max: 100, step: 1, lazy: true }],
+                        onChange: (field, value) => setMaltField(maltActiveIndex, 'yield_fraction', value, 0.01)
+                      })"
+                      x-effect="setModel(maltActiveRow)"
+                    >
+                      <load src="src/partials/ui-form-fields.html" />
+                    </div>
+                    <div
+                      x-data="formBuilder({
+                        schema: [{ id: 'malt-row-color', type: 'number', label: () => 'Color (' + colorUnit() + ')', read: () => colorDisplay(maltActiveRow.color_lovibond), min: 0, step: 0.1, lazy: true }],
+                        onChange: (field, value) => setColorField(maltActiveIndex, value)
+                      })"
+                      x-effect="setModel(maltActiveRow)"
+                    >
+                      <load src="src/partials/ui-form-fields.html" />
+                    </div>
+                  </div>
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'malt-row-notes', type: 'textarea', label: 'Notes', modelKey: 'notes', default: '', rows: 3 }],
+                      onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
+                    })"
+                    x-effect="setModel(maltActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
+        </div>
+    </div>
   </template>
 
   <template x-teleport="#malt-editor-overlay">

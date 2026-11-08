@@ -14,136 +14,138 @@
   <load src="src/partials/ui-modal-shell.html" />
 
   <template x-teleport="#whirlpool-hop-editor-body">
-      <div class="modal-workspace-main">
-        <load src="src/partials/draft-table.html" />
-        <load src="src/partials/modal-whirlpool-cooling-ceiling.html" />
-      </div>
-
-      <div
-        class="modal-drawer-scrim"
-        x-show="whirlpoolHopDrawer !== null"
-        x-transition.opacity.duration.200ms
-        @click="closeWhirlpoolHopDrawer()"
-      ></div>
-
-      <div
-        class="modal-workspace-drawer"
-        id="whirlpool-hop-drawer"
-        x-show="whirlpoolHopDrawer !== null"
-        x-transition:enter="modal-drawer-enter"
-        x-transition:enter-start="modal-drawer-enter-start"
-        x-transition:enter-end="modal-drawer-enter-end"
-        x-transition:leave="modal-drawer-leave"
-        x-transition:leave-start="modal-drawer-leave-start"
-        x-transition:leave-end="modal-drawer-leave-end"
-      >
-        <div class="modal-drawer-header">
-          <h3
-            class="section-title"
-            x-text="whirlpoolHopDrawer === 'search' ? 'Hop / Product Catalog' : 'Hop Inspector'"
-          ></h3>
-          <button type="button" class="btn-close text-xs" @click="closeWhirlpoolHopDrawer()">✕</button>
+    <div class="modal-teleport-root">
+        <div class="modal-workspace-main">
+          <load src="src/partials/draft-table.html" />
+          <load src="src/partials/modal-whirlpool-cooling-ceiling.html" />
         </div>
 
-        <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': whirlpoolHopDrawer === 'search' }">
-          <template x-if="draftDrawer === 'search'">
-            <load src="src/partials/draft-search-pane.html" />
-          </template>
+        <div
+          class="modal-drawer-scrim"
+          x-show="whirlpoolHopDrawer !== null"
+          x-transition.opacity.duration.200ms
+          @click="closeWhirlpoolHopDrawer()"
+        ></div>
 
-          <template x-if="whirlpoolHopDrawer === 'inspect'">
-            <template x-if="whirlpoolHopActiveRow">
-              <div class="inspector-form">
-                <div
-                  x-data="formBuilder({
-                    schema: [{ id: 'whirlpool-hop-row-name', type: 'text', label: 'Hop name', modelKey: 'name', default: '' }],
-                    onChange: (field, value) => setMaltField(whirlpoolHopActiveIndex, field.modelKey, value)
-                  })"
-                  x-effect="setModel(whirlpoolHopActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div
-                  x-data="formBuilder({
-                    schema: [{
-                      id: 'whirlpool-hop-row-cone',
-                      type: 'number',
-                      label: 'Cone utilization (0–1)',
-                      read: () => whirlpoolHopActiveRow.cone_utilization ?? '',
-                      when: () => whirlpoolHopActiveRow.product_form === 'whole_cone',
-                      min: 0,
-                      max: 1,
-                      step: 0.01,
-                      lazy: true,
-                      hint: 'No source publishes it; measure it or own the assumption. The mass stays unsolved until it is set.'
-                    }],
-                    onChange: (field, value) => patchDraftRow(whirlpoolHopActiveIndex, { cone_utilization: value === '' ? null : Number(value) })
-                  })"
-                  x-effect="setModel(whirlpoolHopActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div
-                  x-data="formBuilder({
-                    schema: [{
-                      id: 'whirlpool-hop-row-form',
-                      type: 'select',
-                      label: 'Form',
-                      read: () => whirlpoolHopActiveRow.product_form || 't90_pellet',
-                      options: whirlpoolHopForms,
-                      lazy: true
-                    }],
-                    onChange: (field, value) => patchDraftRow(whirlpoolHopActiveIndex, { product_form: value })
-                  })"
-                  x-effect="setModel(whirlpoolHopActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div
-                  x-data="formBuilder({
-                    schema: [{
-                      id: 'whirlpool-hop-row-start',
-                      type: 'select',
-                      label: 'Start temperature',
-                      read: () => whirlpoolStartBandValue,
-                      options: [...whirlpoolStartBands, { value: 'custom', label: 'Custom (edit the grid temperature)' }],
-                      lazy: true,
-                      hint: () => whirlpoolStartBandHint
-                    }],
-                    onChange: (field, value) => setWhirlpoolStartBand(value)
-                  })"
-                  x-effect="setModel(whirlpoolHopActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div
-                  x-data="formBuilder({
-                    schema: [{
-                      id: 'whirlpool-hop-row-alpha',
-                      type: 'number',
-                      label: 'Alpha acid (%)',
-                      read: () => fmt.toPercentValue(whirlpoolHopActiveRow.alpha_acid_pct, 1),
-                      min: 0,
-                      max: 100,
-                      step: 0.1,
-                      lazy: true,
-                      hint: 'Override with the lot CoA alpha; defaults to the catalog preset.',
-                      hints: [{ text: 'Weigh the lot CoA alpha; substitute at 40–50 % (Cryo) or 50–70 % (Lupomax) of T-90 by weight.', when: () => whirlpoolHopActiveRow.product_form === 'lupulin_pellet' }]
-                    }],
-                    onChange: (field, value) => setMaltField(whirlpoolHopActiveIndex, 'alpha_acid_pct', value, 0.01)
-                  })"
-                  x-effect="setModel(whirlpoolHopActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div class="inspector-partial">
-                  <span class="form-label text-xs">Whirlpool assumptions</span>
-                  <load src="src/partials/whirlpool-assumptions.html" />
-                </div>
-              </div>
+        <div
+          class="modal-workspace-drawer"
+          id="whirlpool-hop-drawer"
+          x-show="whirlpoolHopDrawer !== null"
+          x-transition:enter="modal-drawer-enter"
+          x-transition:enter-start="modal-drawer-enter-start"
+          x-transition:enter-end="modal-drawer-enter-end"
+          x-transition:leave="modal-drawer-leave"
+          x-transition:leave-start="modal-drawer-leave-start"
+          x-transition:leave-end="modal-drawer-leave-end"
+        >
+          <div class="modal-drawer-header">
+            <h3
+              class="section-title"
+              x-text="whirlpoolHopDrawer === 'search' ? 'Hop / Product Catalog' : 'Hop Inspector'"
+            ></h3>
+            <button type="button" class="btn-close text-xs" @click="closeWhirlpoolHopDrawer()">✕</button>
+          </div>
+
+          <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': whirlpoolHopDrawer === 'search' }">
+            <template x-if="draftDrawer === 'search'">
+              <load src="src/partials/draft-search-pane.html" />
             </template>
-          </template>
+
+            <template x-if="whirlpoolHopDrawer === 'inspect'">
+              <template x-if="whirlpoolHopActiveRow">
+                <div class="inspector-form">
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'whirlpool-hop-row-name', type: 'text', label: 'Hop name', modelKey: 'name', default: '' }],
+                      onChange: (field, value) => setMaltField(whirlpoolHopActiveIndex, field.modelKey, value)
+                    })"
+                    x-effect="setModel(whirlpoolHopActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div
+                    x-data="formBuilder({
+                      schema: [{
+                        id: 'whirlpool-hop-row-cone',
+                        type: 'number',
+                        label: 'Cone utilization (0–1)',
+                        read: () => whirlpoolHopActiveRow.cone_utilization ?? '',
+                        when: () => whirlpoolHopActiveRow.product_form === 'whole_cone',
+                        min: 0,
+                        max: 1,
+                        step: 0.01,
+                        lazy: true,
+                        hint: 'No source publishes it; measure it or own the assumption. The mass stays unsolved until it is set.'
+                      }],
+                      onChange: (field, value) => patchDraftRow(whirlpoolHopActiveIndex, { cone_utilization: value === '' ? null : Number(value) })
+                    })"
+                    x-effect="setModel(whirlpoolHopActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div
+                    x-data="formBuilder({
+                      schema: [{
+                        id: 'whirlpool-hop-row-form',
+                        type: 'select',
+                        label: 'Form',
+                        read: () => whirlpoolHopActiveRow.product_form || 't90_pellet',
+                        options: whirlpoolHopForms,
+                        lazy: true
+                      }],
+                      onChange: (field, value) => patchDraftRow(whirlpoolHopActiveIndex, { product_form: value })
+                    })"
+                    x-effect="setModel(whirlpoolHopActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div
+                    x-data="formBuilder({
+                      schema: [{
+                        id: 'whirlpool-hop-row-start',
+                        type: 'select',
+                        label: 'Start temperature',
+                        read: () => whirlpoolStartBandValue,
+                        options: [...whirlpoolStartBands, { value: 'custom', label: 'Custom (edit the grid temperature)' }],
+                        lazy: true,
+                        hint: () => whirlpoolStartBandHint
+                      }],
+                      onChange: (field, value) => setWhirlpoolStartBand(value)
+                    })"
+                    x-effect="setModel(whirlpoolHopActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div
+                    x-data="formBuilder({
+                      schema: [{
+                        id: 'whirlpool-hop-row-alpha',
+                        type: 'number',
+                        label: 'Alpha acid (%)',
+                        read: () => fmt.toPercentValue(whirlpoolHopActiveRow.alpha_acid_pct, 1),
+                        min: 0,
+                        max: 100,
+                        step: 0.1,
+                        lazy: true,
+                        hint: 'Override with the lot CoA alpha; defaults to the catalog preset.',
+                        hints: [{ text: 'Weigh the lot CoA alpha; substitute at 40–50 % (Cryo) or 50–70 % (Lupomax) of T-90 by weight.', when: () => whirlpoolHopActiveRow.product_form === 'lupulin_pellet' }]
+                      }],
+                      onChange: (field, value) => setMaltField(whirlpoolHopActiveIndex, 'alpha_acid_pct', value, 0.01)
+                    })"
+                    x-effect="setModel(whirlpoolHopActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div class="inspector-partial">
+                    <span class="form-label text-xs">Whirlpool assumptions</span>
+                    <load src="src/partials/whirlpool-assumptions.html" />
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
         </div>
-      </div>
+    </div>
   </template>
 
   <template x-teleport="#whirlpool-hop-editor-overlay">

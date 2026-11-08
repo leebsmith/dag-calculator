@@ -14,96 +14,98 @@
   <load src="src/partials/ui-modal-shell.html" />
 
   <template x-teleport="#trace-malt-editor-body">
-    <div class="modal-workspace-main">
-      <load src="src/partials/draft-table.html" />
-    </div>
-
-      <div
-        class="modal-drawer-scrim"
-        x-show="traceDrawer !== null"
-        x-transition.opacity.duration.200ms
-        @click="closeTraceDrawer()"
-      ></div>
-
-      <div
-        class="modal-workspace-drawer"
-        id="trace-drawer"
-        x-show="traceDrawer !== null"
-        x-transition:enter="modal-drawer-enter"
-        x-transition:enter-start="modal-drawer-enter-start"
-        x-transition:enter-end="modal-drawer-enter-end"
-        x-transition:leave="modal-drawer-leave"
-        x-transition:leave-start="modal-drawer-leave-start"
-        x-transition:leave-end="modal-drawer-leave-end"
-      >
-        <div class="modal-drawer-header">
-          <h3
-            class="section-title"
-            x-text="traceDrawer === 'search' ? 'Malt Catalog Browser' : 'Trace Malt Inspector'"
-          ></h3>
-          <button type="button" class="btn-close text-xs" @click="closeTraceDrawer()">✕</button>
-        </div>
-
-        <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': traceDrawer === 'search' }">
-          <template x-if="draftDrawer === 'search'">
-            <load src="src/partials/draft-search-pane.html" />
-          </template>
-
-          <template x-if="traceDrawer === 'inspect'">
-            <template x-if="traceActiveRow">
-              <div class="inspector-form">
-                <div
-                  x-data="formBuilder({
-                    schema: [{ id: 'trace-row-name', type: 'text', label: 'Malt name', modelKey: 'name', default: '' }],
-                    onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
-                  })"
-                  x-effect="setModel(traceActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div
-                  x-data="formBuilder({
-                    schema: [{ id: 'trace-row-category', type: 'select', label: 'Category', modelKey: 'category', options: maltCategories.map((c) => ({ value: c, label: c })), lazy: true }],
-                    onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
-                  })"
-                  x-effect="setModel(traceActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-                <div class="inspector-grid-2col">
-                  <div
-                    x-data="formBuilder({
-                      schema: [{ id: 'trace-row-yield', type: 'number', label: 'Extract yield (%)', read: () => fmt.toPercentValue(traceActiveRow.yield_fraction, 0), min: 0, max: 100, step: 1, lazy: true }],
-                      onChange: (field, value) => setMaltField(traceActiveIndex, 'yield_fraction', value, 0.01)
-                    })"
-                    x-effect="setModel(traceActiveRow)"
-                  >
-                    <load src="src/partials/ui-form-fields.html" />
-                  </div>
-                  <div
-                    x-data="formBuilder({
-                      schema: [{ id: 'trace-row-color', type: 'number', label: () => 'Color (' + colorUnit() + ')', read: () => colorDisplay(traceActiveRow.color_lovibond), min: 0, step: 0.1, lazy: true }],
-                      onChange: (field, value) => setColorField(traceActiveIndex, value)
-                    })"
-                    x-effect="setModel(traceActiveRow)"
-                  >
-                    <load src="src/partials/ui-form-fields.html" />
-                  </div>
-                </div>
-                <div
-                  x-data="formBuilder({
-                    schema: [{ id: 'trace-row-notes', type: 'textarea', label: 'Notes', modelKey: 'notes', default: '', rows: 3 }],
-                    onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
-                  })"
-                  x-effect="setModel(traceActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
-                </div>
-              </div>
-            </template>
-          </template>
-        </div>
+    <div class="modal-teleport-root">
+      <div class="modal-workspace-main">
+        <load src="src/partials/draft-table.html" />
       </div>
+
+        <div
+          class="modal-drawer-scrim"
+          x-show="traceDrawer !== null"
+          x-transition.opacity.duration.200ms
+          @click="closeTraceDrawer()"
+        ></div>
+
+        <div
+          class="modal-workspace-drawer"
+          id="trace-drawer"
+          x-show="traceDrawer !== null"
+          x-transition:enter="modal-drawer-enter"
+          x-transition:enter-start="modal-drawer-enter-start"
+          x-transition:enter-end="modal-drawer-enter-end"
+          x-transition:leave="modal-drawer-leave"
+          x-transition:leave-start="modal-drawer-leave-start"
+          x-transition:leave-end="modal-drawer-leave-end"
+        >
+          <div class="modal-drawer-header">
+            <h3
+              class="section-title"
+              x-text="traceDrawer === 'search' ? 'Malt Catalog Browser' : 'Trace Malt Inspector'"
+            ></h3>
+            <button type="button" class="btn-close text-xs" @click="closeTraceDrawer()">✕</button>
+          </div>
+
+          <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': traceDrawer === 'search' }">
+            <template x-if="draftDrawer === 'search'">
+              <load src="src/partials/draft-search-pane.html" />
+            </template>
+
+            <template x-if="traceDrawer === 'inspect'">
+              <template x-if="traceActiveRow">
+                <div class="inspector-form">
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'trace-row-name', type: 'text', label: 'Malt name', modelKey: 'name', default: '' }],
+                      onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
+                    })"
+                    x-effect="setModel(traceActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'trace-row-category', type: 'select', label: 'Category', modelKey: 'category', options: maltCategories.map((c) => ({ value: c, label: c })), lazy: true }],
+                      onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
+                    })"
+                    x-effect="setModel(traceActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                  <div class="inspector-grid-2col">
+                    <div
+                      x-data="formBuilder({
+                        schema: [{ id: 'trace-row-yield', type: 'number', label: 'Extract yield (%)', read: () => fmt.toPercentValue(traceActiveRow.yield_fraction, 0), min: 0, max: 100, step: 1, lazy: true }],
+                        onChange: (field, value) => setMaltField(traceActiveIndex, 'yield_fraction', value, 0.01)
+                      })"
+                      x-effect="setModel(traceActiveRow)"
+                    >
+                      <load src="src/partials/ui-form-fields.html" />
+                    </div>
+                    <div
+                      x-data="formBuilder({
+                        schema: [{ id: 'trace-row-color', type: 'number', label: () => 'Color (' + colorUnit() + ')', read: () => colorDisplay(traceActiveRow.color_lovibond), min: 0, step: 0.1, lazy: true }],
+                        onChange: (field, value) => setColorField(traceActiveIndex, value)
+                      })"
+                      x-effect="setModel(traceActiveRow)"
+                    >
+                      <load src="src/partials/ui-form-fields.html" />
+                    </div>
+                  </div>
+                  <div
+                    x-data="formBuilder({
+                      schema: [{ id: 'trace-row-notes', type: 'textarea', label: 'Notes', modelKey: 'notes', default: '', rows: 3 }],
+                      onChange: (field, value) => setMaltField(traceActiveIndex, field.modelKey, value)
+                    })"
+                    x-effect="setModel(traceActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
+        </div>
+    </div>
   </template>
 
   <template x-teleport="#trace-malt-editor-overlay">

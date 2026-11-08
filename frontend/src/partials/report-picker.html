@@ -11,53 +11,55 @@
   <load src="src/partials/ui-modal-shell.html" />
 
   <template x-teleport="#report-picker-body">
-    <h2 class="modal-workspace-title" id="report-picker-title">Report sections</h2>
-    <p class="form-hint">
-      Sections without data for this batch are left out. They always print in the
-      order below.
-    </p>
+    <div class="modal-teleport-root">
+      <h2 class="modal-workspace-title" id="report-picker-title">Report sections</h2>
+      <p class="form-hint">
+        Sections without data for this batch are left out. They always print in the
+        order below.
+      </p>
 
-    <div class="form-group">
-      <template x-for="section in $store.recipes.reportSections" :key="section.id">
-        <label class="report-picker-row">
-          <input
-            type="checkbox"
-            class="form-checkbox"
-            :checked="$store.recipes.reportSelection.includes(section.id)"
-            @change="$store.recipes.toggleReportSection(section.id)"
-          />
-          <span x-text="section.title"></span>
-        </label>
-      </template>
-    </div>
+      <div class="form-group">
+        <template x-for="section in $store.recipes.reportSections" :key="section.id">
+          <label class="report-picker-row">
+            <input
+              type="checkbox"
+              class="form-checkbox"
+              :checked="$store.recipes.reportSelection.includes(section.id)"
+              @change="$store.recipes.toggleReportSection(section.id)"
+            />
+            <span x-text="section.title"></span>
+          </label>
+        </template>
+      </div>
 
-    <div class="report-picker-actions">
-      <button type="button" class="btn-outline btn-sm" @click="$store.recipes.selectAllReportSections()">
-        All
-      </button>
-      <button type="button" class="btn-outline btn-sm" @click="$store.recipes.clearReportSections()">
-        None
-      </button>
-      <span class="form-hint" x-text="$store.recipes.reportSelection.length + ' of ' + $store.recipes.reportSections.length + ' selected'"></span>
-      <button type="button" class="btn-outline btn-sm" @click="$store.recipes.closeReportPicker()">
-        Cancel
-      </button>
-      <button
-        type="button"
-        class="btn-outline btn-sm"
-        :disabled="!$store.recipes.reportSelection.length"
-        @click="$store.recipes.previewSelectedReport()"
-      >
-        Preview
-      </button>
-      <button
-        type="button"
-        class="btn-primary btn-sm"
-        :disabled="!$store.recipes.reportSelection.length"
-        @click="$store.recipes.downloadSelectedReport()"
-      >
-        Download
-      </button>
+      <div class="report-picker-actions">
+        <button type="button" class="btn-outline btn-sm" @click="$store.recipes.selectAllReportSections()">
+          All
+        </button>
+        <button type="button" class="btn-outline btn-sm" @click="$store.recipes.clearReportSections()">
+          None
+        </button>
+        <span class="form-hint" x-text="$store.recipes.reportSelection.length + ' of ' + $store.recipes.reportSections.length + ' selected'"></span>
+        <button type="button" class="btn-outline btn-sm" @click="$store.recipes.closeReportPicker()">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn-outline btn-sm"
+          :disabled="!$store.recipes.reportSelection.length"
+          @click="$store.recipes.previewSelectedReport()"
+        >
+          Preview
+        </button>
+        <button
+          type="button"
+          class="btn-primary btn-sm"
+          :disabled="!$store.recipes.reportSelection.length"
+          @click="$store.recipes.downloadSelectedReport()"
+        >
+          Download
+        </button>
+      </div>
     </div>
   </template>
 </div>

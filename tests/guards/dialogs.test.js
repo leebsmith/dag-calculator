@@ -9,6 +9,46 @@ function surfaces() {
 
 const TAG = /<[a-zA-Z][^>]*>/gs;
 
+const VOID_TAGS = new Set([
+  "area", "base", "br", "col", "embed", "hr", "img", "input",
+  "link", "meta", "param", "source", "track", "wbr",
+]);
+
+// Alpine's x-teleport clones `template.content.firstElementChild` only, so a
+// teleport with sibling roots silently drops everything after the first.
+function teleportRootCount(text, start) {
+  const tag = /<!--[\s\S]*?-->|<(\/?)([a-zA-Z][a-zA-Z0-9-]*)((?:[^>"']|"[^"]*"|'[^']*')*?)(\/?)>/g;
+  tag.lastIndex = start;
+  let depth = 0;
+  let roots = 0;
+  for (let match; (match = tag.exec(text)); ) {
+    if (!match[2]) continue;
+    const closing = match[1] === "/";
+    const name = match[2].toLowerCase();
+    const selfClosing = match[4] === "/";
+    if (closing) {
+      if (depth === 0) return roots;
+      depth -= 1;
+    } else {
+      if (depth === 0) roots += 1;
+      if (!selfClosing && !VOID_TAGS.has(name)) depth += 1;
+    }
+  }
+  return roots;
+}
+
+test("every x-teleport template has a single root element", () => {
+  const offenders = [];
+  for (const file of surfaces()) {
+    const text = read(file);
+    for (const match of text.matchAll(/<template[^>]*x-teleport=/g)) {
+      const count = teleportRootCount(text, match.index + "<template".length);
+      if (count !== 1) offenders.push(`${file}: ${count} roots`);
+    }
+  }
+  assert.deepEqual(offenders, [], `teleports with sibling roots:\n${offenders.join("\n")}`);
+});
+
 // Selection is by role, not by a styling class: an overlay that renames its
 // backdrop (the Library panel) must still be held to the dialog contract.
 function dialogSurfaces() {

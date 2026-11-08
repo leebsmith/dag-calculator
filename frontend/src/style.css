@@ -617,6 +617,7 @@ samp {
   overflow: hidden;
 }
 
+.modal-teleport-root,
 .modal-body-slot,
 .modal-overlay-slot {
   display: contents;

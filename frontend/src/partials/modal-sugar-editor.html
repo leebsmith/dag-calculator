@@ -14,37 +14,39 @@
   <load src="src/partials/ui-modal-shell.html" />
 
   <template x-teleport="#sugar-editor-body">
-    <div class="modal-workspace-main">
-      <load src="src/partials/draft-table.html" />
-    </div>
-
-      <div
-        class="modal-drawer-scrim"
-        x-show="sugarDrawer !== null"
-        x-transition.opacity.duration.200ms
-        @click="closeSugarDrawer()"
-      ></div>
-
-      <div
-        class="modal-workspace-drawer"
-        id="sugar-drawer"
-        x-show="sugarDrawer !== null"
-        x-transition:enter="modal-drawer-enter"
-        x-transition:enter-start="modal-drawer-enter-start"
-        x-transition:enter-end="modal-drawer-enter-end"
-        x-transition:leave="modal-drawer-leave"
-        x-transition:leave-start="modal-drawer-leave-start"
-        x-transition:leave-end="modal-drawer-leave-end"
-      >
-        <div class="modal-drawer-header">
-          <h3 class="section-title">Sugar Catalog Browser</h3>
-          <button type="button" class="btn-close text-xs" @click="closeSugarDrawer()">✕</button>
-        </div>
-
-        <div class="modal-drawer-body modal-drawer-body-pinned">
-          <load src="src/partials/draft-search-pane.html" />
-        </div>
+    <div class="modal-teleport-root">
+      <div class="modal-workspace-main">
+        <load src="src/partials/draft-table.html" />
       </div>
+
+        <div
+          class="modal-drawer-scrim"
+          x-show="sugarDrawer !== null"
+          x-transition.opacity.duration.200ms
+          @click="closeSugarDrawer()"
+        ></div>
+
+        <div
+          class="modal-workspace-drawer"
+          id="sugar-drawer"
+          x-show="sugarDrawer !== null"
+          x-transition:enter="modal-drawer-enter"
+          x-transition:enter-start="modal-drawer-enter-start"
+          x-transition:enter-end="modal-drawer-enter-end"
+          x-transition:leave="modal-drawer-leave"
+          x-transition:leave-start="modal-drawer-leave-start"
+          x-transition:leave-end="modal-drawer-leave-end"
+        >
+          <div class="modal-drawer-header">
+            <h3 class="section-title">Sugar Catalog Browser</h3>
+            <button type="button" class="btn-close text-xs" @click="closeSugarDrawer()">✕</button>
+          </div>
+
+          <div class="modal-drawer-body modal-drawer-body-pinned">
+            <load src="src/partials/draft-search-pane.html" />
+          </div>
+        </div>
+    </div>
   </template>
 
   <template x-teleport="#sugar-editor-overlay">

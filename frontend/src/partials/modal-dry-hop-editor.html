@@ -14,222 +14,224 @@
   <load src="src/partials/ui-modal-shell.html" />
 
   <template x-teleport="#dry-hop-editor-body">
-    <div class="modal-workspace-main">
-        <div class="table-header-toolbar">
-          <span class="text-xs text-muted">
-            Applied in fermentation (cold side). The event and the contact end record intent; nothing
-            here is solved.
-          </span>
-          <button
-            type="button"
-            class="btn-primary btn-sm"
-            @click="openDryHopSearch()"
-            :aria-expanded="(dryHopDrawer !== null) ? 'true' : 'false'"
-            aria-controls="dry-hop-drawer"
-          >
-            ＋ Add from Catalog
-          </button>
-        </div>
+    <div class="modal-teleport-root">
+      <div class="modal-workspace-main">
+          <div class="table-header-toolbar">
+            <span class="text-xs text-muted">
+              Applied in fermentation (cold side). The event and the contact end record intent; nothing
+              here is solved.
+            </span>
+            <button
+              type="button"
+              class="btn-primary btn-sm"
+              @click="openDryHopSearch()"
+              :aria-expanded="(dryHopDrawer !== null) ? 'true' : 'false'"
+              aria-controls="dry-hop-drawer"
+            >
+              ＋ Add from Catalog
+            </button>
+          </div>
 
-        <div class="data-table-container data-table-container--fit">
-          <table class="data-table data-table--editor data-table--fixed">
-            <colgroup>
-              <col />
-              <col />
-              <col />
-              <col />
-              <col />
-              <col />
-              <col />
-              <col />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Hop</th>
-                <th>Type</th>
-                <th class="text-right">Qty</th>
-                <th>Unit</th>
-                <th>Applied at</th>
-                <th>Contact</th>
-                <th>Detail</th>
-                <th class="text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template x-for="(row, ri) in draftRows" :key="ri">
+          <div class="data-table-container data-table-container--fit">
+            <table class="data-table data-table--editor data-table--fixed">
+              <colgroup>
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
                 <tr>
-                  <td>
-                    <span class="font-medium" x-text="dryHopTitle(row)"></span>
-                  </td>
-                  <td x-text="dryHopTypeLabel(row)"></td>
-                  <td class="text-right tabular-nums">
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      class="form-input table-input-parts"
-                      :value="row.quantity"
-                      @change="setDryHopDraftNumber(ri, 'quantity', $event.target.value)"
-                      :aria-label="'Quantity for ' + dryHopTitle(row)"
-                    />
-                  </td>
-                  <td>
-                    <select
-                      class="form-select text-xs"
-                      :value="row.unit"
-                      @change="setDryHopDraftField(ri, 'unit', $event.target.value)"
-                      :aria-label="'Unit for ' + dryHopTitle(row)"
-                    >
-                      <template x-for="opt in dryHopUnitOptions" :key="opt.value">
-                        <option
-                          :value="opt.value"
-                          :selected="opt.value === row.unit"
-                          x-text="opt.label"
-                        ></option>
-                      </template>
-                    </select>
-                  </td>
-                  <td>
-                    <select
-                      class="form-select text-xs"
-                      :value="row.application_event"
-                      @change="setDryHopDraftField(ri, 'application_event', $event.target.value)"
-                      :aria-label="'Application event for ' + dryHopTitle(row)"
-                    >
-                      <template x-for="opt in dryHopEventOptions" :key="opt.value">
-                        <option
-                          :value="opt.value"
-                          :selected="opt.value === row.application_event"
-                          x-text="opt.label"
-                        ></option>
-                      </template>
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      class="form-input table-input-parts"
-                      :value="dryHopContactHours(row)"
-                      @change="setDryHopDraftContactHours(ri, $event.target.value)"
-                      :aria-label="'Contact hours for ' + dryHopTitle(row)"
-                    />
-                    <select
-                      class="form-select text-xs"
-                      :value="row.contact_until ?? ''"
-                      @change="setDryHopDraftContactUntil(ri, $event.target.value)"
-                      :aria-label="'Contact end for ' + dryHopTitle(row)"
-                    >
-                      <option value="" :selected="!row.contact_until">— no end event —</option>
-                      <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
-                        <option
-                          :value="opt.value"
-                          :selected="opt.value === row.contact_until"
-                          x-text="opt.label"
-                        ></option>
-                      </template>
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      class="form-input text-xs"
-                      :value="row.time_of_application"
-                      placeholder="e.g. day 3"
-                      @change="setDryHopDraftField(ri, 'time_of_application', $event.target.value)"
-                      :aria-label="'Time of application for ' + dryHopTitle(row)"
-                    />
-                  </td>
-                  <td class="text-right">
-                    <div class="table-action-cell">
-                      <button type="button" class="btn-action-icon" @click="inspectDryHopRow(ri)" title="Inspect">✎</button>
-                      <button
-                        type="button"
-                        class="btn-action-icon btn-action-danger"
-                        @click="removeDryHop(ri)"
-                        title="Remove"
+                  <th>Hop</th>
+                  <th>Type</th>
+                  <th class="text-right">Qty</th>
+                  <th>Unit</th>
+                  <th>Applied at</th>
+                  <th>Contact</th>
+                  <th>Detail</th>
+                  <th class="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="(row, ri) in draftRows" :key="ri">
+                  <tr>
+                    <td>
+                      <span class="font-medium" x-text="dryHopTitle(row)"></span>
+                    </td>
+                    <td x-text="dryHopTypeLabel(row)"></td>
+                    <td class="text-right tabular-nums">
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        class="form-input table-input-parts"
+                        :value="row.quantity"
+                        @change="setDryHopDraftNumber(ri, 'quantity', $event.target.value)"
+                        :aria-label="'Quantity for ' + dryHopTitle(row)"
+                      />
+                    </td>
+                    <td>
+                      <select
+                        class="form-select text-xs"
+                        :value="row.unit"
+                        @change="setDryHopDraftField(ri, 'unit', $event.target.value)"
+                        :aria-label="'Unit for ' + dryHopTitle(row)"
                       >
-                        🗑
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </template>
-              <template x-if="draftRows.length === 0">
-                <tr>
-                  <td colspan="8" class="table-empty-cell">
-                    No dry hops in the draft. Click “＋ Add from Catalog”.
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+                        <template x-for="opt in dryHopUnitOptions" :key="opt.value">
+                          <option
+                            :value="opt.value"
+                            :selected="opt.value === row.unit"
+                            x-text="opt.label"
+                          ></option>
+                        </template>
+                      </select>
+                    </td>
+                    <td>
+                      <select
+                        class="form-select text-xs"
+                        :value="row.application_event"
+                        @change="setDryHopDraftField(ri, 'application_event', $event.target.value)"
+                        :aria-label="'Application event for ' + dryHopTitle(row)"
+                      >
+                        <template x-for="opt in dryHopEventOptions" :key="opt.value">
+                          <option
+                            :value="opt.value"
+                            :selected="opt.value === row.application_event"
+                            x-text="opt.label"
+                          ></option>
+                        </template>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        class="form-input table-input-parts"
+                        :value="dryHopContactHours(row)"
+                        @change="setDryHopDraftContactHours(ri, $event.target.value)"
+                        :aria-label="'Contact hours for ' + dryHopTitle(row)"
+                      />
+                      <select
+                        class="form-select text-xs"
+                        :value="row.contact_until ?? ''"
+                        @change="setDryHopDraftContactUntil(ri, $event.target.value)"
+                        :aria-label="'Contact end for ' + dryHopTitle(row)"
+                      >
+                        <option value="" :selected="!row.contact_until">— no end event —</option>
+                        <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
+                          <option
+                            :value="opt.value"
+                            :selected="opt.value === row.contact_until"
+                            x-text="opt.label"
+                          ></option>
+                        </template>
+                      </select>
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        class="form-input text-xs"
+                        :value="row.time_of_application"
+                        placeholder="e.g. day 3"
+                        @change="setDryHopDraftField(ri, 'time_of_application', $event.target.value)"
+                        :aria-label="'Time of application for ' + dryHopTitle(row)"
+                      />
+                    </td>
+                    <td class="text-right">
+                      <div class="table-action-cell">
+                        <button type="button" class="btn-action-icon" @click="inspectDryHopRow(ri)" title="Inspect">✎</button>
+                        <button
+                          type="button"
+                          class="btn-action-icon btn-action-danger"
+                          @click="removeDryHop(ri)"
+                          title="Remove"
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </template>
+                <template x-if="draftRows.length === 0">
+                  <tr>
+                    <td colspan="8" class="table-empty-cell">
+                      No dry hops in the draft. Click “＋ Add from Catalog”.
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      <div
-        class="modal-drawer-scrim"
-        x-show="dryHopDrawer !== null"
-        x-transition.opacity.duration.200ms
-        @click="closeDryHopDrawer()"
-      ></div>
+        <div
+          class="modal-drawer-scrim"
+          x-show="dryHopDrawer !== null"
+          x-transition.opacity.duration.200ms
+          @click="closeDryHopDrawer()"
+        ></div>
 
-      <div
-        class="modal-workspace-drawer"
-        id="dry-hop-drawer"
-        x-show="dryHopDrawer !== null"
-        x-transition:enter="modal-drawer-enter"
-        x-transition:enter-start="modal-drawer-enter-start"
-        x-transition:enter-end="modal-drawer-enter-end"
-        x-transition:leave="modal-drawer-leave"
-        x-transition:leave-start="modal-drawer-leave-start"
-        x-transition:leave-end="modal-drawer-leave-end"
-      >
-        <div class="modal-drawer-header">
-          <h3
-            class="section-title"
-            x-text="dryHopDrawer === 'search' ? 'Hop / Product Catalog' : 'Dry Hop Inspector'"
-          ></h3>
-          <button type="button" class="btn-close text-xs" @click="closeDryHopDrawer()">✕</button>
-        </div>
+        <div
+          class="modal-workspace-drawer"
+          id="dry-hop-drawer"
+          x-show="dryHopDrawer !== null"
+          x-transition:enter="modal-drawer-enter"
+          x-transition:enter-start="modal-drawer-enter-start"
+          x-transition:enter-end="modal-drawer-enter-end"
+          x-transition:leave="modal-drawer-leave"
+          x-transition:leave-start="modal-drawer-leave-start"
+          x-transition:leave-end="modal-drawer-leave-end"
+        >
+          <div class="modal-drawer-header">
+            <h3
+              class="section-title"
+              x-text="dryHopDrawer === 'search' ? 'Hop / Product Catalog' : 'Dry Hop Inspector'"
+            ></h3>
+            <button type="button" class="btn-close text-xs" @click="closeDryHopDrawer()">✕</button>
+          </div>
 
-        <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': dryHopDrawer === 'search' }">
-          <template x-if="draftDrawer === 'search'">
-            <load src="src/partials/draft-search-pane.html" />
-          </template>
-
-          <template x-if="dryHopDrawer === 'inspect'">
-            <template x-if="dryHopActiveRow">
-              <div
-                class="inspector-form"
-                x-data="formBuilder({
-                  schema: [
-                    { id: 'dry-hop-row-variety', type: 'text', label: 'Hop', modelKey: 'variety', default: '', lazy: true },
-                    { id: 'dry-hop-row-type', type: 'select', label: 'Type', modelKey: 'product_type', options: dryHopProductOptions, lazy: true },
-                    { id: 'dry-hop-row-quantity', type: 'number', label: 'Quantity', modelKey: 'quantity', min: 0, step: 0.1, lazy: true },
-                    { id: 'dry-hop-row-unit', type: 'select', label: 'Unit', modelKey: 'unit', options: dryHopUnitOptions, lazy: true },
-                    { id: 'dry-hop-row-event', type: 'select', label: 'Applied at', modelKey: 'application_event', options: dryHopEventOptions, lazy: true },
-                    { id: 'dry-hop-row-contact', type: 'number', label: 'Contact (hours)', read: () => dryHopContactHours(dryHopActiveRow), min: 0, step: 1, lazy: true, hint: 'Clears the end event below.' },
-                    { id: 'dry-hop-row-until', type: 'select', label: '…or until', read: () => dryHopActiveRow.contact_until ?? '', options: [{ value: '', label: '— no end event —' }, ...dryHopContactUntilOptions], lazy: true, hint: 'Clears the contact hours above.' },
-                    { id: 'dry-hop-row-detail', type: 'text', label: 'Detail', modelKey: 'time_of_application', default: '', placeholder: 'e.g. 50% attenuation, day 3', lazy: true },
-                    { id: 'dry-hop-row-notes', type: 'text', label: 'Notes', modelKey: 'notes', default: '', lazy: true }
-                  ],
-                  onChange: (field, value) => {
-                    if (field.id === 'dry-hop-row-contact') return setDryHopDraftContactHours(dryHopActiveIndex, value);
-                    if (field.id === 'dry-hop-row-until') return setDryHopDraftContactUntil(dryHopActiveIndex, value);
-                    if (field.type === 'number') return setDryHopDraftNumber(dryHopActiveIndex, field.modelKey, value);
-                    return setDryHopDraftField(dryHopActiveIndex, field.modelKey, value);
-                  }
-                })"
-                x-effect="setModel(dryHopActiveRow)"
-              >
-                <load src="src/partials/ui-form-fields.html" />
-              </div>
+          <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': dryHopDrawer === 'search' }">
+            <template x-if="draftDrawer === 'search'">
+              <load src="src/partials/draft-search-pane.html" />
             </template>
-          </template>
+
+            <template x-if="dryHopDrawer === 'inspect'">
+              <template x-if="dryHopActiveRow">
+                <div
+                  class="inspector-form"
+                  x-data="formBuilder({
+                    schema: [
+                      { id: 'dry-hop-row-variety', type: 'text', label: 'Hop', modelKey: 'variety', default: '', lazy: true },
+                      { id: 'dry-hop-row-type', type: 'select', label: 'Type', modelKey: 'product_type', options: dryHopProductOptions, lazy: true },
+                      { id: 'dry-hop-row-quantity', type: 'number', label: 'Quantity', modelKey: 'quantity', min: 0, step: 0.1, lazy: true },
+                      { id: 'dry-hop-row-unit', type: 'select', label: 'Unit', modelKey: 'unit', options: dryHopUnitOptions, lazy: true },
+                      { id: 'dry-hop-row-event', type: 'select', label: 'Applied at', modelKey: 'application_event', options: dryHopEventOptions, lazy: true },
+                      { id: 'dry-hop-row-contact', type: 'number', label: 'Contact (hours)', read: () => dryHopContactHours(dryHopActiveRow), min: 0, step: 1, lazy: true, hint: 'Clears the end event below.' },
+                      { id: 'dry-hop-row-until', type: 'select', label: '…or until', read: () => dryHopActiveRow.contact_until ?? '', options: [{ value: '', label: '— no end event —' }, ...dryHopContactUntilOptions], lazy: true, hint: 'Clears the contact hours above.' },
+                      { id: 'dry-hop-row-detail', type: 'text', label: 'Detail', modelKey: 'time_of_application', default: '', placeholder: 'e.g. 50% attenuation, day 3', lazy: true },
+                      { id: 'dry-hop-row-notes', type: 'text', label: 'Notes', modelKey: 'notes', default: '', lazy: true }
+                    ],
+                    onChange: (field, value) => {
+                      if (field.id === 'dry-hop-row-contact') return setDryHopDraftContactHours(dryHopActiveIndex, value);
+                      if (field.id === 'dry-hop-row-until') return setDryHopDraftContactUntil(dryHopActiveIndex, value);
+                      if (field.type === 'number') return setDryHopDraftNumber(dryHopActiveIndex, field.modelKey, value);
+                      return setDryHopDraftField(dryHopActiveIndex, field.modelKey, value);
+                    }
+                  })"
+                  x-effect="setModel(dryHopActiveRow)"
+                >
+                  <load src="src/partials/ui-form-fields.html" />
+                </div>
+              </template>
+            </template>
+          </div>
         </div>
-      </div>
+    </div>
   </template>
 
   <template x-teleport="#dry-hop-editor-overlay">
