@@ -8,12 +8,12 @@
       "ambient_temp_c": {
         "dimension": "temperature",
         "required": true,
-        "domain": { "gte": -20, "lte": 50 }
+        "domain": "$value >= -20 && $value <= 50"
       },
       "start_temp_c": {
         "dimension": "temperature",
         "required": true,
-        "domain": { "gte": 0, "lte": 100 }
+        "domain": "$value >= 0 && $value <= 100"
       },
       "points": {
         "type": "list",
@@ -25,12 +25,12 @@
           "time_min": {
             "dimension": "time",
             "required": true,
-            "domain": { "gt": 0 }
+            "domain": "$value > 0"
           },
           "temp_c": {
             "dimension": "temperature",
             "required": true,
-            "domain": { "gte": -20, "lte": 100 }
+            "domain": "$value >= -20 && $value <= 100"
           }
         }
       },

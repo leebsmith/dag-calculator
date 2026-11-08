@@ -155,13 +155,14 @@ remaining section; the presence predicates are in `plans/report-renderer.md`
 * **Shape-pin burn-down** — the complexity ratchet and its guard landed with the
   lint program (`tests/guards/shape-pins.test.js` re-measures every pin, so a
   ceiling can only be lowered). What is left is the residue it recorded: 46
-  functions in 25 `frontend/src` files above `complexity 12`, four files above
-  400 lines (`engine/fermentation.js` 506, `store/recipes.js` 454,
-  `adapters/stepAdapter.js` 452, `views/producer/stylePlot.js` 422), plus the
-  script layer's pins from the drift-gates program. The interpreter still leads
-  (`views/producer/projection.js` 34, `engine/validate.js` 34,
-  `views/producer/scalar.js` 21, `engine/ast.js` 22 — dispatch over the grammar,
-  so the split is a table per node kind), then the solve path
+  functions in 25 `frontend/src` files above `complexity 12`, eight files above
+  400 lines (`engine/validate.js` 541, `engine/fermentation.js` 506,
+  `store/recipes.js` 463, `adapters/stepAdapter.js` 459,
+  `views/producer/stylePlot.js` 422, `store/persistence.js` 414,
+  `engine/units.js` 404, `engine/expression.js` 404), plus the script layer's
+  pins from the drift-gates program. The interpreter still leads
+  (`views/producer/projection.js` 34, `engine/dag.js` 26,
+  `engine/validate.js` 21, `views/producer/scalar.js` 21), then the solve path
   (`adapters/cards/water.js` 38 / 296 lines after the 639-line split,
   `adapters/boundaryRunner.js` 35 / 234 lines, `adapters/stepView.js` 19) and the
   stores and catalogue (`store/userCatalog.js` 32, `store/unitPrefs.js` 27,
@@ -179,6 +180,6 @@ remaining section; the presence predicates are in `plans/report-renderer.md`
 
 Not needed by the current artifact; add only when a node requires them:
 
-* `max` reduction; boolean **input** kind (roots need a dimension, choices a
-  taxonomy — no boolean toggle node yet); list literals; map/dict value type.
+* boolean **input** kind (roots need a dimension, choices a taxonomy — no
+  boolean toggle node yet); list literals; map/dict value type.
 * True nested boundary outputs (currently flattened to dotted keys).

@@ -6,6 +6,7 @@ import { compileExpression } from "../frontend/src/engine/expression.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ARTIFACT = resolve(ROOT, "data/artifact.json");
+const RECORD_SCHEMAS = resolve(ROOT, "data/record_schemas.json");
 
 function walk(node, visit) {
   if (!node || typeof node !== "object") return;
@@ -106,7 +107,26 @@ function schemaSurfaces(schemas, surfaces) {
   }
 }
 
-export function expressionSurfaces(artifact) {
+function recordSurfaces(recordSchemas, surfaces) {
+  for (const [kind, schema] of Object.entries(recordSchemas ?? {})) {
+    for (const [field, spec] of Object.entries(schema.fields ?? {})) {
+      if (spec && "domain" in spec) {
+        addSurface(surfaces, `record_schemas.${kind}.${field}.domain`, spec.domain);
+      }
+      for (const [itemField, itemSpec] of Object.entries(spec?.item ?? {})) {
+        if (itemSpec && "domain" in itemSpec) {
+          addSurface(
+            surfaces,
+            `record_schemas.${kind}.${field}.item.${itemField}.domain`,
+            itemSpec.domain
+          );
+        }
+      }
+    }
+  }
+}
+
+export function expressionSurfaces(artifact, recordSchemas = {}) {
   const surfaces = [];
   for (const [id, node] of Object.entries(artifact.nodes ?? {})) {
     nodeSurfaces(id, node, surfaces);
@@ -114,12 +134,13 @@ export function expressionSurfaces(artifact) {
   functionSurfaces(artifact.functions, surfaces);
   relationSurfaces(artifact.relations, surfaces);
   schemaSurfaces(artifact.primitive_schemas, surfaces);
+  recordSurfaces(recordSchemas, surfaces);
   return surfaces;
 }
 
-export function checkExpressions(artifact) {
+export function checkExpressions(artifact, recordSchemas = {}) {
   const state = { failures: [], compiled: 0, nested: 0 };
-  for (const { label, expression } of expressionSurfaces(artifact)) {
+  for (const { label, expression } of expressionSurfaces(artifact, recordSchemas)) {
     checkOne(label, expression, state);
   }
   return { failures: state.failures, compiled: state.compiled, nested: state.nested };
@@ -127,7 +148,8 @@ export function checkExpressions(artifact) {
 
 function main() {
   const artifact = JSON.parse(readFileSync(ARTIFACT, "utf8"));
-  const { failures, compiled, nested } = checkExpressions(artifact);
+  const recordSchemas = JSON.parse(readFileSync(RECORD_SCHEMAS, "utf8"));
+  const { failures, compiled, nested } = checkExpressions(artifact, recordSchemas);
   if (failures.length > 0) {
     console.error(`expression check: ${failures.length} failure(s)`);
     for (const failure of failures) {

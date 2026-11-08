@@ -4,37 +4,6 @@
 
 import { runtimeFor } from "./expression.js";
 
-const OPS = {
-  gt: (a, b) => a > b,
-  gte: (a, b) => a >= b,
-  lt: (a, b) => a < b,
-  lte: (a, b) => a <= b,
-  eq: (a, b) => a === b,
-  ne: (a, b) => a !== b,
-};
-
-function resolveLimit(limit, artifact, resolveRef) {
-  if (typeof limit === "number") return limit;
-  if (limit && typeof limit === "object") {
-    if ("const" in limit) return artifact.constants?.[limit.const]?.value;
-    if ("ref" in limit) return resolveRef(limit.ref);
-  }
-  return undefined;
-}
-
-// Record-catalog schemas still declare bound objects; artifact domains are Jexl
-// strings. The object path is kept for those authored record schemas only.
-function evaluateObjectDomain(artifact, domain, value, resolveRef) {
-  for (const [op, limitExpr] of Object.entries(domain)) {
-    const test = OPS[op];
-    if (!test) continue;
-    const limit = resolveLimit(limitExpr, artifact, resolveRef);
-    if (limit === undefined || limit === null || Number.isNaN(limit)) continue;
-    if (!test(value, limit)) return { bounded: true, holds: false, op, limit };
-  }
-  return { bounded: true, holds: true };
-}
-
 function unresolvedLimit(artifact, domain, resolveRef) {
   const runtime = runtimeFor(artifact);
   return runtime.compile(domain).paths.some((path) => {
@@ -55,11 +24,8 @@ function evaluateDomain(artifact, domain, value, resolveRef) {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     return { bounded: true, holds: false, reason: "non-finite" };
   }
-  if (typeof domain === "object" && domain !== null) {
-    return evaluateObjectDomain(artifact, domain, value, resolveRef);
-  }
   if (typeof domain !== "string") {
-    throw new Error("Domain must be a Jexl string or a bound object");
+    throw new Error("Domain must be a Jexl string");
   }
   if (unresolvedLimit(artifact, domain, resolveRef)) {
     return { bounded: true, holds: true };

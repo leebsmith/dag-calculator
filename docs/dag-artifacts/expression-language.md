@@ -73,7 +73,9 @@ rows | weighted_avg_expr('row.color_lovibond', 'row.pct', null, $context)
 ```
 
 `min_expr`, `max_expr`, `map_expr`, and `filter_expr` follow the same shape.
-`$context` carries the surrounding aliases and `row` binds the current item.
+`map_expr` and `filter_expr` take no `where` predicate: their third argument
+must be `null`, and the validator rejects a non-null value. `$context` carries
+the surrounding aliases and `row` binds the current item.
 
 The transforms preserve the old semantics exactly:
 
@@ -109,6 +111,10 @@ $value >= 0
 $value > 0 && $value <= 1
 $value <= constants.max_boil_off_rate
 ```
+
+Record-catalog schemas (`data/record_schemas.json`) use the same Jexl domain
+strings, so there is one domain syntax across the artifact and the record
+catalogs.
 
 An unresolved value is reported as `holds: null`, not a violation. A non-finite
 value is a violation (`reason: "non-finite"`). A bound whose referenced limit is

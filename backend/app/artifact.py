@@ -20,14 +20,6 @@ from urllib.parse import urlparse
 
 logger = logging.getLogger("app.artifact")
 
-_DOMAIN_OPS = {
-    "gt": lambda a, b: a > b,
-    "gte": lambda a, b: a >= b,
-    "lt": lambda a, b: a < b,
-    "lte": lambda a, b: a <= b,
-    "eq": lambda a, b: a == b,
-    "ne": lambda a, b: a != b,
-}
 _DOMAIN_STRING = re.compile(r"^\$value\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*$")
 _DOMAIN_STRING_OPS = {
     ">": lambda a, b: a > b,
@@ -117,14 +109,6 @@ def load_catalog_registry() -> dict[str, Any]:
     return {**load_catalogs(), **load_record_catalogs()}
 
 
-def _resolve_limit(limit: Any, constants: dict[str, Any]) -> Any:
-    if isinstance(limit, (int, float)):
-        return limit
-    if isinstance(limit, Mapping) and "const" in limit:
-        return constants.get(limit["const"], {}).get("value")
-    return None
-
-
 def _string_limit(expression: str, constants: dict[str, Any]) -> float | None:
     text = expression.strip()
     if text.startswith("constants."):
@@ -152,20 +136,9 @@ def _string_domain_error(domain: str, value: float, constants: dict[str, Any]) -
 
 
 def _domain_error(domain: Any, value: float, constants: dict[str, Any]) -> bool:
-    if isinstance(domain, str):
-        return _string_domain_error(domain, value, constants)
-    if not isinstance(domain, Mapping):
+    if not isinstance(domain, str):
         return False
-    for op, limit_expr in domain.items():
-        test = _DOMAIN_OPS.get(op)
-        if test is None:
-            continue
-        limit = _resolve_limit(limit_expr, constants)
-        if not isinstance(limit, (int, float)) or not math.isfinite(limit):
-            continue
-        if not test(value, limit):
-            return True
-    return False
+    return _string_domain_error(domain, value, constants)
 
 
 def _is_safe_url(value: Any) -> bool:

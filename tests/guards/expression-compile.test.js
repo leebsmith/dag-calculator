@@ -40,3 +40,16 @@ test("a leftover AST object is rejected", () => {
     JSON.stringify(result.failures)
   );
 });
+
+test("a malformed record-schema domain is rejected", () => {
+  const recordSchemas = {
+    cooling_curve: { fields: { ambient_temp_c: { domain: "$value >" } } },
+  };
+  const result = checkExpressions(artifact(), recordSchemas);
+  assert.ok(
+    result.failures.some(
+      (failure) => failure.label === "record_schemas.cooling_curve.ambient_temp_c.domain"
+    ),
+    JSON.stringify(result.failures)
+  );
+});
