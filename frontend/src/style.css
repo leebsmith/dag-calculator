@@ -634,7 +634,8 @@ samp {
 
 .modal-teleport-root,
 .modal-body-slot,
-.modal-overlay-slot {
+.modal-overlay-slot,
+.form-field-control {
   display: contents;
 }
 

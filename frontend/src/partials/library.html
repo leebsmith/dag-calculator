@@ -290,123 +290,123 @@
     </template>
 
     <template x-if="libraryDraft">
-      <div class="library-editor">
+      <div
+        class="library-editor"
+        x-data="(() => {
+          const spec = (name) => libraryFields.find((field) => field.field === name) || null;
+          const labelFor = (name) => {
+            const current = spec(name);
+            return fmt.formatFieldLabel(current?.label ?? name, current?.symbol);
+          };
+          const pointSchema = (list) => list.fields.map((point) => ({
+            id: `library-point-${point.field}`,
+            type: point.kind === 'number' ? 'number' : 'text',
+            label: point.label,
+            labelClass: 'metric-cell-label',
+            controlClass: 'form-input text-xs',
+            read: (context) => libraryPointDisplay(context.index, point.field),
+            write: (value, context) => librarySetPointField(context.index, point.field, value),
+            commit: 'change',
+            step: point.kind === 'number' ? 'any' : undefined
+          }));
+          return formBuilder({
+            schema: libraryFields.map((field) => {
+              if (field.kind === 'list') {
+                return {
+                  id: `library-field-${field.field}`,
+                  type: 'repeat',
+                  label: '',
+                  labelClass: 'form-label text-xs',
+                  items: () => libraryPointRows(),
+                  key: (row, index) => String(index),
+                  schema: pointSchema(field),
+                  rowClass: 'metric-strip',
+                  cellClass: 'metric-cell',
+                  add: { label: 'Add point', run: () => libraryAddPoint() },
+                  remove: { label: 'Remove', run: (row, index) => libraryRemovePoint(index) }
+                };
+              }
+              const base = {
+                id: `library-field-${field.field}`,
+                label: () => labelFor(field.field),
+                labelClass: 'form-label text-xs',
+                hint: () => spec(field.field)?.hint
+              };
+              const read = () => libraryFieldDisplay(field.field);
+              const write = (value) => librarySetField(field.field, value);
+              if (field.kind === 'select') {
+                return {
+                  ...base,
+                  type: 'select',
+                  read,
+                  write,
+                  options: () => [
+                    { value: '', label: '—' },
+                    ...field.options.map((option) => ({
+                      value: option,
+                      label: field.optionLabels?.[option] ?? option
+                    }))
+                  ],
+                  controlClass: 'form-select text-xs',
+                  commit: 'change'
+                };
+              }
+              if (field.kind === 'boolean') {
+                return {
+                  ...base,
+                  type: 'select',
+                  read,
+                  write,
+                  options: [
+                    { value: '', label: 'Unknown' },
+                    { value: 'true', label: 'Yes' },
+                    { value: 'false', label: 'No' }
+                  ],
+                  controlClass: 'form-select text-xs',
+                  commit: 'change'
+                };
+              }
+              if (field.kind === 'number') {
+                return {
+                  ...base,
+                  type: 'number',
+                  read,
+                  draft: { read, write },
+                  write: () => libraryCommitField(field.field),
+                  readonly: () => spec(field.field)?.readOnly === true,
+                  controlClass: 'form-input text-xs',
+                  step: 'any',
+                  commit: 'change'
+                };
+              }
+              if (field.kind === 'date') {
+                return {
+                  ...base,
+                  type: 'date',
+                  read,
+                  write,
+                  controlClass: 'form-input text-xs',
+                  commit: 'change'
+                };
+              }
+              return {
+                ...base,
+                type: 'text',
+                read,
+                write,
+                controlClass: 'form-input text-xs',
+                commit: 'input'
+              };
+            })
+          });
+        })()"
+      >
         <h3 class="library-heading" x-text="libraryEditorTitle"></h3>
         <p class="form-hint" x-show="activeKind === 'yeast'">
           A strain leaves <em>Blend of</em> empty. A blend lists the strains it is composed of,
           comma-separated, and carries the attenuation the blend finishes at.
         </p>
-        <template x-for="f in libraryFields" :key="f.field">
-          <div class="form-group">
-            <label
-              class="form-label text-xs"
-              :for="'library-field-' + f.field"
-              x-text="fmt.formatFieldLabel(f.label, f.symbol)"
-            ></label>
-            <template x-if="f.kind === 'select'">
-              <select
-                class="form-select text-xs"
-                :id="'library-field-' + f.field"
-                :value="libraryFieldDisplay(f.field)"
-                @change="librarySetField(f.field, $event.target.value)"
-              >
-                <option value="" :selected="libraryFieldDisplay(f.field) === ''">—</option>
-                <template x-for="o in f.options" :key="o">
-                  <option
-                    :value="o"
-                    :selected="o === libraryFieldDisplay(f.field)"
-                    x-text="f.optionLabels?.[o] ?? o"
-                  ></option>
-                </template>
-              </select>
-            </template>
-            <template x-if="f.kind === 'number'">
-              <div>
-                <input
-                  type="number"
-                  step="any"
-                  class="form-input text-xs"
-                  :id="'library-field-' + f.field"
-                  :value="libraryFieldDisplay(f.field)"
-                  :readonly="f.readOnly"
-                  @input="librarySetField(f.field, $event.target.value)"
-                  @change="libraryCommitField(f.field)"
-                />
-                <p class="form-hint" x-show="f.hint" x-text="f.hint"></p>
-              </div>
-            </template>
-            <template x-if="f.kind === 'boolean'">
-              <select
-                class="form-select text-xs"
-                :id="'library-field-' + f.field"
-                :value="libraryFieldDisplay(f.field)"
-                @change="librarySetField(f.field, $event.target.value)"
-              >
-                <option value="" :selected="libraryFieldDisplay(f.field) === ''">Unknown</option>
-                <option value="true" :selected="libraryFieldDisplay(f.field) === 'true'">Yes</option>
-                <option value="false" :selected="libraryFieldDisplay(f.field) === 'false'">No</option>
-              </select>
-            </template>
-            <template x-if="f.kind === 'text'">
-              <input
-                type="text"
-                class="form-input text-xs"
-                :id="'library-field-' + f.field"
-                :value="libraryFieldDisplay(f.field)"
-                @input="librarySetField(f.field, $event.target.value)"
-              />
-            </template>
-            <template x-if="f.kind === 'date'">
-              <input
-                type="date"
-                class="form-input text-xs"
-                :id="'library-field-' + f.field"
-                :value="libraryFieldDisplay(f.field)"
-                @change="librarySetField(f.field, $event.target.value)"
-              />
-            </template>
-            <template x-if="f.kind === 'list'">
-              <div>
-                <template x-for="(row, index) in libraryPointRows()" :key="index">
-                  <div class="metric-strip">
-                    <template x-for="pf in f.fields" :key="pf.field">
-                      <div class="metric-cell">
-                        <span class="metric-cell-label" x-text="pf.label"></span>
-                        <template x-if="pf.kind === 'number'">
-                          <input
-                            type="number"
-                            step="any"
-                            class="form-input text-xs"
-                            :value="libraryPointDisplay(index, pf.field)"
-                            @change="librarySetPointField(index, pf.field, $event.target.value)"
-                          />
-                        </template>
-                        <template x-if="pf.kind !== 'number'">
-                          <input
-                            type="text"
-                            class="form-input text-xs"
-                            :value="libraryPointDisplay(index, pf.field)"
-                            @change="librarySetPointField(index, pf.field, $event.target.value)"
-                          />
-                        </template>
-                      </div>
-                    </template>
-                    <button
-                      type="button"
-                      class="btn-outline btn-sm"
-                      @click="libraryRemovePoint(index)"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </template>
-                <button type="button" class="btn-outline btn-sm" @click="libraryAddPoint()">
-                  Add point
-                </button>
-              </div>
-            </template>
-          </div>
-        </template>
+        <load src="src/partials/ui-form-fields.html" />
         <div class="recipes-actions">
           <button type="button" class="btn-outline btn-sm" @click="cancelLibraryItem()">
             Cancel

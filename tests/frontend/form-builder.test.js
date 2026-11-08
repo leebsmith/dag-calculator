@@ -209,3 +209,58 @@ test("dynamic hints resolve through the context", () => {
   assert.equal(field.describedBy, "curve-hint-0");
 });
 
+test("repeat rows build scoped child fields and expose add/remove", () => {
+  const items = [{ x: 1 }, { x: 2 }];
+  const seen = [];
+  const field = build({
+    schema: [
+      {
+        id: "points",
+        type: "repeat",
+        items: () => items,
+        key: (row, index) => String(index),
+        rowClass: "metric-strip",
+        cellClass: "metric-cell",
+        schema: [
+          {
+            id: "point-x",
+            type: "number",
+            read: (context) => {
+              seen.push(context);
+              return context.model.x;
+            },
+            write: (value, context) => {
+              context.model.x = Number(value);
+            },
+          },
+        ],
+        add: { label: "Add point", run: () => {} },
+        remove: { label: "Remove", run: () => {} },
+      },
+    ],
+    model: {},
+  }).fields[0];
+
+  assert.equal(field.rowClass, "metric-strip");
+  assert.equal(field.cellClass, "metric-cell");
+  assert.equal(field.add.label, "Add point");
+  assert.equal(field.remove.label, "Remove");
+
+  const rows = field.rows;
+  assert.equal(rows.length, 2);
+  assert.equal(rows[0].fields[0].id, "point-x-0");
+  assert.equal(rows[0].fields[0].value, 1);
+  assert.equal(rows[1].fields[0].value, 2);
+
+  rows[1].fields[0].commit(9);
+  assert.equal(items[1].x, 9);
+  assert.deepEqual(
+    seen.map(({ model, index, key, row }) => ({ model, index, key, row })),
+    [
+      { model: items[0], index: 0, key: "0", row: items[0] },
+      { model: items[1], index: 1, key: "1", row: items[1] },
+    ]
+  );
+});
+
+

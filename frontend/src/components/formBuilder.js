@@ -114,6 +114,14 @@ function decorationGetters(source) {
       return resolve(source.actions, this.context) || [];
     },
 
+    get labelClass() {
+      return resolve(source.labelClass, this.context) || "form-label";
+    },
+
+    get controlClass() {
+      return resolve(source.controlClass, this.context) || null;
+    },
+
     get readout() {
       return resolve(source.readout, this.context);
     },
@@ -128,7 +136,7 @@ function valueGetters(source, component) {
   return {
     get context() {
       return {
-        model: component.model,
+        model: this._model === undefined ? component.model : this._model,
         index: this._index,
         key: this._key,
         row: this._row,
@@ -208,13 +216,61 @@ function actions(source, component) {
   };
 }
 
-function createField(source, component) {
+function repeatGetters(source, component) {
+  return {
+    get rowClass() {
+      return resolve(source.rowClass, this.context);
+    },
+
+    get cellClass() {
+      return resolve(source.cellClass, this.context);
+    },
+
+    get add() {
+      return resolve(source.add, this.context) || null;
+    },
+
+    get remove() {
+      return resolve(source.remove, this.context) || null;
+    },
+
+    get rows() {
+      const items = resolve(source.items, this.context) || [];
+      const schema = resolve(source.schema, this.context) || [];
+      const rowClass = resolve(source.rowClass, this.context);
+      const cellClass = resolve(source.cellClass, this.context);
+      const remove = resolve(source.remove, this.context) || null;
+
+      return items.map((item, index) => {
+        const key = source.key ? source.key(item, index) : index;
+        return {
+          key,
+          index,
+          model: item,
+          rowClass,
+          cellClass,
+          remove,
+          fields: schema.map((child) =>
+            createField(
+              { ...child, id: `${child.id}-${index}` },
+              component,
+              { model: item, index, key, row: item }
+            )
+          ),
+        };
+      });
+    },
+  };
+}
+
+function createField(source, component, context = {}) {
   const field = {
     ...source,
     _draft: undefined,
-    _index: source.index ?? null,
-    _key: source.key ?? source.id,
-    _row: source.row ?? null,
+    _model: context.model,
+    _index: context.index ?? source.index ?? null,
+    _key: context.key ?? source.key ?? source.id,
+    _row: context.row ?? source.row ?? null,
     ...actions(source, component),
   };
 
@@ -223,6 +279,7 @@ function createField(source, component) {
     {
       ...Object.getOwnPropertyDescriptors(presentationGetters(source)),
       ...Object.getOwnPropertyDescriptors(decorationGetters(source)),
+      ...Object.getOwnPropertyDescriptors(repeatGetters(source, component)),
       ...Object.getOwnPropertyDescriptors(valueGetters(source, component)),
     }
   );
