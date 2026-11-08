@@ -18,27 +18,28 @@
         order below.
       </p>
 
-      <div class="form-group">
-        <template x-for="section in $store.recipes.reportSections" :key="section.id">
-          <label class="report-picker-row">
-            <input
-              type="checkbox"
-              class="form-checkbox"
-              :checked="$store.recipes.reportSelection.includes(section.id)"
-              @change="$store.recipes.toggleReportSection(section.id)"
-            />
-            <span x-text="section.title"></span>
-          </label>
-        </template>
+      <div
+        x-data="formBuilder({
+          schema: [
+            {
+              id: 'report-sections',
+              type: 'checkbox-group',
+              label: 'Sections',
+              options: () => $store.recipes.reportSections.map((section) => ({ value: section.id, label: section.title })),
+              read: () => $store.recipes.reportSelection,
+              write: (next) => { $store.recipes.reportSelection = next; },
+              actions: [
+                { label: 'All', class: 'btn-outline btn-sm', run: () => $store.recipes.selectAllReportSections() },
+                { label: 'None', class: 'btn-outline btn-sm', run: () => $store.recipes.clearReportSections() }
+              ]
+            }
+          ]
+        })"
+      >
+        <load src="src/partials/ui-form-fields.html" />
       </div>
 
       <div class="report-picker-actions">
-        <button type="button" class="btn-outline btn-sm" @click="$store.recipes.selectAllReportSections()">
-          All
-        </button>
-        <button type="button" class="btn-outline btn-sm" @click="$store.recipes.clearReportSections()">
-          None
-        </button>
         <span class="form-hint" x-text="$store.recipes.reportSelection.length + ' of ' + $store.recipes.reportSections.length + ' selected'"></span>
         <button type="button" class="btn-outline btn-sm" @click="$store.recipes.closeReportPicker()">
           Cancel

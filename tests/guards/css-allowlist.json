@@ -98,10 +98,9 @@
       "selectors": [
         ".modal-workspace-header-actions",
         ".recipes-actions",
-        ".boundary-status",
-        ".report-picker-row"
+        ".boundary-status"
       ],
-      "reason": "Coincidental row layout across workspace, recipes, boundary status, and the report picker's checkbox rows."
+      "reason": "Coincidental row layout across the workspace header, recipe actions, and boundary status."
     },
     {
       "context": "",
@@ -220,10 +219,11 @@
       "context": "",
       "declarations": "align-items: center; display: flex; flex-wrap: wrap; gap: var(--space-1)",
       "selectors": [
+        ".form-actions",
         ".yeast-row-badges",
         ".map-suggestions"
       ],
-      "reason": "Coincidental wrap row; the picker badges and the import suggestions are unrelated."
+      "reason": "Coincidental wrap row; the field actions, picker badges, and import suggestions are unrelated."
     },
     {
       "context": "",

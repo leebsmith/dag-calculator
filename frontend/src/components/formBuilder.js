@@ -38,7 +38,7 @@ function presentationGetters(source) {
     },
 
     get hints() {
-      return (source.hints || []).map((hint, index) => ({
+      return (resolve(source.hints, this.context) || []).map((hint, index) => ({
         ...hint,
         id: `${source.id}-hint-${index}`,
         text: resolve(hint.text, this.context),
@@ -83,6 +83,43 @@ function presentationGetters(source) {
       return typeof source.when === "function"
         ? Boolean(source.when(this.context))
         : source.visible !== false;
+    },
+  };
+}
+
+function decorationGetters(source) {
+  return {
+    get min() {
+      return resolve(source.min, this.context);
+    },
+
+    get max() {
+      return resolve(source.max, this.context);
+    },
+
+    get step() {
+      return resolve(source.step, this.context);
+    },
+
+    get badge() {
+      return resolve(source.badge, this.context) || null;
+    },
+
+    get reset() {
+      const reset = resolve(source.reset, this.context);
+      return reset ? { show: reset.show !== false, ...reset } : null;
+    },
+
+    get actions() {
+      return resolve(source.actions, this.context) || [];
+    },
+
+    get readout() {
+      return resolve(source.readout, this.context);
+    },
+
+    get warning() {
+      return resolve(source.warning, this.context);
     },
   };
 }
@@ -160,6 +197,14 @@ function actions(source, component) {
 
       return value;
     },
+
+    toggle(option) {
+      const current = Array.isArray(this.value) ? this.value : [];
+      const next = current.includes(option)
+        ? current.filter((value) => value !== option)
+        : [...current, option];
+      this.commit(next);
+    },
   };
 }
 
@@ -177,6 +222,7 @@ function createField(source, component) {
     field,
     {
       ...Object.getOwnPropertyDescriptors(presentationGetters(source)),
+      ...Object.getOwnPropertyDescriptors(decorationGetters(source)),
       ...Object.getOwnPropertyDescriptors(valueGetters(source, component)),
     }
   );

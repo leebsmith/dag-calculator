@@ -134,3 +134,78 @@ test("setModel clears drafts only when the model identity changes", () => {
   builder.setModel({ name: "other" });
   assert.equal(field.draftValue, "other");
 });
+
+test("range scalars and decorations resolve from functions", () => {
+  const field = build({
+    schema: [
+      {
+        id: "srm",
+        type: "range",
+        min: () => 1,
+        max: () => 40,
+        step: () => 0.5,
+        readout: () => "12 SRM",
+        badge: () => ({ text: "seed", title: "Seeded" }),
+        reset: () => ({ show: true, title: "Reset", run: () => {} }),
+        actions: () => [{ label: "All", run: () => {} }],
+        warning: () => "Outside the style",
+      },
+    ],
+    model: {},
+  }).fields[0];
+
+  assert.equal(field.min, 1);
+  assert.equal(field.max, 40);
+  assert.equal(field.step, 0.5);
+  assert.equal(field.readout, "12 SRM");
+  assert.deepEqual(field.badge, { text: "seed", title: "Seeded" });
+  assert.equal(field.reset.show, true);
+  assert.equal(field.actions[0].label, "All");
+  assert.equal(field.warning, "Outside the style");
+});
+
+test("checkbox groups toggle the selection through write", () => {
+  let selection = ["a"];
+  let written = null;
+  const field = build({
+    schema: [
+      {
+        id: "sections",
+        type: "checkbox-group",
+        read: () => selection,
+        write: (next) => {
+          written = next;
+          selection = next;
+        },
+      },
+    ],
+    model: {},
+  }).fields[0];
+
+  field.toggle("b");
+  assert.deepEqual(written, ["a", "b"]);
+
+  field.toggle("a");
+  assert.deepEqual(written, ["b"]);
+});
+
+test("dynamic hints resolve through the context", () => {
+  const field = build({
+    schema: [
+      {
+        id: "curve",
+        type: "select",
+        modelKey: "curve",
+        hints: () => [{ text: "Warning one", class: "text-warning" }],
+      },
+    ],
+    model: { curve: "" },
+  }).fields[0];
+
+  assert.deepEqual(
+    field.hints.map(({ id, text, when, class: hintClass }) => ({ id, text, when, class: hintClass })),
+    [{ id: "curve-hint-0", text: "Warning one", when: true, class: "text-warning" }]
+  );
+  assert.equal(field.describedBy, "curve-hint-0");
+});
+

@@ -8,8 +8,8 @@
         :name="field.modelKey"
         :checked="field.value"
         @change="field.commit($event.target.checked)"
-        :disabled="field.disabled"
-        :required="field.required"
+        :disabled="field.disabled === true"
+        :required="field.required === true"
         :aria-invalid="field.invalid ? 'true' : null"
         :aria-describedby="field.describedBy"
       />
@@ -18,11 +18,89 @@
     </label>
   </template>
 
-  <template x-if="field.type !== 'checkbox'">
+  <template x-if="field.type !== 'checkbox' && field.type !== 'checkbox-group' && field.type !== 'readout'">
     <label class="form-label" :for="field.id">
       <span x-text="field.label"></span>
       <span class="unit-badge" x-show="field.unit" x-text="field.unit"></span>
+      <template x-if="field.badge">
+        <span class="seed-badge" :title="field.badge.title" x-text="field.badge.text"></span>
+      </template>
+      <template x-if="field.reset?.show">
+        <button
+          type="button"
+          class="seed-reset"
+          :title="field.reset.title"
+          @click="field.reset.run()"
+        >↺</button>
+      </template>
     </label>
+  </template>
+
+  <template x-if="field.type === 'checkbox-group'">
+    <fieldset class="checkbox-group" :aria-describedby="field.describedBy">
+      <legend class="form-label">
+        <span x-text="field.label"></span>
+        <template x-if="field.badge">
+          <span class="seed-badge" :title="field.badge.title" x-text="field.badge.text"></span>
+        </template>
+        <template x-if="field.reset?.show">
+          <button
+            type="button"
+            class="seed-reset"
+            :title="field.reset.title"
+            @click="field.reset.run()"
+          >↺</button>
+        </template>
+      </legend>
+      <template x-for="option in field.options" :key="option.value">
+        <label class="form-checkbox-row" :for="field.id + '-' + option.value">
+          <input
+            class="form-checkbox"
+            type="checkbox"
+            :id="field.id + '-' + option.value"
+            :checked="field.value?.includes(option.value)"
+            @change="field.toggle(option.value)"
+            :disabled="field.disabled === true"
+          />
+          <span x-text="option.label"></span>
+        </label>
+      </template>
+    </fieldset>
+  </template>
+
+  <template x-if="field.type === 'readout'">
+    <div>
+      <span class="form-label">
+        <span x-text="field.label"></span>
+        <template x-if="field.badge">
+          <span class="seed-badge" :title="field.badge.title" x-text="field.badge.text"></span>
+        </template>
+      </span>
+      <span class="field-value" x-text="field.value"></span>
+    </div>
+  </template>
+
+  <template x-if="field.type === 'range'">
+    <div>
+      <input
+        class="target-slider"
+        type="range"
+        :id="field.id"
+        :name="field.modelKey"
+        :min="field.min"
+        :max="field.max"
+        :step="field.step"
+        :value="field.value"
+        :aria-label="field.label"
+        :aria-valuetext="field.readout || null"
+        :aria-describedby="field.describedBy"
+        @input="field.commit($event.target.value)"
+      />
+      <div class="target-slider-readout">
+        <span class="tabular-nums" x-text="field.readout"></span>
+        <span class="text-xs text-muted" :id="field.hintId" x-show="field.hint" x-text="field.hint"></span>
+      </div>
+    </div>
   </template>
 
   <template x-if="field.type === 'select'">
@@ -32,8 +110,8 @@
       :name="field.modelKey"
       :value="field.value"
       @change="field.commit($event.target.value)"
-      :disabled="field.disabled"
-      :required="field.required"
+      :disabled="field.disabled === true"
+      :required="field.required === true"
       :aria-invalid="field.invalid ? 'true' : null"
       :aria-describedby="field.describedBy"
     >
@@ -53,9 +131,9 @@
       @input="field.setDraft($event.target.value)"
       @change="field.commit()"
       :placeholder="field.placeholder"
-      :readonly="field.readonly"
-      :disabled="field.disabled"
-      :required="field.required"
+      :readonly="field.readonly === true"
+      :disabled="field.disabled === true"
+      :required="field.required === true"
       :aria-invalid="field.invalid ? 'true' : null"
       :aria-describedby="field.describedBy"
       x-bind="field.attrs"
@@ -70,16 +148,16 @@
       :rows="field.rows || 3"
       x-model="field.value"
       :placeholder="field.placeholder"
-      :readonly="field.readonly"
-      :disabled="field.disabled"
-      :required="field.required"
+      :readonly="field.readonly === true"
+      :disabled="field.disabled === true"
+      :required="field.required === true"
       :aria-invalid="field.invalid ? 'true' : null"
       :aria-describedby="field.describedBy"
       x-bind="field.attrs"
     ></textarea>
   </template>
 
-  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.commitMode === 'change'">
+  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.type !== 'checkbox-group' && field.type !== 'readout' && field.type !== 'range' && field.commitMode === 'change'">
     <input
       class="form-input"
       :id="field.id"
@@ -92,16 +170,16 @@
       :min="field.min"
       :max="field.max"
       :step="field.step"
-      :readonly="field.readonly"
-      :disabled="field.disabled"
-      :required="field.required"
+      :readonly="field.readonly === true"
+      :disabled="field.disabled === true"
+      :required="field.required === true"
       :aria-invalid="field.invalid ? 'true' : null"
       :aria-describedby="field.describedBy"
       x-bind="field.attrs"
     />
   </template>
 
-  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.commitMode === 'input'">
+  <template x-if="field.type !== 'select' && field.type !== 'textarea' && field.type !== 'checkbox' && field.type !== 'checkbox-group' && field.type !== 'readout' && field.type !== 'range' && field.commitMode === 'input'">
     <input
       class="form-input"
       :id="field.id"
@@ -112,21 +190,37 @@
       :min="field.min"
       :max="field.max"
       :step="field.step"
-      :readonly="field.readonly"
-      :disabled="field.disabled"
-      :required="field.required"
+      :readonly="field.readonly === true"
+      :disabled="field.disabled === true"
+      :required="field.required === true"
       :aria-invalid="field.invalid ? 'true' : null"
       :aria-describedby="field.describedBy"
       x-bind="field.attrs"
     />
   </template>
 
-  <p
-    class="form-hint"
-    :id="field.hintId"
-    x-show="field.hint"
-    x-text="field.hint"
-  ></p>
+
+  <div class="form-actions" x-show="field.actions.length">
+    <template x-for="action in field.actions" :key="action.label">
+      <button
+        type="button"
+        :class="action.class || 'btn-link text-xs'"
+        :title="action.title"
+        :disabled="action.disabled === true"
+        @click="action.run()"
+        x-text="action.label"
+      ></button>
+    </template>
+  </div>
+
+  <template x-if="field.type !== 'range'">
+    <p
+      class="form-hint"
+      :id="field.hintId"
+      x-show="field.hint"
+      x-text="field.hint"
+    ></p>
+  </template>
 
   <template x-for="hint in field.hints" :key="hint.id">
     <span
@@ -137,4 +231,6 @@
       x-text="hint.text"
     ></span>
   </template>
+
+  <span class="form-hint text-warning" x-show="field.warning" x-text="field.warning"></span>
 </div>

@@ -170,57 +170,40 @@
                 min: 1,
                 commit: 'change',
                 hint: () => whirlpoolCoolingField?.hint
+              },
+              {
+                id: 'whirlpool-cooling-curve',
+                type: 'select',
+                label: 'Cooling curve',
+                read: () => coolingCurveValue,
+                write: (value) => selectCoolingCurve(value),
+                options: () => {
+                  const options = [{ value: '', label: 'Default cooling' }];
+                  if (coolingCurveIsCustom) {
+                    options.push({
+                      value: customCoolingCurveValue,
+                      label: 'Custom (manual time constant)'
+                    });
+                  }
+                  for (const curve of coolingCurveOptions) {
+                    options.push({ value: curve.id, label: curve.name });
+                  }
+                  if (coolingCurveMissing) {
+                    options.push({
+                      value: coolingCurveId,
+                      label: 'Missing curve — ' + coolingCurveId
+                    });
+                  }
+                  return options;
+                },
+                actions: [{ label: 'Manage library', run: () => openCoolingCurveLibrary() }],
+                hint: () => coolingCurveSummary,
+                hints: () => (coolingCurveWarnings || []).map((text) => ({ text, class: 'text-warning' }))
               }
             ]
           })"
         >
           <load src="src/partials/ui-form-fields.html" />
-
-          <div class="form-group">
-            <label class="form-label" for="whirlpool-cooling-curve">Cooling curve</label>
-            <div class="form-row">
-              <select
-                class="form-input"
-                id="whirlpool-cooling-curve"
-                :value="coolingCurveValue"
-                @change="selectCoolingCurve($event.target.value)"
-              >
-                <option value="" :selected="coolingCurveValue === ''">Default cooling</option>
-                <template x-if="coolingCurveIsCustom">
-                  <option
-                    :value="customCoolingCurveValue"
-                    :selected="coolingCurveValue === customCoolingCurveValue"
-                    x-text="'Custom (manual time constant)'"
-                  ></option>
-                </template>
-                <template x-for="curve in coolingCurveOptions" :key="curve.id">
-                  <option
-                    :value="curve.id"
-                    :selected="curve.id === coolingCurveValue"
-                    x-text="curve.name"
-                  ></option>
-                </template>
-                <template x-if="coolingCurveMissing">
-                  <option
-                    :value="coolingCurveId"
-                    :selected="coolingCurveValue === coolingCurveId"
-                    x-text="'Missing curve — ' + coolingCurveId"
-                  ></option>
-                </template>
-              </select>
-              <button
-                type="button"
-                class="btn-link text-xs"
-                @click="openCoolingCurveLibrary()"
-              >
-                Manage library
-              </button>
-            </div>
-            <span class="form-hint" x-show="coolingCurveSummary" x-text="coolingCurveSummary"></span>
-            <template x-for="warning in coolingCurveWarnings" :key="warning">
-              <span class="form-hint text-warning" x-text="warning"></span>
-            </template>
-          </div>
         </div>
 
         <div>
