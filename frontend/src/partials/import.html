@@ -18,21 +18,21 @@
   <nav class="import-stages" aria-label="Import stages">
     <button
       type="button"
-      class="btn-outline text-xs"
+      class="btn-outline btn-sm"
       :class="{ 'is-active': $store.importReview.stage === 'transcribe' }"
       :aria-pressed="$store.importReview.stage === 'transcribe'"
       @click="$store.importReview.goTo('transcribe')"
     >1 · Transcribe</button>
     <button
       type="button"
-      class="btn-outline text-xs"
+      class="btn-outline btn-sm"
       :class="{ 'is-active': $store.importReview.stage === 'map' }"
       :aria-pressed="$store.importReview.stage === 'map'"
       @click="$store.importReview.goTo('map')"
     >2 · Map</button>
     <button
       type="button"
-      class="btn-outline text-xs"
+      class="btn-outline btn-sm"
       :class="{ 'is-active': $store.importReview.stage === 'check' }"
       :aria-pressed="$store.importReview.stage === 'check'"
       @click="$store.importReview.goTo('check')"
@@ -68,9 +68,9 @@
         printed rates as parts.
       </p>
       <div class="import-queue-actions">
-        <button type="button" class="btn-outline text-xs" :disabled="$store.importReview.busy"
+        <button type="button" class="btn-outline btn-sm" :disabled="$store.importReview.busy"
           @click="$store.importReview.markFailed()">Mark as failed</button>
-        <button type="button" class="btn-outline text-xs" :disabled="$store.importReview.busy"
+        <button type="button" class="btn-outline btn-sm" :disabled="$store.importReview.busy"
           @click="$store.importReview.discard()">Delete</button>
       </div>
     </div>
@@ -102,7 +102,7 @@
         + ' of ' + $store.importReview.ledgerCounts.total + ' decided'"></span>
     <button
       type="button"
-      class="btn-primary text-xs"
+      class="btn-primary btn-sm"
       x-show="$store.importReview.stage === 'map'"
       :disabled="$store.importReview.busy
         || (!$store.importReview.dirty && $store.importReview.unresolved.length > 0)"
@@ -113,18 +113,18 @@
     ></button>
     <button
       type="button"
-      class="btn-primary text-xs"
+      class="btn-primary btn-sm"
       x-show="$store.importReview.stage !== 'map'"
       :disabled="$store.importReview.busy || !$store.importReview.dirty"
       @click="$store.importReview.save()"
     >Save corrections</button>
     <button
       type="button"
-      class="btn-outline text-xs"
+      class="btn-outline btn-sm"
       :disabled="$store.importReview.busy"
       @click="$store.importReview.discard()"
     >Delete this import</button>
-    <button type="button" class="btn-outline text-xs" @click="$store.recipes.backToBatches()">
+    <button type="button" class="btn-outline btn-sm" @click="$store.recipes.backToBatches()">
       Close
     </button>
   </footer>

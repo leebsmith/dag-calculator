@@ -39,7 +39,7 @@
         ></button>
         <button
           type="button"
-          class="btn-primary text-xs"
+          class="btn-primary btn-sm"
           x-show="$store.importReview.checkSummary?.ok"
           :disabled="$store.importReview.commitBusy"
           @click="$store.importReview.commit()"
@@ -125,7 +125,7 @@
         </template>
       </ul>
       <div class="import-queue-actions">
-        <button type="button" class="btn-outline text-xs" @click="$store.importReview.goTo('map')">
+        <button type="button" class="btn-outline btn-sm" @click="$store.importReview.goTo('map')">
           Fix on the map
         </button>
       </div>

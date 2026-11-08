@@ -9,12 +9,12 @@
       </p>
     </div>
     <div class="section-actions">
-      <button type="button" class="btn-secondary text-xs" @click="$store.brewSession.close()">
+      <button type="button" class="btn-secondary btn-sm" @click="$store.brewSession.close()">
         Back to recipes
       </button>
       <button
         type="button"
-        class="btn-secondary text-xs"
+        class="btn-secondary btn-sm"
         x-show="$store.brewSession.session"
         @click="$store.brewSession.openReport()"
       >
@@ -22,7 +22,7 @@
       </button>
       <button
         type="button"
-        class="btn-secondary text-xs"
+        class="btn-secondary btn-sm"
         x-show="$store.brewSession.session && !$store.brewSession.sealed"
         @click="$store.brewSession.finalize()"
       >
@@ -65,7 +65,7 @@
             </template>
           </select>
         </div>
-        <button type="button" class="btn-primary text-xs" @click="$store.brewSession.startSession()">
+        <button type="button" class="btn-primary btn-sm" @click="$store.brewSession.startSession()">
           Start session
         </button>
       </div>
@@ -160,7 +160,7 @@
                   <span x-show="observation.corrected" x-text="' · corrected ' + (observation.corrected?.value ?? '') + ' ' + (observation.corrected?.unit ?? '')"></span>
                   <span x-text="' · ' + observation.method"></span>
                   <span class="text-xs text-muted" x-text="' · ' + new Date(observation.at * 1000).toLocaleString()"></span>
-                  <button type="button" class="btn-secondary text-xs" x-show="!$store.brewSession.sealed" @click="$store.brewSession.voidObservation(observation)">Void</button>
+                  <button type="button" class="btn-secondary btn-sm" x-show="!$store.brewSession.sealed" @click="$store.brewSession.voidObservation(observation)">Void</button>
                 </p>
               </template>
 
@@ -256,7 +256,7 @@
                     </select>
                   </div>
                 </div>
-                <button type="button" class="btn-primary text-xs" @click="$store.brewSession.addReading(row)">
+                <button type="button" class="btn-primary btn-sm" @click="$store.brewSession.addReading(row)">
                   Add reading
                 </button>
               </div>

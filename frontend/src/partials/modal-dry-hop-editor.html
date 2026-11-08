@@ -19,8 +19,8 @@
         <span class="status-badge badge-info text-xs" x-text="dryHopDraftSummary"></span>
       </div>
       <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline text-xs" @click="cancelDryHopEditor()">Cancel</button>
-        <button type="button" class="btn-primary text-xs" @click="saveDryHopEditor()">Save &amp; Apply</button>
+        <button type="button" class="btn-outline btn-sm" @click="cancelDryHopEditor()">Cancel</button>
+        <button type="button" class="btn-primary btn-sm" @click="saveDryHopEditor()">Save &amp; Apply</button>
       </div>
     </div>
 
@@ -33,7 +33,7 @@
           </span>
           <button
             type="button"
-            class="btn-primary text-xs"
+            class="btn-primary btn-sm"
             @click="openDryHopSearch()"
             :aria-expanded="(dryHopDrawer !== null) ? 'true' : 'false'"
             aria-controls="dry-hop-drawer"

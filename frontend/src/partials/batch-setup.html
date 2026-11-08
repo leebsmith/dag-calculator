@@ -20,20 +20,20 @@
       <div class="modal-workspace-header-actions">
         <button
           type="button"
-          class="btn-outline text-xs"
+          class="btn-outline btn-sm"
           :disabled="$store.setup.state.busy"
           @click="$store.setup.closeModal()"
         >Cancel</button>
         <button
           type="button"
-          class="btn-primary text-xs"
+          class="btn-primary btn-sm"
           x-show="$store.setup.state.mode === 'scratch'"
           :disabled="!$store.setup.canCreate() || $store.setup.state.busy"
           @click="$store.setup.create()"
         >Create batch</button>
         <button
           type="button"
-          class="btn-primary text-xs"
+          class="btn-primary btn-sm"
           x-show="$store.setup.state.mode === 'recipe'"
           :disabled="!$store.setup.canStartImport() || $store.setup.state.busy"
           @click="$store.setup.startImport()"
@@ -56,14 +56,14 @@
         <div class="setup-mode-switch" role="group" aria-label="How to start">
           <button
             type="button"
-            class="btn-outline text-xs"
+            class="btn-outline btn-sm"
             :class="{ 'is-active': $store.setup.state.mode === 'scratch' }"
             :aria-pressed="$store.setup.state.mode === 'scratch'"
             @click="$store.setup.setMode('scratch')"
           >From scratch</button>
           <button
             type="button"
-            class="btn-outline text-xs"
+            class="btn-outline btn-sm"
             :class="{ 'is-active': $store.setup.state.mode === 'recipe' }"
             :aria-pressed="$store.setup.state.mode === 'recipe'"
             @click="$store.setup.setMode('recipe')"

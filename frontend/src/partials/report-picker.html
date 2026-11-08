@@ -34,19 +34,19 @@
     </div>
 
     <div class="report-picker-actions">
-      <button type="button" class="btn-outline text-xs" @click="$store.recipes.selectAllReportSections()">
+      <button type="button" class="btn-outline btn-sm" @click="$store.recipes.selectAllReportSections()">
         All
       </button>
-      <button type="button" class="btn-outline text-xs" @click="$store.recipes.clearReportSections()">
+      <button type="button" class="btn-outline btn-sm" @click="$store.recipes.clearReportSections()">
         None
       </button>
       <span class="form-hint" x-text="$store.recipes.reportSelection.length + ' of ' + $store.recipes.reportSections.length + ' selected'"></span>
-      <button type="button" class="btn-outline text-xs" @click="$store.recipes.closeReportPicker()">
+      <button type="button" class="btn-outline btn-sm" @click="$store.recipes.closeReportPicker()">
         Cancel
       </button>
       <button
         type="button"
-        class="btn-outline text-xs"
+        class="btn-outline btn-sm"
         :disabled="!$store.recipes.reportSelection.length"
         @click="$store.recipes.previewSelectedReport()"
       >
@@ -54,7 +54,7 @@
       </button>
       <button
         type="button"
-        class="btn-primary text-xs"
+        class="btn-primary btn-sm"
         :disabled="!$store.recipes.reportSelection.length"
         @click="$store.recipes.downloadSelectedReport()"
       >

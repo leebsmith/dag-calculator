@@ -12,12 +12,12 @@
           <p class="form-hint" x-show="selectedYeast" x-text="selectedYeastMeta"></p>
         </div>
         <div class="synthesized-actions">
-          <button type="button" class="btn btn-secondary text-xs" @click="openYeastPicker()">
+          <button type="button" class="btn btn-secondary btn-sm" @click="openYeastPicker()">
             Change yeast…
           </button>
           <button
             type="button"
-            class="btn-outline text-xs"
+            class="btn-outline btn-sm"
             x-show="selectedYeast"
             @click="clearYeastSelection()"
           >

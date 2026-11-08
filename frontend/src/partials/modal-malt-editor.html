@@ -19,10 +19,10 @@
         <span class="status-badge text-xs" :class="maltValidation.class" x-text="maltValidation.label"></span>
       </div>
       <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline text-xs" @click="cancelMaltEditor()">Cancel</button>
+        <button type="button" class="btn-outline btn-sm" @click="cancelMaltEditor()">Cancel</button>
         <button
           type="button"
-          class="btn-primary text-xs"
+          class="btn-primary btn-sm"
           @click="saveMaltEditor()"
           :disabled="maltValidation.type !== 'balanced'"
         >

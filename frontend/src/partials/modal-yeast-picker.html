@@ -20,7 +20,7 @@
         <span class="text-xs text-muted" x-text="selectedYeast ? selectedYeast.name : 'No strain selected'"></span>
       </div>
       <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline text-xs" @click="closeYeastPicker()">Close</button>
+        <button type="button" class="btn-outline btn-sm" @click="closeYeastPicker()">Close</button>
       </div>
     </div>
 
@@ -150,7 +150,7 @@
                   <td class="table-action-cell">
                     <button
                       type="button"
-                      class="btn btn-secondary text-xs"
+                      class="btn btn-secondary btn-sm"
                       :class="{ 'is-active': selectedYeastId === y.id }"
                       :aria-pressed="selectedYeastId === y.id ? 'true' : 'false'"
                       @click="selectYeast(y.id)"

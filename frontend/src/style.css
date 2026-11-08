@@ -55,7 +55,7 @@ samp {
    2. Buttons & Interactive Controls
    ========================================================================== */
 
-.btn {
+:is(.btn, .btn-primary, .btn-secondary, .btn-outline) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -74,8 +74,16 @@ samp {
   min-height: var(--target-min-micro);
 }
 
+.btn-sm {
+  gap: var(--space-1);
+  font-size: var(--text-micro);
+  padding: var(--space-1) var(--space-2);
+  min-height: var(--space-5);
+}
+
 .btn:focus-visible,
-.btn-link:focus-visible {
+.btn-link:focus-visible,
+.btn-action-icon:focus-visible {
   outline: 2px solid var(--sys-border-focus);
   outline-offset: 2px;
 }
@@ -106,7 +114,9 @@ samp {
   border-color: var(--sys-border-subtle);
 }
 
-.btn-secondary:hover:not(:disabled) {
+.btn-secondary:hover:not(:disabled),
+.btn-outline:hover:not(:disabled),
+.btn-action-icon:hover {
   background-color: var(--sys-surface-hover);
   color: var(--sys-text-primary);
 }
@@ -116,11 +126,6 @@ samp {
   color: var(--sys-text-secondary);
   border-color: var(--sys-border-default);
   box-shadow: var(--sys-shadow-sm);
-}
-
-.btn-outline:hover:not(:disabled) {
-  background-color: var(--sys-surface-hover);
-  color: var(--sys-text-primary);
 }
 
 .btn.is-active {
@@ -190,11 +195,6 @@ samp {
   justify-content: center;
   line-height: var(--line-height-none);
   transition: background-color var(--transition-fast), color var(--transition-fast);
-}
-
-.btn-action-icon:hover {
-  background-color: var(--sys-surface-hover);
-  color: var(--sys-text-primary);
 }
 
 .btn-action-danger:hover {

@@ -48,11 +48,11 @@
                   <span class="text-xs text-muted" x-text="row.status"></span>
                   <button
                     type="button"
-                    class="btn-outline text-xs"
+                    class="btn-outline btn-sm"
                     @click="$store.imports.resume(row.id)"
                     x-text="$store.imports.resumeLabel(row.status)"
                   ></button>
-                  <button type="button" class="btn-outline text-xs" @click="$store.imports.remove(row.id)">Delete</button>
+                  <button type="button" class="btn-outline btn-sm" @click="$store.imports.remove(row.id)">Delete</button>
                 </div>
               </li>
             </template>
@@ -78,7 +78,7 @@
                   <span class="text-xs text-muted" x-text="row.failure_reason || row.status"></span>
                 </div>
                 <div class="import-queue-actions">
-                  <button type="button" class="btn-outline text-xs" @click="$store.imports.remove(row.id)">Delete</button>
+                  <button type="button" class="btn-outline btn-sm" @click="$store.imports.remove(row.id)">Delete</button>
                 </div>
               </li>
             </template>
@@ -107,11 +107,11 @@
                   <span class="text-xs text-muted" x-text="$store.recipes.batchLabel(row.batch_id)"></span>
                   <button
                     type="button"
-                    class="btn-outline text-xs"
+                    class="btn-outline btn-sm"
                     x-show="$store.recipes.hasBatch(row.batch_id)"
                     @click="$store.recipes.openBatchById(row.batch_id)"
                   >Open batch</button>
-                  <button type="button" class="btn-outline text-xs" @click="$store.imports.remove(row.id)">Delete receipt</button>
+                  <button type="button" class="btn-outline btn-sm" @click="$store.imports.remove(row.id)">Delete receipt</button>
                 </div>
               </li>
             </template>

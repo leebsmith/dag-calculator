@@ -24,7 +24,7 @@
   <div class="import-queue-actions" x-show="$store.importReview.unresolved.length">
     <button
       type="button"
-      class="btn-outline text-xs"
+      class="btn-outline btn-sm"
       :disabled="$store.importReview.matchBusy"
       @click="$store.importReview.enrichSuggestions()"
       x-text="$store.importReview.matchBusy ? 'Asking the model…' : 'Ask the model for matches'"
@@ -59,7 +59,7 @@
           />
           <button
             type="button"
-            class="btn-outline text-xs"
+            class="btn-outline btn-sm"
             x-show="$store.importReview.estimatedPoolFraction != null"
             @click="$store.importReview.useEstimatedPoolFraction()"
             x-text="'Use the estimate (' + Math.round(($store.importReview.estimatedPoolFraction ?? 0) * 100) + '%)'"
@@ -120,38 +120,38 @@
                     <div class="map-row-actions">
                       <button
                         type="button"
-                        class="btn-outline text-xs"
+                        class="btn-outline btn-sm"
                         x-show="pane.id === 'candidates'"
                         @click="$store.importReview.moveHop(row.line_id, 'batch.boil_hops')"
                       >← Boil</button>
                       <button
                         type="button"
-                        class="btn-outline text-xs"
+                        class="btn-outline btn-sm"
                         x-show="pane.id === 'candidates'"
                         @click="$store.importReview.moveHop(row.line_id, 'batch.whirlpool_hops')"
                       >Whirlpool →</button>
                       <button
                         type="button"
-                        class="btn-outline text-xs"
+                        class="btn-outline btn-sm"
                         x-show="pane.id === 'boil'"
                         @click="$store.importReview.moveHop(row.line_id, 'batch.whirlpool_hops')"
                       >→ Whirlpool</button>
                       <button
                         type="button"
-                        class="btn-outline text-xs"
+                        class="btn-outline btn-sm"
                         x-show="pane.id === 'whirlpool'"
                         @click="$store.importReview.moveHop(row.line_id, 'batch.boil_hops')"
                       >← Boil</button>
                       <button
                         type="button"
-                        class="btn-outline text-xs"
+                        class="btn-outline btn-sm"
                         x-show="pane.id !== 'candidates'"
                         @click="$store.importReview.returnHop(row.line_id)"
                         x-text="pane.id === 'dry' ? '↩ Candidates' : '↩'"
                       ></button>
                       <button
                         type="button"
-                        class="btn-outline text-xs"
+                        class="btn-outline btn-sm"
                         @click="$store.importReview.ignoreLine(row.line_id)"
                       >Leave out</button>
                       <span class="text-xs text-muted" x-show="!$store.importReview.rowState(row).ref">
@@ -226,7 +226,7 @@
                   <span class="text-xs text-muted" x-text="row.reason"></span>
                   <button
                     type="button"
-                    class="btn-outline text-xs"
+                    class="btn-outline btn-sm"
                     @click="$store.importReview.returnHop(row.line_id)"
                   >Add back</button>
                 </li>
@@ -331,14 +331,14 @@
               <span class="text-xs text-muted" x-text="row.transform"></span>
               <button
                 type="button"
-                class="btn-outline text-xs"
+                class="btn-outline btn-sm"
                 x-show="!$store.importReview.rowState(row).leftOut"
                 @click="$store.importReview.ignoreLine(row.line_id)"
               >Leave out</button>
               <span class="text-xs text-muted" x-show="$store.importReview.rowState(row).leftOut" x-text="row.reason"></span>
               <button
                 type="button"
-                class="btn-outline text-xs"
+                class="btn-outline btn-sm"
                 x-show="$store.importReview.rowState(row).leftOut"
                 @click="$store.importReview.restoreLine(row.line_id)"
               >Add back</button>

@@ -42,7 +42,7 @@
     <div class="import-queue-actions">
       <button
         type="button"
-        class="btn-outline text-xs"
+        class="btn-outline btn-sm"
         :disabled="$store.importReview.gapfillBusy"
         @click="$store.importReview.askForMissing()"
         x-text="$store.importReview.gapfillBusy ? 'Reading again…' : 'Ask the imported recipe again'"
