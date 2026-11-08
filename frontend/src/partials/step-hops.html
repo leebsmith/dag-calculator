@@ -10,18 +10,25 @@
         <span class="section-title">Hopping Strategy</span>
       </div>
       <div class="section-body">
-        <div class="form-group">
-          <label class="form-label text-xs" for="hop-strategy">Strategy</label>
-          <textarea
-            id="hop-strategy"
-            class="form-input"
-            rows="4"
-            maxlength="4000"
-            placeholder="What the hops are for: the split, the product choices, the weight ratio, the sensory objective."
-            :value="hopStrategy"
-            @change="setHopStrategy($event.target.value)"
-          ></textarea>
-          <span class="form-hint">Blank lines separate paragraphs; single line breaks are ignored.</span>
+        <div
+          x-data="formBuilder({
+            schema: [
+              {
+                id: 'hop-strategy',
+                type: 'textarea',
+                label: 'Strategy',
+                rows: 4,
+                read: () => hopStrategy,
+                write: (value) => setHopStrategy(value),
+                commit: 'change',
+                placeholder: 'What the hops are for: the split, the product choices, the weight ratio, the sensory objective.',
+                attrs: { maxlength: 4000 },
+                hint: 'Blank lines separate paragraphs; single line breaks are ignored.'
+              }
+            ]
+          })"
+        >
+          <load src="src/partials/ui-form-fields.html" />
         </div>
       </div>
     </section>
@@ -114,81 +121,61 @@
       <div class="section-body" id="hops-whirlpool" x-show="isHopSectionOpen('whirlpool')">
         <p class="text-xs text-muted">Author by IBU share; mass is back-calculated from the cooling integral.</p>
 
-        <div class="step-grid-2col">
-          <template x-if="whirlpoolKnockoutField">
-            <div class="form-group">
-              <label
-                class="form-label"
-                :for="whirlpoolKnockoutField.id"
-                x-text="fmt.formatFieldLabel(whirlpoolKnockoutField.label, whirlpoolKnockoutField.unit)"
-              ></label>
-              <input
-                class="form-input"
-                type="number"
-                step="1"
-                min="0"
-                :id="whirlpoolKnockoutField.id"
-                :value="whirlpoolKnockoutField.display"
-                @change="edit(whirlpoolKnockoutField, $event.target.value)"
-              />
-              <span class="form-hint" x-show="whirlpoolKnockoutField.hint" x-text="whirlpoolKnockoutField.hint"></span>
-            </div>
-          </template>
-          <template x-if="whirlpoolStartTempField">
-            <div class="form-group">
-              <label
-                class="form-label"
-                :for="whirlpoolStartTempField.id"
-                x-text="fmt.formatFieldLabel(whirlpoolStartTempField.label, whirlpoolStartTempField.unit)"
-              ></label>
-              <input
-                class="form-input"
-                type="number"
-                step="0.1"
-                :id="whirlpoolStartTempField.id"
-                :value="whirlpoolStartTempField.display"
-                @change="edit(whirlpoolStartTempField, $event.target.value)"
-              />
-              <span class="form-hint" x-show="whirlpoolStartTempField.hint" x-text="whirlpoolStartTempField.hint"></span>
-            </div>
-          </template>
-          <template x-if="whirlpoolAmbientField">
-            <div class="form-group">
-              <label
-                class="form-label"
-                :for="whirlpoolAmbientField.id"
-                x-text="fmt.formatFieldLabel(whirlpoolAmbientField.label, whirlpoolAmbientField.unit)"
-              ></label>
-              <input
-                class="form-input"
-                type="number"
-                step="0.1"
-                :id="whirlpoolAmbientField.id"
-                :value="whirlpoolAmbientField.display"
-                @change="edit(whirlpoolAmbientField, $event.target.value)"
-              />
-              <span class="form-hint" x-show="whirlpoolAmbientField.hint" x-text="whirlpoolAmbientField.hint"></span>
-            </div>
-          </template>
-          <template x-if="whirlpoolCoolingField">
-            <div class="form-group">
-              <label
-                class="form-label"
-                :for="whirlpoolCoolingField.id"
-                x-text="fmt.formatFieldLabel(whirlpoolCoolingField.label, whirlpoolCoolingField.unit)"
-              ></label>
-              <input
-                class="form-input"
-                type="number"
-                step="1"
-                min="1"
-                :id="whirlpoolCoolingField.id"
-                :value="whirlpoolCoolingField.display"
-                @change="editWhirlpoolCooling($event.target.value)"
-              />
-              <span class="form-hint" x-show="whirlpoolCoolingField.hint" x-text="whirlpoolCoolingField.hint"></span>
-            </div>
-          </template>
+        <div
+          class="step-grid-2col"
+          x-data="formBuilder({
+            schema: [
+              {
+                id: 'whirlpool-knockout',
+                type: 'number',
+                label: () => (whirlpoolKnockoutField ? fmt.formatFieldLabel(whirlpoolKnockoutField.label, whirlpoolKnockoutField.unit) : ''),
+                read: () => whirlpoolKnockoutField?.display,
+                write: (value) => whirlpoolKnockoutField && edit(whirlpoolKnockoutField, value),
+                when: () => Boolean(whirlpoolKnockoutField),
+                step: 1,
+                min: 0,
+                commit: 'change',
+                hint: () => whirlpoolKnockoutField?.hint
+              },
+              {
+                id: 'whirlpool-start-temp',
+                type: 'number',
+                label: () => (whirlpoolStartTempField ? fmt.formatFieldLabel(whirlpoolStartTempField.label, whirlpoolStartTempField.unit) : ''),
+                read: () => whirlpoolStartTempField?.display,
+                write: (value) => whirlpoolStartTempField && edit(whirlpoolStartTempField, value),
+                when: () => Boolean(whirlpoolStartTempField),
+                step: 0.1,
+                commit: 'change',
+                hint: () => whirlpoolStartTempField?.hint
+              },
+              {
+                id: 'whirlpool-ambient',
+                type: 'number',
+                label: () => (whirlpoolAmbientField ? fmt.formatFieldLabel(whirlpoolAmbientField.label, whirlpoolAmbientField.unit) : ''),
+                read: () => whirlpoolAmbientField?.display,
+                write: (value) => whirlpoolAmbientField && edit(whirlpoolAmbientField, value),
+                when: () => Boolean(whirlpoolAmbientField),
+                step: 0.1,
+                commit: 'change',
+                hint: () => whirlpoolAmbientField?.hint
+              },
+              {
+                id: 'whirlpool-cooling-time-constant',
+                type: 'number',
+                label: () => (whirlpoolCoolingField ? fmt.formatFieldLabel(whirlpoolCoolingField.label, whirlpoolCoolingField.unit) : ''),
+                read: () => whirlpoolCoolingField?.display,
+                write: (value) => editWhirlpoolCooling(value),
+                when: () => Boolean(whirlpoolCoolingField),
+                step: 1,
+                min: 1,
+                commit: 'change',
+                hint: () => whirlpoolCoolingField?.hint
+              }
+            ]
+          })"
+        >
+          <load src="src/partials/ui-form-fields.html" />
+
           <div class="form-group">
             <label class="form-label" for="whirlpool-cooling-curve">Cooling curve</label>
             <div class="form-row">

@@ -7,18 +7,22 @@
   <div class="step-card-content">
     <!-- Mash style preset -->
     <div class="table-header-toolbar">
-      <div class="form-group">
-        <label for="mash-preset-selector" class="form-label text-xs">Mash Style Preset</label>
-        <select
-          id="mash-preset-selector"
-          class="form-select text-sm"
-          :value="mashPresetId"
-          @change="onMashPresetChange($event.target.value)"
-        >
-          <template x-for="(label, key) in mashPresetLabels" :key="key">
-            <option :value="key" :selected="key === mashPresetId" x-text="label"></option>
-          </template>
-        </select>
+      <div
+        x-data="formBuilder({
+          schema: [
+            {
+              id: 'mash-preset-selector',
+              type: 'select',
+              label: 'Mash Style Preset',
+              read: () => mashPresetId,
+              write: (value) => onMashPresetChange(value),
+              options: () => Object.entries(mashPresetLabels).map(([value, label]) => ({ value, label })),
+              commit: 'change'
+            }
+          ]
+        })"
+      >
+        <load src="src/partials/ui-form-fields.html" />
       </div>
     </div>
 

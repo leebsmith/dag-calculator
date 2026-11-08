@@ -53,6 +53,25 @@ function presentationGetters(source) {
       return `${source.id}-hint`;
     },
 
+    get attrs() {
+      const resolved = resolve(source.attrs, this.context) || {};
+      const reserved = new Set([
+        "id",
+        "type",
+        "value",
+        "class",
+        "name",
+        "checked",
+        "selected",
+        "readonly",
+        "disabled",
+        "required",
+      ]);
+      return Object.fromEntries(
+        Object.entries(resolved).filter(([key]) => !reserved.has(key))
+      );
+    },
+
     get describedBy() {
       const ids = [];
       if (this.hint) ids.push(this.hintId);

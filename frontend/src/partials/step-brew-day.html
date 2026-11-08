@@ -5,22 +5,23 @@
   </div>
 
   <div class="step-card-content">
-    <div class="form-group">
-      <label for="checklist-level" class="form-label text-xs">Checklist level</label>
-      <select
-        id="checklist-level"
-        class="form-select text-sm"
-        :value="brewDayLevel"
-        @change="setBrewDayLevel($event.target.value)"
-      >
-        <template x-for="level in brewDayLevels" :key="level.id">
-          <option :value="level.id" :selected="level.id === brewDayLevel" x-text="level.name"></option>
-        </template>
-      </select>
-      <p class="form-hint">
-        Critical path is the short gate list; Standard is the full brew sheet; Diagnostic adds
-        expected values, methods and model caveats.
-      </p>
+    <div
+      x-data="formBuilder({
+        schema: [
+          {
+            id: 'checklist-level',
+            type: 'select',
+            label: 'Checklist level',
+            read: () => brewDayLevel,
+            write: (value) => setBrewDayLevel(value),
+            options: () => brewDayLevels.map((level) => ({ value: level.id, label: level.name })),
+            commit: 'change',
+            hint: 'Critical path is the short gate list; Standard is the full brew sheet; Diagnostic adds expected values, methods and model caveats.'
+          }
+        ]
+      })"
+    >
+      <load src="src/partials/ui-form-fields.html" />
     </div>
 
     <template x-for="phase in brewDaySections" :key="phase.id">

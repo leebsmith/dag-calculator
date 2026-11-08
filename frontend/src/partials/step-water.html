@@ -10,7 +10,65 @@
         <h3 class="synthesized-title">Water plan</h3>
       </div>
 
-      <div class="step-grid-2col">
+      <div
+        class="step-grid-2col"
+        x-data="formBuilder({
+          schema: [
+            {
+              id: waterPlan.target.id || 'water-target-profile',
+              type: 'select',
+              label: () => waterPlan.target.label || 'Targets',
+              read: () => waterTargetSelection,
+              write: (value) => selectWaterTarget(value),
+              options: () => waterTargetOptions,
+              hint: () => waterPlan.target.hint,
+              commit: 'change'
+            },
+            {
+              id: waterPlan.floor.id || 'water-calcium-floor',
+              type: 'number',
+              label: () => (waterPlan.floor ? fmt.formatFieldLabel(waterPlan.floor.label, waterPlan.floor.unit) : ''),
+              read: () => waterPlan.floor.display,
+              draft: {
+                read: () => inputDraft(inputKey('water', waterPlan.floor.id), waterPlan.floor.display),
+                write: (raw) => editWaterNumber(inputKey('water', waterPlan.floor.id), waterPlan.floor, raw)
+              },
+              write: () => commitWaterNumber(inputKey('water', waterPlan.floor.id), waterPlan.floor),
+              step: 1,
+              commit: 'change',
+              hint: () => waterPlan.floor.hint,
+              hints: [
+                {
+                  text: 'Outside the allowed range',
+                  class: 'text-danger',
+                  when: () => waterPlan.floor.validation && waterPlan.floor.validation.holds === false
+                }
+              ]
+            },
+            {
+              id: waterPlan.mashPh.id || 'water-target-mash-ph',
+              type: 'number',
+              label: () => (waterPlan.mashPh ? fmt.formatFieldLabel(waterPlan.mashPh.label, waterPlan.mashPh.unit) : ''),
+              read: () => waterPlan.mashPh.display,
+              draft: {
+                read: () => inputDraft(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh.display),
+                write: (raw) => editWaterNumber(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh, raw)
+              },
+              write: () => commitWaterNumber(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh),
+              step: 0.1,
+              commit: 'change',
+              hint: () => waterPlan.mashPh.hint,
+              hints: [
+                {
+                  text: 'Outside the allowed range',
+                  class: 'text-danger',
+                  when: () => waterPlan.mashPh.validation && waterPlan.mashPh.validation.holds === false
+                }
+              ]
+            }
+          ]
+        })"
+      >
         <div class="form-group">
           <span class="form-label" x-text="waterPlan.source.label"></span>
           <p class="text-sm font-medium" x-text="waterPlan.source.title || '—'"></p>
@@ -18,60 +76,7 @@
           <span class="form-hint" x-show="waterPlan.source.hint" x-text="waterPlan.source.hint"></span>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" :for="waterPlan.target.id">
-            <span x-text="waterPlan.target.label || 'Targets'"></span>
-          </label>
-          <select
-            class="form-select"
-            :id="waterPlan.target.id"
-            :value="waterTargetSelection"
-            @change="selectWaterTarget($event.target.value)"
-          >
-            <template x-for="opt in waterTargetOptions" :key="opt.value">
-              <option
-                :value="opt.value"
-                :selected="opt.value === waterTargetSelection"
-                x-text="opt.label"
-              ></option>
-            </template>
-          </select>
-          <span class="form-hint" x-show="waterPlan.target.hint" x-text="waterPlan.target.hint"></span>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" :for="waterPlan.floor.id">
-            <span x-text="fmt.formatFieldLabel(waterPlan.floor.label, waterPlan.floor.unit)"></span>
-          </label>
-          <input
-            class="form-input"
-            :id="waterPlan.floor.id"
-            type="number"
-            step="1"
-            :value="inputDraft(inputKey('water', waterPlan.floor.id), waterPlan.floor.display)"
-            @input="editWaterNumber(inputKey('water', waterPlan.floor.id), waterPlan.floor, $event.target.value)"
-            @change="commitWaterNumber(inputKey('water', waterPlan.floor.id), waterPlan.floor)"
-          />
-          <span class="form-hint" x-show="waterPlan.floor.hint" x-text="waterPlan.floor.hint"></span>
-          <span class="form-hint text-danger" x-show="waterPlan.floor.validation && waterPlan.floor.validation.holds === false">Outside the allowed range</span>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" :for="waterPlan.mashPh.id">
-            <span x-text="fmt.formatFieldLabel(waterPlan.mashPh.label, waterPlan.mashPh.unit)"></span>
-          </label>
-          <input
-            class="form-input"
-            :id="waterPlan.mashPh.id"
-            type="number"
-            step="0.1"
-            :value="inputDraft(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh.display)"
-            @input="editWaterNumber(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh, $event.target.value)"
-            @change="commitWaterNumber(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh)"
-          />
-          <span class="form-hint" x-show="waterPlan.mashPh.hint" x-text="waterPlan.mashPh.hint"></span>
-          <span class="form-hint text-danger" x-show="waterPlan.mashPh.validation && waterPlan.mashPh.validation.holds === false">Outside the allowed range</span>
-        </div>
+        <load src="src/partials/ui-form-fields.html" />
       </div>
 
       <div class="data-table-container">
