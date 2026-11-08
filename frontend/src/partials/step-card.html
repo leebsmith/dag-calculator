@@ -125,7 +125,7 @@
         <div>
           <h3 class="section-title" x-text="f.title"></h3>
           <div class="data-table-container">
-            <table class="data-table">
+            <table class="data-table data-table--editor">
               <thead x-show="f.header">
                 <tr>
                   <template x-for="c in f.columns" :key="c.id">
@@ -182,7 +182,7 @@
         <div>
           <span class="form-label" x-text="f.label"></span>
           <div class="data-table-container">
-            <table class="data-table">
+            <table class="data-table data-table--editor">
               <thead>
                 <tr>
                   <template x-for="c in f.columns" :key="c.id">

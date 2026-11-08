@@ -82,6 +82,88 @@ function drawerMethods(getView, registry) {
   };
 }
 
+function draftTableColumns(getView) {
+  const view = getView();
+  const columns = view.draftColumns;
+  const width = `${100 / (columns.length + 1)}%`;
+  const entries = columns.map((col) => {
+    const editable = col.editable === true;
+    const key = (index) => view.inputKey("draft", view.draftNodeId, index, col.id);
+    return {
+      id: col.id,
+      label: view.fmt.formatColumnHeader(col),
+      width,
+      align: view.draftTextColumns.includes(col.id) ? "left" : "right",
+      cell: editable ? "input" : "number",
+      readout: !editable,
+      value: (row) => row[col.id],
+      badge: (row) => view.draftRowBadge(row, col.id),
+      input: editable
+        ? {
+            type: "number",
+            step: view.draftInputStep,
+            min: 0,
+            value: (row, index) => view.inputDraft(key(index), row[col.id]),
+            onInput: (row, index, raw) => view.editDraftCellInput(key(index), index, col.id, raw),
+            onChange: (row, index) => view.commitDraftCellInput(key(index)),
+            ariaLabel: () => view.fmt.formatColumnHeader(col),
+          }
+        : null,
+    };
+  });
+
+  entries.push({
+    id: "actions",
+    label: "Actions",
+    width,
+    align: "right",
+    cell: "actions",
+    actions: (row, index) => [
+      ...(view.draftTableInspect
+        ? [
+            {
+              id: "inspect",
+              label: "✎",
+              class: "btn-action-icon",
+              title: "Inspect",
+              onClick: () => view.inspectDraftRow(index),
+            },
+          ]
+        : []),
+      {
+        id: "remove",
+        label: "🗑",
+        class: "btn-action-icon btn-action-danger",
+        title: "Remove",
+        onClick: () => view.removeDraftRow(index),
+      },
+    ],
+  });
+
+  return entries;
+}
+
+function buildDraftTableConfig(getView) {
+  return {
+    variant: "editor",
+    fixed: true,
+    label: "Draft rows",
+    get columns() {
+      return draftTableColumns(getView);
+    },
+    get rows() {
+      return getView().draftDisplayRows;
+    },
+    rowKey: (row, index) => index,
+    get emptyText() {
+      return getView().draftEmptyText;
+    },
+    get footer() {
+      return getView().draftTotals;
+    },
+  };
+}
+
 function contentMethods(getView, registry) {
   return {
     addCatalogItem(catalogId) {
@@ -103,6 +185,9 @@ function contentMethods(getView, registry) {
       const view = getView();
       const entry = activeEntry(registry, view);
       return entry?.rowBadge ? entry.rowBadge(view, row, columnId) : null;
+    },
+    draftTableConfig() {
+      return buildDraftTableConfig(getView);
     },
     setDraftCatalogForm(value) {
       const view = getView();

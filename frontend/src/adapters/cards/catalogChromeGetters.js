@@ -71,6 +71,7 @@ export const CATALOG_CHROME_KEYS = [
   "draftEmptyText",
   "draftTotals",
   "draftRowBadge",
+  "draftTableConfig",
 ];
 
 const STATE_DEFAULTS = {

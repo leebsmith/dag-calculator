@@ -29,7 +29,7 @@
         </p>
 
         <div class="data-table-container">
-          <table class="data-table">
+          <table class="data-table data-table--editor">
             <colgroup>
               <col style="width: 30%" />
               <col style="width: 11%" />
@@ -127,7 +127,7 @@
 
         <template x-if="traceMaltField">
           <div class="data-table-container">
-            <table class="data-table">
+            <table class="data-table data-table--editor">
               <thead>
                 <tr>
                   <template x-for="c in traceMaltField.columns" :key="c.id">

@@ -914,64 +914,39 @@ samp {
   font-size: var(--text-micro);
 }
 
-.modal-workspace-main .data-table .form-input {
-  min-width: var(--width-parts-input);
-  padding: var(--space-1) var(--space-2);
-  font-size: var(--text-xs);
-}
-
 /* ==========================================================================
    8. Data Tables
    ========================================================================== */
 
+/* Shared panel */
 .data-table-container {
   overflow-x: auto;
-  border-radius: var(--radius-lg);
   border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--radius-lg);
   background-color: var(--sys-surface-default);
 }
 
-/* Bounded-height variant: caps the visible row count and scrolls the
-   remainder. The sticky thead keeps column headers visible during vertical
-   scroll. */
-.data-table-container-scroll {
+.data-table-container--fit {
+  overflow-x: hidden;
+}
+
+.data-table-container--scroll {
   max-height: var(--size-table-scroll);
-  overflow: auto;
+  overflow: hidden auto;
 }
 
-/* Header cells in fixed-layout tables must wrap rather than overflow into
-   adjacent columns. */
-.data-table.is-fixed thead th {
-  white-space: normal;
-  overflow-wrap: break-word;
-  hyphens: auto;
-  line-height: var(--line-height-tight);
-}
-
-.data-table-container-scroll .data-table thead {
+.data-table-container--scroll .data-table thead {
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
 }
 
+/* Base table */
 .data-table {
   width: 100%;
+  border-collapse: collapse;
   text-align: left;
   font-size: var(--text-sm);
-  border-collapse: collapse;
-}
-
-.data-table.is-fixed {
-  table-layout: fixed;
-}
-
-.data-table thead {
-  background-color: var(--sys-surface-subtle);
-  font-size: var(--text-xs);
-  color: var(--sys-text-secondary);
-  text-transform: uppercase;
-  font-weight: var(--font-weight-bold);
-  border-bottom: 1px solid var(--sys-border-subtle);
 }
 
 .data-table th,
@@ -981,43 +956,123 @@ samp {
   vertical-align: middle;
 }
 
-.data-table thead th {
-  text-align: center;
-}
-
-.data-table.data-table--dense th,
-.data-table.data-table--dense td {
-  padding: var(--space-2) var(--space-3);
-  text-align: right;
-}
-
-.data-table.data-table--dense th:first-child,
-.data-table.data-table--dense td:first-child,
-.data-table.data-table--dense th:last-child,
-.data-table.data-table--dense td:last-child {
-  text-align: left;
+.data-table thead {
+  border-bottom: 1px solid var(--sys-border-subtle);
+  color: var(--sys-text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
 }
 
 .data-table tbody tr {
   border-bottom: 1px solid var(--sys-border-subtle);
+}
+
+.data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.data-table tr.is-selected {
+  background-color: var(--sys-surface-selected);
+}
+
+/* Editor/data grid */
+.data-table--editor thead {
+  background-color: var(--sys-surface-subtle);
+  color: var(--sys-text-secondary);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+.data-table--editor thead th {
+  text-align: center;
+}
+
+.data-table--editor tbody tr {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
 }
 
-.data-table tbody tr:last-child,
-.landing-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.data-table tfoot tr {
+.data-table--editor tfoot tr {
   border-top: 2px solid var(--sys-border-default);
   background-color: var(--sys-surface-subtle);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
 }
 
-.data-table tr.is-selected {
-  background-color: var(--sys-surface-selected);
+/* Dense editor */
+.data-table--dense th,
+.data-table--dense td {
+  padding: var(--space-2) var(--space-3);
+  text-align: right;
+}
+
+.data-table--dense th:first-child,
+.data-table--dense td:first-child,
+.data-table--dense th:last-child,
+.data-table--dense td:last-child {
+  text-align: left;
+}
+
+/* Fixed-column contract */
+.data-table--fixed {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 0;
+}
+
+.data-table--fixed th,
+.data-table--fixed td {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.data-table--fixed thead th {
+  white-space: normal;
+  hyphens: auto;
+  line-height: var(--line-height-tight);
+}
+
+.data-table--fixed .form-input:not(.table-input-parts) {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Landing/list table */
+.data-table--list {
+  min-width: var(--size-content-md);
+}
+
+.data-table--list th,
+.data-table--list td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+}
+
+.data-table--list thead th {
+  color: var(--sys-text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: none;
+}
+
+.data-table--list tbody tr:hover {
+  background-color: var(--sys-surface-hover);
+}
+
+.data-table-col-date {
+  width: var(--size-content-xs);
+  white-space: nowrap;
+  color: var(--sys-text-secondary);
+  font-size: var(--text-xs);
+}
+
+.data-table-col-actions {
+  width: var(--space-12);
+  text-align: right;
+}
+
+.data-table-col-title {
+  min-width: 0;
 }
 
 /* ==========================================================================
@@ -1302,58 +1357,6 @@ samp {
 }
 
 
-
-.landing-table-wrap {
-  overflow-x: auto;
-  border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-lg);
-  background-color: var(--sys-surface-default);
-}
-
-.landing-table {
-  width: 100%;
-  min-width: var(--size-content-md);
-  border-collapse: collapse;
-  font-size: var(--text-sm);
-}
-
-.landing-table th,
-.landing-table td {
-  padding: var(--space-2) var(--space-3);
-  text-align: left;
-  vertical-align: middle;
-}
-
-.landing-table thead th {
-  border-bottom: 1px solid var(--sys-border-subtle);
-  color: var(--sys-text-muted);
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-.landing-table tbody tr {
-  border-bottom: 1px solid var(--sys-border-subtle);
-}
-
-.landing-table tbody tr:hover {
-  background-color: var(--sys-surface-hover);
-}
-
-.landing-col-date {
-  width: var(--size-content-xs);
-  white-space: nowrap;
-  color: var(--sys-text-secondary);
-  font-size: var(--text-xs);
-}
-
-.landing-col-actions {
-  width: var(--space-12);
-  text-align: right;
-}
-
-.landing-col-title {
-  min-width: 0;
-}
 
 .landing-title {
   display: flex;

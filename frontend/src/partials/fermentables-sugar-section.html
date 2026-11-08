@@ -70,7 +70,7 @@
 
     <template x-if="lateSugarField">
       <div class="data-table-container">
-        <table class="data-table">
+        <table class="data-table data-table--editor">
           <thead>
             <tr>
               <template x-for="c in lateSugarField.columns" :key="c.id">
@@ -131,7 +131,7 @@
             target on the Style step.
           </p>
           <div class="data-table-container">
-            <table class="data-table">
+            <table class="data-table data-table--editor">
               <thead>
                 <tr>
                   <th>Pin</th>
