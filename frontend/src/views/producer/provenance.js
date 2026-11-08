@@ -3,20 +3,17 @@
 // unset and authored once set (hasRoot); residual host-seeded roots fall back to
 // value comparison against their derivation.
 
+import { compileExpression } from "../../engine/expression.js";
 import { seedDerivations, approxEqual, sourceLabel } from "../seedDerivations.js";
 import { resolveReference } from "../../engine/paths.js";
 
-function collectRefs(expr, out = []) {
-  if (expr === null || typeof expr !== "object") return out;
-  if (Array.isArray(expr)) {
-    for (const item of expr) collectRefs(item, out);
-    return out;
-  }
-  for (const [key, value] of Object.entries(expr)) {
-    if (key === "ref" && typeof value === "string") out.push(value);
-    else collectRefs(value, out);
-  }
-  return out;
+function defaultPaths(expression) {
+  return compileExpression(expression).paths.filter((path) => {
+    if (path === "null" || path === "$value" || path === "$context" || path === "row") {
+      return false;
+    }
+    return !path.startsWith("row.") && !path.startsWith("constants.");
+  });
 }
 
 // The component a root inherits from, when its default reads one. Returns null
@@ -24,7 +21,8 @@ function collectRefs(expr, out = []) {
 export function inheritedSource(artifact, nodeId) {
   const node = artifact?.nodes?.[nodeId];
   if (!node || (node.kind !== "root" && node.kind !== "choice")) return null;
-  for (const path of collectRefs(node.default)) {
+  if (typeof node.default !== "string") return null;
+  for (const path of defaultPaths(node.default)) {
     const resolved = resolveReference(artifact, path);
     if (!resolved) continue;
     if (resolved.kind === "identity") return { kind: "identity", id: resolved.namespace };

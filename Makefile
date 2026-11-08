@@ -136,6 +136,8 @@ check:
 	cd frontend && npm run lint
 	@echo "Checking test and script linting..."
 	./frontend/node_modules/.bin/eslint --config eslint.config.js --max-warnings 0 tests scripts
+	@echo "Checking artifact expressions..."
+	node scripts/check-expressions.mjs
 	@echo "Checking backend linting and architectural boundaries..."
 	cd backend && uv run ruff check . ../tests/backend ../scripts
 	cd backend && uv run tach check

@@ -1,6 +1,7 @@
 // Field attribution: maps artifact paths and relation predicates onto the step
 // slice that owns them. Keeps cards and violation badges on the same manifest.
 
+import { compileExpression } from "../engine/expression.js";
 import { resolveReference } from "../engine/index.js";
 
 function fieldKey(artifact, path) {
@@ -8,15 +9,14 @@ function fieldKey(artifact, path) {
   return ref ? ref.path : null;
 }
 
-function refPaths(node, out = new Set()) {
-  if (node === null || typeof node !== "object") return out;
-  if ("ref" in node) out.add(node.ref);
-  if (Array.isArray(node)) {
-    for (const item of node) refPaths(item, out);
-  } else {
-    for (const value of Object.values(node)) refPaths(value, out);
-  }
-  return out;
+function predicatePaths(predicate) {
+  if (typeof predicate !== "string") return [];
+  return compileExpression(predicate).paths.filter((path) => {
+    if (path === "null" || path === "$value" || path === "$context" || path === "row") {
+      return false;
+    }
+    return !path.startsWith("row.") && !path.startsWith("constants.");
+  });
 }
 
 export function createFieldAttribution(artifact, steps) {
@@ -62,7 +62,7 @@ export function createFieldAttribution(artifact, steps) {
 
   function relationSlices(predicate) {
     const slices = new Set();
-    for (const path of refPaths(predicate)) slices.add(sliceForPath(path));
+    for (const path of predicatePaths(predicate)) slices.add(sliceForPath(path));
     return slices;
   }
 
