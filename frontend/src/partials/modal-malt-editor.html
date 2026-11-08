@@ -1,40 +1,23 @@
 <!-- Grain Bill Editor (workspace modal): draft grid + catalog / inspector drawers -->
 <div
-  class="modal-backdrop"
-  x-show="maltEditorOpen"
-  @click.self="cancelMaltEditor()"
-  @keydown.escape.window="handleMaltEscape()"
+  x-data="modalShell({
+    open: () => maltEditorOpen,
+    id: 'malt-editor',
+    title: 'Grain Bill Editor',
+    badge: () => maltValidation.label,
+    badgeClass: () => maltValidation.class,
+    cancel: () => cancelMaltEditor(),
+    save: () => saveMaltEditor(),
+    escape: () => handleMaltEscape(),
+    saveDisabled: () => maltValidation.type !== 'balanced'
+  })"
 >
-  <div
-    class="modal-dialog modal-dialog-workspace"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="malt-editor-title"
-    tabindex="-1"
-    x-effect="dialogFocus($el, maltEditorOpen)"
-  >
-    <div class="modal-workspace-header">
-      <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title" id="malt-editor-title">Grain Bill Editor</h2>
-        <span class="status-badge text-xs" :class="maltValidation.class" x-text="maltValidation.label"></span>
-      </div>
-      <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline btn-sm" @click="cancelMaltEditor()">Cancel</button>
-        <button
-          type="button"
-          class="btn-primary btn-sm"
-          @click="saveMaltEditor()"
-          :disabled="maltValidation.type !== 'balanced'"
-        >
-          Save &amp; Apply
-        </button>
-      </div>
-    </div>
+  <load src="src/partials/ui-modal-shell.html" />
 
-    <div class="modal-workspace-body">
-      <div class="modal-workspace-main">
-        <load src="src/partials/draft-table.html" />
-      </div>
+  <template x-teleport="#malt-editor-body">
+    <div class="modal-workspace-main">
+      <load src="src/partials/draft-table.html" />
+    </div>
 
       <div
         class="modal-drawer-scrim"
@@ -122,8 +105,9 @@
           </template>
         </div>
       </div>
-    </div>
+  </template>
 
+  <template x-teleport="#malt-editor-overlay">
     <load src="src/partials/draft-discard-confirm.html" />
-  </div>
+  </template>
 </div>

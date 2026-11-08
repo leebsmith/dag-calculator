@@ -10,6 +10,7 @@ import { createBatchClient } from "./adapters/batchClient.js";
 import { createLibraryClient } from "./adapters/libraryClient.js";
 import { createSessionClient } from "./adapters/sessionClient.js";
 import { formBuilder } from "./components/formBuilder.js";
+import { modalShell } from "./components/modalShell.js";
 import {
   closeReportTab,
   downloadBlob,
@@ -267,6 +268,7 @@ onAuthStateChanged((user) => {
 });
 
 Alpine.data("formBuilder", formBuilder);
+Alpine.data("modalShell", modalShell);
 
 Alpine.data("stepCalculator", () => {
   // Wrap in Alpine's reactive proxy so the adapter's methods (which mutate

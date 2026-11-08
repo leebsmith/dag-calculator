@@ -1,31 +1,20 @@
 <!-- Yeast picker: one strain for the batch. The page shows the chosen row; this
      modal is the catalog. -->
 <div
-  class="modal-backdrop"
-  x-show="yeastPickerOpen"
-  @click.self="closeYeastPicker()"
-  @keydown.escape.window="handleYeastEscape()"
+  x-data="modalShell({
+    open: () => yeastPickerOpen,
+    id: 'yeast-picker',
+    title: 'Choose Yeast',
+    subtitle: () => (selectedYeast ? selectedYeast.name : 'No strain selected'),
+    cancel: () => closeYeastPicker(),
+    cancelLabel: 'Close',
+    escape: () => handleYeastEscape()
+  })"
 >
-  <div
-    class="modal-dialog modal-dialog-workspace"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="yeast-picker-title"
-    tabindex="-1"
-    x-effect="dialogFocus($el, yeastPickerOpen)"
-  >
-    <div class="modal-workspace-header">
-      <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title" id="yeast-picker-title">Choose Yeast</h2>
-        <span class="text-xs text-muted" x-text="selectedYeast ? selectedYeast.name : 'No strain selected'"></span>
-      </div>
-      <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline btn-sm" @click="closeYeastPicker()">Close</button>
-      </div>
-    </div>
+  <load src="src/partials/ui-modal-shell.html" />
 
-    <div class="modal-workspace-body">
-      <div class="modal-workspace-main">
+  <template x-teleport="#yeast-picker-body">
+    <div class="modal-workspace-main">
         <div class="yeast-filter-grid">
           <div class="form-group">
             <label class="form-label" for="yeast-search">Search</label>
@@ -168,6 +157,5 @@
           </table>
         </div>
       </div>
-    </div>
-  </div>
+  </template>
 </div>

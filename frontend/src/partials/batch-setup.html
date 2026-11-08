@@ -1,47 +1,21 @@
 <!-- New batch dialog: selection only. Records are authored in the Library. ------->
 <div
-  class="modal-backdrop"
-  x-show="$store.setup.state.modalOpen"
-  @click.self="$store.setup.closeModal()"
-  @keydown.escape.window="$store.setup.closeModal()"
+  x-data="modalShell({
+    open: () => $store.setup.state.modalOpen,
+    id: 'new-batch',
+    title: 'New batch',
+    cancel: () => $store.setup.closeModal(),
+    cancelLabel: 'Cancel',
+    cancelDisabled: () => $store.setup.state.busy,
+    save: () => ($store.setup.state.mode === 'scratch' ? $store.setup.create() : $store.setup.startImport()),
+    saveLabel: () => ($store.setup.state.mode === 'scratch' ? 'Create batch' : $store.setup.primaryLabel()),
+    saveDisabled: () => $store.setup.state.busy || ($store.setup.state.mode === 'scratch' ? !$store.setup.canCreate() : !$store.setup.canStartImport()),
+    escape: () => $store.setup.closeModal()
+  })"
 >
-  <div
-    class="modal-dialog modal-dialog-workspace"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="new-batch-title"
-    tabindex="-1"
-    x-effect="dialogFocus($el, $store.setup.state.modalOpen)"
-  >
-    <div class="modal-workspace-header">
-      <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title" id="new-batch-title">New batch</h2>
-      </div>
-      <div class="modal-workspace-header-actions">
-        <button
-          type="button"
-          class="btn-outline btn-sm"
-          :disabled="$store.setup.state.busy"
-          @click="$store.setup.closeModal()"
-        >Cancel</button>
-        <button
-          type="button"
-          class="btn-primary btn-sm"
-          x-show="$store.setup.state.mode === 'scratch'"
-          :disabled="!$store.setup.canCreate() || $store.setup.state.busy"
-          @click="$store.setup.create()"
-        >Create batch</button>
-        <button
-          type="button"
-          class="btn-primary btn-sm"
-          x-show="$store.setup.state.mode === 'recipe'"
-          :disabled="!$store.setup.canStartImport() || $store.setup.state.busy"
-          @click="$store.setup.startImport()"
-          x-text="$store.setup.primaryLabel()"
-        ></button>
-      </div>
-    </div>
+  <load src="src/partials/ui-modal-shell.html" />
 
+  <template x-teleport="#new-batch-overlay">
     <div class="modal-busy" x-show="$store.setup.state.busy" role="status" aria-live="polite">
       <span class="spinner" aria-hidden="true"></span>
       <p class="font-medium" x-text="$store.setup.primaryLabel()"></p>
@@ -50,9 +24,10 @@
         transcription and the mapping persist.
       </p>
     </div>
+  </template>
 
-    <div class="modal-workspace-body">
-      <div class="modal-workspace-main">
+  <template x-teleport="#new-batch-body">
+    <div class="modal-workspace-main">
         <div class="setup-mode-switch" role="group" aria-label="How to start">
           <button
             type="button"
@@ -166,6 +141,5 @@
 
         <p class="form-hint text-danger" x-show="$store.setup.state.error" x-text="$store.setup.state.error"></p>
       </div>
-    </div>
-  </div>
+  </template>
 </div>

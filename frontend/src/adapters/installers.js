@@ -220,11 +220,6 @@ export const SHARED = [
     reason: "shared field verbs: the card partials bind the one editing surface",
   },
   {
-    key: "dialogFocus",
-    owners: ["hop", "lateAdditions", "malt", "mash", "traceMalts", "dryHops", "yeast"],
-    reason: "every modal shares the one focus trap",
-  },
-  {
     key: "dismissDraftDiscard",
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",

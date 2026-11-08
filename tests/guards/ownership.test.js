@@ -59,11 +59,11 @@ test("every card partial is owned and every declared partial exists", () => {
 test("a foreign read fails when its SHARED entry is dropped", () => {
   const gaps = ownershipGaps(
     INSTALLERS,
-    SHARED.filter((entry) => entry.key !== "dialogFocus")
+    SHARED.filter((entry) => entry.key !== "draftRows")
   );
   assert.ok(
-    gaps.undeclared.some((message) => message.includes("dialogFocus")),
-    `expected an undeclared dialogFocus read, got ${JSON.stringify(gaps.undeclared)}`
+    gaps.undeclared.some((message) => message.includes("draftRows")),
+    `expected an undeclared draftRows read, got ${JSON.stringify(gaps.undeclared)}`
   );
 });
 

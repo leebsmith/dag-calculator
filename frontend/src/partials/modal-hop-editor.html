@@ -1,36 +1,22 @@
 <!-- Boil Hop Editor (workspace modal): draft grid + hop catalog / inspector drawers -->
 <div
-  class="modal-backdrop"
-  x-show="hopEditorOpen"
-  @click.self="cancelHopEditor()"
-  @keydown.escape.window="handleHopEscape()"
+  x-data="modalShell({
+    open: () => hopEditorOpen,
+    id: 'hop-editor',
+    title: 'Hop Schedule Editor',
+    badge: () => hopDraftSummary,
+    badgeClass: 'badge-info',
+    cancel: () => cancelHopEditor(),
+    save: () => saveHopEditor(),
+    escape: () => handleHopEscape()
+  })"
 >
-  <div
-    class="modal-dialog modal-dialog-workspace"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="hop-editor-title"
-    tabindex="-1"
-    x-effect="dialogFocus($el, hopEditorOpen)"
-  >
-    <div class="modal-workspace-header">
-      <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title" id="hop-editor-title">Hop Schedule Editor</h2>
-        <span
-          class="status-badge badge-info text-xs"
-          x-text="hopDraftSummary"
-        ></span>
-      </div>
-      <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline btn-sm" @click="cancelHopEditor()">Cancel</button>
-        <button type="button" class="btn-primary btn-sm" @click="saveHopEditor()">Save &amp; Apply</button>
-      </div>
-    </div>
+  <load src="src/partials/ui-modal-shell.html" />
 
-    <div class="modal-workspace-body">
-      <div class="modal-workspace-main">
-        <load src="src/partials/draft-table.html" />
-      </div>
+  <template x-teleport="#hop-editor-body">
+    <div class="modal-workspace-main">
+      <load src="src/partials/draft-table.html" />
+    </div>
 
       <div
         class="modal-drawer-scrim"
@@ -96,8 +82,9 @@
           </template>
         </div>
       </div>
-    </div>
+  </template>
 
+  <template x-teleport="#hop-editor-overlay">
     <load src="src/partials/draft-discard-confirm.html" />
-  </div>
+  </template>
 </div>

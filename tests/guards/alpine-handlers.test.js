@@ -26,6 +26,15 @@ const JS_GLOBALS = new Set([
 const HANDLER = /(?:^|\s)(?:@|x-on:)[\w.:-]+="([^"]*)"/g;
 const CALL = /(^|[^\w$.'"])([A-Za-z_$][\w$]*)\s*\(/g;
 
+// The shell owns its own Alpine component methods; its handlers are not step-app
+// handlers. Keep the allowance local to the component partial.
+const COMPONENT_HANDLERS = new Map([
+  [
+    "frontend/src/partials/ui-modal-shell.html",
+    new Set(["backdropAction", "escapeAction", "cancelAction", "saveAction"]),
+  ],
+]);
+
 function calledNames(expression) {
   const names = new Set();
   for (const match of expression.matchAll(CALL)) names.add(match[2]);
@@ -44,6 +53,7 @@ test("A8: every Alpine handler calls a method on the step app", async () => {
     for (const match of read(file).matchAll(HANDLER)) {
       for (const name of calledNames(match[1])) {
         if (JS_GLOBALS.has(name)) continue;
+        if (COMPONENT_HANDLERS.get(file)?.has(name)) continue;
         if (typeof app[name] !== "function") missing.push(`${file}: ${name}()`);
       }
     }

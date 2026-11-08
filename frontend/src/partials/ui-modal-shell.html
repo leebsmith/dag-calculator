@@ -1,0 +1,60 @@
+<div
+  class="modal-backdrop"
+  x-show="isOpen"
+  @click.self="backdropAction()"
+  @keydown.escape.window="escapeAction()"
+>
+  <div
+    class="modal-dialog"
+    :class="workspace ? 'modal-dialog-workspace' : null"
+    role="dialog"
+    aria-modal="true"
+    :aria-labelledby="titleId"
+    tabindex="-1"
+    x-effect="dialogFocus($el, isOpen)"
+  >
+    <template x-if="workspace">
+      <div class="modal-workspace-header">
+        <div class="modal-workspace-header-title">
+          <h2 class="modal-workspace-title" :id="titleId" x-text="titleText"></h2>
+          <span
+            class="text-xs text-muted"
+            x-show="subtitleText"
+            x-text="subtitleText"
+          ></span>
+          <span
+            class="status-badge text-xs"
+            :class="badgeClassText"
+            x-show="badgeText"
+            x-text="badgeText"
+          ></span>
+        </div>
+        <div class="modal-workspace-header-actions">
+          <button
+            type="button"
+            class="btn-outline btn-sm"
+            x-show="cancel"
+            :disabled="cancelDisabledState"
+            @click="cancelAction()"
+            x-text="cancelLabelText"
+          ></button>
+          <button
+            type="button"
+            class="btn-primary btn-sm"
+            x-show="saveShown"
+            :disabled="saveDisabledState"
+            @click="saveAction()"
+            x-text="saveLabelText"
+          ></button>
+        </div>
+      </div>
+    </template>
+
+    <div
+      :class="workspace ? 'modal-workspace-body' : 'modal-body-slot'"
+      :id="bodyId"
+    ></div>
+
+    <div class="modal-overlay-slot" :id="overlayId"></div>
+  </div>
+</div>

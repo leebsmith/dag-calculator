@@ -1,37 +1,20 @@
 <!-- Configure Mash Rests modal: draft/cancel editor over the enabled rests. -->
 <div
-  class="modal-backdrop"
-  x-show="mashModalOpen"
-  @click.self="closeMashModal()"
-  @keydown.escape.window="closeMashModal()"
+  x-data="modalShell({
+    open: () => mashModalOpen,
+    id: 'mash-rests',
+    title: 'Configure Mash Rests',
+    cancel: () => closeMashModal(),
+    save: () => commitMashSchedule(),
+    saveLabel: 'OK',
+    saveDisabled: () => !isMashDraftValid,
+    escape: () => closeMashModal()
+  })"
 >
-  <div
-    class="modal-dialog modal-dialog-workspace"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="mash-rests-title"
-    tabindex="-1"
-    x-effect="dialogFocus($el, mashModalOpen)"
-  >
-    <div class="modal-workspace-header">
-      <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title" id="mash-rests-title">Configure Mash Rests</h2>
-      </div>
-      <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline btn-sm" @click="closeMashModal()">Cancel</button>
-        <button
-          type="button"
-          class="btn-primary btn-sm"
-          @click="commitMashSchedule()"
-          :disabled="!isMashDraftValid"
-        >
-          OK
-        </button>
-      </div>
-    </div>
+  <load src="src/partials/ui-modal-shell.html" />
 
-    <div class="modal-workspace-body">
-      <div class="modal-workspace-main">
+  <template x-teleport="#mash-rests-body">
+    <div class="modal-workspace-main">
         <p class="form-hint text-danger" x-show="!isMashDraftValid">
           Every enabled rest needs a use temperature and a duration.
         </p>
@@ -98,6 +81,5 @@
           </table>
         </div>
       </div>
-    </div>
-  </div>
+  </template>
 </div>

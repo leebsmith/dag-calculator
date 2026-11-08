@@ -7,7 +7,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { walk, read, rel } from "./util.js";
 
-const ATTR = /\b(?:x-text|x-html|x-if|x-show|x-for|x-model|x-effect|:[\w-]+|x-bind:[\w-]+)\s*=\s*"([^"]*)"/g;
+const ATTR = /\b(?:x-text|x-html|x-if|x-show|x-for|x-model|x-effect|x-data|:[\w-]+|x-bind:[\w-]+)\s*=\s*"([^"]*)"/g;
 const IDENT = /[A-Za-z_$][\w$]*/g;
 
 const ALLOW = {

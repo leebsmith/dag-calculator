@@ -1,31 +1,20 @@
 <!-- Dry Hop Editor (workspace modal): draft table + hop catalog / inspector drawers -->
 <div
-  class="modal-backdrop"
-  x-show="dryHopEditorOpen"
-  @click.self="cancelDryHopEditor()"
-  @keydown.escape.window="handleDryHopEscape()"
+  x-data="modalShell({
+    open: () => dryHopEditorOpen,
+    id: 'dry-hop-editor',
+    title: 'Dry Hop Editor',
+    badge: () => dryHopDraftSummary,
+    badgeClass: 'badge-info',
+    cancel: () => cancelDryHopEditor(),
+    save: () => saveDryHopEditor(),
+    escape: () => handleDryHopEscape()
+  })"
 >
-  <div
-    class="modal-dialog modal-dialog-workspace"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="dry-hop-editor-title"
-    tabindex="-1"
-    x-effect="dialogFocus($el, dryHopEditorOpen)"
-  >
-    <div class="modal-workspace-header">
-      <div class="modal-workspace-header-title">
-        <h2 class="modal-workspace-title" id="dry-hop-editor-title">Dry Hop Editor</h2>
-        <span class="status-badge badge-info text-xs" x-text="dryHopDraftSummary"></span>
-      </div>
-      <div class="modal-workspace-header-actions">
-        <button type="button" class="btn-outline btn-sm" @click="cancelDryHopEditor()">Cancel</button>
-        <button type="button" class="btn-primary btn-sm" @click="saveDryHopEditor()">Save &amp; Apply</button>
-      </div>
-    </div>
+  <load src="src/partials/ui-modal-shell.html" />
 
-    <div class="modal-workspace-body">
-      <div class="modal-workspace-main">
+  <template x-teleport="#dry-hop-editor-body">
+    <div class="modal-workspace-main">
         <div class="table-header-toolbar">
           <span class="text-xs text-muted">
             Applied in fermentation (cold side). The event and the contact end record intent; nothing
@@ -241,8 +230,9 @@
           </template>
         </div>
       </div>
-    </div>
+  </template>
 
+  <template x-teleport="#dry-hop-editor-overlay">
     <load src="src/partials/draft-discard-confirm.html" />
-  </div>
+  </template>
 </div>

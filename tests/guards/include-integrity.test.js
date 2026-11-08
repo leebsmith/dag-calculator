@@ -23,6 +23,7 @@ const EXTRA_PARTIALS = [
   "./src/partials/import-check.html",
   "./src/partials/import-delta.html",
   "./src/partials/landing-list.html",
+  "./src/partials/ui-modal-shell.html",
 ];
 
 // App-level files that may declare <load src>: index.html plus the allowlisted

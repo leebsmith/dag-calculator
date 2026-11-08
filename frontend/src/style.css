@@ -617,6 +617,11 @@ samp {
   overflow: hidden;
 }
 
+.modal-body-slot,
+.modal-overlay-slot {
+  display: contents;
+}
+
 .modal-workspace-main {
   flex: 1;
   min-width: 0;
