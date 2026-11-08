@@ -6,11 +6,42 @@ import jexl from "jexl";
 const parser = new jexl.Jexl();
 const parserCache = new Map();
 const runtimes = new WeakMap();
+const facades = new WeakSet();
 
-const FUNCTION_CALL = /functions\.([A-Za-z_][A-Za-z0-9_]*)\(/g;
+function functionCallAt(expression, index) {
+  const match = /^functions\.([A-Za-z_][A-Za-z0-9_]*)\(/.exec(expression.slice(index));
+  return match ? { length: match[0].length, name: match[1] } : null;
+}
 
 export function normalizeExpression(expression) {
-  return expression.replace(FUNCTION_CALL, "$1(");
+  let result = "";
+  let quote = null;
+  for (let index = 0; index < expression.length; index += 1) {
+    const char = expression[index];
+    if (quote) {
+      result += char;
+      if (char === "\\" && index + 1 < expression.length) {
+        result += expression[index + 1];
+        index += 1;
+      } else if (char === quote) {
+        quote = null;
+      }
+      continue;
+    }
+    if (char === '"' || char === "'") {
+      quote = char;
+      result += char;
+      continue;
+    }
+    const call = char === "f" ? functionCallAt(expression, index) : null;
+    if (call) {
+      result += `${call.name}(`;
+      index += call.length - 1;
+      continue;
+    }
+    result += char;
+  }
+  return result;
 }
 
 function identifierPath(node) {
@@ -120,41 +151,60 @@ function addLazyPaths(tree, paths, resolve) {
   }
 }
 
-function buildContext(scope, record) {
-  const explicit = scope.explicit;
-  const context = { ...explicit };
-  context.constants = constantValues(scope.runtime.artifact);
-  context.null = null;
-  context.$context = scope;
-  const tree = {};
-  addLazyPaths(
-    tree,
-    record.paths.filter((path) => !skippedPath(path, explicit)),
-    scope.resolve
-  );
-  for (const [key, value] of Object.entries(tree)) {
-    if (!Object.prototype.hasOwnProperty.call(context, key)) context[key] = value;
-  }
-  return context;
-}
+class ExpressionScope {
+  #runtime;
+  #resolve;
+  #explicit;
 
-export class ExpressionScope {
   constructor(runtime, resolve, explicit = {}) {
-    this.runtime = runtime;
-    this.resolve = resolve;
-    this.explicit = explicit;
+    this.#runtime = runtime;
+    this.#resolve = resolve;
+    this.#explicit = explicit;
   }
 
   withRow(row) {
-    return new ExpressionScope(this.runtime, this.resolve, { ...this.explicit, row });
+    return new ExpressionScope(this.#runtime, this.#resolve, { ...this.#explicit, row });
   }
 
   withValue(value) {
-    return new ExpressionScope(this.runtime, this.resolve, { ...this.explicit, $value: value });
+    return new ExpressionScope(this.#runtime, this.#resolve, {
+      ...this.#explicit,
+      $value: value,
+    });
   }
 
   evaluate(expression) {
-    return this.runtime.evaluate(expression, this);
+    return this.#runtime.evaluate(expression, this);
+  }
+
+  facade() {
+    const facade = { ...this.#explicit };
+    facades.add(facade);
+    Object.defineProperty(facade, "evaluate", {
+      enumerable: false,
+      value: (expression, row) => {
+        const target = row === undefined ? this : this.withRow(row);
+        return target.evaluate(expression);
+      },
+    });
+    return facade;
+  }
+
+  context(record) {
+    const context = { ...this.#explicit };
+    context.constants = constantValues(this.#runtime.artifact);
+    context.null = null;
+    context.$context = this.facade();
+    const tree = {};
+    addLazyPaths(
+      tree,
+      record.paths.filter((path) => !skippedPath(path, this.#explicit)),
+      (path) => this.#resolve(path)
+    );
+    for (const [key, value] of Object.entries(tree)) {
+      if (!Object.prototype.hasOwnProperty.call(context, key)) context[key] = value;
+    }
+    return context;
   }
 }
 
@@ -173,15 +223,15 @@ function evaluateFunction(runtime, fnId, args) {
 
 function splitScope(args) {
   const last = args[args.length - 1];
-  if (last instanceof ExpressionScope) {
-    return { scope: last, args: args.slice(0, -1) };
+  if (last && facades.has(last)) {
+    return { facade: last, args: args.slice(0, -1) };
   }
-  return { scope: null, args };
+  return { facade: null, args };
 }
 
-function rowScope(runtime, scope, row) {
-  const base = scope ?? runtime.scope(() => undefined, {});
-  return base.withRow(row);
+function evaluateRow(runtime, facade, row, expression) {
+  if (facade) return facade.evaluate(expression, row);
+  return runtime.scope(() => undefined, {}).withRow(row).evaluate(expression);
 }
 
 function requireCollection(collection, op) {
@@ -190,48 +240,47 @@ function requireCollection(collection, op) {
   }
 }
 
-function matches(runtime, scope, row, where) {
+function matches(runtime, facade, row, where) {
   if (where === null || where === undefined) return true;
-  return Boolean(rowScope(runtime, scope, row).evaluate(where));
+  return Boolean(evaluateRow(runtime, facade, row, where));
 }
 
-function sumField(runtime, collection, args, scope) {
+function sumField(runtime, collection, args, facade) {
   let total = 0;
   for (const row of collection) {
-    if (matches(runtime, scope, row, args[1])) total += row[args[0]];
+    if (matches(runtime, facade, row, args[1])) total += row[args[0]];
   }
   return total;
 }
 
-function sumExpr(runtime, collection, args, scope) {
+function sumExpr(runtime, collection, args, facade) {
   let total = 0;
   for (const row of collection) {
-    if (matches(runtime, scope, row, args[1])) {
-      total += rowScope(runtime, scope, row).evaluate(args[0]);
+    if (matches(runtime, facade, row, args[1])) {
+      total += evaluateRow(runtime, facade, row, args[0]);
     }
   }
   return total;
 }
 
-function weightedAvgField(runtime, collection, args, scope) {
+function weightedAvgField(runtime, collection, args, facade) {
   let numerator = 0;
   let denominator = 0;
   for (const row of collection) {
-    if (!matches(runtime, scope, row, args[2])) continue;
+    if (!matches(runtime, facade, row, args[2])) continue;
     numerator += row[args[0]] * row[args[1]];
     denominator += row[args[1]];
   }
   return denominator === 0 ? 0 : numerator / denominator;
 }
 
-function weightedAvgExpr(runtime, collection, args, scope) {
+function weightedAvgExpr(runtime, collection, args, facade) {
   let numerator = 0;
   let denominator = 0;
   for (const row of collection) {
-    if (!matches(runtime, scope, row, args[2])) continue;
-    const rowEvaluation = rowScope(runtime, scope, row);
-    const value = rowEvaluation.evaluate(args[0]);
-    const weight = rowEvaluation.evaluate(args[1]);
+    if (!matches(runtime, facade, row, args[2])) continue;
+    const value = evaluateRow(runtime, facade, row, args[0]);
+    const weight = evaluateRow(runtime, facade, row, args[1]);
     numerator += value * weight;
     denominator += weight;
   }
@@ -242,10 +291,10 @@ function finiteValue(value) {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-function minMaxField(op, runtime, collection, args, scope) {
+function minMaxField(op, runtime, collection, args, facade) {
   let result;
   for (const row of collection) {
-    if (!matches(runtime, scope, row, args[1])) continue;
+    if (!matches(runtime, facade, row, args[1])) continue;
     const value = row[args[0]];
     if (!finiteValue(value)) continue;
     if (result === undefined || (op === "min" ? value < result : value > result)) result = value;
@@ -253,11 +302,11 @@ function minMaxField(op, runtime, collection, args, scope) {
   return result;
 }
 
-function minMaxExpr(op, runtime, collection, args, scope) {
+function minMaxExpr(op, runtime, collection, args, facade) {
   let result;
   for (const row of collection) {
-    if (!matches(runtime, scope, row, args[1])) continue;
-    const value = rowScope(runtime, scope, row).evaluate(args[0]);
+    if (!matches(runtime, facade, row, args[1])) continue;
+    const value = evaluateRow(runtime, facade, row, args[0]);
     if (!finiteValue(value)) continue;
     if (result === undefined || (op === "min" ? value < result : value > result)) result = value;
   }
@@ -273,45 +322,45 @@ function registerFunctions(runtime) {
 function registerTransforms(runtime) {
   runtime.instance.addTransform("sum", (collection, ...rest) => {
     requireCollection(collection, "sum");
-    const { scope, args } = splitScope(rest);
-    return sumField(runtime, collection, args, scope);
+    const { facade, args } = splitScope(rest);
+    return sumField(runtime, collection, args, facade);
   });
   runtime.instance.addTransform("sum_expr", (collection, ...rest) => {
     requireCollection(collection, "sum_expr");
-    const { scope, args } = splitScope(rest);
-    return sumExpr(runtime, collection, args, scope);
+    const { facade, args } = splitScope(rest);
+    return sumExpr(runtime, collection, args, facade);
   });
   runtime.instance.addTransform("weighted_avg", (collection, ...rest) => {
     requireCollection(collection, "weighted_avg");
-    const { scope, args } = splitScope(rest);
-    return weightedAvgField(runtime, collection, args, scope);
+    const { facade, args } = splitScope(rest);
+    return weightedAvgField(runtime, collection, args, facade);
   });
   runtime.instance.addTransform("weighted_avg_expr", (collection, ...rest) => {
     requireCollection(collection, "weighted_avg_expr");
-    const { scope, args } = splitScope(rest);
-    return weightedAvgExpr(runtime, collection, args, scope);
+    const { facade, args } = splitScope(rest);
+    return weightedAvgExpr(runtime, collection, args, facade);
   });
   for (const op of ["min", "max"]) {
     runtime.instance.addTransform(op, (collection, ...rest) => {
       requireCollection(collection, op);
-      const { scope, args } = splitScope(rest);
-      return minMaxField(op, runtime, collection, args, scope);
+      const { facade, args } = splitScope(rest);
+      return minMaxField(op, runtime, collection, args, facade);
     });
     runtime.instance.addTransform(`${op}_expr`, (collection, ...rest) => {
       requireCollection(collection, `${op}_expr`);
-      const { scope, args } = splitScope(rest);
-      return minMaxExpr(op, runtime, collection, args, scope);
+      const { facade, args } = splitScope(rest);
+      return minMaxExpr(op, runtime, collection, args, facade);
     });
   }
   runtime.instance.addTransform("map_expr", (collection, ...rest) => {
     requireCollection(collection, "map_expr");
-    const { scope, args } = splitScope(rest);
-    return collection.map((row) => rowScope(runtime, scope, row).evaluate(args[0]));
+    const { facade, args } = splitScope(rest);
+    return collection.map((row) => evaluateRow(runtime, facade, row, args[0]));
   });
   runtime.instance.addTransform("filter_expr", (collection, ...rest) => {
     requireCollection(collection, "filter_expr");
-    const { scope, args } = splitScope(rest);
-    return collection.filter((row) => Boolean(rowScope(runtime, scope, row).evaluate(args[0])));
+    const { facade, args } = splitScope(rest);
+    return collection.filter((row) => Boolean(evaluateRow(runtime, facade, row, args[0])));
   });
 }
 
@@ -331,7 +380,7 @@ function createRuntime(artifact) {
     },
     evaluate(expression, scope) {
       const record = runtime.compile(expression);
-      return record.compiled.evalSync(buildContext(scope, record));
+      return record.compiled.evalSync(scope.context(record));
     },
     scope(resolve, explicit = {}) {
       return new ExpressionScope(runtime, resolve, explicit);

@@ -116,8 +116,54 @@ test("rejects derived inputs, output, and expression drift", () => {
   assert.throws(() => validateArtifact(unknownFn), /unknown function "nope"/);
 
   const unknownNested = clone();
-  node(unknownNested, "derived").expr = "(batch.target_abv + functions.nope())";
+  const nestedDerived = node(unknownNested, "derived");
+  nestedDerived.inputs = { value: "batch.target_abv" };
+  nestedDerived.expr = "(value + functions.nope())";
   assert.throws(() => validateArtifact(unknownNested), /unknown function "nope"/);
+});
+
+test("rejects undeclared derived dependencies", () => {
+  const doc = clone();
+  const derived = node(doc, "derived");
+  derived.inputs = {};
+  derived.expr = "batch.target_abv";
+  assert.throws(
+    () => validateArtifact(doc),
+    /Derived ".*" expr references undeclared input "batch.target_abv"/
+  );
+});
+
+test("rejects function bodies that reference node paths", () => {
+  const doc = clone();
+  doc.functions.probe = { params: [], returns: "abv", body: "batch.target_abv" };
+  assert.throws(
+    () => validateArtifact(doc),
+    /Function "probe" body references undeclared input "batch.target_abv"/
+  );
+});
+
+test("rejects malformed transform arity, subjects, and expression bodies", () => {
+  const cases = [
+    ['(rows | sum())', /transform "sum" expects/],
+    ['(rows | weighted_avg("pct"))', /transform "weighted_avg" expects/],
+    ['(rows | sum("pct", 123))', /transform "sum" expects/],
+    ['(rows | sum_expr("row.pct"))', /transform "sum_expr" expects/],
+    ['(rows | sum_expr(123, null, $context))', /expression must be a non-empty string/],
+    ['(rows | map_expr("row.pct", "row.pct > 0", $context))', /does not accept a where predicate/],
+  ];
+  for (const [expr, message] of cases) {
+    const doc = clone();
+    const derived = node(doc, "derived");
+    derived.inputs = { rows: "grist.major_malts" };
+    derived.expr = expr;
+    assert.throws(() => validateArtifact(doc), message, expr);
+  }
+
+  const scalar = clone();
+  const derived = node(scalar, "derived");
+  derived.inputs = { rows: "batch.target_abv" };
+  derived.expr = '(rows | sum("pct"))';
+  assert.throws(() => validateArtifact(scalar), /subject must be a collection/);
 });
 
 test("rejects boundary binding, input, and output drift", () => {

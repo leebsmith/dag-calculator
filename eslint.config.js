@@ -196,9 +196,10 @@ const FILE_LINE_PINS = {
   "adapters/stepAdapter.js": 459,
   "views/producer/stylePlot.js": 422,
   "engine/dag.js": 366,
+  "engine/expression.js": 404,
   "engine/fermentation.js": 506,
   "engine/units.js": 404,
-  "engine/validate.js": 435,
+  "engine/validate.js": 541,
   "store/persistence.js": 414,
   "store/recipes.js": 463,
 };

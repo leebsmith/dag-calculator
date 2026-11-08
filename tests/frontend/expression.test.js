@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
+import { normalizeExpression } from "../../frontend/src/engine/expression.js";
 import { runtimeFor } from "../../frontend/src/engine/index.js";
 import { loadArtifact } from "./helpers.js";
 
@@ -30,6 +31,34 @@ test("flat and namespaced artifact function calls resolve", () => {
   const expected = runtime.callFunction("extract_yield_ldk", [0.8]);
   assert.equal(runtime.evaluate("extract_yield_ldk(0.8)", scope()), expected);
   assert.equal(runtime.evaluate("functions.extract_yield_ldk(0.8)", scope()), expected);
+});
+
+test("normalizeExpression only rewrites function calls outside string literals", () => {
+  assert.equal(
+    normalizeExpression("functions.extract_yield_ldk(0.8)"),
+    "extract_yield_ldk(0.8)"
+  );
+  assert.equal(
+    normalizeExpression('"functions.extract_yield_ldk("'),
+    '"functions.extract_yield_ldk("'
+  );
+  assert.equal(
+    normalizeExpression("'functions.extract_yield_ldk('"),
+    "'functions.extract_yield_ldk('"
+  );
+  assert.equal(
+    normalizeExpression('"functions.foo(" + functions.extract_yield_ldk(0.8)'),
+    '"functions.foo(" + extract_yield_ldk(0.8)'
+  );
+});
+
+test("$context exposes aliases and an opaque evaluate handle", () => {
+  const s = scope(() => undefined, { x: 1 });
+  assert.equal(runtime.evaluate("$context.x", s), 1);
+  assert.equal(runtime.evaluate("$context.runtime", s), undefined);
+  assert.equal(runtime.evaluate("$context.explicit", s), undefined);
+  assert.equal(runtime.evaluate("$context.artifact", s), undefined);
+  assert.equal(typeof runtime.evaluate("$context.evaluate", s), "function");
 });
 
 test("and/or/ternary short-circuit the untaken branch", () => {

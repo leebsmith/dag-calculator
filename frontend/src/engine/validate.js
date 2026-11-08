@@ -89,6 +89,7 @@ function validateRelationsAndFunctions(artifact, constants, functions) {
     const aliases = Object.fromEntries(fn.params.map((param) => [param, true]));
     checkExprIds(artifact, fn.body, constants, functions, `Function "${id}" body`, {
       aliases,
+      allowNodeRefs: false,
     });
   }
   for (const relation of artifact.relations ?? []) {
@@ -149,6 +150,7 @@ function validateCollection(artifact, id, node, dimensions, taxonomies, constant
     checkExprIds(artifact, spec.expr, constants, functions, `${label} expr`, {
       aliases: spec.inputs,
       rowSchema: schema,
+      allowNodeRefs: false,
     });
   }
 }
@@ -163,6 +165,7 @@ function validateDerived(artifact, id, node, constants, functions) {
   checkOutput(node, `Derived "${id}"`);
   checkExprIds(artifact, node.expr, constants, functions, `Derived "${id}" expr`, {
     aliases: node.inputs,
+    allowNodeRefs: false,
   });
 }
 
@@ -252,18 +255,18 @@ const TRANSFORM_NAMES = new Set([
   "filter_expr",
 ]);
 const FIELD_TRANSFORMS = {
-  sum: { fields: [1], where: 2 },
-  min: { fields: [1], where: 2 },
-  max: { fields: [1], where: 2 },
-  weighted_avg: { fields: [1, 2], where: 3 },
+  sum: { fields: 1 },
+  min: { fields: 1 },
+  max: { fields: 1 },
+  weighted_avg: { fields: 2 },
 };
 const EXPR_TRANSFORMS = {
-  sum_expr: { expressions: [1], where: 2 },
-  min_expr: { expressions: [1], where: 2 },
-  max_expr: { expressions: [1], where: 2 },
-  weighted_avg_expr: { expressions: [1, 2], where: 3 },
-  map_expr: { expressions: [1], where: 2 },
-  filter_expr: { expressions: [1], where: 2 },
+  sum_expr: { expressions: 1, where: true },
+  min_expr: { expressions: 1, where: true },
+  max_expr: { expressions: 1, where: true },
+  weighted_avg_expr: { expressions: 2, where: true },
+  map_expr: { expressions: 1, where: false },
+  filter_expr: { expressions: 1, where: false },
 };
 
 function identifierPath(node) {
@@ -275,6 +278,14 @@ function identifierPath(node) {
 
 function literalValue(node) {
   return node?.type === "Literal" ? node.value : undefined;
+}
+
+function isContextArgument(node) {
+  return node?.type === "Identifier" && !node.from && node.value === "$context";
+}
+
+function isNullArgument(node) {
+  return node?.type === "Identifier" && !node.from && node.value === "null";
 }
 
 function walkCalls(node, visit) {
@@ -290,57 +301,147 @@ function walkCalls(node, visit) {
   }
 }
 
-function transformRowSchema(artifact, call, aliases) {
+function transformSubject(artifact, call, aliases, label) {
   const path = identifierPath(call.args?.[0]);
-  if (!path) return null;
+  if (!path) {
+    throw new Error(`${label} transform "${call.name}" subject must be a collection path`);
+  }
   const target = aliases[path] ?? path;
   const ref = resolveReference(artifact, target);
-  if (ref?.kind !== "node" || ref.suffix.length > 0) return null;
-  const node = artifact.nodes[ref.nodeId];
-  if (node?.kind !== "collection") return null;
-  return artifact.primitive_schemas?.[node.item_schema] ?? null;
+  const node = ref?.kind === "node" && ref.suffix.length === 0 ? artifact.nodes[ref.nodeId] : null;
+  if (node?.kind !== "collection") {
+    throw new Error(`${label} transform "${call.name}" subject must be a collection`);
+  }
+  return artifact.primitive_schemas?.[node.item_schema] ?? {};
 }
 
-function checkTransformCall(artifact, call, label, constants, functions, aliases) {
+function requireContext(call, label) {
+  const args = call.args ?? [];
+  if (!isContextArgument(args[args.length - 1])) {
+    throw new Error(`${label} transform "${call.name}" requires $context`);
+  }
+}
+
+function checkFieldArity(call, fields, label) {
+  const count = (call.args ?? []).length;
+  if (count === fields + 1) return false;
+  if (count === fields + 3) {
+    requireContext(call, label);
+    return true;
+  }
+  throw new Error(
+    `${label} transform "${call.name}" expects ${fields + 1} arguments or ` +
+      `${fields + 3} with a where predicate and $context, got ${count}`
+  );
+}
+
+function checkExprArity(call, expressions, label) {
+  const expected = expressions + 3;
+  const count = (call.args ?? []).length;
+  if (count !== expected) {
+    throw new Error(
+      `${label} transform "${call.name}" expects ${expected} arguments, got ${count}`
+    );
+  }
+  requireContext(call, label);
+}
+
+function checkFieldArgument(ast, rowSchema, label, name) {
+  const field = literalValue(ast);
+  if (typeof field !== "string" || field.trim() === "") {
+    throw new Error(`${label} transform "${name}" requires a field name`);
+  }
+  if (!(field in rowSchema)) {
+    throw new Error(`${label} references unknown row field "row.${field}"`);
+  }
+}
+
+function checkExpressionArgument(ast, context) {
+  const expression = literalValue(ast);
+  if (typeof expression !== "string" || expression.trim() === "") {
+    throw new Error(
+      `${context.label} transform "${context.name}" expression must be a non-empty string`
+    );
+  }
+  checkExprIds(
+    context.artifact,
+    expression,
+    context.constants,
+    context.functions,
+    `${context.label} transform "${context.name}"`,
+    {
+      aliases: context.aliases,
+      rowSchema: context.rowSchema,
+      allowNodeRefs: context.allowNodeRefs,
+    }
+  );
+}
+
+function checkWhereArgument(ast, context) {
+  if (isNullArgument(ast)) return;
+  const where = literalValue(ast);
+  if (typeof where !== "string" || where.trim() === "") {
+    throw new Error(
+      `${context.label} transform "${context.name}" where must be a string or null`
+    );
+  }
+  checkExprIds(
+    context.artifact,
+    where,
+    context.constants,
+    context.functions,
+    `${context.label} transform where`,
+    {
+      aliases: context.aliases,
+      rowSchema: context.rowSchema,
+      allowNodeRefs: context.allowNodeRefs,
+    }
+  );
+}
+
+function checkTransformCall(artifact, call, label, constants, functions, aliases, options = {}) {
+  const { allowNodeRefs = true } = options;
   if (!TRANSFORM_NAMES.has(call.name)) {
     throw new Error(`${label} references unknown transform "${call.name}"`);
   }
   const args = call.args ?? [];
-  const rowSchema = transformRowSchema(artifact, call, aliases);
+  const rowSchema = transformSubject(artifact, call, aliases, label);
+  const context = {
+    artifact,
+    label,
+    name: call.name,
+    constants,
+    functions,
+    aliases,
+    rowSchema,
+    allowNodeRefs,
+  };
   const fieldForm = FIELD_TRANSFORMS[call.name];
   if (fieldForm) {
-    for (const index of fieldForm.fields) {
-      const field = literalValue(args[index]);
-      if (rowSchema && typeof field === "string" && !(field in rowSchema)) {
-        throw new Error(`${label} references unknown row field "row.${field}"`);
-      }
+    const hasWhere = checkFieldArity(call, fieldForm.fields, label);
+    for (let index = 1; index <= fieldForm.fields; index += 1) {
+      checkFieldArgument(args[index], rowSchema, label, call.name);
     }
-    checkWhere(args[fieldForm.where], artifact, label, constants, functions, aliases, rowSchema);
+    if (hasWhere) checkWhereArgument(args[fieldForm.fields + 1], context);
     return;
   }
   const exprForm = EXPR_TRANSFORMS[call.name];
-  for (const index of exprForm.expressions) {
-    const expression = literalValue(args[index]);
-    if (typeof expression !== "string") continue;
-    checkExprIds(artifact, expression, constants, functions, `${label} transform "${call.name}"`, {
-      aliases,
-      rowSchema,
-    });
+  checkExprArity(call, exprForm.expressions, label);
+  for (let index = 1; index <= exprForm.expressions; index += 1) {
+    checkExpressionArgument(args[index], context);
   }
-  checkWhere(args[exprForm.where], artifact, label, constants, functions, aliases, rowSchema);
-}
-
-function checkWhere(ast, artifact, label, constants, functions, aliases, rowSchema) {
-  const where = literalValue(ast);
-  if (typeof where !== "string") return;
-  checkExprIds(artifact, where, constants, functions, `${label} transform where`, {
-    aliases,
-    rowSchema,
-  });
+  const whereAst = args[exprForm.expressions + 1];
+  if (!exprForm.where) {
+    if (!isNullArgument(whereAst)) {
+      throw new Error(`${label} transform "${call.name}" does not accept a where predicate`);
+    }
+    return;
+  }
+  checkWhereArgument(whereAst, context);
 }
 
 function checkExprIds(artifact, expression, constants, functions, label, options = {}) {
-  const { aliases = {}, rowSchema = null } = options;
+  const { aliases = {}, rowSchema = null, allowNodeRefs = true } = options;
   const record = compileExpression(expression);
   for (const path of record.paths) {
     if (path === "$value" || path === "$context" || path === "constants") continue;
@@ -361,6 +462,9 @@ function checkExprIds(artifact, expression, constants, functions, label, options
       continue;
     }
     if (Object.prototype.hasOwnProperty.call(aliases, path)) continue;
+    if (!allowNodeRefs) {
+      throw new Error(`${label} references undeclared input "${path}"`);
+    }
     checkRefResolves(artifact, path, label);
   }
   walkCalls(record.ast, (call) => {
@@ -368,7 +472,9 @@ function checkExprIds(artifact, expression, constants, functions, label, options
       throw new Error(`${label} references unknown function "${call.name}"`);
     }
     if (call.pool === "transforms") {
-      checkTransformCall(artifact, call, label, constants, functions, aliases);
+      checkTransformCall(artifact, call, label, constants, functions, aliases, {
+        allowNodeRefs,
+      });
     }
   });
 }
