@@ -154,10 +154,11 @@
       "context": "",
       "declarations": "color: var(--sys-text-secondary)",
       "selectors": [
+        ".form-input.is-seeded, .form-select.is-seeded",
         ".finding-message",
         ".text-secondary"
       ],
-      "reason": "Finding messages share the secondary-text colour utility."
+      "reason": "Seeded controls, finding messages, and the secondary-text utility share the secondary-text colour."
     },
     {
       "context": "",
