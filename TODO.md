@@ -161,6 +161,13 @@ remaining section; the presence predicates are in `plans/report-renderer.md`
 - [ ] **Phase 5: Edge Cases (`batch-setup`)**
   - **Blocker:** Requires custom change handlers for `type="file"` inputs and support for multiple dynamic hints (e.g., rendering a filename alongside a static HTML hint).
 
+### UI Component Encapsulation Backlog
+
+- [ ] **Phase 2: Selection Control Base Normalization**
+  - **Context:** Phase 1 extracted the active state into `.segmented-item.is-active`, but items still rely on legacy geometry classes (`.filter-pill`, `.map-chip`).
+  - **Task:** Promote the item bases to unified modifiers (e.g., `.segmented-item--pill`, `.segmented-item--chip`, `.segmented-item--button`). Replace all instances of `.filter-pill` and `.map-chip`.
+  - **Blocker:** Requires a dedicated visual QA pass to verify padding, margins, and flex-gap spacing across the library, chooser, map suggestions, and yeast picker.
+
 ### Low priority
 
 * **Shape-pin burn-down** — the complexity ratchet and its guard landed with the
