@@ -55,12 +55,14 @@ seam, solvers, Firebase auth, and Firestore persistence.
     make test-affected  # only those suites (BASE=<ref>, default main)
     make test-guards    # the guard suites only (artifact, seed and documentation edits)
     make test-fuzz      # seeded water-solver invariant sweep (CASES=200 SEED=...)
+    make test-visual    # local Chrome container snapshot vs BASE=<ref> (not in CI)
     make verify         # check + test + production build (hermetic)
     make verify-full    # verify + oracle-snapshot check against the legacy checkout
 
 CI runs `make check`, `make test`, and `make build` on every push and pull request
-(`.github/workflows/verify.yml`). `make test-fuzz` and `make test-oracle` stay
-local: one is generative, the other reads the legacy checkout.
+(`.github/workflows/verify.yml`). `make test-fuzz`, `make test-oracle` and
+`make test-visual` stay local: one is generative, one reads the legacy checkout,
+and one depends on the local browser and fonts.
 
 `make quick` is the local loop, not the gate: it runs `make check` and then only
 the suites the working diff can reach. The selector is a pre-filter — imports,

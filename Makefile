@@ -26,7 +26,7 @@ EMULATOR_IMPORT := $(wildcard $(EMULATOR_DATA)/firebase-export-metadata.json)
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle test-visual coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products seeds-whirlpool-notes \
         scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
         report-dev report-pages dot
@@ -44,6 +44,7 @@ help:
 	@echo "  test-guards     The guard suites only"
 	@echo "  test-fuzz       Seeded water-solver invariant sweep (CASES=200 SEED=...)"
 	@echo "  test-oracle     Check the oracle snapshot against the legacy checkout"
+	@echo "  test-visual     Local Chrome container snapshot vs BASE=<ref> (not in CI)"
 	@echo "  coverage        Frontend + backend coverage reports"
 	@echo "  verify          check + test + production build (hermetic)"
 	@echo "  verify-full     verify + test-oracle (needs the legacy checkout)"
@@ -167,6 +168,12 @@ quick: check test-affected
 
 test-oracle:
 	node tests/conformance/emit-oracle-fixture.mjs --check
+
+# Local Chrome snapshot of the container markup and stylesheet. Outputs to
+# .local/visual; deliberately outside `verify` because computed styles and
+# pixels depend on the local browser and fonts.
+test-visual:
+	node scripts/visual-snapshot.mjs $(if $(BASE),--base $(BASE),)
 
 # Generative search, deliberately outside `verify`: the case count is a
 # parameter and a failure is a seed to reproduce, not a diff to review.
