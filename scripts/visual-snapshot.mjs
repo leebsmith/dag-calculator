@@ -58,16 +58,23 @@ export const SNAPSHOT_PROPS = [
 export const SNAPSHOT_EXPRESSION = `(() => {
   const props = ${JSON.stringify(SNAPSHOT_PROPS)};
   const roots = [...document.querySelectorAll("[data-fixture-file]")];
-  return roots.map((root) => ({
-    file: root.dataset.fixtureFile,
-    elements: [root, ...root.querySelectorAll("*")].map((el, index) => {
-      const style = getComputedStyle(el);
-      const values = {};
-      for (const prop of props) values[prop] = style.getPropertyValue(prop);
-      const rect = el.getBoundingClientRect();
-      return { index, props: values, rect: [rect.x, rect.y, rect.width, rect.height] };
-    }),
-  }));
+  return roots.map((root) => {
+    const origin = root.getBoundingClientRect();
+    return {
+      file: root.dataset.fixtureFile,
+      elements: [root, ...root.querySelectorAll("*")].map((el, index) => {
+        const style = getComputedStyle(el);
+        const values = {};
+        for (const prop of props) values[prop] = style.getPropertyValue(prop);
+        const rect = el.getBoundingClientRect();
+        return {
+          index,
+          props: values,
+          rect: [rect.x - origin.x, rect.y - origin.y, rect.width, rect.height],
+        };
+      }),
+    };
+  });
 })()`;
 
 export function stripAlpine(source) {
