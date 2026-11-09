@@ -122,11 +122,6 @@ Deferred from the 2026-11 CSS rationalization
 * **Container composition** — extract `ui-card.html` / `ui-region.html` so step
   partials stop copying the card header/body; this is the structural anti-drift
   lever and deserves its own plan.
-* **Surface tint, after the first visual review** — the hierarchy pass keeps
-  surfaces unchanged and promotes boundaries only. If the card sections still
-  read flat, set `card-section` to `surface-subtle` and/or add header bands; the
-  contrast guard already pins the boundary, so this is a two-line experiment.
-
 ### Flavor charge
 
 A batch addition that carries flavour and aroma but **no IBU**, dosed per volume

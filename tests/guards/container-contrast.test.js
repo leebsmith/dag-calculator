@@ -58,6 +58,15 @@ function contrast(a, b) {
   return (high + 0.05) / (low + 0.05);
 }
 
+function lightness(hex) {
+  const y = luminance(hex);
+  return y > 0.008856 ? 116 * Math.cbrt(y) - 16 : 903.3 * y;
+}
+
+function separation(a, b) {
+  return Math.abs(lightness(a) - lightness(b));
+}
+
 const { light, dark } = tokenMaps();
 const themes = [
   ["light", resolver(light)],
@@ -84,5 +93,15 @@ for (const [name, resolve] of themes) {
       const ratio = contrast(resolve("--sys-text-secondary"), resolve(`--sys-${surface}`));
       assert.ok(ratio >= TEXT_MIN, `${surface} text ${ratio.toFixed(2)} < ${TEXT_MIN}`);
     }
+  });
+
+  test(`the section surface separates from the card in ${name}`, () => {
+    const delta = separation(resolve("--sys-surface-subtle"), resolve("--sys-surface-default"));
+    assert.ok(delta >= 3, `section delta L* ${delta.toFixed(1)} < 3`);
+  });
+
+  test(`the summary strip separates from the section in ${name}`, () => {
+    const delta = separation(resolve("--sys-surface-elevated"), resolve("--sys-surface-subtle"));
+    assert.ok(delta >= 1.5, `strip delta L* ${delta.toFixed(1)} < 1.5`);
   });
 }

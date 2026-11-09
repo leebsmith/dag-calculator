@@ -613,6 +613,10 @@ details[open] > summary::before {
   border: 1px solid var(--sys-border-subtle);
 }
 
+.card-section .summary-strip {
+  background-color: var(--sys-surface-elevated);
+}
+
 .summary-strip-item {
   display: flex;
   flex-direction: column;
@@ -2058,7 +2062,7 @@ details[open] > summary::before {
 /* --- Boxed regions --- */
 
 .card-section {
-  background-color: var(--sys-surface-canvas);
+  background-color: var(--sys-surface-subtle);
   border: 1px solid var(--sys-border-default);
   border-radius: var(--radius-lg);
   padding: var(--space-4);

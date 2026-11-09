@@ -35,7 +35,7 @@
     {
       "selector": ".card-section",
       "declarations": [
-        "background-color: var(--sys-surface-canvas)",
+        "background-color: var(--sys-surface-subtle)",
         "border-radius: var(--radius-lg)",
         "border: 1px solid var(--sys-border-default)",
         "display: flex",
@@ -71,6 +71,12 @@
         "align-items: center",
         "display: flex",
         "gap: var(--space-1-5)"
+      ]
+    },
+    {
+      "selector": ".card-section .summary-strip",
+      "declarations": [
+        "background-color: var(--sys-surface-elevated)"
       ]
     },
     {
