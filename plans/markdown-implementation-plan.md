@@ -17,6 +17,25 @@ an advisory supported-subset validator, not a renderer.
 
 <!-- claims: proposed prose.unsupported.table prose.unsupported.image prose.unsupported.html prose.unsafe.link prose.too_long prose.too_deep prose.too_many_nodes prose.check_failed -->
 
+## Execution checklist
+
+- [ ] Add `markdown-it-py` as a backend runtime dependency.
+- [ ] Implement the backend markdown parser, AST normalizer, limits, safe-link rule, and report/session enrichers in `backend/app/services/prose.py`.
+- [ ] Add the recursive Typst prose renderer in `backend/app/templates/lib/prose.typ`, with a text fallback and same-font `raw` code.
+- [ ] Wire `hops.typ`, `process.typ`, `checklist.typ`, and `brew_session.typ` through the prose helpers.
+- [ ] Enrich report and session payloads in `backend/app/services/report_render.py` and add the prose digest to the render key.
+- [ ] Add the local report-bundle enrichment CLI and wire it into `make report-dev` and `make report-pages`.
+- [ ] Change the hopping-strategy producer to emit one raw-markdown row.
+- [ ] Add `markdown-it` to the frontend and implement the memoized subset validator in `frontend/src/markdown/validate.js`.
+- [ ] Add the prose-validation installer, register it, and wire it into `stepAdapter.js`.
+- [ ] Show advisory validation lines for hopping strategy, process notes, recipe checklist notes, and live session notes/skip reasons.
+- [ ] Make process notes use a multiline textarea in the collection table.
+- [ ] Add backend prose and render tests, and update the report-bundle fixture and existing hop-strategy tests.
+- [ ] Add frontend validator tests and shared prose conformance fixtures.
+- [ ] Add `docs/prose.md` and update `docs/report-renderer.md`, `docs/typst-notes.md`, and `docs/report-bundle.md`.
+- [ ] Run lint, boundary checks, the full `make test` gate, and `make build`; fix failures.
+- [ ] Move the plan to `plans/archive/2026-11/` and commit the completed work.
+
 ## 1. Goal
 
 Freeform brewing prose — the hopping strategy, process notes, and brew-day
