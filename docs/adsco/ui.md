@@ -363,6 +363,11 @@ One name and one element per purpose. The guard is
 | Static field label | `field-label` | `span` |
 | Row actions | `row-actions` | `div` |
 
+`sheet` always carries a modifier: there is no base rule, so a bare `sheet`
+would be unstyled. `segmented-control` is a `div` when it filters within a view
+and a `nav` when it switches views (the import stages); the element follows the
+navigation role, not the class.
+
 The page card, the boxed region, the unboxed region and the sheet are the four
 structural levels; `sheet` is the only one that is centred rather than placed in
 the document flow. Distinct elevation roles keep their own names:

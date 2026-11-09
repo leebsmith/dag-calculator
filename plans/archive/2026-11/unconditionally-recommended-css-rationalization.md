@@ -10,9 +10,9 @@ status: shipped
 
 # Unconditionally recommended CSS rationalization
 
-Status: proposed. This file records the part of the UI-container rationalization
-that holds regardless of the naming, sequencing, or tooling choices. The open
-choices are listed in §6; none of them changes §2.
+Status: shipped. This file records the part of the UI-container rationalization
+that holds regardless of the naming, sequencing, or tooling choices. The choices
+are recorded as settled in §9 and the shipped evidence is in §10.
 
 ## 1. Why
 
@@ -151,7 +151,9 @@ dependency is needed.
   fail.
 - No Chrome, no screenshots, no baselines in CI.
 
-## 6. Open decisions
+## 6. Decisions (settled by §9)
+
+The table below is retained as the option record; §9 records the choices made.
 
 | Decision | Options |
 | --- | --- |
@@ -222,3 +224,33 @@ harness is used once and not committed; corrections are deferred.
       computed-style fixture; both must be empty.
 - [x] Gates: make check, make test, make build.
 - [x] Archive this plan and commit the completed pass.
+
+## 10. Postscript — shipped evidence
+
+Proof, recorded after the pass: 24 selector pairs with 0 declaration changes;
+2,334 elements with 0 class-mapping failures; 43 partials and 11,613 elements
+with 0 computed-style and 0 layout diffs. The fixture was generated from the
+partials before and after, stripped of Alpine directives, with animations and
+transitions disabled, and compared in Chrome 157 headless over computed styles
+and bounding rects.
+
+Two recipes deliberately stayed separate because merging them would have moved
+pixels:
+
+- `pane-title` stayed for the import panes. The old `import-section-title` set
+  no font size, so an `h3` rendered at the user-agent 18.72px while an `h4`
+  rendered at 16px; one `region-title` size could not preserve both.
+- `group-title` stayed. `eyebrow` carries `margin: 0`, while the group heading
+  relied on the user-agent heading margins.
+
+**Superseded decisions.** `plans/archive/2026-10/css-consolidation.md` Q1 kept
+`library-panel` and `signin-panel` as separate elevation roles and declined a
+panel primitive. This pass consolidated both into the `sheet` block but kept
+each rule intact as `sheet--library` and `sheet--signin`, so the elevation
+recipes did not merge. `plans/archive/2026-11/hops-card-sections.md` kept
+`section-title` for drawer headers; this pass renamed that vocabulary to
+`region-title` and kept the drawer use, preserving the declaration set.
+
+**Harness deviation.** The visual fixture and comparator were used once and not
+committed, which departs from invariant #4. The durable artifact is the static
+container contract; committing a local visual harness remains in `TODO.md`.

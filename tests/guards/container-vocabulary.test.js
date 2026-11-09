@@ -200,6 +200,13 @@ test("container modifiers carry their block", () => {
           failures.push(`${file}:${tag.line}: ${modifier} needs ${base}`);
         }
       }
+      if (
+        tag.classes.includes("sheet") &&
+        !tag.classes.includes("sheet--library") &&
+        !tag.classes.includes("sheet--signin")
+      ) {
+        failures.push(`${file}:${tag.line}: sheet needs a sheet-- library or signin modifier`);
+      }
     }
   }
   assert.deepEqual(failures, [], failures.join("\n"));
