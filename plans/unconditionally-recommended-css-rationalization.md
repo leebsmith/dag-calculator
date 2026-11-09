@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
 gate: every rename commit preserves matched declarations and layout; make check and make test green
-status: proposed (invariant core agreed; naming, sequencing and tooling open)
+status: active (invariant core agreed; execution checklist in §9)
 ---
 
 # Unconditionally recommended CSS rationalization
@@ -183,3 +183,38 @@ The invariant core is satisfied when:
   snapshot;
 - corrections are filed separately with their own evidence;
 - make check and make test are green on every commit.
+
+## 9. Execution checklist
+
+The open decisions are settled for this pass as follows: page card is `card`;
+sheets are `sheet` with `--library` and `--signin`; `region-title` is 14px with a
+`--pane` modifier that keeps the 16px import size; `landing-heading` keeps its
+name; the guard lands with the rename; the visual harness is used once and not
+committed; corrections are deferred.
+
+- [ ] Record the baseline: before copies of `frontend/src/style.css` and the
+      partials, plus the container inventory used by the proof.
+- [ ] Page cards: `step-card` -> `card`, `step-card-header` -> `card-header`,
+      `step-card-content` -> `card-body`; delete the dormant `card` rule.
+- [ ] Sheets: `library-panel` -> `sheet--library`, `signin-panel` ->
+      `sheet--signin`, `library-overlay` -> `sheet-overlay`.
+- [ ] Boxed regions: `synthesized-card` -> `card-section`, the existing
+      `card-section` -> `card-section--collapsible`, `synthesized-header` ->
+      `card-section-header`, `synthesized-actions` -> `card-section-actions`;
+      every boxed region becomes a `section`.
+- [ ] Unboxed regions: `library-section` -> `region--divided`,
+      `landing-imports` and `step-group` -> `region`, `map-section` ->
+      `region--spaced`.
+- [ ] Titles: `section-title` and `library-heading` -> `region-title`,
+      `import-section-title` -> `region-title--pane`, `synthesized-title` ->
+      `eyebrow`, `group-title` -> `eyebrow--group`.
+- [ ] Leaves: `table-empty-cell` -> `empty-state`, `catalog-drawer-*` ->
+      `catalog-pane-*`, `div.table-action-cell` -> `row-actions`,
+      `span.form-label` -> `field-label`.
+- [ ] Guards: boundary-aware retired-name matching, a container contract and
+      recipe registry, and the CSS allowlist update.
+- [ ] Docs: add the container vocabulary to `docs/adsco/ui.md`.
+- [ ] Proof: static declaration and element mapping diff, plus a Chrome
+      computed-style fixture; both must be empty.
+- [ ] Gates: make check, make test, make build.
+- [ ] Archive this plan and commit the completed pass.
