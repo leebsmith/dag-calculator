@@ -137,6 +137,7 @@ function collectionField(artifact, registry, step, entry, unitMode = {}) {
     // Optional bespoke add-row flow (e.g. open a catalog picker modal).
     addAction: entry.addAction ?? null,
     addLabel: entry.addLabel ?? "Add row",
+    addLabelMore: entry.addLabelMore ?? entry.addLabel ?? "Add row",
     prose: entry.prose === true,
     target: { scope: "collection", nodeId: entry.collection },
   };

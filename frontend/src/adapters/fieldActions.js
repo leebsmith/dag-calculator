@@ -292,6 +292,22 @@ export function createFieldActions({
       return normalizedRowShares(rows);
     },
 
+    collectionCanAdd(field) {
+      if (!field.prose) return true;
+      const rows = field.rows ?? [];
+      const last = rows[rows.length - 1];
+      if (!last) return true;
+      return Object.values(last).some(
+        (value) => typeof value === "string" && value.trim() !== ""
+      );
+    },
+
+    collectionAddLabel(field) {
+      const rows = field.rows ?? [];
+      if (!field.prose || rows.length === 0) return field.addLabel;
+      return field.addLabelMore ?? field.addLabel;
+    },
+
     // Dispatch a collection-table's add-row action: a bespoke handler named by
     // the manifest, else the generic blank-row add.
     runCollectionAdd(field) {
@@ -303,4 +319,4 @@ export function createFieldActions({
   return actions;
 }
 
-export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "commitCellText", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];
+export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "commitCellText", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd", "collectionCanAdd", "collectionAddLabel"];

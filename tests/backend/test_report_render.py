@@ -241,6 +241,23 @@ def test_process_notes_render_markdown() -> None:
     assert "**PROCESSBOLDSENTINEL**" not in text
 
 
+def test_process_notes_render_tables() -> None:
+    data = bundle_dict()
+    data["formatted_tables"]["batch.process_notes"][0]["note"]["text"] = (
+        "| Header One | Header Two |\n"
+        "| --- | --- |\n"
+        "| TableCellOne | TableCellTwo |"
+    )
+
+    rendered = render(seal_bundle(data), parse_spec(sections="process"))
+    text = _pdf_text(rendered.data)
+
+    assert "Header One" in text
+    assert "TableCellOne" in text
+    assert "TableCellTwo" in text
+    assert "| --- |" not in text
+
+
 def test_hop_strategy_renders_markdown() -> None:
     data = bundle_dict()
     data["formatted_tables"]["report.hop_strategy"][0]["text"]["text"] = (

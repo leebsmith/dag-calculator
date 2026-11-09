@@ -45,6 +45,31 @@
     } else {
       list(..items)
     }
+  } else if kind == "table" {
+    let columns = node.at("header", default: ()).len()
+    if columns == 0 {
+      ""
+    } else {
+      let align = node.at("align", default: ()).map(kind => if kind == "center" {
+        center
+      } else if kind == "right" {
+        right
+      } else {
+        left
+      })
+      let header = node.at("header", default: ()).map(cell => cell.map(prose-node).join())
+      let rows = node.at("rows", default: ()).map(row =>
+        row.map(cell => cell.map(prose-node).join())
+      ).flatten()
+      table(
+        columns: columns,
+        align: align,
+        stroke: none,
+        inset: (x: 3pt, y: 2pt),
+        table.header(..header),
+        ..rows,
+      )
+    }
   } else if kind == "quote" {
     quote(block: true, node.at("children", default: ()).map(prose-node).join())
   } else if kind == "code" {

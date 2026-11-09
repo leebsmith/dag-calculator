@@ -50,6 +50,42 @@ def test_raw_html_stays_text() -> None:
     ]
 
 
+def test_gfm_tables_are_normalized() -> None:
+    ast = prose.parse_markdown(
+        "| Left | Center | Right |\n"
+        "| :--- | :----: | ----: |\n"
+        "| one | **two** | `3` |\n"
+        "| four | five | six |\n"
+    )
+    table = ast["children"][0]
+    assert table["type"] == "table"
+    assert table["align"] == ["left", "center", "right"]
+    assert len(table["header"]) == 3
+    assert table["header"][0] == [{"type": "text", "value": "Left"}]
+    assert any(node["type"] == "strong" for node in table["rows"][0][1])
+    assert any(node["type"] == "code" for node in table["rows"][0][2])
+
+
+def test_malformed_tables_stay_paragraphs() -> None:
+    ast = prose.parse_markdown("| Header 1 | Header 2 |\n| +++++ | +++++ |\n| One | Two |")
+    assert [node["type"] for node in ast["children"]] == ["paragraph"]
+
+
+def test_table_column_cap_falls_back_to_one_paragraph() -> None:
+    columns = [f"h{index}" for index in range(prose.MAX_TABLE_COLUMNS + 1)]
+    source = f"| {' | '.join(columns)} |\n| {' | '.join('---' for _ in columns)} |"
+    ast = prose.parse_markdown(source)
+    assert [node["type"] for node in ast["children"]] == ["paragraph"]
+
+
+def test_table_row_cap_falls_back_to_one_paragraph() -> None:
+    rows = "\n".join(
+        f"| {index} | row |" for index in range(prose.MAX_TABLE_ROWS + 1)
+    )
+    ast = prose.parse_markdown(f"| a | b |\n| --- | --- |\n{rows}")
+    assert [node["type"] for node in ast["children"]] == ["paragraph"]
+
+
 def test_lists_quotes_code_and_rules_are_normalized() -> None:
     ast = prose.parse_markdown(
         "- one\n- two\n\n1. first\n2. second\n\n> quote\n\n```\ncode\n```\n\n---\n"

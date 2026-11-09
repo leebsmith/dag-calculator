@@ -4,7 +4,7 @@ Free-text brewing fields accept markdown. The stored value is always the raw
 source; markdown becomes layout only at report time. Three authoring surfaces
 are in scope: the hopping strategy, process notes, and brew-day checklist notes.
 
-<!-- claims: proposed prose.unsupported.table prose.unsupported.image prose.unsupported.html prose.unsafe.link prose.too_long prose.too_deep prose.too_many_nodes prose.check_failed -->
+<!-- claims: proposed prose.unsupported.image prose.unsupported.html prose.unsafe.link prose.too_long prose.too_deep prose.too_many_nodes prose.too_many_table_columns prose.too_many_table_rows prose.malformed.table prose.check_failed -->
 
 ## Supported subset
 
@@ -23,6 +23,18 @@ are in scope: the hopping strategy, process notes, and brew-day checklist notes.
 | Horizontal rule | `---` | rule |
 | Hard break | two trailing spaces or backslash | line break |
 | Heading | `#`, `##`, `###` | bold paragraph at heading scale |
+| Table | GFM pipe table with a `\|---\|---\|` delimiter row | Typst table with column alignment |
+
+A table needs its own lines and a blank line before the block:
+
+```markdown
+| Header 1 | Header 2 |
+| -------- | -------- |
+| One thing | Another thing |
+```
+
+Table cells accept inline markdown only: emphasis, strong, code, and links. A
+cell cannot contain paragraphs, lists, or another table.
 
 Headings intentionally do not become Typst `heading` elements. A note must not
 alter the report outline, force a page break, or compete with a section title.
@@ -36,14 +48,14 @@ constructs print as text:
 |---|---|
 | Image | alt text |
 | Raw HTML | the literal text |
-| Table | ordinary paragraphs |
+| Malformed table | ordinary paragraphs, with an editor warning |
 | Unsafe link (`javascript:`, `data:`, `mailto:`, relative) | the label, without an anchor |
 | Unknown node | its text children, or nothing |
 
 ## Backend conversion
 
 `backend/app/services/prose.py` parses with `markdown-it-py` in CommonMark mode,
-with HTML disabled, strikethrough enabled, and tables disabled. It normalizes the
+with HTML disabled, strikethrough and GFM tables enabled. It normalizes the
 syntax tree into a small AST and injects it into the report or session payload:
 
 - `report.hop_strategy` is one raw-markdown row; its `text` cell gains `blocks`.
@@ -64,6 +76,12 @@ absent, so older bundles and unenriched local bundles still compile.
 | Source length | 20,000 Unicode code points per field |
 | AST nodes | 2,000 |
 | Nesting depth | 32 |
+| Table columns | 6 |
+| Table rows | 50 |
+
+A table over the column or row cap falls back with the rest of the note to one
+plain-text paragraph. That preserves the authored text instead of silently
+dropping columns or rows.
 
 A source that exceeds a limit falls back to one plain-text paragraph and logs a
 warning. The fallback is deliberate: a long note must not make a report
@@ -85,13 +103,15 @@ exceed a limit:
 
 | Code | Meaning |
 |---|---|
-| `prose.unsupported.table` | table will print as plain text |
 | `prose.unsupported.image` | image will print as alt text |
 | `prose.unsupported.html` | HTML will print as text |
 | `prose.unsafe.link` | link will lose its anchor |
 | `prose.too_long` | source exceeds the code-point cap |
 | `prose.too_deep` | nesting exceeds the depth cap |
 | `prose.too_many_nodes` | token count exceeds the node cap |
+| `prose.too_many_table_columns` | table exceeds the column cap |
+| `prose.too_many_table_rows` | table exceeds the row cap |
+| `prose.malformed.table` | pipe text looks like a table but did not parse |
 | `prose.check_failed` | the local check threw |
 
 The validator never returns HTML and never calls the markdown renderer. It

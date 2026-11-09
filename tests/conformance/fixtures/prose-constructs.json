@@ -16,8 +16,14 @@
   },
   {
     "name": "table",
-    "source": "| a | b |\n|---|---|\n| 1 | 2 |",
-    "codes": ["prose.unsupported.table"],
+    "source": "| Left | Center | Right |\n| :--- | :----: | ----: |\n| one | **two** | `3` |",
+    "codes": [],
+    "python": { "block_types": ["table"], "contains_text": "one" }
+  },
+  {
+    "name": "malformed table",
+    "source": "| Header 1 | Header 2 |\n| +++++ | +++++ |\n| One | Two |",
+    "codes": ["prose.malformed.table"],
     "python": { "block_types": ["paragraph"] }
   },
   {

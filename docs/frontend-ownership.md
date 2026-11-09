@@ -4,7 +4,7 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **790** (532 enumerable, 258 hidden)
+- Declared members: **792** (534 enumerable, 258 hidden)
 - Installers: **22**
 - Card partials: **19**
 - Installers reading another installer's key: **13 of 22**
@@ -15,7 +15,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | installer | modules | members | card partials | foreign reads |
 |---|---|---|---|---|
 | `navigation` | `frontend/src/adapters/navigation.js` | 7 | 0 | 0 |
-| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 28 | 1 | 5 |
+| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 30 | 1 | 5 |
 | `proseValidation` | `frontend/src/adapters/proseValidation.js`, `frontend/src/markdown/validate.js` | 1 | 0 | 0 |
 | `tableConfigs` | `frontend/src/adapters/tableConfigs.js` | 4 | 0 | 0 |
 | `draftEditor` | `frontend/src/adapters/draftEditor.js` | 79 | 0 | 0 |

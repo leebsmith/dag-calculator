@@ -18,10 +18,12 @@ from urllib.parse import urlsplit
 from markdown_it import MarkdownIt
 from markdown_it.tree import SyntaxTreeNode
 
-PROSE_AST_VERSION = 1
+PROSE_AST_VERSION = 2
 MAX_SOURCE_CODE_POINTS = 20_000
 MAX_NODES = 2_000
 MAX_DEPTH = 32
+MAX_TABLE_COLUMNS = 6
+MAX_TABLE_ROWS = 50
 
 _REPORT_TABLE_CELLS = {
     "report.hop_strategy": ("text",),
@@ -40,6 +42,7 @@ _parser = MarkdownIt(
     },
 )
 _parser.enable("strikethrough")
+_parser.enable("table")
 
 
 def _allow_all_links(_url: str) -> bool:
@@ -139,6 +142,8 @@ def _block_node(node: SyntaxTreeNode, depth: int, budget: _Budget) -> list[dict]
         ]
     if kind in ("bullet_list", "ordered_list"):
         return [_list_node(node, depth, budget)]
+    if kind == "table":
+        return [_table_node(node, depth, budget)]
     if kind == "blockquote":
         return [{"type": "quote", "children": _block_nodes(node.children, depth, budget)}]
     if kind in ("fence", "code_block"):
@@ -148,6 +153,10 @@ def _block_node(node: SyntaxTreeNode, depth: int, budget: _Budget) -> list[dict]
         return [{"type": "hr"}]
     if kind == "html_block":
         return [_text_paragraph(node.content)]
+    return _unknown_block(node)
+
+
+def _unknown_block(node: SyntaxTreeNode) -> list[dict]:
     if node.children:
         return [_text_paragraph(node.content)] if node.content else []
     if node.content:
@@ -180,6 +189,82 @@ def _list_node(node: SyntaxTreeNode, depth: int, budget: _Budget) -> dict:
         if item.type == "list_item"
     ]
     return {"type": "list", "ordered": ordered, "start": start, "items": items}
+
+
+def _table_node(node: SyntaxTreeNode, depth: int, budget: _Budget) -> dict:
+    header_rows = _table_rows(node, "thead", depth, budget)
+    body_rows = _table_rows(node, "tbody", depth, budget)
+    header = header_rows[0] if header_rows else []
+    columns = len(header)
+    if columns == 0:
+        raise ProseLimitError("table has no header cells")
+    if columns > MAX_TABLE_COLUMNS:
+        raise ProseLimitError(
+            f"table columns exceeded ({columns} > {MAX_TABLE_COLUMNS})"
+        )
+    if len(body_rows) > MAX_TABLE_ROWS:
+        raise ProseLimitError(f"table rows exceeded ({len(body_rows)} > {MAX_TABLE_ROWS})")
+    return {
+        "type": "table",
+        "align": _table_align(node, columns),
+        "header": _fit_cells(header, columns, depth, budget),
+        "rows": [_fit_cells(row, columns, depth, budget) for row in body_rows],
+    }
+
+
+def _table_rows(
+    node: SyntaxTreeNode, section: str, depth: int, budget: _Budget
+) -> list[list[dict]]:
+    rows: list[list[dict]] = []
+    for group in node.children:
+        if group.type != section:
+            continue
+        for row in group.children:
+            if row.type != "tr":
+                continue
+            budget.spend(depth)
+            rows.append(
+                [
+                    _table_cell(cell, depth, budget)
+                    for cell in row.children
+                    if cell.type in ("th", "td")
+                ]
+            )
+    return rows
+
+
+def _table_cell(node: SyntaxTreeNode, depth: int, budget: _Budget) -> list[dict]:
+    budget.spend(depth)
+    return _inline_children(node, depth, budget)
+
+
+def _fit_cells(
+    cells: list[list[dict]], columns: int, depth: int, budget: _Budget
+) -> list[list[dict]]:
+    fitted = cells[:columns]
+    while len(fitted) < columns:
+        fitted.append([{"type": "text", "value": ""}])
+    return fitted
+
+
+def _table_align(node: SyntaxTreeNode, columns: int) -> list[str]:
+    header = next(
+        (
+            row
+            for group in node.children
+            if group.type == "thead"
+            for row in group.children
+            if row.type == "tr"
+        ),
+        None,
+    )
+    cells = [cell for cell in header.children if cell.type in ("th", "td")] if header else []
+    align: list[str] = []
+    for index in range(columns):
+        style = cells[index].attrs.get("style", "") if index < len(cells) else ""
+        value = style.rsplit(":", 1)[-1].strip() if "text-align:" in style else "left"
+        align.append(value if value in ("left", "center", "right") else "left")
+    return align
 
 
 def _inline_children(container: SyntaxTreeNode, depth: int, budget: _Budget) -> list[dict]:

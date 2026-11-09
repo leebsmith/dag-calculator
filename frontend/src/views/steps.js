@@ -291,7 +291,14 @@ export const steps = [
     title: "Process notes",
     subtitle: "Additions and notes the model does not calculate",
     partial: "./src/partials/step-card.html",
-    fields: [{ collection: "batch.process_notes", addLabel: "Add note", prose: true }],
+    fields: [
+      {
+        collection: "batch.process_notes",
+        addLabel: "Add note",
+        addLabelMore: "Add another note",
+        prose: true,
+      },
+    ],
   },
   {
     id: "mash",

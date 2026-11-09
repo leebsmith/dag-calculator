@@ -240,8 +240,15 @@
             class="form-hint text-danger"
             x-show="f.rowValidations && f.rowValidations.some((r) => Object.values(r).some((v) => v.holds === false))"
           >Some cells are outside their allowed range</span>
-          <span class="form-hint" x-show="f.prose">Markdown supported: paragraphs, lists, emphasis, links, and code.</span>
-          <button type="button" class="btn-outline" @click="runCollectionAdd(f)" x-text="f.addLabel"></button>
+          <span class="form-hint" x-show="f.prose">Markdown supported: paragraphs, lists, tables, emphasis, links, and code.</span>
+          <button
+            type="button"
+            class="btn-outline"
+            x-show="collectionCanAdd(f)"
+            :disabled="!collectionCanAdd(f)"
+            @click="runCollectionAdd(f)"
+            x-text="collectionAddLabel(f)"
+          ></button>
         </div>
       </template>
     </div>
