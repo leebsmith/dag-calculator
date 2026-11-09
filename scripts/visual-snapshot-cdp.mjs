@@ -136,16 +136,29 @@ export async function openPage(browser, { theme, width, height = 900 }) {
 
 export async function navigate(browser, sessionId, url) {
   await browser.cdp.send("Page.navigate", { url }, sessionId);
+  let ready = false;
   for (let waited = 0; waited < READY_TIMEOUT_MS; waited += READY_POLL_MS) {
     const { result } = await browser.cdp.send(
       "Runtime.evaluate",
       { expression: "document.readyState", returnByValue: true },
       sessionId
     );
-    if (result.value === "complete") return;
+    if (result.value === "complete") {
+      ready = true;
+      break;
+    }
     await sleep(READY_POLL_MS);
   }
-  throw new Error(`page did not settle: ${url}`);
+  if (!ready) throw new Error(`page did not settle: ${url}`);
+  await evaluate(
+    browser,
+    sessionId,
+    `new Promise((resolve) => {
+      const finish = () => requestAnimationFrame(() => requestAnimationFrame(resolve));
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(finish, finish);
+      else finish();
+    })`
+  );
 }
 
 export async function evaluate(browser, sessionId, expression) {

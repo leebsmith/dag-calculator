@@ -83,9 +83,7 @@ export function stripAlpine(source) {
     .replace(/\s+:[A-Za-z0-9_.:-]+="[^"]*"/g, "")
     .replace(/\s+x-[A-Za-z0-9_.:-]+="[^"]*"/g, "")
     .replace(/\s+x-[A-Za-z0-9_.:-]+='[^']*'/g, "")
-    .replace(/\s+x-cloak\b/g, "")
-    .replace(/<template\b[^>]*>/g, "")
-    .replace(/<\/template>/g, "");
+    .replace(/\s+x-cloak\b/g, "");
 }
 
 function loadName(src) {
@@ -107,7 +105,7 @@ export function inlineLoads(source, { partialsDir, depth = 0 }) {
   );
 }
 
-export function buildFixture({ css, partialsDir, files, theme }) {
+export function buildFixture({ tokens, css, partialsDir, files, theme, hideModals = false }) {
   const sections = files.map((file) => {
     const raw = stripAlpine(fs.readFileSync(path.join(partialsDir, file), "utf8"));
     return `<section data-fixture-file="${file}">${inlineLoads(raw, { partialsDir })}</section>`;
@@ -115,8 +113,9 @@ export function buildFixture({ css, partialsDir, files, theme }) {
   return `<!doctype html>
 <html lang="en" data-theme="${theme}">
 <head><meta charset="utf-8"><title>visual fixture</title>
-<style>${css}
+<style>${tokens}\n${css}
 *, *::before, *::after { animation: none !important; transition: none !important; }
+${hideModals ? ".modal-backdrop { display: none !important; }" : ""}
 </style></head>
 <body><main class="app-shell"><div class="app-content">${sections.join("\n")}</div></main></body>
 </html>`;
@@ -158,13 +157,14 @@ export function compareSnapshots(before, after) {
 function materializeBase(ref, dir) {
   const archive = execFileSync(
     "git",
-    ["archive", "--format=tar", ref, "frontend/src/style.css", "frontend/src/partials"],
+    ["archive", "--format=tar", ref, "frontend/src/tokens.css", "frontend/src/style.css", "frontend/src/partials"],
     { maxBuffer: 64 * 1024 * 1024 }
   );
   const result = spawnSync("tar", ["-x", "-C", dir], { input: archive });
   if (result.status !== 0) throw new Error(`could not extract ${ref}`);
   return {
     style: path.join(dir, "frontend/src/style.css"),
+    tokens: path.join(dir, "frontend/src/tokens.css"),
     partials: path.join(dir, "frontend/src/partials"),
   };
 }
@@ -193,10 +193,17 @@ async function captureScreenshot(browser, fixture, theme, width, target) {
   }
 }
 
-function writeFixture(target, tree, files, theme) {
+function writeFixture(target, tree, files, theme, hideModals) {
   fs.writeFileSync(
     target,
-    buildFixture({ css: fs.readFileSync(tree.style, "utf8"), partialsDir: tree.partials, files, theme })
+    buildFixture({
+      tokens: fs.readFileSync(tree.tokens, "utf8"),
+      css: fs.readFileSync(tree.style, "utf8"),
+      partialsDir: tree.partials,
+      files,
+      theme,
+      hideModals,
+    })
   );
   return target;
 }
@@ -235,8 +242,8 @@ async function runSnapshots({ browser, options, before, after, baseDir, outDir }
   const files = [...new Set([...beforeFiles, ...afterFiles])].sort();
   const results = [];
   for (const theme of options.themes) {
-    const beforeFixture = writeFixture(path.join(baseDir, `fixture-${theme}.html`), before, beforeFiles, theme);
-    const afterFixture = writeFixture(path.join(outDir, `fixture-${theme}.html`), after, afterFiles, theme);
+    const beforeFixture = writeFixture(path.join(baseDir, `fixture-${theme}.html`), before, beforeFiles, theme, true);
+    const afterFixture = writeFixture(path.join(outDir, `fixture-${theme}.html`), after, afterFiles, theme, true);
     for (const width of options.widths) {
       const beforeSnap = await snapshot(browser, beforeFixture, theme, width);
       const afterSnap = await snapshot(browser, afterFixture, theme, width);
@@ -264,8 +271,9 @@ async function runScreenshots({ browser, options, before, after, baseDir, outDir
   for (const theme of options.themes) {
     for (const file of DEFAULT_SCREENS) {
       if (!beforeFiles.has(file) || !afterFiles.has(file)) continue;
-      const beforeFixture = writeFixture(path.join(baseDir, `screen-before-${theme}-${file}.html`), before, [file], theme);
-      const afterFixture = writeFixture(path.join(outDir, `screen-after-${theme}-${file}.html`), after, [file], theme);
+      const hideModals = !file.startsWith("modal-");
+      const beforeFixture = writeFixture(path.join(baseDir, `screen-before-${theme}-${file}.html`), before, [file], theme, hideModals);
+      const afterFixture = writeFixture(path.join(outDir, `screen-after-${theme}-${file}.html`), after, [file], theme, hideModals);
       await captureScreenshot(browser, beforeFixture, theme, 1280, path.join(outDir, `before-${theme}-${file}.png`));
       await captureScreenshot(browser, afterFixture, theme, 1280, path.join(outDir, `after-${theme}-${file}.png`));
     }
@@ -285,6 +293,7 @@ async function main() {
     const before = materializeBase(options.base, baseDir);
     const after = {
       style: path.join(repo, "frontend/src/style.css"),
+      tokens: path.join(repo, "frontend/src/tokens.css"),
       partials: path.join(repo, "frontend/src/partials"),
     };
     browser = await openBrowser();

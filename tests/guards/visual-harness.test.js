@@ -18,8 +18,8 @@ test("the fixture strips Alpine directives and unwraps templates", () => {
   assert.equal(out.includes("x-data"), false);
   assert.equal(out.includes(":class"), false);
   assert.equal(out.includes("@click"), false);
-  assert.equal(out.includes("<template"), false);
-  assert.equal(out.includes("</template>"), false);
+  assert.equal(out.includes("<template"), true);
+  assert.equal(out.includes("</template>"), true);
   assert.equal(out.includes("<div>x</div>"), true);
 });
 
@@ -31,12 +31,14 @@ test("the fixture inlines partial loads", () => {
 
 test("the fixture carries the theme and file marker", () => {
   const html = buildFixture({
+    tokens: ":root { --x: red; }",
     css: "body { color: red; }",
     partialsDir: PARTIALS,
     files: ["ui-form-fields.html"],
     theme: "dark",
   });
   assert.match(html, /data-theme="dark"/);
+  assert.match(html, /--x: red/);
   assert.match(html, /data-fixture-file="ui-form-fields.html"/);
   assert.match(html, /animation: none !important/);
 });
