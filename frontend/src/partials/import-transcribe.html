@@ -55,7 +55,7 @@
     </div>
   </div>
 
-  <h3 class="import-section-title">Targets</h3>
+  <h3 class="pane-title">Targets</h3>
   <p class="form-hint">
     Edit a value to correct the transcription. A corrected row reads “you” instead of “page”.
   </p>
@@ -103,7 +103,7 @@
     </table>
   </div>
 
-  <h3 class="import-section-title">
+  <h3 class="pane-title">
     Fermentables <span class="text-xs text-muted" x-text="'(' + $store.importReview.counts.fermentables + ')'"></span>
   </h3>
   <ul class="import-line-list">
@@ -117,7 +117,7 @@
     </template>
   </ul>
 
-  <h3 class="import-section-title">
+  <h3 class="pane-title">
     Hops <span class="text-xs text-muted" x-text="'(' + $store.importReview.counts.hops + ')'"></span>
   </h3>
   <ul class="import-line-list">
@@ -132,7 +132,7 @@
     </template>
   </ul>
 
-  <h3 class="import-section-title">
+  <h3 class="pane-title">
     Yeast <span class="text-xs text-muted" x-text="'(' + $store.importReview.counts.yeasts + ')'"></span>
   </h3>
   <ul class="import-line-list">
@@ -146,7 +146,7 @@
     </template>
   </ul>
 
-  <h3 class="import-section-title">
+  <h3 class="pane-title">
     Mash <span class="text-xs text-muted" x-text="'(' + $store.importReview.counts.mashes + ')'"></span>
   </h3>
   <ul class="import-line-list">
@@ -161,7 +161,7 @@
 
   <template x-if="$store.importReview.warnings.length">
     <div>
-      <h3 class="import-section-title">The model's warnings</h3>
+      <h3 class="pane-title">The model's warnings</h3>
       <ul class="import-line-list">
         <template x-for="(line, index) in $store.importReview.warnings" :key="'w' + index">
           <li class="import-line">

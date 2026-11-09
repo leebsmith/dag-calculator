@@ -1,44 +1,44 @@
-<section class="step-card">
-  <div class="step-card-header">
+<section class="card">
+  <div class="card-header">
     <h2 class="card-title" x-text="activeStep.title"></h2>
     <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
   </div>
 
-  <div class="step-card-content">
+  <div class="card-body">
     <!-- Selected style readout -->
     <template x-if="selectedStyle">
-      <div class="synthesized-card">
-        <div class="synthesized-header">
-          <span class="synthesized-title" x-text="selectedStyle.name + ' (' + selectedStyle.id + ')'"></span>
+      <section class="card-section">
+        <div class="card-section-header">
+          <span class="eyebrow" x-text="selectedStyle.name + ' (' + selectedStyle.id + ')'"></span>
         </div>
         <div class="text-xs text-muted" x-text="selectedStyle.overall_impression"></div>
         <div class="text-xs text-muted" x-show="selectedStyle.comments" x-text="selectedStyle.comments"></div>
         <div class="step-grid-2col">
           <div class="form-group">
-            <span class="form-label">Category</span>
+            <span class="field-label">Category</span>
             <span x-text="selectedStyle.category_name"></span>
           </div>
           <div class="form-group">
-            <span class="form-label">Vital statistics (OG / FG)</span>
+            <span class="field-label">Vital statistics (OG / FG)</span>
             <span class="tabular-nums" x-text="styleVitals()"></span>
           </div>
           <div class="form-group">
-            <span class="form-label">Fermentation</span>
+            <span class="field-label">Fermentation</span>
             <span
               x-text="fmt.optionLabel(fermentationField.optionLabels, fermentationField.value)"
             ></span>
           </div>
         </div>
-      </div>
+      </section>
     </template>
 
     <!-- Recipe targets: fermentation navigator + color/bitterness sliders -->
     <div class="target-cards">
       <!-- Fermentation target picker (OE/AE region navigator) -->
       <template x-if="stylePreview">
-        <div class="synthesized-card">
-          <div class="synthesized-header">
-            <h3 class="synthesized-title">Fermentation target</h3>
+        <section class="card-section">
+          <div class="card-section-header">
+            <h3 class="eyebrow">Fermentation target</h3>
             <button type="button" class="btn btn-secondary btn-sm" @click="resetScaleTarget()">
               Reset to style
             </button>
@@ -62,7 +62,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="style-scale-target" x-text="activeScaleTargetLabel"></label>
-            <div class="table-action-cell">
+            <div class="row-actions">
               <input
                 id="style-scale-target"
                 type="number"
@@ -197,30 +197,30 @@
           </span>
           <div class="extract-readouts">
             <div class="extract-readout">
-              <span class="form-label">OG</span>
+              <span class="field-label">OG</span>
               <span class="tabular-nums" x-text="styleGravityReadouts.og"></span>
             </div>
             <div class="extract-readout">
-              <span class="form-label">FG</span>
+              <span class="field-label">FG</span>
               <span class="tabular-nums" x-text="styleGravityReadouts.fg"></span>
             </div>
             <div class="extract-readout">
-              <span class="form-label">Apparent attenuation</span>
+              <span class="field-label">Apparent attenuation</span>
               <span class="tabular-nums" x-text="fmt.formatPercent(attenuationBlend)"></span>
             </div>
             <div class="extract-readout">
-              <span class="form-label">ABV</span>
+              <span class="field-label">ABV</span>
               <span class="tabular-nums" x-text="fmt.formatPercentValue(styleTargetInfo?.abv)"></span>
             </div>
             <div class="extract-readout">
-              <span class="form-label">Style safety</span>
+              <span class="field-label">Style safety</span>
               <span
                 class="tabular-nums"
                 x-text="fmt.formatPercentRounded(styleTargetRisk?.safety)"
               ></span>
             </div>
             <div class="extract-readout">
-              <span class="form-label">Nearest limit</span>
+              <span class="field-label">Nearest limit</span>
               <span class="tabular-nums" x-text="styleTargetNearest()"></span>
             </div>
           </div>
@@ -228,13 +228,13 @@
             Apparent attenuation is the realized outcome from the grain bill and the yeast
             cap set in the Yeast step.
           </span>
-        </div>
+        </section>
       </template>
 
       <!-- Color & bitterness targets (style-envelope bounded) -->
-      <div class="synthesized-card">
-        <div class="synthesized-header">
-          <h3 class="synthesized-title">Color &amp; Bitterness targets</h3>
+      <section class="card-section">
+        <div class="card-section-header">
+          <h3 class="eyebrow">Color &amp; Bitterness targets</h3>
         </div>
 
         <div
@@ -328,24 +328,24 @@
         </div>
 
         <div class="target-slider-readout">
-          <span class="form-label">Planned IBU/GU</span>
+          <span class="field-label">Planned IBU/GU</span>
           <span class="tabular-nums" x-text="ibuGuDisplay"></span>
         </div>
         <span class="form-hint">Bitterness balance: ≈0.5–1.0 is typical; higher is more bitter.</span>
-      </div>
+      </section>
     </div>
 
     <!-- Style conformance (realized drift vs. the envelope) -->
     <template x-if="conformanceSummary">
-      <div class="synthesized-card">
-        <div class="synthesized-header">
-          <h3 class="synthesized-title">Style conformance</h3>
+      <section class="card-section">
+        <div class="card-section-header">
+          <h3 class="eyebrow">Style conformance</h3>
           <span class="tabular-nums" x-text="'SAI ' + conformanceSummary.sai"></span>
         </div>
         <div class="extract-readouts">
           <template x-for="d in conformanceSummary.dimensions" :key="d.id">
             <div class="extract-readout">
-              <span class="form-label" x-text="d.label"></span>
+              <span class="field-label" x-text="d.label"></span>
               <span
                 class="tabular-nums"
                 :class="{ 'text-warning': d.status !== 'Within' }"
@@ -354,13 +354,13 @@
             </div>
           </template>
         </div>
-      </div>
+      </section>
     </template>
 
     <!-- Style envelope: the sealed declaration is read-only -->
-    <div class="synthesized-card">
-      <div class="synthesized-header">
-        <h3 class="synthesized-title">Style envelope</h3>
+    <section class="card-section">
+      <div class="card-section-header">
+        <h3 class="eyebrow">Style envelope</h3>
       </div>
       <div
         class="step-grid-2col"
@@ -381,6 +381,6 @@
       >
         <load src="src/partials/ui-form-fields.html" />
       </div>
-    </div>
+    </section>
   </div>
 </section>

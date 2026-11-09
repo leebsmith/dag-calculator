@@ -34,7 +34,7 @@
   </div>
 
   <div class="import-verdict" x-show="$store.importReview.sections.find((s) => s.id === 'hops')?.rows.length">
-    <h3 class="import-section-title">Whirlpool IBU share</h3>
+    <h3 class="pane-title">Whirlpool IBU share</h3>
     <p class="form-hint" x-show="$store.importReview.printedPoolFraction != null">
       Printed per-addition IBUs give this exactly:
       <strong x-text="Math.round($store.importReview.printedPoolFraction * 100) + '%'"></strong>
@@ -82,8 +82,8 @@
   </ul>
 
   <template x-for="section in $store.importReview.sections" :key="section.id">
-    <div class="map-section">
-      <h3 class="import-section-title">
+    <section class="region region--spaced">
+      <h3 class="pane-title">
         <span x-text="section.id"></span>
         <span class="text-xs text-muted"
           x-text="'(' + section.rows.filter((r) => r.decision === 'mapped' || r.decision === 'ignored').length + ' of ' + section.rows.length + ')'"></span>
@@ -408,7 +408,7 @@
           </li>
         </template>
       </ul>
-    </div>
+    </section>
   </template>
 
   <p class="form-hint" x-show="$store.importReview.sections.length === 0">

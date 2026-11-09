@@ -1,4 +1,4 @@
-<section class="synthesized-card card-section">
+<section class="card-section card-section--collapsible">
   <div class="section-header">
     <button
       type="button"
@@ -8,7 +8,7 @@
       @click="toggleDryHopSection()"
     >
       <span class="section-chevron" aria-hidden="true">▸</span>
-      <span class="section-title">Dry Hops</span>
+      <span class="region-title">Dry Hops</span>
       <span class="section-meta" x-text="dryHopSectionMeta"></span>
     </button>
     <div class="section-actions">
@@ -57,7 +57,7 @@
           </template>
           <template x-if="dryHopRows.length === 0">
             <tr>
-              <td colspan="7" class="table-empty-cell">
+              <td colspan="7" class="empty-state">
                 No dry hops yet. Click “Configure Dry Hops” to add additions.
               </td>
             </tr>

@@ -142,7 +142,7 @@
               </template>
 
               <template x-if="col.cell === 'actions'">
-                <div class="table-action-cell">
+                <div class="row-actions">
                   <template x-for="action in col.actions(row, index)" :key="action.id || action.label">
                     <button
                       type="button"
@@ -164,7 +164,7 @@
         <tr>
           <td
             :colspan="config.columns.length"
-            class="table-empty-cell"
+            class="empty-state"
             x-text="config.emptyText"
           ></td>
         </tr>

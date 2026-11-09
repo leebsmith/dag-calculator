@@ -30,7 +30,7 @@
       @keydown.page-up.window="keyNav('prev', $event)"
       @keydown.page-down.window="keyNav('next', $event)"
     >
-      <div class="signin-panel" x-show="!$store.auth.user && !$store.auth.loading">
+      <section class="sheet sheet--signin" x-show="!$store.auth.user && !$store.auth.loading">
         <h1 class="card-title">Brewing Calculator</h1>
         <p class="card-description" x-show="!$store.auth.blocked && !$store.auth.sessionError">
           Sign in to open your recipes.
@@ -55,7 +55,7 @@
         <button type="button" class="btn-primary" @click="$store.auth.signIn()">
           Sign in with Google
         </button>
-      </div>
+      </section>
 
       <template x-if="$store.auth.user">
         <div class="app-content">

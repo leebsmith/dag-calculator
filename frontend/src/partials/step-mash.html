@@ -1,10 +1,10 @@
-<section class="step-card">
-  <div class="step-card-header">
+<section class="card">
+  <div class="card-header">
     <h2 class="card-title" x-text="activeStep.title"></h2>
     <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
   </div>
 
-  <div class="step-card-content">
+  <div class="card-body">
     <!-- Mash style preset -->
     <div class="table-header-toolbar">
       <div
@@ -27,9 +27,9 @@
     </div>
 
     <!-- Available rests (checkbox table) -->
-    <div class="synthesized-card">
-      <div class="synthesized-header">
-        <h3 class="synthesized-title">Available Rests</h3>
+    <section class="card-section">
+      <div class="card-section-header">
+        <h3 class="eyebrow">Available Rests</h3>
         <button
           type="button"
           class="btn btn-secondary btn-sm"
@@ -68,12 +68,12 @@
           </tbody>
         </table>
       </div>
-    </div>
+    </section>
 
     <!-- Mash summary + metric strip -->
-    <div class="synthesized-card">
-      <div class="synthesized-header">
-        <h3 class="synthesized-title">Mash Summary</h3>
+    <section class="card-section">
+      <div class="card-section-header">
+        <h3 class="eyebrow">Mash Summary</h3>
       </div>
 
       <p class="form-hint">
@@ -170,7 +170,7 @@
           <span class="text-xs text-muted" x-show="rampTimeMin > 0" x-text="mashTimeSummary"></span>
         </div>
       </div>
-    </div>
+    </section>
 
   </div>
 

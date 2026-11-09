@@ -1,10 +1,10 @@
-<section class="step-card">
-  <div class="step-card-header">
+<section class="card">
+  <div class="card-header">
     <h2 class="card-title" x-text="activeStep.title"></h2>
     <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
   </div>
 
-  <div class="step-card-content">
+  <div class="card-body">
     <div
       x-data="formBuilder({
         schema: [
@@ -25,7 +25,7 @@
     </div>
 
     <template x-for="phase in brewDaySections" :key="phase.id">
-      <div class="synthesized-card card-section">
+      <section class="card-section card-section--collapsible">
         <div class="section-header">
           <button
             type="button"
@@ -35,7 +35,7 @@
             @click="toggleBrewDaySection(phase.id)"
           >
             <span class="section-chevron" aria-hidden="true">▸</span>
-            <span class="section-title" x-text="phase.name"></span>
+            <span class="region-title" x-text="phase.name"></span>
             <span class="section-meta" x-text="phase.sections.length + ' sections'"></span>
           </button>
         </div>
@@ -47,7 +47,7 @@
         >
           <template x-for="section in phase.sections" :key="section.id">
             <div>
-              <h3 class="synthesized-title" x-text="section.name"></h3>
+              <h3 class="eyebrow" x-text="section.name"></h3>
 
               <template x-for="row in section.rows" :key="row.kind + ':' + row.step_id + ':' + row.title">
                 <div class="brew-day-step">
@@ -113,7 +113,7 @@
             </div>
           </template>
         </div>
-      </div>
+      </section>
     </template>
   </div>
 </section>

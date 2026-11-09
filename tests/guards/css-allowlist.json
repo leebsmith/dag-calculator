@@ -60,7 +60,7 @@
       "context": "",
       "declarations": "display: flex; flex-direction: column; gap: var(--space-1)",
       "selectors": [
-        ".step-card-header",
+        ".card-header",
         ".summary-strip-item"
       ],
       "reason": "Coincidental column layout; card header and summary item are unrelated."

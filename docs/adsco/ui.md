@@ -338,6 +338,38 @@ nothing is persisted, no root changes, and the active pin is untouched. It answe
 sugar input is `batch.sugar_extract_total` (the solved budget), so the deltas
 remain meaningful when the dose is derived rather than authored.
 
+## Container vocabulary
+
+One name and one element per purpose. The guard is
+`tests/guards/container-vocabulary.test.js`; the pinned recipes are in
+`tests/guards/container-recipes.json`.
+
+| Purpose | Class | Element |
+| --- | --- | --- |
+| Page surface | `card` | `section` |
+| Centred sheet | `sheet` plus `sheet--library` or `sheet--signin` | `section` |
+| Boxed region in a card | `card-section`, plus `card-section--collapsible` when it hosts a disclosure | `section` |
+| Unboxed named region | `region`, plus `region--divided` or `region--spaced` | `section` |
+| Card heading | `card-title` | `h1` or `h2` |
+| Region heading | `region-title` | `h2`–`h4`; `span` only inside `button.section-toggle` or `div.section-header` |
+| Pane heading | `pane-title` in the import panes | `h3` or `h4` |
+| Micro-heading | `eyebrow` | `h3`, `h4` or `span` |
+| Group micro-heading | `group-title` beside a `group-header` rule | `h3` |
+| Disclosure parts | `section-toggle`, `section-chevron`, `section-meta`, `section-body` | button plus divs |
+| Card-section parts | `card-section-header`, `card-section-actions` | `div` |
+| Item surface | `catalog-item-card` | `div` |
+| Detail disclosure surface | `detail-panel` | `div` |
+| Empty state | `empty-state` | `td` or `div` |
+| Static field label | `field-label` | `span` |
+| Row actions | `row-actions` | `div` |
+
+The page card, the boxed region, the unboxed region and the sheet are the four
+structural levels; `sheet` is the only one that is centred rather than placed in
+the document flow. Distinct elevation roles keep their own names:
+`catalog-item-card`, `detail-panel`, and the modal drawer classes. A new
+container name must be added to the registry and the approved set in the guard;
+the guard fails on an unregistered container or a changed recipe.
+
 ## Guardrails / a11y
 
 - Named handlers, `fmt.*` for all numbers/deltas, no inline logic (A8/A10),

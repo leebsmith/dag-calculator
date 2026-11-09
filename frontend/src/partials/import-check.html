@@ -57,7 +57,7 @@
   </div>
 
   <div class="import-water" x-show="$store.importReview.unresolved.length === 0">
-    <h3 class="import-section-title">Water targets</h3>
+    <h3 class="pane-title">Water targets</h3>
     <p class="form-hint">
       The imported recipe's water treatment is not modelled, and a batch carries no target profile until one is
       chosen. Pick a profile here and the gate will solve water with it; leave it blank and the batch
@@ -102,7 +102,7 @@
 
   <template x-if="$store.importReview.unresolved.length || $store.importReview.sectionIssues.length">
     <div>
-      <h3 class="import-section-title">Lines that need your call</h3>
+      <h3 class="pane-title">Lines that need your call</h3>
       <p class="form-hint">
         Each one is marked on its line, with what it needs. Fix them on the map, then run the check
         again.
@@ -142,7 +142,7 @@
 
   <template x-if="$store.importReview.gate && $store.importReview.gateState !== 'stale'">
     <div>
-      <h3 class="import-section-title">Findings</h3>
+      <h3 class="pane-title">Findings</h3>
       <p class="form-hint" x-show="$store.importReview.gate.findings.length === 0">
         No findings: the batch solves on this rig as mapped.
       </p>
@@ -158,7 +158,7 @@
       </ul>
 
       <div x-data="{ delta: $store.importReview.delta }">
-      <h3 class="import-section-title">What changed</h3>
+      <h3 class="pane-title">What changed</h3>
       <p class="form-hint">
         Efficiency, malt specs, hop utilization and yeast attenuation are this calculator's, not the
         imported recipe's — so masses move. This is where and why.

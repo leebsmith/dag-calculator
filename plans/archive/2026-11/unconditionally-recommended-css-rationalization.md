@@ -5,7 +5,7 @@ target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
 gate: every rename commit preserves matched declarations and layout; make check and make test green
-status: active (invariant core agreed; execution checklist in §9)
+status: shipped
 ---
 
 # Unconditionally recommended CSS rationalization
@@ -173,6 +173,10 @@ dependency is needed.
 - A superseded decision gets one paragraph naming the prior plan and the reason.
 - The three prior cleanups are the evidence base; this plan does not re-litigate
   their outcomes beyond the specific reversals recorded above.
+- Deferred corrections, each a separate visual change: unit-badge hover/focus
+  scoping; disabled segmented items as buttons; the read-only brew-day pointer
+  cursor; wrapping the import-delta tables; adding region wrappers in the import
+  panes; the alert paragraph-to-div and catalog item span-to-div tag changes.
 
 ## 8. Acceptance
 
@@ -187,34 +191,34 @@ The invariant core is satisfied when:
 ## 9. Execution checklist
 
 The open decisions are settled for this pass as follows: page card is `card`;
-sheets are `sheet` with `--library` and `--signin`; `region-title` is 14px with a
-`--pane` modifier that keeps the 16px import size; `landing-heading` keeps its
-name; the guard lands with the rename; the visual harness is used once and not
-committed; corrections are deferred.
+sheets are `sheet` with `--library` and `--signin`; `region-title` is 14px; the
+import panes keep `pane-title` because the UA heading size differs by tag;
+`landing-heading` keeps its name; the guard lands with the rename; the visual
+harness is used once and not committed; corrections are deferred.
 
-- [ ] Record the baseline: before copies of `frontend/src/style.css` and the
+- [x] Record the baseline: before copies of `frontend/src/style.css` and the
       partials, plus the container inventory used by the proof.
-- [ ] Page cards: `step-card` -> `card`, `step-card-header` -> `card-header`,
+- [x] Page cards: `step-card` -> `card`, `step-card-header` -> `card-header`,
       `step-card-content` -> `card-body`; delete the dormant `card` rule.
-- [ ] Sheets: `library-panel` -> `sheet--library`, `signin-panel` ->
+- [x] Sheets: `library-panel` -> `sheet--library`, `signin-panel` ->
       `sheet--signin`, `library-overlay` -> `sheet-overlay`.
-- [ ] Boxed regions: `synthesized-card` -> `card-section`, the existing
+- [x] Boxed regions: `synthesized-card` -> `card-section`, the existing
       `card-section` -> `card-section--collapsible`, `synthesized-header` ->
       `card-section-header`, `synthesized-actions` -> `card-section-actions`;
       every boxed region becomes a `section`.
-- [ ] Unboxed regions: `library-section` -> `region--divided`,
+- [x] Unboxed regions: `library-section` -> `region--divided`,
       `landing-imports` and `step-group` -> `region`, `map-section` ->
       `region--spaced`.
-- [ ] Titles: `section-title` and `library-heading` -> `region-title`,
-      `import-section-title` -> `region-title--pane`, `synthesized-title` ->
-      `eyebrow`, `group-title` -> `eyebrow--group`.
-- [ ] Leaves: `table-empty-cell` -> `empty-state`, `catalog-drawer-*` ->
+- [x] Titles: `section-title` and `library-heading` -> `region-title`,
+      `import-section-title` -> `pane-title`, `synthesized-title` ->
+      `eyebrow`; `group-title` stays because its UA margin differs.
+- [x] Leaves: `table-empty-cell` -> `empty-state`, `catalog-drawer-*` ->
       `catalog-pane-*`, `div.table-action-cell` -> `row-actions`,
       `span.form-label` -> `field-label`.
-- [ ] Guards: boundary-aware retired-name matching, a container contract and
+- [x] Guards: boundary-aware retired-name matching, a container contract and
       recipe registry, and the CSS allowlist update.
-- [ ] Docs: add the container vocabulary to `docs/adsco/ui.md`.
-- [ ] Proof: static declaration and element mapping diff, plus a Chrome
+- [x] Docs: add the container vocabulary to `docs/adsco/ui.md`.
+- [x] Proof: static declaration and element mapping diff, plus a Chrome
       computed-style fixture; both must be empty.
-- [ ] Gates: make check, make test, make build.
-- [ ] Archive this plan and commit the completed pass.
+- [x] Gates: make check, make test, make build.
+- [x] Archive this plan and commit the completed pass.

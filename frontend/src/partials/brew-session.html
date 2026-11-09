@@ -1,5 +1,5 @@
-<section class="step-card">
-  <div class="step-card-header">
+<section class="card">
+  <div class="card-header">
     <div>
       <h2 class="card-title" x-text="$store.brewSession.batchName || 'Brew session'"></h2>
       <p class="card-subtitle">
@@ -31,13 +31,13 @@
     </div>
   </div>
 
-  <div class="step-card-content">
+  <div class="card-body">
     <p class="form-hint" x-show="$store.brewSession.loading">Loading…</p>
     <p class="alert alert-warning" x-show="$store.brewSession.error" x-text="$store.brewSession.error"></p>
 
     <template x-if="!$store.brewSession.loading && !$store.brewSession.session">
-      <div class="synthesized-card">
-        <h3 class="synthesized-title">Start a session</h3>
+      <section class="card-section">
+        <h3 class="eyebrow">Start a session</h3>
         <p class="form-hint">
           The frozen recipe is the plan. The session records what actually happened; the recipe is
           never changed.
@@ -68,7 +68,7 @@
         <button type="button" class="btn-primary btn-sm" @click="$store.brewSession.startSession()">
           Start session
         </button>
-      </div>
+      </section>
     </template>
 
     <template x-if="$store.brewSession.session">
@@ -107,8 +107,8 @@
         </div>
 
         <template x-for="section in $store.brewSession.stepSections" :key="section.key">
-          <div class="synthesized-card card-section">
-            <h3 class="synthesized-title" x-text="section.name"></h3>
+          <section class="card-section card-section--collapsible">
+            <h3 class="eyebrow" x-text="section.name"></h3>
             <p class="text-xs text-muted" x-text="section.phase"></p>
             <template x-for="row in section.rows" :key="row.step_id.text">
               <div class="brew-day-step">
@@ -139,11 +139,11 @@
                 </label>
               </div>
             </template>
-          </div>
+          </section>
         </template>
 
-        <div class="synthesized-card card-section">
-          <h3 class="synthesized-title">Observations</h3>
+        <section class="card-section card-section--collapsible">
+          <h3 class="eyebrow">Observations</h3>
           <p class="form-hint">
             Record raw values. The corrected column is optional; the method is always kept.
           </p>
@@ -262,10 +262,10 @@
               </div>
             </div>
           </template>
-        </div>
+        </section>
 
-        <div class="synthesized-card card-section">
-          <h3 class="synthesized-title">Variance</h3>
+        <section class="card-section card-section--collapsible">
+          <h3 class="eyebrow">Variance</h3>
           <table class="data-table data-table--editor">
             <thead>
               <tr>
@@ -288,7 +288,7 @@
               </template>
             </tbody>
           </table>
-        </div>
+        </section>
       </div>
     </template>
   </div>

@@ -18,7 +18,7 @@
         <div class="yeast-filter-grid">
           <div class="form-group">
             <label class="form-label" for="yeast-search">Search</label>
-            <div class="table-action-cell">
+            <div class="row-actions">
               <input
                 id="yeast-search"
                 type="text"
@@ -150,7 +150,7 @@
               </template>
               <template x-if="filteredYeasts.length === 0">
                 <tr>
-                  <td colspan="5" class="table-empty-cell">No yeast strains match the current filters.</td>
+                  <td colspan="5" class="empty-state">No yeast strains match the current filters.</td>
                 </tr>
               </template>
             </tbody>

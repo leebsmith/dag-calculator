@@ -27,7 +27,7 @@
 
     <div class="landing">
       <div class="landing-page">
-        <section class="landing-imports" x-show="$store.imports.count > 0">
+        <section class="region" x-show="$store.imports.count > 0">
           <div class="landing-section-bar">
             <h2 class="landing-heading">
               Imports <span class="text-xs text-muted" x-text="'(' + $store.imports.count + ')'"></span>
@@ -59,7 +59,7 @@
           </ul>
         </section>
 
-        <section class="landing-imports" x-show="$store.imports.failedRows.length > 0">
+        <section class="region" x-show="$store.imports.failedRows.length > 0">
           <div class="landing-section-bar">
             <h2 class="landing-heading">
               Failed imports
@@ -85,7 +85,7 @@
           </ul>
         </section>
 
-        <section class="landing-imports" x-show="$store.imports.committedRows.length > 0">
+        <section class="region" x-show="$store.imports.committedRows.length > 0">
           <div class="landing-section-bar">
             <h2 class="landing-heading">
               Imported recipes

@@ -1,17 +1,17 @@
-<section class="step-card">
-  <div class="step-card-header">
+<section class="card">
+  <div class="card-header">
     <h2 class="card-title" x-text="activeStep.title"></h2>
     <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
   </div>
 
-  <div class="step-card-content">
-    <div class="synthesized-card yeast-summary">
-      <div class="synthesized-header">
+  <div class="card-body">
+    <section class="card-section yeast-summary">
+      <div class="card-section-header">
         <div>
-          <h3 class="synthesized-title" x-text="selectedYeast ? selectedYeast.name : 'No yeast selected'"></h3>
+          <h3 class="eyebrow" x-text="selectedYeast ? selectedYeast.name : 'No yeast selected'"></h3>
           <p class="form-hint" x-show="selectedYeast" x-text="selectedYeastMeta"></p>
         </div>
-        <div class="synthesized-actions">
+        <div class="card-section-actions">
           <button type="button" class="btn btn-secondary btn-sm" @click="openYeastPicker()">
             Change yeast…
           </button>
@@ -38,7 +38,7 @@
             <span class="status-badge status-badge-info text-nano" x-show="isUserItem(selectedYeast.id)">mine</span>
           </div>
           <div class="attenuation-summary-line">
-            <span class="form-label">Published</span>
+            <span class="field-label">Published</span>
             <span class="tabular-nums" x-text="selectedYeastPublished"></span>
           </div>
         </div>
@@ -46,19 +46,19 @@
       <p class="form-hint" x-show="!selectedYeast">
         No yeast selected. Choose a strain to set the attenuation cap.
       </p>
-    </div>
+    </section>
 
-    <div class="synthesized-card yeast-attenuation" x-show="selectedYeast">
-      <div class="synthesized-header">
+    <section class="card-section yeast-attenuation" x-show="selectedYeast">
+      <div class="card-section-header">
         <div>
-          <h3 class="synthesized-title">Batch attenuation</h3>
+          <h3 class="eyebrow">Batch attenuation</h3>
           <p class="form-hint">
             Target cap
             <span class="tabular-nums" x-text="fmt.formatPercent(attenuationCapValue)"></span>
           </p>
         </div>
-        <div class="synthesized-actions">
-          <div class="table-action-cell">
+        <div class="card-section-actions">
+          <div class="row-actions">
             <input
               id="yeast-derate"
               type="number"
@@ -77,15 +77,15 @@
 
       <div class="attenuation-readout">
         <div>
-          <span class="form-label">Published</span>
+          <span class="field-label">Published</span>
           <span class="tabular-nums" x-text="selectedYeastPublished"></span>
         </div>
         <div>
-          <span class="form-label">Realized</span>
+          <span class="field-label">Realized</span>
           <span class="tabular-nums" x-text="fmt.formatPercent(attenuationRealizedValue)"></span>
         </div>
         <div>
-          <span class="form-label">Binding</span>
+          <span class="field-label">Binding</span>
           <span x-text="attenuationBinding"></span>
         </div>
       </div>
@@ -96,7 +96,7 @@
         <span class="text-xs text-muted" x-text="attenuationAboveCapCause"></span>
       </div>
 
-    </div>
+    </section>
 
     <template x-if="selectedYeast">
       <details class="yeast-more">

@@ -1,5 +1,5 @@
-<div class="catalog-drawer-content">
-  <div class="catalog-drawer-controls">
+<div class="catalog-pane-content">
+  <div class="catalog-pane-controls">
     <div class="catalog-search-wrapper">
       <input
         type="text"
@@ -73,7 +73,7 @@
   </div>
 
   <template x-if="draftHasStandard">
-    <div class="catalog-drawer-list">
+    <div class="catalog-pane-list">
       <template x-if="!draftStandard">
         <div>
           <template x-for="g in draftStandardGroups" :key="g.id">
@@ -92,7 +92,7 @@
             </div>
           </template>
           <template x-if="draftSearch.trim() && draftProductMatches.length > 0">
-            <div class="catalog-drawer-breadcrumb">
+            <div class="catalog-pane-breadcrumb">
               <span class="text-xs font-medium">Matching malts</span>
             </div>
           </template>
@@ -120,14 +120,14 @@
             </div>
           </template>
           <template x-if="draftStandardGroups.length === 0 && draftProductMatches.length === 0">
-            <div class="table-empty-cell" x-text="draftEmptyMessage"></div>
+            <div class="empty-state" x-text="draftEmptyMessage"></div>
           </template>
         </div>
       </template>
 
       <template x-if="draftStandard">
         <div>
-          <div class="catalog-drawer-breadcrumb">
+          <div class="catalog-pane-breadcrumb">
             <button type="button" class="btn-link text-xs" @click="clearDraftStandard()">← All standards</button>
             <span class="text-xs font-medium" x-text="draftStandardName"></span>
           </div>
@@ -158,7 +158,7 @@
             </div>
           </template>
           <template x-if="draftFilteredCatalog.length === 0">
-            <div class="table-empty-cell" x-text="draftEmptyDrilldownMessage"></div>
+            <div class="empty-state" x-text="draftEmptyDrilldownMessage"></div>
           </template>
         </div>
       </template>
@@ -166,7 +166,7 @@
   </template>
 
   <template x-if="!draftHasStandard">
-    <div class="catalog-drawer-list">
+    <div class="catalog-pane-list">
       <template x-for="item in draftVisibleCatalog" :key="item.id">
         <div class="catalog-item-card">
           <div>
@@ -197,7 +197,7 @@
         </div>
       </template>
       <template x-if="draftFilteredCatalog.length === 0">
-        <div class="table-empty-cell" x-text="draftEmptyMessage"></div>
+        <div class="empty-state" x-text="draftEmptyMessage"></div>
       </template>
     </div>
   </template>

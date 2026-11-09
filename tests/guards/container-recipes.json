@@ -1,0 +1,247 @@
+{
+  "$comment": "Container recipe registry. Every entry pins the exact declarations of a structural class; update it only with the change that intends to alter the recipe.",
+  "selectors": [
+    {
+      "selector": ".card",
+      "declarations": [
+        "background-color: var(--sys-surface-default)",
+        "border-radius: var(--radius-xl)",
+        "border: 1px solid var(--sys-border-default)",
+        "box-shadow: var(--sys-shadow-md)",
+        "display: flex",
+        "flex-direction: column",
+        "gap: var(--space-4)",
+        "height: 100%",
+        "padding: var(--space-6)"
+      ]
+    },
+    {
+      "selector": ".card-header",
+      "declarations": [
+        "display: flex",
+        "flex-direction: column",
+        "gap: var(--space-1)"
+      ]
+    },
+    {
+      "selector": ".card-body",
+      "declarations": [
+        "container-type: inline-size",
+        "display: flex",
+        "flex-direction: column",
+        "gap: var(--space-6)"
+      ]
+    },
+    {
+      "selector": ".card-section",
+      "declarations": [
+        "background-color: var(--sys-surface-canvas)",
+        "border-radius: var(--radius-lg)",
+        "border: 1px solid var(--sys-border-subtle)",
+        "display: flex",
+        "flex-direction: column",
+        "gap: var(--space-3)",
+        "padding: var(--space-4)"
+      ]
+    },
+    {
+      "selector": ".card-section--collapsible",
+      "declarations": [
+        "gap: var(--space-2)"
+      ]
+    },
+    {
+      "selector": ".card-section-header",
+      "declarations": [
+        "align-items: center",
+        "display: flex",
+        "justify-content: space-between"
+      ]
+    },
+    {
+      "selector": ".card-section-actions",
+      "declarations": [
+        "align-items: center",
+        "display: flex",
+        "gap: var(--space-1-5)"
+      ]
+    },
+    {
+      "selector": ".region--divided, .library-editor",
+      "declarations": [
+        "border-top: 1px solid var(--sys-border-subtle)",
+        "display: flex",
+        "flex-direction: column",
+        "gap: var(--space-2)",
+        "padding-top: var(--space-3)"
+      ]
+    },
+    {
+      "selector": ".region--spaced",
+      "declarations": [
+        "margin-bottom: var(--space-4)"
+      ]
+    },
+    {
+      "selector": ".region-title",
+      "declarations": [
+        "color: var(--sys-text-primary)",
+        "font-size: var(--text-sm)",
+        "font-weight: var(--font-weight-semibold)",
+        "margin: var(--space-0)"
+      ]
+    },
+    {
+      "selector": ".eyebrow",
+      "declarations": [
+        "color: var(--sys-text-secondary)",
+        "font-size: var(--text-xs)",
+        "font-weight: var(--font-weight-bold)",
+        "letter-spacing: var(--text-tracking-wide)",
+        "margin: var(--space-0)",
+        "text-transform: uppercase"
+      ]
+    },
+    {
+      "selector": ".group-title",
+      "declarations": [
+        "color: var(--sys-text-secondary)",
+        "font-size: var(--text-xs)",
+        "font-weight: var(--font-weight-semibold)",
+        "letter-spacing: var(--text-tracking-wide)",
+        "text-transform: uppercase",
+        "white-space: nowrap"
+      ]
+    },
+    {
+      "selector": ".sheet--library",
+      "declarations": [
+        "background-color: var(--sys-surface-elevated)",
+        "border-radius: var(--radius-lg)",
+        "border: 1px solid var(--sys-border-subtle)",
+        "box-shadow: var(--sys-shadow-lg)",
+        "display: flex",
+        "flex-direction: column",
+        "gap: var(--space-3)",
+        "margin: auto",
+        "max-height: 90vh",
+        "max-width: var(--container-content-wide)",
+        "overflow-y: auto",
+        "padding: var(--space-4)",
+        "width: 100%"
+      ]
+    },
+    {
+      "selector": ".sheet--signin",
+      "declarations": [
+        "background-color: var(--sys-surface-default)",
+        "border-radius: var(--radius-xl)",
+        "border: 1px solid var(--sys-border-subtle)",
+        "box-shadow: var(--sys-shadow-sm)",
+        "display: flex",
+        "flex-direction: column",
+        "gap: var(--space-4)",
+        "margin: auto",
+        "max-width: var(--container-content-stack)",
+        "padding: var(--space-6)",
+        "width: 100%"
+      ]
+    },
+    {
+      "selector": ".sheet-overlay",
+      "declarations": [
+        "backdrop-filter: var(--sys-backdrop-blur)",
+        "background-color: var(--sys-surface-overlay)",
+        "display: flex",
+        "inset: 0",
+        "justify-content: center",
+        "overflow-y: auto",
+        "padding: var(--space-4)",
+        "position: fixed",
+        "z-index: var(--z-modal)"
+      ]
+    },
+    {
+      "selector": ".empty-state",
+      "declarations": [
+        "color: var(--sys-text-muted)",
+        "font-family: var(--font-sans)",
+        "font-style: italic",
+        "padding: var(--space-8)",
+        "text-align: center"
+      ]
+    },
+    {
+      "selector": ".row-actions, .table-action-cell",
+      "declarations": [
+        "align-items: center",
+        "display: flex",
+        "gap: var(--space-1)",
+        "justify-content: flex-end"
+      ]
+    },
+    {
+      "selector": ".catalog-pane-content",
+      "declarations": [
+        "display: flex",
+        "flex-direction: column",
+        "flex: 1",
+        "min-height: 0"
+      ]
+    },
+    {
+      "selector": ".catalog-pane-controls",
+      "declarations": [
+        "display: flex",
+        "flex-direction: column",
+        "flex-shrink: 0"
+      ]
+    },
+    {
+      "selector": ".catalog-pane-list",
+      "declarations": [
+        "display: flex",
+        "flex-direction: column",
+        "flex: 1",
+        "gap: var(--space-2)",
+        "min-height: 0",
+        "overflow-y: auto"
+      ]
+    },
+    {
+      "selector": ".catalog-pane-breadcrumb",
+      "declarations": [
+        "align-items: center",
+        "border-bottom: 1px solid var(--sys-border-subtle)",
+        "display: flex",
+        "gap: var(--space-2)",
+        "margin-bottom: var(--space-2)",
+        "padding-bottom: var(--space-2)"
+      ]
+    },
+    {
+      "selector": ".catalog-item-card",
+      "declarations": [
+        "align-items: center",
+        "background-color: var(--sys-surface-default)",
+        "border-radius: var(--radius-md)",
+        "border: 1px solid var(--sys-border-subtle)",
+        "display: flex",
+        "gap: var(--space-3)",
+        "justify-content: space-between",
+        "padding: var(--space-3) var(--space-4)",
+        "transition: border-color var(--transition-fast), background-color var(--transition-fast)"
+      ]
+    },
+    {
+      "selector": ".detail-panel",
+      "declarations": [
+        "background-color: var(--sys-surface-subtle)",
+        "border-radius: var(--radius-lg)",
+        "border: 1px solid var(--sys-border-subtle)",
+        "margin-top: var(--space-2)",
+        "padding: var(--space-3) var(--space-4)"
+      ]
+    }
+  ]
+}

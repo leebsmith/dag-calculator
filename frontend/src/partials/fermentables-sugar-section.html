@@ -1,4 +1,4 @@
-<section class="synthesized-card card-section">
+<section class="card-section card-section--collapsible">
   <div class="section-header">
     <button
       type="button"
@@ -8,7 +8,7 @@
       @click="toggleSugarSection()"
     >
       <span class="section-chevron" aria-hidden="true">▸</span>
-      <span class="section-title">Sugars</span>
+      <span class="region-title">Sugars</span>
       <span class="section-meta" x-text="sugarSectionMeta"></span>
     </button>
     <div class="section-actions">
@@ -57,7 +57,7 @@
           @change="commitNumberInput(inputKey('field', sugarShareField.id), sugarShareField)"
         />
         <span class="form-hint" x-text="sugarShareField.hint"></span>
-        <div class="table-action-cell">
+        <div class="row-actions">
           <button type="button" class="btn-outline btn-sm" @click="adoptLateAdditionDose()">
             Adopt current dose
           </button>
@@ -88,7 +88,7 @@
             </template>
             <template x-if="lateSugarField.rows.length === 0">
               <tr>
-                <td :colspan="lateSugarField.columns.length" class="table-empty-cell">
+                <td :colspan="lateSugarField.columns.length" class="empty-state">
                   No sugars yet. Click “Configure Sugars” to add late additions.
                 </td>
               </tr>
@@ -162,7 +162,7 @@
                 </template>
                 <template x-if="scalePreviewRows.length === 0">
                   <tr>
-                    <td colspan="5" class="table-empty-cell">Solve the batch to preview the three pins.</td>
+                    <td colspan="5" class="empty-state">Solve the batch to preview the three pins.</td>
                   </tr>
                 </template>
               </tbody>

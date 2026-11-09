@@ -143,7 +143,7 @@
                       />
                     </td>
                     <td class="text-right">
-                      <div class="table-action-cell">
+                      <div class="row-actions">
                         <button type="button" class="btn-action-icon" @click="inspectDryHopRow(ri)" title="Inspect">✎</button>
                         <button
                           type="button"
@@ -159,7 +159,7 @@
                 </template>
                 <template x-if="draftRows.length === 0">
                   <tr>
-                    <td colspan="8" class="table-empty-cell">
+                    <td colspan="8" class="empty-state">
                       No dry hops in the draft. Click “＋ Add from Catalog”.
                     </td>
                   </tr>
@@ -189,7 +189,7 @@
         >
           <div class="modal-drawer-header">
             <h3
-              class="section-title"
+              class="region-title"
               x-text="dryHopDrawer === 'search' ? 'Hop / Product Catalog' : 'Dry Hop Inspector'"
             ></h3>
             <button type="button" class="btn-close text-xs" @click="closeDryHopDrawer()">✕</button>

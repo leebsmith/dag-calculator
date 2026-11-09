@@ -1,13 +1,13 @@
-<section class="step-card">
-  <div class="step-card-header">
+<section class="card">
+  <div class="card-header">
     <h2 class="card-title" x-text="activeStep.title"></h2>
     <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
   </div>
 
-  <div class="step-card-content">
-    <section class="synthesized-card card-section">
+  <div class="card-body">
+    <section class="card-section card-section--collapsible">
       <div class="section-header">
-        <span class="section-title">Hopping Strategy</span>
+        <span class="region-title">Hopping Strategy</span>
       </div>
       <div class="section-body">
         <div
@@ -33,7 +33,7 @@
       </div>
     </section>
 
-    <section class="synthesized-card card-section">
+    <section class="card-section card-section--collapsible">
       <div class="section-header">
         <button
           type="button"
@@ -43,7 +43,7 @@
           @click="toggleHopSection('boil')"
         >
           <span class="section-chevron" aria-hidden="true">▸</span>
-          <span class="section-title">Boil Additions</span>
+          <span class="region-title">Boil Additions</span>
           <span class="section-meta" x-text="boilHopSectionMeta"></span>
         </button>
         <div class="section-actions">
@@ -92,7 +92,7 @@
       </div>
     </section>
 
-    <section class="synthesized-card card-section">
+    <section class="card-section card-section--collapsible">
       <div class="section-header">
         <button
           type="button"
@@ -102,7 +102,7 @@
           @click="toggleHopSection('whirlpool')"
         >
           <span class="section-chevron" aria-hidden="true">▸</span>
-          <span class="section-title">Whirlpool Additions</span>
+          <span class="region-title">Whirlpool Additions</span>
           <span class="section-meta" x-text="whirlpoolHopSectionMeta"></span>
         </button>
         <div class="section-actions">

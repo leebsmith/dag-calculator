@@ -1,5 +1,5 @@
-<section class="step-card">
-  <div class="step-card-header">
+<section class="card">
+  <div class="card-header">
     <h2 class="card-title" x-text="activeStep.title"></h2>
     <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
   </div>
@@ -84,7 +84,7 @@
 
       <template x-if="f.control === 'readout'">
         <div>
-          <span class="form-label">
+          <span class="field-label">
             <span x-text="fmt.formatFieldLabel(f.label, f.toggleable ? null : f.unit)"></span>
             <button
               type="button"
@@ -123,7 +123,7 @@
 
       <template x-if="f.control === 'readout-table'">
         <div>
-          <h3 class="section-title" x-text="f.title"></h3>
+          <h3 class="region-title" x-text="f.title"></h3>
           <div class="data-table-container">
             <table class="data-table data-table--editor">
               <thead x-show="f.header">
@@ -180,7 +180,7 @@
 
       <template x-if="f.control === 'collection-table'">
         <div>
-          <span class="form-label" x-text="f.label"></span>
+          <span class="field-label" x-text="f.label"></span>
           <div class="data-table-container">
             <table class="data-table data-table--editor">
               <thead>

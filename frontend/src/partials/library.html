@@ -1,6 +1,6 @@
-<div class="library-overlay" @keydown.escape.window="closeLibrary()">
+<div class="sheet-overlay" @keydown.escape.window="closeLibrary()">
   <section
-    class="library-panel"
+    class="sheet sheet--library"
     role="dialog"
     aria-modal="true"
     aria-labelledby="library-title"
@@ -91,8 +91,8 @@
           existing declaration before they are edited.
         </p>
 
-        <section class="library-section">
-          <h3 class="library-heading">Your records</h3>
+        <section class="region region--divided">
+          <h3 class="region-title">Your records</h3>
           <div class="library-records">
             <template x-for="item in libraryRecords" :key="libraryItemId(item)">
               <div class="catalog-item-card">
@@ -132,8 +132,8 @@
           </button>
         </div>
 
-        <section class="library-section">
-          <h3 class="library-heading">Bundled seeds (read-only)</h3>
+        <section class="region region--divided">
+          <h3 class="region-title">Bundled seeds (read-only)</h3>
           <div class="library-records">
             <template x-for="item in librarySeedItems" :key="libraryItemId(item)">
               <div class="catalog-item-card is-readonly">
@@ -217,11 +217,11 @@
           differs from the record is edited on the batch, not here.
         </p>
 
-        <section class="library-section">
-          <h3 class="library-heading">Your records</h3>
+        <section class="region region--divided">
+          <h3 class="region-title">Your records</h3>
           <template x-for="group in libraryGroups" :key="group.title || 'all'">
             <div x-show="group.items.length">
-              <h4 class="library-heading" x-show="group.title" x-text="group.title"></h4>
+              <h4 class="region-title" x-show="group.title" x-text="group.title"></h4>
               <div class="library-records">
                 <template x-for="item in group.items" :key="libraryItemId(item)">
                   <div class="catalog-item-card">
@@ -254,8 +254,8 @@
           </button>
         </div>
 
-        <section class="library-section">
-          <h3 class="library-heading">Bundled seeds (read-only)</h3>
+        <section class="region region--divided">
+          <h3 class="region-title">Bundled seeds (read-only)</h3>
           <div class="library-records">
             <template x-for="item in librarySeedItems" :key="libraryItemId(item)">
               <div class="catalog-item-card is-readonly">
@@ -401,7 +401,7 @@
           });
         })()"
       >
-        <h3 class="library-heading" x-text="libraryEditorTitle"></h3>
+        <h3 class="region-title" x-text="libraryEditorTitle"></h3>
         <p class="form-hint" x-show="activeKind === 'yeast'">
           A strain leaves <em>Blend of</em> empty. A blend lists the strains it is composed of,
           comma-separated, and carries the attenuation the blend finishes at.

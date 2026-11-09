@@ -1,13 +1,13 @@
-<section class="step-card">
-  <div class="step-card-header">
+<section class="card">
+  <div class="card-header">
     <h2 class="card-title" x-text="activeStep.title"></h2>
     <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
   </div>
 
-  <div class="step-card-content">
-    <div class="synthesized-card">
-      <div class="synthesized-header">
-        <h3 class="synthesized-title">Water plan</h3>
+  <div class="card-body">
+    <section class="card-section">
+      <div class="card-section-header">
+        <h3 class="eyebrow">Water plan</h3>
       </div>
 
       <div
@@ -70,7 +70,7 @@
         })"
       >
         <div class="form-group">
-          <span class="form-label" x-text="waterPlan.source.label"></span>
+          <span class="field-label" x-text="waterPlan.source.label"></span>
           <p class="text-sm font-medium" x-text="waterPlan.source.title || '—'"></p>
           <p class="text-xs text-muted" x-show="waterPlan.source.detail" x-text="waterPlan.source.detail"></p>
           <span class="form-hint" x-show="waterPlan.source.hint" x-text="waterPlan.source.hint"></span>
@@ -155,9 +155,9 @@
         @click="toggleWaterDetails()"
         x-text="waterSummary.warningLabel + ' — view details'"
       ></button>
-    </div>
+    </section>
 
-    <section class="step-group">
+    <section class="region">
       <div class="group-header">
         <h3 class="group-title">Treatment</h3>
       </div>
@@ -187,7 +187,7 @@
       </div>
     </section>
 
-    <section class="step-group">
+    <section class="region">
       <div class="group-header">
         <h3 class="group-title">Prescription</h3>
       </div>
@@ -201,7 +201,7 @@
 
       <div class="step-grid-2col">
         <div>
-          <h4 class="synthesized-title">Mash</h4>
+          <h4 class="eyebrow">Mash</h4>
           <p class="text-sm text-muted" x-show="waterPrescription.pending">Solving…</p>
           <p class="text-sm text-muted" x-show="!waterPrescription.pending && waterPrescription.mash.length === 0">No mash additions.</p>
           <template x-for="d in waterPrescription.mash" :key="d.label">
@@ -212,7 +212,7 @@
           </template>
         </div>
         <div>
-          <h4 class="synthesized-title">Sparge</h4>
+          <h4 class="eyebrow">Sparge</h4>
           <p class="text-sm text-muted" x-show="waterPrescription.pending">Solving…</p>
           <p class="text-sm text-muted" x-show="!waterPrescription.pending && waterPrescription.sparge.length === 0">No sparge additions.</p>
           <template x-for="d in waterPrescription.sparge" :key="d.label">
@@ -232,7 +232,7 @@
       </template>
     </section>
 
-    <section class="step-group">
+    <section class="region">
       <div class="group-header">
         <h3 class="group-title">Details</h3>
         <button
