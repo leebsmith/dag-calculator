@@ -64,7 +64,7 @@
       table(
         columns: columns,
         align: align,
-        stroke: none,
+        stroke: 0.4pt + rgb(185, 177, 164),
         inset: (x: 3pt, y: 2pt),
         table.header(..header),
         ..rows,

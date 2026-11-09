@@ -308,6 +308,34 @@ def test_the_hop_strategy_survives_without_hop_rows() -> None:
         render(root, "hops")
 
 
+def test_prose_tables_render_with_a_full_cell_grid() -> None:
+    ast = {
+        "type": "doc",
+        "children": [
+            {
+                "type": "table",
+                "align": ["left"],
+                "header": [[{"type": "text", "value": "Header"}]],
+                "rows": [[[{"type": "text", "value": "Cell"}]]],
+            }
+        ],
+    }
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), fixture())
+        (root / "table.json").write_text(json.dumps(ast))
+        (root / "prose-table-probe.typ").write_text(
+            '#import "lib/prose.typ": prose-node\n#prose-node(json("table.json"))\n'
+        )
+        completed = run_typst(
+            ["eval", "query(selector(table))", "--in", str(root / "prose-table-probe.typ")],
+            root,
+        )
+        rendered = json.loads(completed.stdout)
+        assert len(rendered) == 1
+        assert "0.4pt" in rendered[0]["stroke"]
+        assert "#b9b1a4" in rendered[0]["stroke"]
+
+
 def test_the_hop_purchase_table_is_present_with_its_rows(shared_root: Path) -> None:
     assert probe(shared_root, HOPS_PURCHASE_PROBE) is True
 

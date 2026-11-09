@@ -23,7 +23,7 @@ are in scope: the hopping strategy, process notes, and brew-day checklist notes.
 | Horizontal rule | `---` | rule |
 | Hard break | two trailing spaces or backslash | line break |
 | Heading | `#`, `##`, `###` | bold paragraph at heading scale |
-| Table | GFM pipe table with a `\|---\|---\|` delimiter row | Typst table with column alignment |
+| Table | GFM pipe table with a `\|---\|---\|` delimiter row | Typst table with column alignment and a full cell grid |
 
 A table needs its own lines and a blank line before the block:
 
@@ -35,6 +35,10 @@ A table needs its own lines and a blank line before the block:
 
 Table cells accept inline markdown only: emphasis, strong, code, and links. A
 cell cannot contain paragraphs, lists, or another table.
+
+Prose tables use a full cell grid in the report's rule colour. That styling
+lives in `lib/prose.typ`; the report's data tables stay borderless through the
+theme's `stroke: none`.
 
 Headings intentionally do not become Typst `heading` elements. A note must not
 alter the report outline, force a page break, or compete with a section title.

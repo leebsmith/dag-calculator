@@ -160,8 +160,9 @@ walks it with content constructors: `par`, `strong`, `emph`, `strike`, `list`,
   mono font is vendored.
 - Headings map to bold paragraphs at the theme's heading sizes. They are not
   `heading` elements, so a note cannot enter the outline or force a page break.
-- GFM tables map to Typst `table` elements with per-column alignment. Cells are
-  inline content only; the backend caps columns and rows.
+- GFM tables map to Typst `table` elements with per-column alignment and a full
+  cell grid. Cells are inline content only; the backend caps columns and rows.
+  The grid is set in `lib/prose.typ`; the theme's data tables stay borderless.
 - `prose-cell` and `prose-value` fall back to the existing text when the AST is
   absent, which keeps older bundles and unenriched local bundles compiling.
 
