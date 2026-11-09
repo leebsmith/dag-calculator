@@ -28,6 +28,7 @@ import {
 } from "./visual-snapshot-cdp.mjs";
 
 const DEFAULT_SCREENS = [
+  "editor.html",
   "step-hops.html",
   "step-water.html",
   "library.html",
