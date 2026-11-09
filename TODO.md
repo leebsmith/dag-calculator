@@ -99,6 +99,30 @@ tracks only what is outstanding.
   variety already in the draft, unlike the hop drawers, which keep it and show the
   row count (`allowDuplicates` on the shared catalog-draft mixin).
 
+### UI container maintenance
+
+Deferred from the 2026-11 CSS rationalization
+(`plans/archive/2026-11/unconditionally-recommended-css-rationalization.md`):
+
+* **Visual corrections** — each is a deliberate pixel change with before/after
+  evidence: scope `unit-badge` hover/focus to buttons; render disabled
+  `segmented-item` chips as disabled buttons; give the read-only brew-day header
+  its own class without the pointer cursor; change the `alert` error paragraph to
+  a `div`; normalize `catalog-item-name` / `-actions` to `div`; wrap the
+  `import-delta` tables in `data-table-container`; add `region` wrappers in the
+  import-transcribe / import-check groups; normalize heading levels and the
+  `form-hint` tag mix.
+* **Local visual harness** — the one-off Chrome fixture and computed-style
+  comparator were not committed, departing from the plan's invariant #4. Add a
+  local target (Chrome optional, baseline from `BASE=<ref>`, no screenshots in
+  CI) if CSS refactors recur.
+* **Guard refinements** — pin container state variants (`:hover`, `:focus`,
+  `:disabled`, `is-readonly`) in the recipe registry, and derive the
+  approved-token set from the registry instead of duplicating it in the guard.
+* **Container composition** — extract `ui-card.html` / `ui-region.html` so step
+  partials stop copying the card header/body; this is the structural anti-drift
+  lever and deserves its own plan.
+
 ### Flavor charge
 
 A batch addition that carries flavour and aroma but **no IBU**, dosed per volume
