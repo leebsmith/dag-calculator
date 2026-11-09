@@ -246,12 +246,22 @@
     },
     {
       "context": "",
+      "declarations": "transform: rotate(90deg)",
+      "selectors": [
+        ".section-toggle[aria-expanded=\"true\"] .section-chevron, .detail-toggle[aria-expanded=\"true\"] .section-chevron",
+        "details[open] > summary::before"
+      ],
+      "reason": "Shared open-state chevron rotation for the disclosure primitives."
+    },
+    {
+      "context": "",
       "declarations": "display: none",
       "selectors": [
         "[x-cloak]",
+        "details > summary::-webkit-details-marker",
         ".stepper::-webkit-scrollbar"
       ],
-      "reason": "Coincidental hidden rendering: the Alpine cloak and the hidden stepper scrollbar are unrelated."
+      "reason": "Coincidental hidden rendering: the Alpine cloak, the native disclosure marker, and the hidden stepper scrollbar are unrelated."
     }
   ],
   "classes": []

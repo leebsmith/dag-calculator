@@ -368,6 +368,20 @@ would be unstyled. `segmented-control` is a `div` when it filters within a view
 and a `nav` when it switches views (the import stages); the element follows the
 navigation role, not the class.
 
+The page card is the only level with a shadow. Every boxed container boundary
+uses `border-default`; `border-subtle` is reserved for row dividers and table
+cell rules, so a boundary never reads as a divider. Section headers and
+card-section headers carry a bottom rule in `border-default`; the group rule
+behind a `group-title` uses the same token. The contrast target is 2:1 for a
+boundary against its surface and 1.1:1 for a divider;
+`tests/guards/container-contrast.test.js` enforces both in light and dark.
+
+Disclosures have two shapes. A page-level `details` (`import-origin`,
+`import-unmodeled`, `whirlpool-ceiling`) is a boxed section with a summary rule;
+an inline `details` (`yeast-more`, `yeast-row-details`, `map-search`) is a
+summary row with a chevron and no box. Both use the same chevron as
+`section-toggle`.
+
 The page card, the boxed region, the unboxed region and the sheet are the four
 structural levels; `sheet` is the only one that is centred rather than placed in
 the document flow. Distinct elevation roles keep their own names:

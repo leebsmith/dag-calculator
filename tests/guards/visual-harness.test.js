@@ -12,7 +12,7 @@ import { ROOT } from "./util.js";
 
 const PARTIALS = path.join(ROOT, "frontend/src/partials");
 
-test("the fixture strips Alpine directives and unwraps templates", () => {
+test("the fixture strips Alpine directives and keeps templates inert", () => {
   const source = `<template x-if="open"><div x-data="{}" :class="{ active: on }" @click="go()">x</div></template>`;
   const out = stripAlpine(source);
   assert.equal(out.includes("x-data"), false);

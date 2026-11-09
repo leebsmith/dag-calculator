@@ -51,7 +51,7 @@ export const RULES = [
     ["frontend/index.html", "frontend/public/**", "frontend/src/*.css", "frontend/src/**/*.html", "frontend/src/**/*.css"],
     [
       "alpine-handlers", "control-states", "dialogs", "css-classes", "css-duplication",
-      "ui-vocabulary", "container-vocabulary", "theme-tokens",
+      "ui-vocabulary", "container-vocabulary", "container-contrast", "theme-tokens",
       "engine-access", "engine-read-mirrors", "include-integrity", "mash-input-contract",
       "number-input-contract", "select-binding", "show-dereference", "store-surface",
       "svg-length-bindings", "telemetry-classes", "template-scope",
