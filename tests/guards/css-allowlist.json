@@ -99,9 +99,19 @@
       "selectors": [
         ".modal-workspace-header-actions",
         ".recipes-actions",
+        ".library-header-actions",
         ".boundary-status"
       ],
-      "reason": "Coincidental row layout across the workspace header, recipe actions, and boundary status."
+      "reason": "Coincidental row layout across the workspace header, recipe actions, library header actions, and boundary status."
+    },
+    {
+      "context": "",
+      "declarations": "align-items: center; display: inline-flex; gap: var(--space-1)",
+      "selectors": [
+        ".detail-toggle",
+        ".theme-control"
+      ],
+      "reason": "Coincidental inline row; the detail disclosure toggle and the theme label are unrelated."
     },
     {
       "context": "",

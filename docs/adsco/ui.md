@@ -375,6 +375,16 @@ the document flow. Distinct elevation roles keep their own names:
 container name must be added to the registry and the approved set in the guard;
 the guard fails on an unregistered container or a changed recipe.
 
+## Color theme
+
+The theme is a device-local preference (`brew_theme` in localStorage) with three
+modes: system, light, dark. `frontend/public/theme-init.js` sets `data-theme`
+before the stylesheet paints; `frontend/src/store/theme.js` owns the Alpine
+store; `ui-theme-control.html` appears in every menu bar and the library header.
+The dark roles are declared under both `prefers-color-scheme` and
+`:root[data-theme="dark"]`; `tests/guards/theme-tokens.test.js` keeps the two
+blocks identical and checks that the control is surfaced.
+
 ## Guardrails / a11y
 
 - Named handlers, `fmt.*` for all numbers/deltas, no inline logic (A8/A10),

@@ -48,10 +48,10 @@ export const RULES = [
   ),
   coupled(["tools/**"], ["artifact-dot-sync", "precommit-contract"], "the dot generator is run by the pre-commit harness and compared by its guard"),
   coupled(
-    ["frontend/index.html", "frontend/src/*.css", "frontend/src/**/*.html", "frontend/src/**/*.css"],
+    ["frontend/index.html", "frontend/public/**", "frontend/src/*.css", "frontend/src/**/*.html", "frontend/src/**/*.css"],
     [
       "alpine-handlers", "control-states", "dialogs", "css-classes", "css-duplication",
-      "ui-vocabulary", "container-vocabulary",
+      "ui-vocabulary", "container-vocabulary", "theme-tokens",
       "engine-access", "engine-read-mirrors", "include-integrity", "mash-input-contract",
       "number-input-contract", "select-binding", "show-dereference", "store-surface",
       "svg-length-bindings", "telemetry-classes", "template-scope",

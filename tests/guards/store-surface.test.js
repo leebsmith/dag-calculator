@@ -12,6 +12,7 @@ import { createRecipesStore } from "../../frontend/src/store/recipes.js";
 import { createBrewSessionStore } from "../../frontend/src/store/brewSession.js";
 import { createImportsStore } from "../../frontend/src/store/imports.js";
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
+import { createThemeStore } from "../../frontend/src/store/theme.js";
 import { read, rel, walk } from "./util.js";
 
 // Stores created inline in `main.js` and therefore not covered by a factory.
@@ -30,6 +31,10 @@ const FACTORIES = {
   imports: () =>
     createImportsStore({ client: { list: async () => [] }, readFile: async () => "" }),
   importReview: () => createImportReviewStore({ client: {} }),
+  theme: () =>
+    createThemeStore({
+      storage: { getItem: () => null, setItem: () => {} },
+    }),
 };
 
 function surfaces() {
@@ -81,6 +86,7 @@ test("every Alpine store registered in main.js is either a factory or explicitly
     "imports",
     "recipes",
     "setup",
+    "theme",
   ]);
 
   const uncovered = registered.filter((name) => !EXTERNAL.has(name) && !(name in FACTORIES));

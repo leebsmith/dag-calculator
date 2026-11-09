@@ -27,6 +27,7 @@ const EXTRA_PARTIALS = [
   "./src/partials/ui-form-fields.html",
   "./src/partials/ui-form-field.html",
   "./src/partials/ui-form-field-control.html",
+  "./src/partials/ui-theme-control.html",
 ];
 
 // App-level files that may declare <load src>: index.html plus the allowlisted

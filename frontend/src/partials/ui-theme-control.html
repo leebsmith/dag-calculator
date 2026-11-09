@@ -1,0 +1,13 @@
+<label class="theme-control">
+  <span class="text-xs text-muted">Theme</span>
+  <select
+    class="form-select"
+    aria-label="Color theme"
+    :value="$store.theme.mode"
+    @change="$store.theme.set($event.target.value)"
+  >
+    <option value="system">System</option>
+    <option value="light">Light</option>
+    <option value="dark">Dark</option>
+  </select>
+</label>

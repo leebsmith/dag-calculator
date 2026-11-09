@@ -439,7 +439,7 @@
    M3 System Color Roles (Dark)
    ======================================================================== */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --md-sys-color-primary: var(--md-ref-palette-primary-80);
     --md-sys-color-on-primary: var(--md-ref-palette-primary-10);
     --md-sys-color-primary-container: var(--md-ref-palette-primary-30);
@@ -484,4 +484,56 @@
     --md-sys-color-on-warning-container: #fde68a;
     --md-sys-color-warning-outline: rgba(251, 191, 36, 0.35);
   }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --md-sys-color-primary: var(--md-ref-palette-primary-80);
+  --md-sys-color-on-primary: var(--md-ref-palette-primary-10);
+  --md-sys-color-primary-container: var(--md-ref-palette-primary-30);
+  --md-sys-color-on-primary-container: var(--md-ref-palette-primary-90);
+
+  --md-sys-color-secondary: var(--md-ref-palette-secondary-80);
+  --md-sys-color-on-secondary: var(--md-ref-palette-secondary-10);
+  --md-sys-color-secondary-container: var(--md-ref-palette-secondary-30);
+  --md-sys-color-on-secondary-container: var(--md-ref-palette-secondary-90);
+
+  --md-sys-color-error: var(--md-ref-palette-error-80);
+  --md-sys-color-on-error: var(--md-ref-palette-error-20);
+  --md-sys-color-error-container: var(--md-ref-palette-error-30);
+  --md-sys-color-on-error-container: var(--md-ref-palette-error-90);
+  --md-sys-color-error-outline: rgba(251, 113, 133, 0.35);
+
+  --md-sys-color-surface: var(--md-ref-palette-neutral-5);
+  --md-sys-color-surface-dim: var(--md-ref-palette-neutral-3);
+  --md-sys-color-surface-bright: var(--md-ref-palette-neutral-20);
+  --md-sys-color-surface-container-lowest: var(--md-ref-palette-neutral-3);
+  --md-sys-color-surface-container-low: var(--md-ref-palette-neutral-12);
+  --md-sys-color-surface-container: var(--md-ref-palette-neutral-17);
+  --md-sys-color-surface-container-high: var(--md-ref-palette-neutral-20);
+  --md-sys-color-surface-container-highest: var(--md-ref-palette-neutral-25);
+  --md-sys-color-on-surface: var(--md-ref-palette-neutral-99);
+  --md-sys-color-on-surface-variant: var(--md-ref-palette-neutral-80);
+  --md-sys-color-surface-variant: var(--md-ref-palette-neutral-25);
+
+  --md-sys-color-outline: var(--md-ref-palette-neutral-60);
+  --md-sys-color-outline-variant: var(--md-ref-palette-neutral-25);
+  --md-sys-color-inverse-surface: var(--md-ref-palette-neutral-99);
+  --md-sys-color-inverse-on-surface: var(--md-ref-palette-neutral-5);
+  --md-sys-color-inverse-primary: var(--md-ref-palette-primary-40);
+
+  --md-sys-color-success: #34d399;
+  --md-sys-color-success-container: rgba(16, 185, 129, 0.14);
+  --md-sys-color-on-success-container: #6ee7b7;
+  --md-sys-color-success-outline: rgba(52, 211, 153, 0.35);
+
+  --md-sys-color-warning: #fbbf24;
+  --md-sys-color-warning-container: rgba(245, 158, 11, 0.14);
+  --md-sys-color-on-warning-container: #fde68a;
+  --md-sys-color-warning-outline: rgba(251, 191, 36, 0.35);
 }

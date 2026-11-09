@@ -37,6 +37,7 @@ import { createImportReviewStore } from "./store/importReview.js";
 import { createSetupStore } from "./store/setup.js";
 import { createRecipesStore } from "./store/recipes.js";
 import { createBrewSessionStore } from "./store/brewSession.js";
+import { createThemeStore } from "./store/theme.js";
 
 // The JSON seam and its clients are instantiated at boot and injected down; no
 // module owns a shared token provider. Firebase's `getIdToken` is the one
@@ -87,6 +88,8 @@ function anchorStyle(event) {
     : `top:${Math.round(rect.bottom + 4)}px`;
   return `right:${right}px; ${vertical}`;
 }
+
+Alpine.store("theme", createThemeStore());
 
 Alpine.store("auth", {
   user: null,

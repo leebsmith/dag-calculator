@@ -16,7 +16,10 @@
           batch.
         </p>
       </div>
-      <button type="button" class="btn-outline" @click="closeLibrary()">Close</button>
+      <div class="library-header-actions">
+        <load src="src/partials/ui-theme-control.html" />
+        <button type="button" class="btn-outline" @click="closeLibrary()">Close</button>
+      </div>
     </header>
 
     <div class="segmented-control segmented-control--pills">

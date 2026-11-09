@@ -1295,6 +1295,16 @@ samp {
   position: relative;
 }
 
+.theme-control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.theme-control .form-select {
+  width: auto;
+}
+
 .unit-popover {
   position: absolute;
   top: calc(100% + var(--space-2));
@@ -1387,6 +1397,12 @@ samp {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-3);
+}
+
+.library-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .library-filter-bar {
