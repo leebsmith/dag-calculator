@@ -2,6 +2,7 @@
 // grouped by phase and section. Every cell is a frozen display string.
 
 #import "../lib/bundle.typ": display-tables, display-values
+#import "../lib/prose.typ": prose-cell
 
 #let COLLECTION = "batch.brew_checklist"
 
@@ -26,6 +27,7 @@
 }
 
 #let step-row(row) = block(breakable: false, {
+  let note-cell = row.at("note", default: none)
   let note = cell(row, "note")
   grid(
     columns: (14pt, 1fr),
@@ -37,7 +39,11 @@
       #cell(row, "text")
       #if note != "—" [
         #linebreak()
-        #text(size: 8pt, fill: rgb("#6b6b6b"), "Note: " + note)
+        #block(text(size: 8pt, fill: rgb("#6b6b6b"), "Note:"))
+        #block({
+          set text(size: 8pt, fill: rgb("#6b6b6b"))
+          prose-cell(note-cell)
+        })
       ]
       #linebreak()
       #text(size: 8pt, fill: rgb("#6b6b6b"), "Level: " + cell(row, "level"))

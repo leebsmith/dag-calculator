@@ -3,6 +3,7 @@
 // arranges them.
 
 #import "../lib/format.typ": formatted-table, formatted-text, present-formatted, present-formatted-table
+#import "../lib/prose.typ": prose-cell
 
 #let BOIL = "batch.boil_hops"
 #let WHIRLPOOL = "batch.whirlpool_hops"
@@ -84,7 +85,7 @@
     block(breakable: false, {
       heading(level: 2)[Hopping Strategy]
       for row in formatted-table("report.hop_strategy") {
-        par(row.at("text").at("text"))
+        prose-cell(row.at("text"))
       }
     })
   }

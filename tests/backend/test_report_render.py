@@ -227,6 +227,47 @@ def test_the_process_notes_section_renders(render_once) -> None:
     assert rendered.pages >= 1
 
 
+def test_process_notes_render_markdown() -> None:
+    data = bundle_dict()
+    data["formatted_tables"]["batch.process_notes"][0]["note"]["text"] = (
+        "**PROCESSBOLDSENTINEL** and *PROCESSITALICSENTINEL*"
+    )
+
+    rendered = render(seal_bundle(data), parse_spec(sections="process"))
+    text = _pdf_text(rendered.data)
+
+    assert "PROCESSBOLDSENTINEL" in text
+    assert "PROCESSITALICSENTINEL" in text
+    assert "**PROCESSBOLDSENTINEL**" not in text
+
+
+def test_hop_strategy_renders_markdown() -> None:
+    data = bundle_dict()
+    data["formatted_tables"]["report.hop_strategy"][0]["text"]["text"] = (
+        "**STRATEGYBOLDSENTINEL**\n\n- STRATEGYLISTSENTINEL"
+    )
+
+    rendered = render(seal_bundle(data), parse_spec(sections="hops"))
+    text = _pdf_text(rendered.data)
+
+    assert "STRATEGYBOLDSENTINEL" in text
+    assert "STRATEGYLISTSENTINEL" in text
+    assert "**STRATEGYBOLDSENTINEL**" not in text
+
+
+def test_checklist_notes_render_markdown() -> None:
+    data = bundle_dict()
+    data["formatted_tables"]["batch.brew_checklist"][0]["note"]["text"] = (
+        "**CHECKLISTBOLDSENTINEL**"
+    )
+
+    rendered = render(seal_bundle(data), parse_spec(sections="checklist"))
+    text = _pdf_text(rendered.data)
+
+    assert "CHECKLISTBOLDSENTINEL" in text
+    assert "**CHECKLISTBOLDSENTINEL**" not in text
+
+
 def test_the_mash_rests_section_renders(render_once) -> None:
     rendered = render_once(bundle(), parse_spec(sections="mash-rests"))
 

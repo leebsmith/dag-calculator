@@ -312,7 +312,7 @@ def test_the_hop_purchase_table_is_present_with_its_rows(shared_root: Path) -> N
     assert probe(shared_root, HOPS_PURCHASE_PROBE) is True
 
 
-def test_the_hop_strategy_is_present_with_its_paragraphs(shared_root: Path) -> None:
+def test_the_hop_strategy_is_present_with_its_markdown(shared_root: Path) -> None:
     assert probe(shared_root, HOPS_STRATEGY_PROBE) is True
 
 

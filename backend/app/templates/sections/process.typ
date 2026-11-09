@@ -3,6 +3,7 @@
 // the rows.
 
 #import "../lib/format.typ": formatted-table, present-formatted-table
+#import "../lib/prose.typ": prose-cell
 
 #let COLLECTION = "batch.process_notes"
 
@@ -16,6 +17,6 @@
     stroke: none,
     inset: (x: 3pt, y: 2pt),
     table.header([Note]),
-    ..rows.map(row => row.at("note").at("text")),
+    ..rows.map(row => prose-cell(row.at("note"))),
   )
 }

@@ -13,6 +13,7 @@
 
 import { KEYS as navigationKeys } from "./navigation.js";
 import { KEYS as fieldActionsKeys } from "./fieldActions.js";
+import { KEYS as proseValidationKeys } from "./proseValidation.js";
 import { KEYS as draftEditorKeys } from "./draftEditor.js";
 import { KEYS as unitActionsKeys } from "./unitActions.js";
 import { KEYS as modalFocusKeys } from "./modalFocus.js";
@@ -91,6 +92,7 @@ const STYLE_PARTIALS = ["step-style.html"];
 export const INSTALLERS = [
   { name: "navigation", modules: NAVIGATION, keys: navigationKeys },
   { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["step-card.html"] },
+  { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys },
   {
     name: "tableConfigs",
     modules: TABLE_CONFIGS,
@@ -183,6 +185,11 @@ export const SHARED = [
     key: "addDraftRow",
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
+  },
+  {
+    key: "proseIssues",
+    owners: ["hop", "fieldActions", "brewDay"],
+    reason: "the hop, process-note, and brew-day cards bind the shared markdown validator",
   },
   {
     key: "clearInputDraft",

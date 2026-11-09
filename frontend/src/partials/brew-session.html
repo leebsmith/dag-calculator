@@ -126,9 +126,12 @@
                   class="form-input brew-day-instructions"
                   rows="2"
                   :value="$store.brewSession.stepNote(row)"
-                  placeholder="What actually happened?"
+                  placeholder="What actually happened? (markdown supported)"
                   @change="$store.brewSession.setStep(row, { note: $event.target.value })"
                 ></textarea>
+                <template x-for="issue in proseIssues($store.brewSession.stepNote(row))" :key="issue.code">
+                  <span class="form-hint text-warning" x-text="issue.message"></span>
+                </template>
                 <label class="text-xs">
                   <input
                     type="checkbox"

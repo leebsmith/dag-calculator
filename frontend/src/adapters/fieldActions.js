@@ -62,6 +62,12 @@ export function createFieldActions({
       getView().notify();
     },
 
+    commitCellText(key, field, rowIndex, columnId, raw) {
+      actions.editCell(field, rowIndex, columnId, raw);
+      actions.clearInputDraft(key);
+      getView().notify();
+    },
+
     editDraftCellInput(key, rowIndex, columnId, raw) {
       actions.setInputDraft(key, raw);
       getView().editDraftCell(rowIndex, columnId, raw);
@@ -297,4 +303,4 @@ export function createFieldActions({
   return actions;
 }
 
-export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];
+export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "commitCellText", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd"];

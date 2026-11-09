@@ -22,6 +22,7 @@ const LAYERS = {
   observability: { rank: 2, note: "error sink; leaf" },
   firebase: { rank: 2, note: "Auth-only Firebase bootstrap; leaf" },
   views: { rank: 3, note: "display model: producer field models, registries, pure view helpers" },
+  markdown: { rank: 3, note: "advisory markdown validation; token inspection with a bounded cache" },
   ui: { rank: 4, note: "UI store primitives" },
   store: { rank: 5, note: "application state, catalogs, and persistence" },
   adapters: { rank: 6, note: "host wiring, Alpine installers, boundary clients" },

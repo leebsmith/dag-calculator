@@ -1,0 +1,47 @@
+[
+  {
+    "name": "paragraph and inline emphasis",
+    "source": "Plain **bold** and *italic* text.",
+    "codes": []
+  },
+  {
+    "name": "supported list",
+    "source": "- one\n- two\n\n1. first\n2. second",
+    "codes": []
+  },
+  {
+    "name": "supported code block",
+    "source": "```\n1.050\n```",
+    "codes": []
+  },
+  {
+    "name": "table",
+    "source": "| a | b |\n|---|---|\n| 1 | 2 |",
+    "codes": ["prose.unsupported.table"],
+    "python": { "block_types": ["paragraph"] }
+  },
+  {
+    "name": "image",
+    "source": "![alt text](https://example.com/x.png)",
+    "codes": ["prose.unsupported.image"],
+    "python": { "contains_text": "alt text" }
+  },
+  {
+    "name": "raw html",
+    "source": "<script>alert(1)</script>",
+    "codes": ["prose.unsupported.html"],
+    "python": { "contains_text": "<script>alert(1)</script>" }
+  },
+  {
+    "name": "unsafe link",
+    "source": "[bad](javascript:alert(1))",
+    "codes": ["prose.unsafe.link"],
+    "python": { "forbidden_types": ["link"], "contains_text": "bad" }
+  },
+  {
+    "name": "safe link",
+    "source": "[good](https://example.com)",
+    "codes": [],
+    "python": { "contains_types": ["link"] }
+  }
+]

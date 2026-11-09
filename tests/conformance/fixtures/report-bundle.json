@@ -7109,14 +7109,7 @@
     "report.hop_strategy": [
       {
         "text": {
-          "text": "IBU split between the boil and the hot whirlpool; flavour and aroma additions use Cryo in the cool whirlpool.",
-          "number": null,
-          "unit": null
-        }
-      },
-      {
-        "text": {
-          "text": "Sensory: 60/40 Chinook/Simcoe on the cool side by weight, pine backbone with a grapefruit and citrus surround.",
+          "text": "IBU split between the boil and the hot whirlpool; flavour and aroma additions use Cryo in the cool whirlpool.\n\n- **Sensory:** 60/40 Chinook/Simcoe on the cool side by weight.\n- *Pine* backbone with a grapefruit and citrus surround.",
           "number": null,
           "unit": null
         }
@@ -7488,5 +7481,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:6fd0d3cd11b58519d6bb176213dae8e60881de93fa5a1b63ab03d7912717fdd9"
+  "content_hash": "sha256:f99f1b442bc40a015824180cbe6aa8d7b379833ccf13f1ffe423d868388fa32a"
 }

@@ -24,6 +24,7 @@ Two rules that explain most of the shape:
 | `backend/app/templates/theme.typ` | page setup, type, headings, footer |
 | `backend/app/templates/lib/bundle.typ` | loads the bundle from `sys.inputs` |
 | `backend/app/templates/lib/format.typ` | dotted-path accessors, unit conversion, display strings |
+| `backend/app/templates/lib/prose.typ` | recursive markdown-AST renderer with a text fallback |
 | `backend/app/templates/sections/*.typ` | one module per section: `present()` + `render()` |
 | `backend/app/templates/fonts/*` | vendored IBM Plex Sans (variable Roman + Italic) + OFL |
 | `backend/app/templates/TYPST_VERSION` | the pinned `typst` version |
@@ -39,7 +40,7 @@ version is pinned, so a note that is wrong is a bug.
 ## Local loop
 
 Download a bundle (editor toolbar → **Download bundle**, or a batch row menu),
-then iterate without Python:
+then iterate with one prose-enrichment step, the same one the service runs:
 
 ```bash
 make report-dev BUNDLE=~/Downloads/house-pale-report-bundle.json
@@ -64,8 +65,12 @@ tests assert the family resolves from that path.
 
 The bundle reaches Typst as a **path input** (`--input bundle=/…`), resolved
 against `--root`. The service passes `/report.json` from its temp root; the
-local targets pass `/.local/report/report.json` with the repo as root. One
-mechanism, no staging step in the edit cycle.
+local targets pass `/.local/report/report.json` with the repo as root.
+
+Both targets first run `backend/scripts/enrich_report_bundle.py`, which injects
+the markdown AST into the known prose cells with the same function the service
+uses. This is one enrichment step, not a second presentation model. See
+[`prose.md`](prose.md).
 
 ### Drafting a new section without touching the templates
 
@@ -163,9 +168,11 @@ surviving section makes a standalone sheet, which suppresses the document chrome
 ## Rendering service
 
 `app/services/report_render.py` copies the template tree into a temp root, writes
-the bundle beside it, and shells out to the pinned Typst binary. The bundle is
-data, the templates are code: no user-supplied path or Typst source reaches the
-compiler, and `--root` confinement is what makes that a boundary. The binary is
+the bundle beside it, and shells out to the pinned Typst binary. Before writing,
+it runs `app/services/prose.py` over the known prose cells so Typst receives a
+typed AST rather than markdown. The bundle is data, the templates are code: no
+user-supplied path or Typst source reaches the compiler, and `--root`
+confinement is what makes that a boundary. The binary is
 resolved on first use (`TYPST_BIN`, else `typst` on `PATH`) and its version must
 match `templates/TYPST_VERSION`, otherwise the route answers `503`.
 
@@ -194,10 +201,11 @@ page to export). `pdf` is the default; a PNG response is one page, selected by
   indistinguishable from a rendering bug, so it is refused).
 - `503` — Typst missing or not the pinned version; `500` — a template failure.
 
-The `ETag` hashes the bundle's `content_hash`, the template tree and the spec, so a
-template edit or a different unit preference revalidates. Only frozen renders carry
-one: a preview embeds its compile time, so the same tag would not mean the same
-bytes. Nothing is persisted — the bundle is the fact and the render is derived.
+The `ETag` hashes the bundle's `content_hash`, the template tree, the prose
+renderer digest and the spec, so a template edit, a markdown-parser upgrade, or a
+different unit preference revalidates. Only frozen renders carry one: a preview
+embeds its compile time, so the same tag would not mean the same bytes. Nothing
+is persisted — the bundle is the fact and the render is derived.
 
 The routes are annotated for FastAPI's schema, so `GET /docs` and
 `/openapi.json` show them with their query parameters, the two response content
@@ -250,8 +258,8 @@ content hash, the render key and the resolved section ids are emitted as
 The footer prints the batch name and eight hex characters of the render key (the
 content hash until the service lands). Eight characters identify the bundle **and**
 the template/toolchain that printed it, so a printed sheet is traceable with no
-registry — and a reprint after a template edit shows a different token, which is
-the divergence the product accepts.
+registry — and a reprint after a template edit or a markdown-renderer upgrade
+shows a different token, which is the divergence the product accepts.
 
 ## Status
 

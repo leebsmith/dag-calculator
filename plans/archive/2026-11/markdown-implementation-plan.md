@@ -5,12 +5,12 @@ target_repo: ~/Development/dag-calculator
 depends_on: [report-renderer, report-bundle]
 blocks: []
 gate: markdown in hopping strategy, process notes, and brew-day checklist notes renders as styled prose in recipe and session PDFs; the frontend validator flags unsupported constructs without a backend call; make check and make test green
-status: proposed
+status: complete
 ---
 
 # Markdown prose — backend Typst AST, frontend subset validation
 
-Status: proposed. Freeform text becomes markdown at three authoring surfaces. The
+Status: complete. Freeform text becomes markdown at three authoring surfaces. The
 backend converts markdown to a small normalized AST at report time and Typst
 renders that AST with content constructors. The frontend keeps `markdown-it` as
 an advisory supported-subset validator, not a renderer.
@@ -19,22 +19,22 @@ an advisory supported-subset validator, not a renderer.
 
 ## Execution checklist
 
-- [ ] Add `markdown-it-py` as a backend runtime dependency.
-- [ ] Implement the backend markdown parser, AST normalizer, limits, safe-link rule, and report/session enrichers in `backend/app/services/prose.py`.
-- [ ] Add the recursive Typst prose renderer in `backend/app/templates/lib/prose.typ`, with a text fallback and same-font `raw` code.
-- [ ] Wire `hops.typ`, `process.typ`, `checklist.typ`, and `brew_session.typ` through the prose helpers.
-- [ ] Enrich report and session payloads in `backend/app/services/report_render.py` and add the prose digest to the render key.
-- [ ] Add the local report-bundle enrichment CLI and wire it into `make report-dev` and `make report-pages`.
-- [ ] Change the hopping-strategy producer to emit one raw-markdown row.
-- [ ] Add `markdown-it` to the frontend and implement the memoized subset validator in `frontend/src/markdown/validate.js`.
-- [ ] Add the prose-validation installer, register it, and wire it into `stepAdapter.js`.
-- [ ] Show advisory validation lines for hopping strategy, process notes, recipe checklist notes, and live session notes/skip reasons.
-- [ ] Make process notes use a multiline textarea in the collection table.
-- [ ] Add backend prose and render tests, and update the report-bundle fixture and existing hop-strategy tests.
-- [ ] Add frontend validator tests and shared prose conformance fixtures.
-- [ ] Add `docs/prose.md` and update `docs/report-renderer.md`, `docs/typst-notes.md`, and `docs/report-bundle.md`.
-- [ ] Run lint, boundary checks, the full `make test` gate, and `make build`; fix failures.
-- [ ] Move the plan to `plans/archive/2026-11/` and commit the completed work.
+- [x] Add `markdown-it-py` as a backend runtime dependency.
+- [x] Implement the backend markdown parser, AST normalizer, limits, safe-link rule, and report/session enrichers in `backend/app/services/prose.py`.
+- [x] Add the recursive Typst prose renderer in `backend/app/templates/lib/prose.typ`, with a text fallback and same-font `raw` code.
+- [x] Wire `hops.typ`, `process.typ`, `checklist.typ`, and `brew_session.typ` through the prose helpers.
+- [x] Enrich report and session payloads in `backend/app/services/report_render.py` and add the prose digest to the render key.
+- [x] Add the local report-bundle enrichment CLI and wire it into `make report-dev` and `make report-pages`.
+- [x] Change the hopping-strategy producer to emit one raw-markdown row.
+- [x] Add `markdown-it` to the frontend and implement the memoized subset validator in `frontend/src/markdown/validate.js`.
+- [x] Add the prose-validation installer, register it, and wire it into `stepAdapter.js`.
+- [x] Show advisory validation lines for hopping strategy, process notes, recipe checklist notes, and live session notes/skip reasons.
+- [x] Make process notes use a multiline textarea in the collection table.
+- [x] Add backend prose and render tests, and update the report-bundle fixture and existing hop-strategy tests.
+- [x] Add frontend validator tests and shared prose conformance fixtures.
+- [x] Add `docs/prose.md` and update `docs/report-renderer.md`, `docs/typst-notes.md`, and `docs/report-bundle.md`.
+- [x] Run lint, boundary checks, the full `make test` gate, and `make build`; fix failures.
+- [x] Move the plan to `plans/archive/2026-11/` and commit the completed work.
 
 ## 1. Goal
 

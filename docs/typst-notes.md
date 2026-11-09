@@ -147,6 +147,22 @@ Rules: `line(length: 100%, stroke: 0.6pt + rgb("#b9b1a4"))`.
 - `--root` is a real boundary: anything outside it is rejected, symlinks
   included.
 
+## Prose AST
+
+Markdown arrives as a typed AST, never as generated Typst source. `lib/prose.typ`
+walks it with content constructors: `par`, `strong`, `emph`, `strike`, `list`,
+`enum`, `quote`, `link`, `line`, and `linebreak`.
+
+- A string used in content position prints literally. This is why the AST walker
+  needs no markup escaping; do not start generating Typst text.
+- Inline and fenced code use `raw`. A show rule reads the raw element's block
+  flag to distinguish inline from block and keeps the IBM Plex Sans face, so no
+  mono font is vendored.
+- Headings map to bold paragraphs at the theme's heading sizes. They are not
+  `heading` elements, so a note cannot enter the outline or force a page break.
+- `prose-cell` and `prose-value` fall back to the existing text when the AST is
+  absent, which keeps older bundles and unenriched local bundles compiling.
+
 ## What will bite you
 
 1. `datetime.from-unix` — does not exist. Use the epoch + duration form.

@@ -165,11 +165,7 @@ function mashRestRows(artifact, catalog, engine) {
 function hopStrategyRows(strategy) {
   const text = String(strategy ?? "").trim();
   if (!text) return [];
-  return text
-    .split(/\n\s*\n/)
-    .map((paragraph) => paragraph.replace(/\s+/g, " ").trim())
-    .filter(Boolean)
-    .map((paragraph) => ({ text: { text: paragraph } }));
+  return [{ text: { text } }];
 }
 
 // Per-row display strings for the fermentable tables. Grist is the malt charge

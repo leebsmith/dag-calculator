@@ -109,7 +109,7 @@ test("an empty recipe still produces every declared table, empty", () => {
   }
 });
 
-test("the strategy is split into paragraphs, not sentences", () => {
+test("the strategy is carried as one raw markdown row", () => {
   const engine = engineWith();
   const strategy = "  First   paragraph.\n\nSecond paragraph.\n\n\n";
 
@@ -117,7 +117,7 @@ test("the strategy is split into paragraphs, not sentences", () => {
 
   assert.deepEqual(
     tables["report.hop_strategy"].map((row) => row.text.text),
-    ["First paragraph.", "Second paragraph."]
+    ["First   paragraph.\n\nSecond paragraph."]
   );
 });
 

@@ -1581,13 +1581,9 @@ PAYLOAD = FreezePayload(
             {
                 "text": FormattedValue(
                     text="IBU split between the boil and the hot whirlpool; "
-                    "flavour and aroma additions use Cryo in the cool whirlpool."
-                )
-            },
-            {
-                "text": FormattedValue(
-                    text="Sensory: 60/40 Chinook/Simcoe on the cool side by weight, "
-                    "pine backbone with a grapefruit and citrus surround."
+                    "flavour and aroma additions use Cryo in the cool whirlpool.\n\n"
+                    "- **Sensory:** 60/40 Chinook/Simcoe on the cool side by weight.\n"
+                    "- *Pine* backbone with a grapefruit and citrus surround."
                 )
             },
         ],

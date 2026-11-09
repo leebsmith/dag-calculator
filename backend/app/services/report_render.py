@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from app.schemas.report_bundle import ReportBundle
+from app.services.prose import enrich_bundle, enrich_session, prose_digest
 
 TEMPLATES = Path(__file__).resolve().parents[1] / "templates"
 PINNED_TYPST = (TEMPLATES / "TYPST_VERSION").read_text().strip()
@@ -117,9 +118,8 @@ def render(bundle: ReportBundle, spec: ReportSpec) -> RenderedReport:
     with tempfile.TemporaryDirectory(prefix="report-") as tmp:
         root = Path(tmp) / "report"
         shutil.copytree(TEMPLATES, root)
-        (root / "report.json").write_text(
-            json.dumps(bundle.model_dump(mode="json")), encoding="utf-8"
-        )
+        payload = enrich_bundle(bundle.model_dump(mode="json"))
+        (root / "report.json").write_text(json.dumps(payload), encoding="utf-8")
 
         common = [
             "--root",
@@ -180,7 +180,7 @@ def render_session(session: dict, *, paper: str = "a4") -> RenderedReport:
         root = Path(tmp) / "report"
         shutil.copytree(TEMPLATES, root)
         (root / "session.json").write_text(
-            json.dumps(session), encoding="utf-8"
+            json.dumps(enrich_session(session)), encoding="utf-8"
         )
         chosen = "a4" if paper == "auto" else paper
         common = [
@@ -368,6 +368,7 @@ def _render_key(bundle: ReportBundle, spec: ReportSpec) -> str:
         (
             bundle.content_hash,
             _templates_hash(),
+            prose_digest(),
             spec.doc_kind,
             spec.sections_input,
             spec.paper,

@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import shutil
+from io import BytesIO
 
 import pytest
+from pypdf import PdfReader
 
 from app.services.report_render import render_session
 
@@ -82,6 +84,31 @@ def test_the_brew_sheet_renders_a_pdf() -> None:
     assert rendered.data.startswith(b"%PDF")
     assert rendered.media_type == "application/pdf"
     assert rendered.sections == ("session",)
+
+
+def pdf_text(data: bytes) -> str:
+    reader = PdfReader(BytesIO(data))
+    return "\n".join(page.extract_text() or "" for page in reader.pages)
+
+
+def test_the_brew_sheet_renders_markdown_notes() -> None:
+    session = session_doc()
+    session["steps"]["mash-ph"].update(
+        {
+            "note": "**NOTESENTINEL** and *ITALICSENTINEL*",
+            "skipped": True,
+            "skip_reason": "**SKIPSENTINEL**",
+        }
+    )
+    session["notes"] = "**OVERALLSENTINEL**"
+
+    text = pdf_text(render_session(session).data)
+
+    assert "NOTESENTINEL" in text
+    assert "ITALICSENTINEL" in text
+    assert "SKIPSENTINEL" in text
+    assert "OVERALLSENTINEL" in text
+    assert "**NOTESENTINEL**" not in text
 
 
 def test_an_unknown_paper_is_a_spec_error() -> None:

@@ -1,6 +1,8 @@
 // Brew Sheet: the execution log beside a frozen recipe. The session document
 // supplies every fact; this template only arranges it.
 
+#import "lib/prose.typ": prose-value
+
 #let session = json(sys.inputs.at("session", default: "/session.json"))
 #let paper = sys.inputs.at("paper", default: "a4")
 
@@ -93,19 +95,28 @@
         text(weight: "bold", mark + " " + cell(row, "title"))
         linebreak()
         cell(row, "text")
-        if state.at("note", default: "") != "" {
+        let note-blocks = state.at("note_prose", default: none)
+        if note-blocks != none or state.at("note", default: "") != "" {
           linebreak()
-          text(size: 8.5pt, fill: rgb("#6b6b6b"), "Note: " + state.note)
+          block(text(size: 8.5pt, fill: rgb("#6b6b6b"), "Note:"))
+          block({
+            set text(size: 8.5pt, fill: rgb("#6b6b6b"))
+            prose-value(state.at("note", default: ""), blocks: note-blocks)
+          })
         }
         if state.at("skipped", default: false) {
+          let reason-blocks = state.at("skip_reason_prose", default: none)
           linebreak()
           text(
             size: 8.5pt,
             fill: rgb("#b8823a"),
-            "Skipped" + if state.at("skip_reason", default: "") == "" {
+            "Skipped" + if state.at("skip_reason", default: "") == "" and reason-blocks == none {
               ""
             } else {
-              ": " + state.skip_reason
+              [
+                :
+                #prose-value(state.at("skip_reason", default: ""), blocks: reason-blocks)
+              ]
             },
           )
         }
@@ -180,7 +191,10 @@
   )
 }
 
-#if session.notes != "" {
+#if session.at("notes_prose", default: none) != none or session.at("notes", default: "") != "" {
   heading(level: 2)[Notes]
-  session.notes
+  prose-value(
+    session.at("notes", default: ""),
+    blocks: session.at("notes_prose", default: none),
+  )
 }

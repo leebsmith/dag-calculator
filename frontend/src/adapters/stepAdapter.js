@@ -47,6 +47,7 @@ import { createBoundaryRunner } from "./boundaryRunner.js";
 import { bindGate, waterTargetGate } from "./waterGate.js";
 import { createFieldAttribution } from "./fieldAttribution.js";
 import { createFieldActions } from "./fieldActions.js";
+import { createProseValidation } from "./proseValidation.js";
 import { createDraftEditor } from "./draftEditor.js";
 import { createUnitActions } from "./unitActions.js";
 import { createNavigationActions } from "./navigation.js";
@@ -364,7 +365,6 @@ export function createStepApp(options = {}) {
       if (!remote) this.compute();
     },
   };
-
   // The single composition point: every layer is built first, then merged once.
   // No installer writes the app afterwards; handlers resolve the live view
   // through `getView`.
@@ -375,6 +375,7 @@ export function createStepApp(options = {}) {
     { dialogFocus: modalFocus.dialogFocus },
     createNavigationActions({ ui, steps, isEditorActive: options.isEditorActive, getView }),
     createFieldActions({ ...core, observability, refToSelectionMap: attribution.refToSelectionMap }),
+    createProseValidation({ observability }),
     createDraftEditor({ ...core, ui, observability }),
     createUnitActions({ ...core, ui, observability }),
     createSnapshotActions({ ...core, master, observability }),
@@ -394,7 +395,6 @@ export function createStepApp(options = {}) {
     ...createHopStrategyLayers(cardCtx)
   );
   liveView.current = app;
-
   const view = createStepView({
     artifact,
     steps,

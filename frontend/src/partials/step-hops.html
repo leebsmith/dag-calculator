@@ -23,12 +23,15 @@
                 commit: 'change',
                 placeholder: 'What the hops are for: the split, the product choices, the weight ratio, the sensory objective.',
                 attrs: { maxlength: 4000 },
-                hint: 'Blank lines separate paragraphs; single line breaks are ignored.'
+                hint: 'Markdown supported: paragraphs, lists, emphasis, links, and code. Blank lines separate paragraphs.'
               }
             ]
           })"
         >
           <load src="src/partials/ui-form-fields.html" />
+          <template x-for="issue in proseIssues(hopStrategy)" :key="issue.code">
+            <p class="form-hint text-warning" x-text="issue.message"></p>
+          </template>
         </div>
       </div>
     </section>

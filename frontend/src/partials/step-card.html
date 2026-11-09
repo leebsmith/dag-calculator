@@ -196,7 +196,21 @@
                   <tr>
                     <template x-for="c in f.columns" :key="c.id">
                       <td>
-                        <template x-if="c.editable">
+                        <template x-if="c.editable && f.prose">
+                          <div>
+                            <textarea
+                              class="form-input"
+                              rows="3"
+                              :value="inputDraft(inputKey('cell', f.id, ri, c.id), row[c.id])"
+                              @input="setInputDraft(inputKey('cell', f.id, ri, c.id), $event.target.value)"
+                              @change="commitCellText(inputKey('cell', f.id, ri, c.id), f, ri, c.id, $event.target.value)"
+                            ></textarea>
+                            <template x-for="issue in proseIssues(inputDraft(inputKey('cell', f.id, ri, c.id), row[c.id]))" :key="issue.code">
+                              <span class="form-hint text-warning" x-text="issue.message"></span>
+                            </template>
+                          </div>
+                        </template>
+                        <template x-if="c.editable && !f.prose">
                           <input
                             class="form-input"
                             :class="{ 'is-invalid': f.rowValidations[ri] && f.rowValidations[ri][c.id] && f.rowValidations[ri][c.id].holds === false }"
@@ -226,6 +240,7 @@
             class="form-hint text-danger"
             x-show="f.rowValidations && f.rowValidations.some((r) => Object.values(r).some((v) => v.holds === false))"
           >Some cells are outside their allowed range</span>
+          <span class="form-hint" x-show="f.prose">Markdown supported: paragraphs, lists, emphasis, links, and code.</span>
           <button type="button" class="btn-outline" @click="runCollectionAdd(f)" x-text="f.addLabel"></button>
         </div>
       </template>

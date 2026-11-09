@@ -97,7 +97,7 @@ Firestore transaction.
 | `artifact` | The whole artifact as of freeze. Free-form to the bundle schema — validated by the engine before freeze and pinned by `hash`. |
 | `catalog` | Structural presentation: labels, dimensions, options, and the unit/symbol/decimals metadata. The unit choice reflects the batch's display preferences at freeze. |
 | `formatted` | The display strings the report prints, one per scalar path the bundle exposes: `text` (number + symbol), plus `number`/`unit` for tables that align them separately. Produced by the same formatter the UI uses; the report never converts, rounds, or chooses a symbol. |
-| `formatted_tables` | Per-row display cells for collection tables (major grist, trace malts, sugars, hop charges): one entry per declared collection, keyed by column. The producer computes derived amounts, PPG, and shares; the report only lays them out. Columns: `own_pct` (share within the row's own table — the authored grain bill for major malts, the mass share for trace malts) and `grist_pct` (share of grist mass, major + trace) on the grist tables; `grist_pct` only on sugars; `extract` (mass) and `extract_pct` on malt and sugar rows, the potential extract share. Percentage columns are largest-remainder normalised to sum to 100.0; a sugar's mass share sits outside the grist's 100. The allowlisted named report tables are `report.hop_strategy` (one row per prose paragraph, a `text` cell) and `report.hop_purchases` (one row per product, with `name`, `form` and `purchase` cells). |
+| `formatted_tables` | Per-row display cells for collection tables (major grist, trace malts, sugars, hop charges): one entry per declared collection, keyed by column. The producer computes derived amounts, PPG, and shares; the report only lays them out. Columns: `own_pct` (share within the row's own table — the authored grain bill for major malts, the mass share for trace malts) and `grist_pct` (share of grist mass, major + trace) on the grist tables; `grist_pct` only on sugars; `extract` (mass) and `extract_pct` on malt and sugar rows, the potential extract share. Percentage columns are largest-remainder normalised to sum to 100.0; a sugar's mass share sits outside the grist's 100. The allowlisted named report tables are `report.hop_strategy` (one row carrying the raw markdown source in a `text` cell; the renderer injects its AST) and `report.hop_purchases` (one row per product, with `name`, `form` and `purchase` cells). |
 | `formatted_summaries` | Mass-weighted colour and extract yield per fermentable table, plus the `overall` aggregate. Keys name a collection node or the literal `overall`; the producer does the weighing. |
 | `batch.identity` | The three component snapshots: `equipment`, `water.source`, `style`. |
 | `state.valuation` | `node id → value` for every node. Boundary nodes map to their plain output map. |
@@ -236,7 +236,8 @@ Telemetry events (`telemetry.<boundary>.telemetry[]`) carry
   number/unit split.
 - `formatted_tables` keys name collection nodes or one of the allowlisted named
   report tables (`report.hop_strategy`, `report.hop_purchases`); cells are
-  display strings.
+  display records, and the renderer adds `blocks` to the known prose cells in
+  its temporary copy without changing the stored bundle.
 - `formatted_summaries` keys name collection nodes or `overall`; `color` and
   `extract_yield` are display strings.
 - Collection state keys are collection nodes with a known item schema; values

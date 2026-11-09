@@ -294,9 +294,11 @@ test("hop tables carry the charges, the solved cells and the choice labels", asy
   assert.match(purchases[0].purchase.text, /1 oz/);
 
   const strategy = tables["report.hop_strategy"];
-  assert.equal(strategy.length, 2);
-  assert.equal(strategy[0].text.text, "IBU split between the boil and the whirlpool.");
-  assert.equal(strategy[1].text.text, "Sensory: pine backbone.");
+  assert.equal(strategy.length, 1);
+  assert.equal(
+    strategy[0].text.text,
+    "IBU split between the boil and the whirlpool.\n\nSensory: pine backbone."
+  );
 });
 
 test("a blank hopping strategy emits no report rows", async () => {
@@ -305,13 +307,12 @@ test("a blank hopping strategy emits no report rows", async () => {
   assert.deepEqual(app.reportFormattedTables()["report.hop_strategy"], []);
 });
 
-test("single newlines collapse inside a strategy paragraph", async () => {
+test("the raw hopping strategy is preserved for the markdown renderer", async () => {
   const app = await booted();
   app.hopStrategy = "Line one\nline two\n\nNext paragraph.";
   const strategy = app.reportFormattedTables()["report.hop_strategy"];
-  assert.equal(strategy.length, 2);
-  assert.equal(strategy[0].text.text, "Line one line two");
-  assert.equal(strategy[1].text.text, "Next paragraph.");
+  assert.equal(strategy.length, 1);
+  assert.equal(strategy[0].text.text, "Line one\nline two\n\nNext paragraph.");
 });
 
 test("a volume dry hop prints millilitres in the purchase table", async () => {

@@ -112,7 +112,8 @@ report-dev:
 	    echo "typst $$actual does not match the pinned $(TYPST_VERSION)"; exit 1; \
 	  fi
 	@mkdir -p $(REPORT_DIR)
-	@cp "$(BUNDLE)" $(REPORT_DIR)/report.json
+	@cd backend && uv run python scripts/enrich_report_bundle.py \
+		"$(abspath $(BUNDLE))" "$(abspath $(REPORT_DIR)/report.json)"
 	typst watch --root . --font-path $(REPORT_FONTS) --ignore-system-fonts \
 		--input bundle=/$(REPORT_DIR)/report.json \
 		--input sections=$(SECTIONS) \
@@ -124,7 +125,8 @@ report-pages:
 	@test -n "$(BUNDLE)" || (echo "Usage: make report-pages BUNDLE=<downloaded report-bundle.json>"; exit 1)
 	@test -f "$(BUNDLE)" || (echo "No such bundle: $(BUNDLE)"; exit 1)
 	@mkdir -p $(REPORT_DIR)
-	@cp "$(BUNDLE)" $(REPORT_DIR)/report.json
+	@cd backend && uv run python scripts/enrich_report_bundle.py \
+		"$(abspath $(BUNDLE))" "$(abspath $(REPORT_DIR)/report.json)"
 	typst compile --format png --root . --font-path $(REPORT_FONTS) --ignore-system-fonts \
 		--input bundle=/$(REPORT_DIR)/report.json \
 		--input sections=$(SECTIONS) \

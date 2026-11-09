@@ -73,9 +73,12 @@
                             class="form-input brew-day-instructions"
                             rows="2"
                             :value="row.note"
-                            placeholder="Add a note for this step"
+                            placeholder="Add a note for this step (markdown supported)"
                             @input="setBrewDayNote(row.step_id, $event.target.value)"
                           ></textarea>
+                          <template x-for="issue in proseIssues(row.note)" :key="issue.code">
+                            <span class="form-hint text-warning" x-text="issue.message"></span>
+                          </template>
 
                           <label class="text-xs">
                             <input
@@ -91,9 +94,12 @@
                             class="form-input text-xs"
                             x-show="row.skipped"
                             :value="row.skip_reason"
-                            placeholder="Why skip this step?"
+                            placeholder="Why skip this step? (markdown supported)"
                             @change="setBrewDaySkipReason(row.step_id, $event.target.value)"
                           />
+                          <template x-for="issue in proseIssues(row.skip_reason)" :key="issue.code">
+                            <span class="form-hint text-warning" x-text="issue.message"></span>
+                          </template>
                         </div>
                       </template>
                     </div>
