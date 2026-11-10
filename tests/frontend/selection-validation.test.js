@@ -13,9 +13,9 @@ test("HLT fill is clamped to the equipment envelope", withFreshApp((app) => {
   app.commitField(field());
   assert.equal(app.master.getRoot("batch.hlt_starting_volume_l"), 30);
 
-  app.edit(field(), "1"); // < coil floor (4 L)
+  app.edit(field(), "1"); // < coil floor (herms-30l floor = 22 L)
   app.commitField(field());
-  assert.equal(app.master.getRoot("batch.hlt_starting_volume_l"), 4);
+  assert.equal(app.master.getRoot("batch.hlt_starting_volume_l"), 22);
 }));
 
 test("selecting a strain sets the yeast attenuation cap", withFreshApp((app) => {
