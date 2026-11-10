@@ -139,7 +139,9 @@ The generator does no numeric work. Every scalar the bundle exposes arrives in
 - `lib/format.typ` exposes `formatted(path)`, `formatted-text(path)`,
   `formatted-number(path)`, `formatted-unit(path)`, and
   `present-formatted(path)`. There is no conversion, rounding, or symbol choice
-  in Typst.
+  in Typst, with one view-only exception: the `lb_oz` mass format presents a
+  frozen `mass` cell in pounds and ounces from its `base` (kg) value. It never
+  changes the batch or the stored figures.
 - The **producer** (the browser freeze payload) computes the strings with the
   same formatter the UI uses, at the unit preference in force at freeze
   (per-field override → registry pin → per-dimension choice → default). Nonlinear
@@ -154,6 +156,7 @@ The generator does no numeric work. Every scalar the bundle exposes arrives in
 | `sections` | comma-separated section ids | all |
 | `doc_kind` | `recipe` | `recipe` |
 | `paper` | `a4`, `letter`, `auto` | `auto` |
+| `mass_format` | `display`, `lb_oz` | `display` |
 
 `paper=auto` follows the bundle’s display units: two of the three markers —
 `batch.v_ferm` volume in `gal`/`qt`, `solver.batch.m_grist` mass in `lb`/`oz`,
@@ -187,8 +190,8 @@ The section list is generated from the Typst registry
 freshness-guarded, so the picker and the renderer cannot disagree about what
 exists or what order it prints in.
 
-Both accept `doc_kind`, `sections`, `paper`, `format=pdf|png` and `page` (the PNG
-page to export). `pdf` is the default; a PNG response is one page, selected by
+Both accept `doc_kind`, `sections`, `paper`, `mass_format`, `format=pdf|png` and
+`page` (the PNG page to export). `pdf` is the default; a PNG response is one page, selected by
 `page`.
 
 - `200` — the artifact, with `ETag`, `Content-Length`, `X-Report-Sections` and
@@ -196,8 +199,8 @@ page to export). `pdf` is the default; a PNG response is one page, selected by
 - `404` — missing batch, or another user's.
 - `409` — a draft on `GET`, a frozen batch on `POST`, or a frozen batch that
   predates bundles.
-- `422` — unknown section id, unknown `doc_kind`/`paper`/`format`, a page beyond
-  the document, or a selection that resolves to nothing (a blank page is
+- `422` — unknown section id, unknown `doc_kind`/`paper`/`mass_format`/`format`,
+  a page beyond the document, or a selection that resolves to nothing (a blank page is
   indistinguishable from a rendering bug, so it is refused).
 - `503` — Typst missing or not the pinned version; `500` — a template failure.
 
@@ -222,7 +225,8 @@ first eight characters; the full value is in its metadata).
 
 In the UI, **Build report…** — in a frozen row's menu or the editor toolbar — opens
 the section picker. It lists the registered sections in canonical order, starts
-with all selected, and offers **Preview** and **Download**. Preview opens a tab:
+with all selected, offers a **Mass format** choice (display units, or pounds and
+ounces), and offers **Preview** and **Download**. Preview opens a tab:
 the tab is created in the click handler before the render (after the `await` a
 popup blocker would eat it) and filled with the blob afterwards; a failed render
 closes it and shows the action banner. Download saves and closes the picker.
@@ -268,11 +272,13 @@ version, the local loop, the bundle-carried display strings (`formatted`,
 `formatted_tables`, `formatted_summaries`) that make the generator a string
 compositor, the FastAPI routes and `report_render.py`, and the sections —
 **Brewhouse** (`sections/brewhouse.typ`), **Batch Facts**, **Mash Rests**,
-**Hops**, **Yeast**, the **Volume Ledger**, the **Liquor Ledger**, **Water
-Chemistry**, **Limits** and the **Brew Checklist**. Mash Rests prints only the
-enabled schedule and its total mash time; disabled canonical rests stay out of
-the report. Hops prints the batch's hopping strategy first, then the boil,
-whirlpool, dry-hop and IBU tables, and the hop purchase list last. Not yet
+**Hops**, **Purchases**, **Yeast**, the **Volume Ledger**, the **Liquor
+Ledger**, **Water Chemistry**, **Limits** and the **Brew Checklist**. Mash Rests
+prints only the enabled schedule and its total mash time; disabled canonical
+rests stay out of the report. Hops prints the batch's hopping strategy, then the
+boil, whirlpool, dry-hop and IBU tables. Purchases is the shopping list: grain
+and sugars rounded up to the next whole ounce and printed in pounds and ounces,
+then the hop purchase list. Not yet
 landed: pinned ions, style conformance, and the image that ships the binary
 (authored one at a time — see
 [`adding-a-section.md`](adding-a-section.md)).

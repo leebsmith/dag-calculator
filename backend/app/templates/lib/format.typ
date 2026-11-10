@@ -26,7 +26,7 @@
   catalog.nodes.at(path)
 }
 
-// The frozen display record: { text, number?, unit? }.
+// The frozen display record: { text, number?, unit?, base?, dimension? }.
 #let formatted(path) = {
   if path not in display-values { path-panic(path, "no formatted value") }
   display-values.at(path)
@@ -34,6 +34,32 @@
 
 // True only when the producer emitted a display string for this path.
 #let present-formatted(path) = path in display-values
+
+// The report is a view: the `mass-format` input may present a grocery-scale mass
+// in pounds and ounces without touching the frozen figures. Only kg/lb cells are
+// converted; grams and ounces keep their printed form (salts, hop purchases).
+#let mass-format = sys.inputs.at("mass-format", default: "display")
+#let KG_PER_LB = 0.45359237
+#let lb-oz(kg) = {
+  let total-lb = kg / KG_PER_LB
+  let whole = calc.floor(total-lb)
+  let oz = (total-lb - whole) * 16
+  let oz-text = str(calc.round(oz, digits: 1))
+  if whole >= 1 { str(whole) + " lb " + oz-text + " oz" } else { oz-text + " oz" }
+}
+#let cell-text(cell) = {
+  let symbol = cell.at("unit", default: none)
+  if (
+    mass-format == "lb_oz"
+      and cell.at("dimension", default: none) == "mass"
+      and symbol in ("kg", "lb")
+      and cell.at("base", default: none) != none
+  ) {
+    lb-oz(cell.base)
+  } else {
+    cell.at("text")
+  }
+}
 
 // Per-row display cells for a collection table. Absent/empty means the block
 // has no rows to print.
@@ -64,7 +90,7 @@
 }
 
 // The printed value, including the symbol ("12.4 °P", "75.6%").
-#let formatted-text(path) = formatted(path).at("text")
+#let formatted-text(path) = cell-text(formatted(path))
 
 // The figure without the symbol ("12.4"), for tables that align the number and
 // the unit in separate columns.

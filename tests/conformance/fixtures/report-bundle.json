@@ -6032,707 +6032,989 @@
     "equipment.name": {
       "text": "HERMS 30L",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.yeast_id": {
       "text": "us-05",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.name": {
       "text": "SafAle US-05",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.manufacturer": {
       "text": "Fermentis",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.form": {
       "text": "Dry",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.fermentation": {
       "text": "Ale",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.attenuation_cap_pct": {
       "text": "76.0%",
       "number": "76.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.attenuation_derate_points": {
       "text": "3.0 pts",
       "number": "3.0",
-      "unit": "pts"
+      "unit": "pts",
+      "base": null,
+      "dimension": null
     },
     "batch.yeast_cap": {
       "text": "73.0%",
       "number": "73.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.attenuation_above_cap": {
       "text": "2.6 pts",
       "number": "2.6",
-      "unit": "pts"
+      "unit": "pts",
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.temp_low_c": {
       "text": "15.0 \u00b0C",
       "number": "15.0",
-      "unit": "\u00b0C"
+      "unit": "\u00b0C",
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.temp_high_c": {
       "text": "22.0 \u00b0C",
       "number": "22.0",
-      "unit": "\u00b0C"
+      "unit": "\u00b0C",
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.flocculation": {
       "text": "Medium",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.sta1": {
       "text": "true",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.yeast.pof": {
       "text": "Unknown",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "style.name": {
       "text": "American Pale Ale",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "water.source.source_name": {
       "text": "City tap",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "water.source.laboratory": {
       "text": "Ward Labs",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "water.source.report_id": {
       "text": "w-2026-01",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "water.source.calcium_ca": {
       "text": "42.0 ppm",
       "number": "42.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.source.magnesium_mg": {
       "text": "8.0 ppm",
       "number": "8.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.source.sodium_na": {
       "text": "12.0 ppm",
       "number": "12.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.source.sulfate_so4": {
       "text": "20.0 ppm",
       "number": "20.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.source.chloride_cl": {
       "text": "15.0 ppm",
       "number": "15.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.source.total_alkalinity_caco3": {
       "text": "38.0 ppm",
       "number": "38.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.target_profile.name": {
       "text": "Pale ale target",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "water.target.calcium_ca": {
       "text": "50.0 ppm",
       "number": "50.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.target.magnesium_mg": {
       "text": "10.0 ppm",
       "number": "10.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.target.sodium_na": {
       "text": "15.0 ppm",
       "number": "15.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.target.sulfate_so4": {
       "text": "100.0 ppm",
       "number": "100.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.target.chloride_cl": {
       "text": "60.0 ppm",
       "number": "60.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.target.alkalinity_as_caco3": {
       "text": "40.0 ppm",
       "number": "40.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.mash_adjustment.calcium_ca": {
       "text": "10.0 ppm",
       "number": "10.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.mash_adjustment.magnesium_mg": {
       "text": "2.0 ppm",
       "number": "2.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.mash_adjustment.sodium_na": {
       "text": "3.0 ppm",
       "number": "3.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.mash_adjustment.sulfate_so4": {
       "text": "80.0 ppm",
       "number": "80.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.mash_adjustment.chloride_cl": {
       "text": "45.0 ppm",
       "number": "45.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "water.mash_adjustment.alkalinity_as_caco3": {
       "text": "-3.0 ppm",
       "number": "-3.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "solver.water.strategy": {
       "text": "Best fit (all six)",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "solver.water.prescription.predicted_mash_ph": {
       "text": "5.42 pH",
       "number": "5.42",
-      "unit": "pH"
+      "unit": "pH",
+      "base": null,
+      "dimension": null
     },
     "solver.water.prescription.mash_ph_status": {
       "text": "Optimal",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "solver.water.post_dose_mash_ions.calcium_ca": {
       "text": "52.0 ppm",
       "number": "52.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "solver.water.post_dose_mash_ions.magnesium_mg": {
       "text": "10.0 ppm",
       "number": "10.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "solver.water.post_dose_mash_ions.sodium_na": {
       "text": "15.0 ppm",
       "number": "15.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "solver.water.post_dose_mash_ions.sulfate_so4": {
       "text": "100.0 ppm",
       "number": "100.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "solver.water.post_dose_mash_ions.chloride_cl": {
       "text": "60.0 ppm",
       "number": "60.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "solver.water.post_dose_mash_ions.alkalinity_as_caco3": {
       "text": "35.0 ppm",
       "number": "35.0",
-      "unit": "ppm"
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
     },
     "batch.sparge_salted_volume": {
       "text": "18.7 L",
       "number": "18.7",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "water.salt_distribution": {
       "text": "Split \u2014 grist and HLT",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "water.gypsum_form": {
       "text": "Dihydrate (CaSO\u2084\u00b72H\u2082O)",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "water.cacl2_form": {
       "text": "Dihydrate (CaCl\u2082\u00b72H\u2082O)",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "water.acid_medium": {
       "text": "88% lactic acid",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "solver.water.mash_additions.gypsum_kg": {
       "text": "4.2 g",
       "number": "4.2",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.water.mash_additions.cacl2_kg": {
       "text": "2.1 g",
       "number": "2.1",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.water.mash_additions.acid_l": {
       "text": "1.4 mL",
       "number": "1.4",
-      "unit": "mL"
+      "unit": "mL",
+      "base": null,
+      "dimension": null
     },
     "solver.water.sparge_additions.gypsum_kg": {
       "text": "4.8 g",
       "number": "4.8",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.water.sparge_additions.cacl2_kg": {
       "text": "2.4 g",
       "number": "2.4",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.water.sparge_additions.acid_l": {
       "text": "1.0 mL",
       "number": "1.0",
-      "unit": "mL"
+      "unit": "mL",
+      "base": null,
+      "dimension": null
     },
     "batch.target_abv": {
       "text": "5.5%",
       "number": "5.5",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "mash.strike_water_temp_c": {
       "text": "68.3 \u00b0C",
       "number": "68.3",
-      "unit": "\u00b0C"
+      "unit": "\u00b0C",
+      "base": null,
+      "dimension": null
     },
     "mash.total_time_min": {
       "text": "74 min",
       "number": "74",
-      "unit": "min"
+      "unit": "min",
+      "base": null,
+      "dimension": null
     },
     "batch.topology": {
       "text": "Liquor-to-grist ratio",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.conversion_efficiency": {
       "text": "90.0%",
       "number": "90.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.brewhouse_efficiency": {
       "text": "73.7%",
       "number": "73.7",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.grist_attenuation": {
       "text": "71.0%",
       "number": "71.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.mash_thickness_l_per_kg": {
       "text": "3.0 L/kg",
       "number": "3.0",
-      "unit": "L/kg"
+      "unit": "L/kg",
+      "base": null,
+      "dimension": null
     },
     "batch.runoff_ratio": {
       "text": "1.5",
       "number": "1.5",
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "batch.boil_time_min": {
       "text": "60 min",
       "number": "60",
-      "unit": "min"
+      "unit": "min",
+      "base": null,
+      "dimension": null
     },
     "batch.boil_off_rate_l_per_hr": {
       "text": "3.0 L/hr",
       "number": "3.0",
-      "unit": "L/hr"
+      "unit": "L/hr",
+      "base": null,
+      "dimension": null
     },
     "batch.sparge_water_temp_c": {
       "text": "76.0 \u00b0C",
       "number": "76.0",
-      "unit": "\u00b0C"
+      "unit": "\u00b0C",
+      "base": null,
+      "dimension": null
     },
     "batch.grain_moisture_fraction": {
       "text": "4.0%",
       "number": "4.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.hlt_starting_volume_l": {
       "text": "30.0 L",
       "number": "30.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "batch.surplus_sparge_capacity": {
       "text": "0.0 L",
       "number": "0.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.sg_pre_boil": {
       "text": "10.4 \u00b0P",
       "number": "10.4",
-      "unit": "\u00b0P"
+      "unit": "\u00b0P",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.hlt.v_hlt_debt": {
       "text": "1.0 L",
       "number": "1.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.hlt.v_hlt_after_strike": {
       "text": "15.0 L",
       "number": "15.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.hlt.v_hlt_top_up": {
       "text": "3.7 L",
       "number": "3.7",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.hlt.v_sparge_deliverable": {
       "text": "17.7 L",
       "number": "17.7",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.hlt.v_hlt_required": {
       "text": "18.7 L",
       "number": "18.7",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.hlt.v_hlt_target": {
       "text": "18.7 L",
       "number": "18.7",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.sg_post_boil": {
       "text": "13.6 \u00b0P",
       "number": "13.6",
-      "unit": "\u00b0P"
+      "unit": "\u00b0P",
+      "base": null,
+      "dimension": null
     },
     "batch.realized_fg": {
       "text": "3.1 \u00b0P",
       "number": "3.1",
-      "unit": "\u00b0P"
+      "unit": "\u00b0P",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.apparent_attenuation": {
       "text": "75.6%",
       "number": "75.6",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.realized_abv": {
       "text": "5.6%",
       "number": "5.6",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.target_ibu": {
       "text": "40.0 IBU",
       "number": "40.0",
-      "unit": "IBU"
+      "unit": "IBU",
+      "base": null,
+      "dimension": null
     },
     "batch.boil_target_ibu": {
       "text": "30.0 IBU",
       "number": "30.0",
-      "unit": "IBU"
+      "unit": "IBU",
+      "base": null,
+      "dimension": null
     },
     "batch.whirlpool_target_ibu": {
       "text": "10.0 IBU",
       "number": "10.0",
-      "unit": "IBU"
+      "unit": "IBU",
+      "base": null,
+      "dimension": null
     },
     "batch.whirlpool_ibu_fraction": {
       "text": "25.0%",
       "number": "25.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.whirlpool_ambient_temp_c": {
       "text": "20.0 \u00b0C",
       "number": "20.0",
-      "unit": "\u00b0C"
+      "unit": "\u00b0C",
+      "base": null,
+      "dimension": null
     },
     "batch.whirlpool_cooling_time_constant_min": {
       "text": "108.7 min",
       "number": "108.7",
-      "unit": "min"
+      "unit": "min",
+      "base": null,
+      "dimension": null
     },
     "batch.boil_ibu_share": {
       "text": "75.0%",
       "number": "75.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.whirlpool_ibu_share": {
       "text": "25.0%",
       "number": "25.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.whirlpool_hot_ibu_share": {
       "text": "70.0%",
       "number": "70.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "batch.whirlpool_cool_ibu_share": {
       "text": "30.0%",
       "number": "30.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "solver.hops.boil_mass_kg": {
       "text": "22.9 g",
       "number": "22.9",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.hops.whirlpool_mass_kg": {
       "text": "50.0 g",
       "number": "50.0",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.hops.boil_alpha_mass_kg": {
       "text": "4.4 g",
       "number": "4.4",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.hops.whirlpool_alpha_mass_kg": {
       "text": "4.7 g",
       "number": "4.7",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.hops.total_mass_kg": {
       "text": "72.9 g",
       "number": "72.9",
-      "unit": "g"
+      "unit": "g",
+      "base": null,
+      "dimension": null
     },
     "solver.hops.whirlpool_hot_ibu": {
       "text": "7.0 IBU",
       "number": "7.0",
-      "unit": "IBU"
+      "unit": "IBU",
+      "base": null,
+      "dimension": null
     },
     "solver.hops.whirlpool_cool_ibu": {
       "text": "3.0 IBU",
       "number": "3.0",
-      "unit": "IBU"
+      "unit": "IBU",
+      "base": null,
+      "dimension": null
     },
     "grist.finished_beer_srm": {
       "text": "6.0 SRM",
       "number": "6.0",
-      "unit": "SRM"
+      "unit": "SRM",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.v_strike": {
       "text": "15.0 L",
       "number": "15.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.v_mc": {
       "text": "0.2 L",
       "number": "0.2",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.v_sol": {
       "text": "1.5 L",
       "number": "1.5",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.v_absorption": {
       "text": "8.0 L",
       "number": "8.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.v_run1": {
       "text": "8.2 L",
       "number": "8.2",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.v_sparge": {
       "text": "17.7 L",
       "number": "17.7",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.v_run2": {
       "text": "17.7 L",
       "number": "17.7",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.v_post_boil": {
       "text": "22.4 L",
       "number": "22.4",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.v_pre_boil": {
       "text": "25.4 L",
       "number": "25.4",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "batch.delta_v_evap": {
       "text": "3.0 L",
       "number": "3.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "batch.late_addition_volume_l": {
       "text": "0.5 L",
       "number": "0.5",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "batch.shrinkage_volume_l": {
       "text": "0.9 L",
       "number": "0.9",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "batch.v_ferm": {
       "text": "20.0 L",
       "number": "20.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "equipment.mash_dead_space_l": {
       "text": "0.5 L",
       "number": "0.5",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "equipment.mash_transfer_loss_l": {
       "text": "0.5 L",
       "number": "0.5",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "equipment.kettle_dead_space_l": {
       "text": "1.0 L",
       "number": "1.0",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "equipment.kettle_transfer_loss_l": {
       "text": "0.5 L",
       "number": "0.5",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "equipment.trub_loss_l": {
       "text": "0.5 L",
       "number": "0.5",
-      "unit": "L"
+      "unit": "L",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.m_grist": {
       "text": "5.0 kg",
       "number": "5.0",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.s_post_boil_target": {
       "text": "3.14 kg",
       "number": "3.14",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.s_run1": {
       "text": "1.6 kg",
       "number": "1.6",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.cascade.s_run2": {
       "text": "1.1 kg",
       "number": "1.1",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.extract.s_potential": {
       "text": "3.72 kg",
       "number": "3.72",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.extract.s_converted": {
       "text": "3.34 kg",
       "number": "3.34",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.extract.s_tun": {
       "text": "2.79 kg",
       "number": "2.79",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.extract.s_kettle": {
       "text": "2.74 kg",
       "number": "2.74",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.extract.s_fermenter": {
       "text": "2.85 kg",
       "number": "2.85",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "batch.sugar_extract_total": {
       "text": "0.40 kg",
       "number": "0.40",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "batch.extract_loss_conversion": {
       "text": "0.37 kg",
       "number": "0.37",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "batch.extract_loss_mash": {
       "text": "0.61 kg",
       "number": "0.61",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "batch.extract_loss_retention": {
       "text": "0.55 kg",
       "number": "0.55",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "batch.extract_loss_transfer": {
       "text": "0.05 kg",
       "number": "0.05",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "batch.extract_loss_kettle": {
       "text": "0.29 kg",
       "number": "0.29",
-      "unit": "kg"
+      "unit": "kg",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.real_attenuation": {
       "text": "68.0%",
       "number": "68.0",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.max_feasible_abv": {
       "text": "7.2%",
       "number": "7.2",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.max_achievable_abv": {
       "text": "8.4%",
       "number": "8.4",
-      "unit": "%"
+      "unit": "%",
+      "base": null,
+      "dimension": null
     },
     "solver.batch.binding_constraint": {
       "text": "Mash tun",
       "number": null,
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     },
     "solver.batch.mash_thickness_l_per_kg": {
       "text": "3.00 L/kg",
       "number": "3.00",
-      "unit": "L/kg"
+      "unit": "L/kg",
+      "base": null,
+      "dimension": null
     },
     "batch.runnings_ratio": {
       "text": "0.46",
       "number": "0.46",
-      "unit": null
+      "unit": null,
+      "base": null,
+      "dimension": null
     }
   },
   "formatted_tables": {
@@ -6741,84 +7023,116 @@
         "name": {
           "text": "American 2-row",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "amount": {
           "text": "4.3 kg",
           "number": "4.3",
-          "unit": "kg"
+          "unit": "kg",
+          "base": 4.3,
+          "dimension": "mass"
         },
         "ppg": {
           "text": "36.0",
           "number": "36.0",
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "color": {
           "text": "1.8 \u00b0L",
           "number": "1.8",
-          "unit": "\u00b0L"
+          "unit": "\u00b0L",
+          "base": null,
+          "dimension": null
         },
         "own_pct": {
           "text": "85.0%",
           "number": "85.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "grist_pct": {
           "text": "83.3%",
           "number": "83.3",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "extract": {
           "text": "3.3 kg",
           "number": "3.3",
-          "unit": "kg"
+          "unit": "kg",
+          "base": 3.3,
+          "dimension": "mass"
         },
         "extract_pct": {
           "text": "77.6%",
           "number": "77.6",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         }
       },
       {
         "name": {
           "text": "Crystal 40",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "amount": {
           "text": "0.8 kg",
           "number": "0.8",
-          "unit": "kg"
+          "unit": "kg",
+          "base": 0.8,
+          "dimension": "mass"
         },
         "ppg": {
           "text": "34.2",
           "number": "34.2",
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "color": {
           "text": "40.0 \u00b0L",
           "number": "40.0",
-          "unit": "\u00b0L"
+          "unit": "\u00b0L",
+          "base": null,
+          "dimension": null
         },
         "own_pct": {
           "text": "15.0%",
           "number": "15.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "grist_pct": {
           "text": "14.7%",
           "number": "14.7",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "extract": {
           "text": "0.6 kg",
           "number": "0.6",
-          "unit": "kg"
+          "unit": "kg",
+          "base": 0.6,
+          "dimension": "mass"
         },
         "extract_pct": {
           "text": "13.0%",
           "number": "13.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -6827,32 +7141,44 @@
         "name": {
           "text": "Carafa Special II",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "amount": {
           "text": "0.1 kg",
           "number": "0.1",
-          "unit": "kg"
+          "unit": "kg",
+          "base": 0.1,
+          "dimension": "mass"
         },
         "ppg": {
           "text": "27.7",
           "number": "27.7",
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "color": {
           "text": "500.0 \u00b0L",
           "number": "500.0",
-          "unit": "\u00b0L"
+          "unit": "\u00b0L",
+          "base": null,
+          "dimension": null
         },
         "own_pct": {
           "text": "100.0%",
           "number": "100.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "grist_pct": {
           "text": "2.0%",
           "number": "2.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -6861,37 +7187,51 @@
         "name": {
           "text": "Candi Syrup D-180",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "amount": {
           "text": "0.50 kg",
           "number": "0.50",
-          "unit": "kg"
+          "unit": "kg",
+          "base": 0.5,
+          "dimension": "mass"
         },
         "ppg": {
           "text": "37.0",
           "number": "37.0",
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "color": {
           "text": "180.0 \u00b0L",
           "number": "180.0",
-          "unit": "\u00b0L"
+          "unit": "\u00b0L",
+          "base": null,
+          "dimension": null
         },
         "grist_pct": {
           "text": "9.8%",
           "number": "9.8",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "extract": {
           "text": "0.4 kg",
           "number": "0.4",
-          "unit": "kg"
+          "unit": "kg",
+          "base": 0.4,
+          "dimension": "mass"
         },
         "extract_pct": {
           "text": "9.4%",
           "number": "9.4",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -6900,17 +7240,23 @@
         "name": {
           "text": "Beta-Amylase Rest",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "temp": {
           "text": "67.0 \u00b0C",
           "number": "67.0",
-          "unit": "\u00b0C"
+          "unit": "\u00b0C",
+          "base": null,
+          "dimension": null
         },
         "time": {
           "text": "60 min",
           "number": "60",
-          "unit": "min"
+          "unit": "min",
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -6919,74 +7265,102 @@
         "name": {
           "text": "Magnum",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "T-90 pellet",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "alpha": {
           "text": "14.0%",
           "number": "14.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "boil": {
           "text": "60 min",
           "number": "60",
-          "unit": "min"
+          "unit": "min",
+          "base": null,
+          "dimension": null
         },
         "ibu_share": {
           "text": "60.0%",
           "number": "60.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "ibu": {
           "text": "18.0 IBU",
           "number": "18.0",
-          "unit": "IBU"
+          "unit": "IBU",
+          "base": null,
+          "dimension": null
         },
         "amount": {
           "text": "18.6 g",
           "number": "18.6",
-          "unit": "g"
+          "unit": "g",
+          "base": null,
+          "dimension": null
         }
       },
       {
         "name": {
           "text": "DynaBoost Citra",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "Flowable extract",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "alpha": {
           "text": "42.5%",
           "number": "42.5",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "boil": {
           "text": "15 min",
           "number": "15",
-          "unit": "min"
+          "unit": "min",
+          "base": null,
+          "dimension": null
         },
         "ibu_share": {
           "text": "40.0%",
           "number": "40.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "ibu": {
           "text": "12.0 IBU",
           "number": "12.0",
-          "unit": "IBU"
+          "unit": "IBU",
+          "base": null,
+          "dimension": null
         },
         "amount": {
           "text": "4.3 g",
           "number": "4.3",
-          "unit": "g"
+          "unit": "g",
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -6995,84 +7369,116 @@
         "name": {
           "text": "Citra",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "T-90 pellet",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "alpha": {
           "text": "12.0%",
           "number": "12.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "add": {
           "text": "0 min",
           "number": "0",
-          "unit": "min"
+          "unit": "min",
+          "base": null,
+          "dimension": null
         },
         "temp": {
           "text": "95.0 \u00b0C",
           "number": "95.0",
-          "unit": "\u00b0C"
+          "unit": "\u00b0C",
+          "base": null,
+          "dimension": null
         },
         "ibu_share": {
           "text": "70.0%",
           "number": "70.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "ibu": {
           "text": "7.0 IBU",
           "number": "7.0",
-          "unit": "IBU"
+          "unit": "IBU",
+          "base": null,
+          "dimension": null
         },
         "amount": {
           "text": "35.0 g",
           "number": "35.0",
-          "unit": "g"
+          "unit": "g",
+          "base": null,
+          "dimension": null
         }
       },
       {
         "name": {
           "text": "Saaz",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "T-90 pellet",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "alpha": {
           "text": "3.5%",
           "number": "3.5",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "add": {
           "text": "20 min",
           "number": "20",
-          "unit": "min"
+          "unit": "min",
+          "base": null,
+          "dimension": null
         },
         "temp": {
           "text": "70.0 \u00b0C",
           "number": "70.0",
-          "unit": "\u00b0C"
+          "unit": "\u00b0C",
+          "base": null,
+          "dimension": null
         },
         "ibu_share": {
           "text": "30.0%",
           "number": "30.0",
-          "unit": "%"
+          "unit": "%",
+          "base": null,
+          "dimension": null
         },
         "ibu": {
           "text": "3.0 IBU",
           "number": "3.0",
-          "unit": "IBU"
+          "unit": "IBU",
+          "base": null,
+          "dimension": null
         },
         "amount": {
           "text": "15.0 g",
           "number": "15.0",
-          "unit": "g"
+          "unit": "g",
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -7081,37 +7487,51 @@
         "name": {
           "text": "Mosaic",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "type": {
           "text": "T-90 pellet",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "quantity": {
           "text": "1.0",
           "number": "1.0",
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "unit": {
           "text": "oz",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "applied": {
           "text": "High krausen",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "contact": {
           "text": "Terminal gravity",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "detail": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -7120,14 +7540,18 @@
         "note": {
           "text": "0.5 oz (14 g) lemon peel at flame-out",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         }
       },
       {
         "note": {
           "text": "0.05 oz (1.5 g) fresh-grated ginger at flame-out",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -7136,7 +7560,103 @@
         "text": {
           "text": "IBU split between the boil and the hot whirlpool; flavour and aroma additions use Cryo in the cool whirlpool.\n\n- **Sensory:** 60/40 Chinook/Simcoe on the cool side by weight.\n- *Pine* backbone with a grapefruit and citrus surround.",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
+        }
+      }
+    ],
+    "report.grain_purchases": [
+      {
+        "name": {
+          "text": "American 2-row",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        },
+        "kind": {
+          "text": "Grain",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        },
+        "buy": {
+          "text": "10 lb 8 oz",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        }
+      },
+      {
+        "name": {
+          "text": "Crystal 40",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        },
+        "kind": {
+          "text": "Grain",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        },
+        "buy": {
+          "text": "2 lb 2 oz",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        }
+      },
+      {
+        "name": {
+          "text": "Carafa Special II",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        },
+        "kind": {
+          "text": "Grain",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        },
+        "buy": {
+          "text": "4 oz",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        }
+      },
+      {
+        "name": {
+          "text": "Candi Syrup D-180",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        },
+        "kind": {
+          "text": "Sugar",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        },
+        "buy": {
+          "text": "1 lb 2 oz",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -7145,85 +7665,115 @@
         "name": {
           "text": "Citra",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "T-90 pellet",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "purchase": {
           "text": "2 oz",
           "number": "2",
-          "unit": "oz"
+          "unit": "oz",
+          "base": null,
+          "dimension": null
         }
       },
       {
         "name": {
           "text": "DynaBoost Citra",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "Extract",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "purchase": {
           "text": "1 oz",
           "number": "1",
-          "unit": "oz"
+          "unit": "oz",
+          "base": null,
+          "dimension": null
         }
       },
       {
         "name": {
           "text": "Magnum",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "T-90 pellet",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "purchase": {
           "text": "1 oz",
           "number": "1",
-          "unit": "oz"
+          "unit": "oz",
+          "base": null,
+          "dimension": null
         }
       },
       {
         "name": {
           "text": "Mosaic",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "T-90 pellet",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "purchase": {
           "text": "1 oz",
           "number": "1",
-          "unit": "oz"
+          "unit": "oz",
+          "base": null,
+          "dimension": null
         }
       },
       {
         "name": {
           "text": "Saaz",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "form": {
           "text": "T-90 pellet",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "purchase": {
           "text": "1 oz",
           "number": "1",
-          "unit": "oz"
+          "unit": "oz",
+          "base": null,
+          "dimension": null
         }
       }
     ],
@@ -7232,144 +7782,200 @@
         "kind": {
           "text": "step",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "phase": {
           "text": "Brew day",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "section": {
           "text": "Setup",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "title": {
           "text": "Brew Day Setup",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "text": {
           "text": "Fill the HLT to 20.0 L.",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "level": {
           "text": "info",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "expected": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "unit": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "method": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "note": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "skipped": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "raw": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "corrected": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "time": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         }
       },
       {
         "kind": {
           "text": "observation",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "phase": {
           "text": "Brew day",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "section": {
           "text": "Mash",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "title": {
           "text": "Mash pH",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "text": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "level": {
           "text": "critical",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "expected": {
           "text": "5.4",
           "number": "5.4",
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "unit": {
           "text": "pH",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "method": {
           "text": "pH meter",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "note": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "skipped": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "raw": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "corrected": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         },
         "time": {
           "text": "\u2014",
           "number": null,
-          "unit": null
+          "unit": null,
+          "base": null,
+          "dimension": null
         }
       }
     ]
@@ -7379,48 +7985,64 @@
       "color": {
         "text": "7.5 \u00b0L",
         "number": "7.5",
-        "unit": "\u00b0L"
+        "unit": "\u00b0L",
+        "base": null,
+        "dimension": null
       },
       "extract_yield": {
         "text": "77.4%",
         "number": "77.4",
-        "unit": "%"
+        "unit": "%",
+        "base": null,
+        "dimension": null
       }
     },
     "grist.trace_malts": {
       "color": {
         "text": "500.0 \u00b0L",
         "number": "500.0",
-        "unit": "\u00b0L"
+        "unit": "\u00b0L",
+        "base": null,
+        "dimension": null
       },
       "extract_yield": {
         "text": "60.0%",
         "number": "60.0",
-        "unit": "%"
+        "unit": "%",
+        "base": null,
+        "dimension": null
       }
     },
     "batch.sugars": {
       "color": {
         "text": "180.0 \u00b0L",
         "number": "180.0",
-        "unit": "\u00b0L"
+        "unit": "\u00b0L",
+        "base": null,
+        "dimension": null
       },
       "extract_yield": {
         "text": "80.0%",
         "number": "80.0",
-        "unit": "%"
+        "unit": "%",
+        "base": null,
+        "dimension": null
       }
     },
     "overall": {
       "color": {
         "text": "31.7 \u00b0L",
         "number": "31.7",
-        "unit": "\u00b0L"
+        "unit": "\u00b0L",
+        "base": null,
+        "dimension": null
       },
       "extract_yield": {
         "text": "77.6%",
         "number": "77.6",
-        "unit": "%"
+        "unit": "%",
+        "base": null,
+        "dimension": null
       }
     }
   },
@@ -7506,5 +8128,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:e8db09ae6c7d3f5ca2136c84b32af3a42cf595897c85409261906dd9a4c820bf"
+  "content_hash": "sha256:f079a5dfe37f89ee0095e2c98babb2cb1bb235bc95e190742ec494c669e3491a"
 }

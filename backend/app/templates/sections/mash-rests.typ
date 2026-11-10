@@ -1,7 +1,7 @@
 // Mash rests: the enabled schedule in canonical order. The total includes the
 // ramp between rests; the table rows are rest durations only.
 
-#import "../lib/format.typ": formatted-table, formatted-text, present-formatted, present-formatted-table
+#import "../lib/format.typ": cell-text, formatted-table, formatted-text, present-formatted, present-formatted-table
 
 #let COLLECTION = "mash.rests"
 
@@ -28,7 +28,7 @@
     inset: (x: 3pt, y: 2pt),
     table.header(..columns.map(column => column.at(0))),
     ..rows
-      .map(row => columns.map(column => row.at(column.at(1)).at("text")))
+      .map(row => columns.map(column => cell-text(row.at(column.at(1)))))
       .flatten(),
   )
   v(2pt)

@@ -8,6 +8,7 @@
 #import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
 #import "sections/mash-rests.typ": present-mash-rests, render-mash-rests
 #import "sections/hops.typ": present-hops, render-hops
+#import "sections/purchases.typ": present-purchases, render-purchases
 #import "sections/process.typ": present-process, render-process
 #import "sections/yeast.typ": present-yeast, render-yeast
 #import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
@@ -26,6 +27,7 @@
   (id: "batch-facts", title: "Batch Facts", present: present-batch-facts, render: render-batch-facts),
   (id: "mash-rests", title: "Mash Rests", present: present-mash-rests, render: render-mash-rests),
   (id: "hops", title: "Hops", present: present-hops, render: render-hops),
+  (id: "purchases", title: "Purchases", present: present-purchases, render: render-purchases),
   (id: "process", title: "Process notes", present: present-process, render: render-process),
   (id: "yeast", title: "Yeast", present: present-yeast, render: render-yeast),
   (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
@@ -56,6 +58,14 @@
 )
 
 #let paper-input = sys.inputs.at("paper", default: "auto")
+#let mass-format-input = sys.inputs.at("mass-format", default: "display")
+#let mass-formats = ("display", "lb_oz")
+// A spec error, not a template crash: the service maps this panic to 422.
+#let mass-format = if mass-format-input in mass-formats {
+  mass-format-input
+} else {
+  panic("report spec: unknown mass-format " + mass-format-input + " (display, lb_oz)")
+}
 #let paper = if paper-input == "auto" or paper-input == "" {
   if us-markers.filter(marker => marker).len() >= 2 { "us-letter" } else { "a4" }
 } else if paper-input == "a4" {

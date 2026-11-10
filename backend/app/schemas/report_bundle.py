@@ -32,12 +32,17 @@ class FormattedValue(BundleModel):
 
     ``text`` is what a report prints (number + symbol). ``number`` and ``unit``
     exist for tables that align the figures in one column and the unit in
-    another. The report generator never converts or rounds.
+    another. ``base`` and ``dimension`` carry the canonical value (base units) so
+    a view-only format choice — pounds and ounces — can present the same figure
+    without re-solving. The report generator never converts or rounds unless the
+    requested mass format asks it to.
     """
 
     text: str
     number: str | None = None
     unit: str | None = None
+    base: float | None = None
+    dimension: str | None = None
 
 
 class FormattedSummary(BundleModel):

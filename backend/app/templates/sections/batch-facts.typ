@@ -1,7 +1,7 @@
 // Batch facts: the sealed identity names and the realized batch results. Every
 // figure is the bundle's frozen display string; this section does no conversion.
 
-#import "../lib/format.typ": formatted-summary, formatted-table, formatted-text, present-formatted, present-formatted-summary, present-formatted-table
+#import "../lib/format.typ": cell-text, formatted-summary, formatted-table, formatted-text, present-formatted, present-formatted-summary, present-formatted-table
 
 #let RESULT_PATHS = (
   "solver.batch.sg_post_boil",
@@ -53,7 +53,7 @@
     inset: (x: 3pt, y: 2pt),
     table.header(..columns.map(column => column.at(0))),
     ..rows
-      .map(row => columns.map(column => row.at(column.at(1)).at("text")))
+      .map(row => columns.map(column => cell-text(row.at(column.at(1)))))
       .flatten(),
   )
 }
@@ -63,12 +63,12 @@
 #let summary-line(key) = {
   let summary = formatted-summary(key)
   if summary == none { return }
-  let cell-text(name) = {
+  let summary-text(name) = {
     let cell = summary.at(name, default: none)
-    if cell == none { "—" } else { cell.at("text") }
+    if cell == none { "—" } else { cell-text(cell) }
   }
   text(size: 8pt, fill: rgb("#6b6b6b"))[
-    Weighted color: #cell-text("color") · Weighted extract yield: #cell-text("extract_yield")
+    Weighted color: #summary-text("color") · Weighted extract yield: #summary-text("extract_yield")
   ]
 }
 
@@ -179,8 +179,8 @@
         ..extract-rows
           .map(row => (
             row.at("name").at("text"),
-            row.at("amount").at("text"),
-            row.at("extract").at("text"),
+            cell-text(row.at("amount")),
+            cell-text(row.at("extract")),
             row.at("extract_pct").at("text"),
           ))
           .flatten(),

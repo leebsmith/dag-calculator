@@ -45,6 +45,7 @@ SECTIONS = (
     "batch-facts",
     "mash-rests",
     "hops",
+    "purchases",
     "process",
     "yeast",
     "volume-ledger",
@@ -91,6 +92,7 @@ def render_once():
             spec.fmt,
             spec.sections,
             spec.paper,
+            spec.mass_format,
             spec.page,
             os.environ.get("TYPST_BIN"),
         )
@@ -319,6 +321,17 @@ def test_the_render_key_tracks_the_spec(
     assert frozen_report.key == second_frozen_report.key
     assert frozen_report.key != render_once(bundle(), parse_spec(paper="letter")).key
     assert frozen_report.key != render_once(bundle(), parse_spec(fmt="png")).key
+    assert (
+        frozen_report.key
+        != render_once(bundle(), parse_spec(mass_format="lb_oz")).key
+    )
+
+
+def test_mass_format_prints_pounds_and_ounces() -> None:
+    rendered = render(bundle(), parse_spec(sections="batch-facts", mass_format="lb_oz"))
+    text = "\n".join(page.extract_text() for page in PdfReader(BytesIO(rendered.data)).pages)
+    assert " lb " in text, "the grain bill should print pounds"
+    assert " kg" not in text, "the grain bill should not still print kilograms"
 
 
 def test_a_mismatched_typst_binary_is_unavailable(monkeypatch) -> None:

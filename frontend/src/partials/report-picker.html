@@ -32,6 +32,19 @@
                 { label: 'All', class: 'btn-outline btn-sm', run: () => $store.recipes.selectAllReportSections() },
                 { label: 'None', class: 'btn-outline btn-sm', run: () => $store.recipes.clearReportSections() }
               ]
+            },
+            {
+              id: 'report-mass-format',
+              type: 'select',
+              label: 'Mass format',
+              read: () => $store.recipes.reportMassFormat,
+              write: (value) => { $store.recipes.reportMassFormat = value; },
+              options: () => [
+                { value: 'display', label: 'Display units' },
+                { value: 'lb_oz', label: 'Pounds & ounces' }
+              ],
+              commit: 'change',
+              hint: 'Pounds and ounces print as 3 lb 6.4 oz (or 6.4 oz under a pound). The Purchases section always uses them, rounded up to the next ounce.'
             }
           ]
         })"

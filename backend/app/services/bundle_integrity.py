@@ -26,7 +26,9 @@ Check = Callable[[ReportBundle], None]
 # Report-only tables that are not artifact collections. They are presentation
 # tables derived at freeze time; every other formatted-table key must still be
 # a declared collection node.
-NAMED_REPORT_TABLES = frozenset({"report.hop_strategy", "report.hop_purchases"})
+NAMED_REPORT_TABLES = frozenset(
+    {"report.hop_strategy", "report.hop_purchases", "report.grain_purchases"}
+)
 
 
 def check_valuation_nodes(bundle: ReportBundle) -> None:

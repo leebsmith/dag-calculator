@@ -303,11 +303,16 @@ def preview_report_bundle(
 
 
 def _report_spec(
-    *, doc_kind: str, fmt: str, sections: str, paper: str, page: int
+    *, doc_kind: str, fmt: str, sections: str, paper: str, mass_format: str, page: int
 ) -> ReportSpec:
     try:
         return parse_spec(
-            doc_kind=doc_kind, fmt=fmt, sections=sections, paper=paper, page=page
+            doc_kind=doc_kind,
+            fmt=fmt,
+            sections=sections,
+            paper=paper,
+            mass_format=mass_format,
+            page=page,
         )
     except ReportSpecError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
@@ -359,13 +364,19 @@ def get_report(
     doc_kind: str = "recipe",
     sections: str = "",
     paper: str = "auto",
+    mass_format: str = "display",
     page: int = 1,
     fmt: str = Query("pdf", alias="format"),
 ) -> Response:
     """Render the stored bundle of a frozen batch."""
     validate_doc_id(batch_id)
     spec = _report_spec(
-        doc_kind=doc_kind, fmt=fmt, sections=sections, paper=paper, page=page
+        doc_kind=doc_kind,
+        fmt=fmt,
+        sections=sections,
+        paper=paper,
+        mass_format=mass_format,
+        page=page,
     )
     return _report_response(service.render_report(user["uid"], batch_id, spec))
 
@@ -394,13 +405,19 @@ def preview_report(
     doc_kind: str = "recipe",
     sections: str = "",
     paper: str = "auto",
+    mass_format: str = "display",
     page: int = 1,
     fmt: str = Query("pdf", alias="format"),
 ) -> Response:
     """Render a draft's posted bundle without persisting it."""
     validate_doc_id(batch_id)
     spec = _report_spec(
-        doc_kind=doc_kind, fmt=fmt, sections=sections, paper=paper, page=page
+        doc_kind=doc_kind,
+        fmt=fmt,
+        sections=sections,
+        paper=paper,
+        mass_format=mass_format,
+        page=page,
     )
     return _report_response(
         service.render_preview(user["uid"], batch_id, payload.bundle, spec)

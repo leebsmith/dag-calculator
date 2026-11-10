@@ -575,6 +575,24 @@ test("the picker narrows the params and the filename", async () => {
   assert.equal(store.reportFilename(), "house-pale.pdf");
 });
 
+test("the report mass format adds its param and resets when the picker opens", async () => {
+  const { store } = makeStore();
+  await store.openReportPicker({ id: "frozen", name: "House Pale", status: "frozen" });
+
+  store.reportMassFormat = "lb_oz";
+  assert.deepEqual(store.reportSectionsParam(), { mass_format: "lb_oz" });
+
+  store.clearReportSections();
+  store.toggleReportSection("brewhouse");
+  assert.deepEqual(store.reportSectionsParam(), {
+    sections: "brewhouse",
+    mass_format: "lb_oz",
+  });
+
+  await store.openReportPicker();
+  assert.equal(store.reportMassFormat, "display");
+});
+
 test("previewSelectedReport renders the chosen subset into a tab", async () => {
   const tab = tabStub();
   const calls = [];

@@ -51,6 +51,7 @@ export function createRecipesStore({
     reportPickerTarget: null,
     reportSections: [],
     reportSelection: [],
+    reportMassFormat: "display",
     renamingId: null,
     renameValue: "",
 
@@ -370,6 +371,7 @@ export function createRecipesStore({
         }
       }
       this.reportSelection = this.reportSections.map((section) => section.id);
+      this.reportMassFormat = "display";
     },
 
     closeReportPicker() {
@@ -393,10 +395,12 @@ export function createRecipesStore({
 
     // Selecting everything is the default, so it sends no `sections` at all.
     reportSectionsParam() {
-      if (!this.reportSections.length) return {};
-      return this.reportSelection.length === this.reportSections.length
-        ? {}
-        : { sections: this.reportSelection.join(",") };
+      const params = {};
+      if (this.reportSections.length && this.reportSelection.length !== this.reportSections.length) {
+        params.sections = this.reportSelection.join(",");
+      }
+      if (this.reportMassFormat === "lb_oz") params.mass_format = "lb_oz";
+      return params;
     },
 
     reportFilename() {

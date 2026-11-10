@@ -10,6 +10,7 @@ import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { HOP_NODES as H } from "../registry/hops.js";
 import { sortWhirlpoolRows } from "./hopRows.js";
 import { hopPurchaseRows } from "./hopPurchaseRows.js";
+import { grainPurchaseRows } from "./grainPurchaseRows.js";
 import { DRY_HOP_NODES as D } from "../registry/dry-hops.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { BREW_DAY_NODES as B } from "../registry/brew-day.js";
@@ -35,13 +36,15 @@ function formatEntry(artifact, entry, value, nl) {
   }
   const shown = displayValue(artifact, entry.dimension, entry.unit, value, nl);
   const cell = formatCell(shown, { decimals: entry.decimals });
+  const base = entry.dimension === "mass" ? { base: value, dimension: "mass" } : {};
   return entry.symbol
     ? {
         text: cellLabel(cell.display, { symbol: entry.symbol }),
         number: cell.display,
         unit: entry.symbol,
+        ...base,
       }
-    : { text: cell.display, number: cell.display };
+    : { text: cell.display, number: cell.display, ...base };
 }
 
 function formatPpg(artifact, yieldFraction) {
@@ -162,6 +165,19 @@ function mashRestRows(artifact, catalog, engine) {
     }));
 }
 
+function purchaseTables({ artifact, catalog, engine, list, format, fermentables }) {
+  return {
+    "report.hop_purchases": hopPurchaseRows({
+      artifact,
+      catalog,
+      engine,
+      resolvedList: list,
+      formatEntry: format,
+    }),
+    "report.grain_purchases": grainPurchaseRows({ artifact, engine, fermentables }),
+  };
+}
+
 function hopStrategyRows(strategy) {
   const text = String(strategy ?? "").trim();
   if (!text) return [];
@@ -195,7 +211,14 @@ export function buildReportTables(artifact, catalog, engine, strategy, reportErr
   const traceShares = hamiltonPct(trace.map((row) => row.mass));
   const extractRows = [...major, ...sugar];
   const extractShares = hamiltonPct(extractRows.map((row) => row.extract));
-  const purchaseRows = hopPurchaseRows({ artifact, catalog, engine, resolvedList, formatEntry });
+  const purchases = purchaseTables({
+    artifact,
+    catalog,
+    engine,
+    list: resolvedList,
+    format: formatEntry,
+    fermentables: { major, trace, sugar },
+  });
   const pctCell = (fraction) =>
     fraction == null
       ? { text: "—" }
@@ -250,7 +273,7 @@ export function buildReportTables(artifact, catalog, engine, strategy, reportErr
     [D.collection]: dryHopRows(artifact, catalog, engine),
     [B.steps]: checklistTable(artifact, catalog, engine, reportError),
     [P.collection]: processNoteRows(engine),
-    "report.hop_purchases": purchaseRows,
+    ...purchases,
     "report.hop_strategy": hopStrategyRows(strategy),
   };
 }

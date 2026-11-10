@@ -2,7 +2,7 @@
 // roll-up. Every figure is the bundle's frozen display string; this section only
 // arranges them.
 
-#import "../lib/format.typ": formatted-table, formatted-text, present-formatted, present-formatted-table
+#import "../lib/format.typ": cell-text, formatted-table, formatted-text, present-formatted, present-formatted-table
 #import "../lib/prose.typ": prose-cell
 
 #let BOIL = "batch.boil_hops"
@@ -20,8 +20,6 @@
   or present-strategy()
 )
 
-#let present-purchases() = present-formatted-table("report.hop_purchases")
-
 #let text-or(path) = if present-formatted(path) { formatted-text(path) } else { "—" }
 
 #let note(body) = text(size: 8pt, fill: rgb("#6b6b6b"), body)
@@ -38,7 +36,7 @@
     inset: (x: 3pt, y: 2pt),
     table.header(..columns.map(column => column.at(0))),
     ..rows
-      .map(row => columns.map(column => row.at(column.at(1)).at("text")))
+      .map(row => columns.map(column => cell-text(row.at(column.at(1)))))
       .flatten(),
   )
 }
@@ -72,12 +70,6 @@
   ([Applied at], "applied", left),
   ([Contact], "contact", left),
   ([Detail], "detail", left),
-)
-
-#let purchase-columns = (
-  ([Hop], "name", left),
-  ([Form], "form", left),
-  ([Buy], "purchase", right),
 )
 
 #let render-hops() = {
@@ -177,16 +169,4 @@
     v(2pt)
     note[The totals cover the boil and the whirlpool; dry hops are excluded.]
   })
-
-  if present-formatted-table("report.hop_purchases") {
-    v(4pt)
-    block(breakable: false, {
-      heading(level: 2)[Hop Purchases]
-      hop-table("report.hop_purchases", purchase-columns)
-      v(2pt)
-      note[
-        Quantities include dry hops and are rounded up to the next whole ounce.
-      ]
-    })
-  }
 }

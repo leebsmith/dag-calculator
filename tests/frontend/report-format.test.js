@@ -17,7 +17,7 @@ test("the checklist table carries the skipped state and reason", async () => {
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { sharedTestApp } from "./appHelpers.js";
+import { sharedTestApp, withFreshApp } from "./appHelpers.js";
 
 async function booted() {
   return sharedTestApp();
@@ -78,6 +78,24 @@ test("the extract chain arrives as frozen masses that close", async () => {
   // Brewhouse efficiency is the kettle figure: malt extract / potential.
   assert.equal(formatted["solver.batch.brewhouse_efficiency"].text, "72.0%");
 });
+
+test("grain purchases round up to the next whole ounce in pounds and ounces", withFreshApp(async (app) => {
+  const rows = app.reportFormattedTables()["report.grain_purchases"];
+  assert.ok(rows.length > 0, "a grist produces purchase rows");
+
+  const ozKg = 0.028349523125;
+  for (const row of rows) {
+    assert.match(row.buy.text, /^(\d+ lb )?\d+ oz$/, "whole ounces, never a fraction");
+  }
+
+  const first = rows.find((row) => row.kind.text === "Grain");
+  const major = app.engine.get("grist.major_malts");
+  const massKg = major.find((row) => row.name === first.name.text).mass_kg;
+  const buyOz = Math.ceil(massKg / ozKg - 1e-9);
+  const label =
+    buyOz >= 16 ? `${Math.floor(buyOz / 16)} lb ${buyOz % 16} oz` : `${buyOz} oz`;
+  assert.equal(first.buy.text, label);
+}));
 
 test("the batch derate is points off the strain maximum, not a percentage", async () => {
   const app = await booted();

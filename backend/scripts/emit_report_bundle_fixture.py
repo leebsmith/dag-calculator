@@ -1480,29 +1480,29 @@ PAYLOAD = FreezePayload(
         "grist.major_malts": [
             {
                 "name": FormattedValue(text="American 2-row"),
-                "amount": FormattedValue(text="4.3 kg", number="4.3", unit="kg"),
+                "amount": FormattedValue(text="4.3 kg", number="4.3", unit="kg", base=4.3, dimension="mass"),
                 "ppg": FormattedValue(text="36.0", number="36.0"),
                 "color": FormattedValue(text="1.8 °L", number="1.8", unit="°L"),
                 "own_pct": FormattedValue(text="85.0%", number="85.0", unit="%"),
                 "grist_pct": FormattedValue(text="83.3%", number="83.3", unit="%"),
-                "extract": FormattedValue(text="3.3 kg", number="3.3", unit="kg"),
+                "extract": FormattedValue(text="3.3 kg", number="3.3", unit="kg", base=3.3, dimension="mass"),
                 "extract_pct": FormattedValue(text="77.6%", number="77.6", unit="%"),
             },
             {
                 "name": FormattedValue(text="Crystal 40"),
-                "amount": FormattedValue(text="0.8 kg", number="0.8", unit="kg"),
+                "amount": FormattedValue(text="0.8 kg", number="0.8", unit="kg", base=0.8, dimension="mass"),
                 "ppg": FormattedValue(text="34.2", number="34.2"),
                 "color": FormattedValue(text="40.0 °L", number="40.0", unit="°L"),
                 "own_pct": FormattedValue(text="15.0%", number="15.0", unit="%"),
                 "grist_pct": FormattedValue(text="14.7%", number="14.7", unit="%"),
-                "extract": FormattedValue(text="0.6 kg", number="0.6", unit="kg"),
+                "extract": FormattedValue(text="0.6 kg", number="0.6", unit="kg", base=0.6, dimension="mass"),
                 "extract_pct": FormattedValue(text="13.0%", number="13.0", unit="%"),
             },
         ],
         "grist.trace_malts": [
             {
                 "name": FormattedValue(text="Carafa Special II"),
-                "amount": FormattedValue(text="0.1 kg", number="0.1", unit="kg"),
+                "amount": FormattedValue(text="0.1 kg", number="0.1", unit="kg", base=0.1, dimension="mass"),
                 "ppg": FormattedValue(text="27.7", number="27.7"),
                 "color": FormattedValue(text="500.0 °L", number="500.0", unit="°L"),
                 "own_pct": FormattedValue(text="100.0%", number="100.0", unit="%"),
@@ -1512,11 +1512,11 @@ PAYLOAD = FreezePayload(
         "batch.sugars": [
             {
                 "name": FormattedValue(text="Candi Syrup D-180"),
-                "amount": FormattedValue(text="0.50 kg", number="0.50", unit="kg"),
+                "amount": FormattedValue(text="0.50 kg", number="0.50", unit="kg", base=0.5, dimension="mass"),
                 "ppg": FormattedValue(text="37.0", number="37.0"),
                 "color": FormattedValue(text="180.0 °L", number="180.0", unit="°L"),
                 "grist_pct": FormattedValue(text="9.8%", number="9.8", unit="%"),
-                "extract": FormattedValue(text="0.4 kg", number="0.4", unit="kg"),
+                "extract": FormattedValue(text="0.4 kg", number="0.4", unit="kg", base=0.4, dimension="mass"),
                 "extract_pct": FormattedValue(text="9.4%", number="9.4", unit="%"),
             },
         ],
@@ -1591,6 +1591,28 @@ PAYLOAD = FreezePayload(
                     "- **Sensory:** 60/40 Chinook/Simcoe on the cool side by weight.\n"
                     "- *Pine* backbone with a grapefruit and citrus surround."
                 )
+            },
+        ],
+        "report.grain_purchases": [
+            {
+                "name": FormattedValue(text="American 2-row"),
+                "kind": FormattedValue(text="Grain"),
+                "buy": FormattedValue(text="10 lb 8 oz"),
+            },
+            {
+                "name": FormattedValue(text="Crystal 40"),
+                "kind": FormattedValue(text="Grain"),
+                "buy": FormattedValue(text="2 lb 2 oz"),
+            },
+            {
+                "name": FormattedValue(text="Carafa Special II"),
+                "kind": FormattedValue(text="Grain"),
+                "buy": FormattedValue(text="4 oz"),
+            },
+            {
+                "name": FormattedValue(text="Candi Syrup D-180"),
+                "kind": FormattedValue(text="Sugar"),
+                "buy": FormattedValue(text="1 lb 2 oz"),
             },
         ],
         "report.hop_purchases": [

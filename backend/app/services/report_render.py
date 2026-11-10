@@ -31,6 +31,7 @@ SECTIONS_MANIFEST = TEMPLATES / "sections.json"
 
 FORMATS = ("pdf", "png")
 PAPERS = ("auto", "a4", "letter")
+MASS_FORMATS = ("display", "lb_oz")
 DOC_KINDS = ("recipe",)
 
 _TIMEOUT_S = 120
@@ -56,6 +57,7 @@ class ReportSpec:
     fmt: str = "pdf"
     sections: tuple[str, ...] = ()
     paper: str = "auto"
+    mass_format: str = "display"
     page: int = 1
 
     @property
@@ -91,6 +93,7 @@ def parse_spec(
     fmt: str = "pdf",
     sections: str = "",
     paper: str = "auto",
+    mass_format: str = "display",
     page: int = 1,
 ) -> ReportSpec:
     """Validate a raw spec. Unknown section ids are caught by the template."""
@@ -102,13 +105,22 @@ def parse_spec(
         raise ReportSpecError(f"unknown format {fmt!r} (expected pdf or png)")
     if paper not in PAPERS:
         raise ReportSpecError(f"unknown paper {paper!r} (expected auto, a4 or letter)")
+    if mass_format not in MASS_FORMATS:
+        raise ReportSpecError(
+            f"unknown mass format {mass_format!r} (expected display or lb_oz)"
+        )
     if page < 1:
         raise ReportSpecError("page must be 1 or greater")
     requested = tuple(
         dict.fromkeys(part.strip() for part in sections.split(",") if part.strip())
     )
     return ReportSpec(
-        doc_kind=doc_kind, fmt=fmt, sections=requested, paper=paper, page=page
+        doc_kind=doc_kind,
+        fmt=fmt,
+        sections=requested,
+        paper=paper,
+        mass_format=mass_format,
+        page=page,
     )
 
 
@@ -133,6 +145,8 @@ def render(bundle: ReportBundle, spec: ReportSpec) -> RenderedReport:
             f"sections={spec.sections_input}",
             "--input",
             f"paper={spec.paper}",
+            "--input",
+            f"mass-format={spec.mass_format}",
         ]
         if bundle.batch.frozen_at is not None:
             # A frozen bundle reprints byte-identically; a draft makes no claim.
@@ -372,6 +386,7 @@ def _render_key(bundle: ReportBundle, spec: ReportSpec) -> str:
             spec.doc_kind,
             spec.sections_input,
             spec.paper,
+            spec.mass_format,
             spec.fmt,
             str(spec.page),
         )

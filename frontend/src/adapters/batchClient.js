@@ -1,7 +1,7 @@
 // Batch (draft/frozen) persistence client over the JSON seam. Browser-only —
 // the app hands it the shared JSON seam at construction.
 
-const REPORT_PARAMS = ["doc_kind", "sections", "paper", "format", "page"];
+const REPORT_PARAMS = ["doc_kind", "sections", "paper", "mass_format", "format", "page"];
 
 function reportPath(batchId, params = {}) {
   const search = new URLSearchParams();

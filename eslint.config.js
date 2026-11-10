@@ -183,6 +183,7 @@ const DEPTH_PINS = {
 };
 
 const FUNCTION_LINE_PINS = {
+  "views/producer/reportFormat.js": 87,
   "engine/dag.js": 269,
   "engine/validate.js": 47,
   "adapters/boundaryRunner.js": 208,
@@ -201,7 +202,8 @@ const FILE_LINE_PINS = {
   "engine/units.js": 404,
   "engine/validate.js": 541,
   "store/persistence.js": 414,
-  "store/recipes.js": 463,
+  "store/recipes.js": 467,
+  "views/producer/reportFormat.js": 416,
 };
 
 const SCRIPT_COMPLEXITY = {

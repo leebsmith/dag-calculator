@@ -34,6 +34,7 @@ SECTION_IDS = (
     "batch-facts",
     "mash-rests",
     "hops",
+    "purchases",
     "yeast",
     "volume-ledger",
     "liquor-ledger",
@@ -89,12 +90,15 @@ def compile_argv(
     target: Path,
     sections: str | None = None,
     paper: str | None = None,
+    mass_format: str | None = None,
 ) -> list[str]:
     argv = ["compile", "--input", "bundle=/report.json"]
     if sections is not None:
         argv += ["--input", f"sections={sections}"]
     if paper is not None:
         argv += ["--input", f"paper={paper}"]
+    if mass_format is not None:
+        argv += ["--input", f"mass-format={mass_format}"]
     return [*argv, str(root / "report.typ"), str(target)]
 
 
@@ -229,8 +233,13 @@ HOPS_PRESENCE_PROBE = (
 )
 
 HOPS_PURCHASE_PROBE = (
-    '#import "sections/hops.typ": present-purchases\n'
-    "#metadata(present-purchases()) <probe>\n"
+    '#import "sections/purchases.typ": present-hop-purchases\n'
+    "#metadata(present-hop-purchases()) <probe>\n"
+)
+
+GRAIN_PURCHASE_PROBE = (
+    '#import "sections/purchases.typ": present-grain-purchases\n'
+    "#metadata(present-grain-purchases()) <probe>\n"
 )
 
 HOPS_STRATEGY_PROBE = (
@@ -340,6 +349,10 @@ def test_the_hop_purchase_table_is_present_with_its_rows(shared_root: Path) -> N
     assert probe(shared_root, HOPS_PURCHASE_PROBE) is True
 
 
+def test_the_grain_purchase_table_is_present_with_its_rows(shared_root: Path) -> None:
+    assert probe(shared_root, GRAIN_PURCHASE_PROBE) is True
+
+
 def test_the_hop_strategy_is_present_with_its_markdown(shared_root: Path) -> None:
     assert probe(shared_root, HOPS_STRATEGY_PROBE) is True
 
@@ -361,7 +374,7 @@ def test_the_hop_purchase_table_is_absent_without_rows() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, HOPS_PURCHASE_PROBE) is False
-        render(root, "hops")
+        render(root, "purchases")
 
 
 def test_brewhouse_is_present_with_the_process_inputs(shared_root: Path) -> None:
@@ -596,6 +609,7 @@ def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> N
         "batch-facts",
         "mash-rests",
         "hops",
+        "purchases",
         "process",
         "yeast",
         "volume-ledger",

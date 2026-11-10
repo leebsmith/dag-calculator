@@ -23,10 +23,11 @@ checklist is [`adding-a-section.md`](adding-a-section.md).
 | 2 | `batch-facts` | Batch Facts | `present-batch-facts` | [`sections/batch-facts.typ`](../backend/app/templates/sections/batch-facts.typ) |
 | 3 | `mash-rests` | Mash Rests | `present-mash-rests` | [`sections/mash-rests.typ`](../backend/app/templates/sections/mash-rests.typ) |
 | 4 | `hops` | Hops | `present-hops` | [`sections/hops.typ`](../backend/app/templates/sections/hops.typ) |
-| 5 | `process` | Process notes | `present-process` | [`sections/process.typ`](../backend/app/templates/sections/process.typ) |
-| 6 | `yeast` | Yeast | `present-yeast` | [`sections/yeast.typ`](../backend/app/templates/sections/yeast.typ) |
-| 7 | `volume-ledger` | Volume Ledger | `present-volume-ledger` | [`sections/volume-ledger.typ`](../backend/app/templates/sections/volume-ledger.typ) |
-| 8 | `liquor-ledger` | Liquor Ledger | `present-liquor-ledger` | [`sections/liquor-ledger.typ`](../backend/app/templates/sections/liquor-ledger.typ) |
-| 9 | `water-chemistry` | Water Chemistry | `present-water-chemistry` | [`sections/water-chemistry.typ`](../backend/app/templates/sections/water-chemistry.typ) |
-| 10 | `limits` | Limits | `present-limits` | [`sections/limits.typ`](../backend/app/templates/sections/limits.typ) |
-| 11 | `checklist` | Brew Checklist | `present-checklist` | [`sections/checklist.typ`](../backend/app/templates/sections/checklist.typ) |
+| 5 | `purchases` | Purchases | `present-purchases` | [`sections/purchases.typ`](../backend/app/templates/sections/purchases.typ) |
+| 6 | `process` | Process notes | `present-process` | [`sections/process.typ`](../backend/app/templates/sections/process.typ) |
+| 7 | `yeast` | Yeast | `present-yeast` | [`sections/yeast.typ`](../backend/app/templates/sections/yeast.typ) |
+| 8 | `volume-ledger` | Volume Ledger | `present-volume-ledger` | [`sections/volume-ledger.typ`](../backend/app/templates/sections/volume-ledger.typ) |
+| 9 | `liquor-ledger` | Liquor Ledger | `present-liquor-ledger` | [`sections/liquor-ledger.typ`](../backend/app/templates/sections/liquor-ledger.typ) |
+| 10 | `water-chemistry` | Water Chemistry | `present-water-chemistry` | [`sections/water-chemistry.typ`](../backend/app/templates/sections/water-chemistry.typ) |
+| 11 | `limits` | Limits | `present-limits` | [`sections/limits.typ`](../backend/app/templates/sections/limits.typ) |
+| 12 | `checklist` | Brew Checklist | `present-checklist` | [`sections/checklist.typ`](../backend/app/templates/sections/checklist.typ) |
