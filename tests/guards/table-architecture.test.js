@@ -118,6 +118,40 @@ test("fixed tables declare a colgroup and sit in a non-scrolling panel", () => {
   assert.deepEqual(failures, [], failures.join("\n"));
 });
 
+// Alpine's x-bind coerces a dotted expression that evaluates to undefined into
+// "", and a boolean attribute bound to "" is written as attribute="attribute".
+// A bare `:readonly="col.input.readonly"` therefore locks every input cell the
+// config did not explicitly mark readonly — the grain bill's Hamilton Parts
+// column among them. Boolean bindings in the shared table must coerce to a real
+// boolean so an absent flag removes the attribute.
+const BOOLEAN_ATTRIBUTES = [
+  "readonly",
+  "disabled",
+  "required",
+  "checked",
+  "selected",
+  "open",
+  "inert",
+  "hidden",
+];
+
+test("the generic table's boolean bindings coerce to a real boolean", () => {
+  const text = read("frontend/src/partials/ui-data-table.html");
+  const pattern = new RegExp(`:(${BOOLEAN_ATTRIBUTES.join("|")})="([^"]*)"`, "g");
+  const failures = [];
+
+  for (const match of text.matchAll(pattern)) {
+    const expression = match[2].trim();
+    if (!expression.includes(".")) continue;
+    const coerced = /===|!==|!!|Boolean\(|^!/.test(expression);
+    if (!coerced) {
+      failures.push(`${match[0]} turns undefined into "" (Alpine writes the attribute)`);
+    }
+  }
+
+  assert.deepEqual(failures, [], failures.join("\n"));
+});
+
 test("the generic table renders a colgroup and fit panel for fixed configs", () => {
   const text = read("frontend/src/partials/ui-data-table.html");
 

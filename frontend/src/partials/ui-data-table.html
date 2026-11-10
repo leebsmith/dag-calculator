@@ -98,7 +98,7 @@
                       :step="col.input.step"
                       :min="col.input.min"
                       :max="col.input.max"
-                      :readonly="col.input.readonly"
+                      :readonly="col.input.readonly === true"
                       :value="col.input.value(row, index)"
                       @input="col.input.onInput ? col.input.onInput(row, index, $event.target.value) : null"
                       @change="col.input.onChange ? col.input.onChange(row, index, $event.target.value) : null"
