@@ -64,8 +64,21 @@ export const WATER_SOURCE = {
   total_alkalinity_caco3: 80,
 };
 
+export const FERMENTER = {
+  id: "fermenter-7gal",
+  name: "7 gal Fermenter",
+  description: "7 gal fermenter (test fixture)",
+  max_volume_l: 26.497882,
+  nominal_volume_l: 23.091012,
+};
+
 export function identityFixture() {
-  return { equipment: { ...EQUIPMENT }, "water.source": { ...WATER_SOURCE }, style: { ...STYLE } };
+  return {
+    equipment: { ...EQUIPMENT },
+    fermenter: { ...FERMENTER },
+    "water.source": { ...WATER_SOURCE },
+    style: { ...STYLE },
+  };
 }
 
 // Full flattened output sets (matching the artifact's boundary output keys).

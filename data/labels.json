@@ -341,6 +341,12 @@
   "equipment.shrinkage_pct": {
     "label": "Shrinkage"
   },
+  "fermenter.max_volume_l": {
+    "label": "Maximum capacity"
+  },
+  "fermenter.nominal_volume_l": {
+    "label": "Nominal packaged volume"
+  },
   "grist.finished_beer_srm": {
     "label": "Beer color"
   },

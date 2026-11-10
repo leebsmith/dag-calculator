@@ -46,24 +46,27 @@ function fakeApp() {
   return app;
 }
 
-test("identity() snapshots the chosen triplet", () => {
+test("identity() snapshots the chosen quartet", () => {
   const store = createSetupStore({});
   const styleId = store.styleOptions()[0].value;
   const equipmentId = store.equipmentOptions()[0].value;
+  const fermenterId = store.fermenterOptions()[0].value;
 
   store.state.styleId = styleId;
   store.state.equipmentId = equipmentId;
+  store.state.fermenterId = fermenterId;
   store.state.waterId = "unknown";
   store.state.name = "House Pale";
 
   const identity = store.identity();
   assert.equal(identity.style.id, styleId);
   assert.equal(identity.equipment.id, equipmentId);
+  assert.equal(identity.fermenter.id, fermenterId);
   assert.equal(identity["water.source"].laboratory, "Unknown source");
   assert.equal(identity["water.source"].calcium_ca, 0);
 });
 
-test("canCreate requires a name, a style, a rig, and a water source", () => {
+test("canCreate requires a name, a style, a rig, a fermenter, and a water source", () => {
   const store = createSetupStore({});
   store.openModal();
   assert.equal(store.canCreate(), false);
@@ -78,6 +81,10 @@ test("canCreate requires a name, a style, a rig, and a water source", () => {
   store.state.equipmentId = "";
   assert.equal(store.canCreate(), false);
   store.state.equipmentId = store.equipmentOptions()[0].value;
+
+  store.state.fermenterId = "";
+  assert.equal(store.canCreate(), false);
+  store.state.fermenterId = store.fermenterOptions()[0].value;
 
   store.state.waterId = "";
   assert.equal(store.canCreate(), false);
@@ -123,6 +130,7 @@ test("create() persists a batch carrying the identity snapshot", async () => {
   assert.equal(active.name, "House Pale");
   assert.equal(created?.id, active.id);
   assert.equal(app.loaded.identity.style.id, store.state.styleId);
+  assert.equal(app.loaded.identity.fermenter.id, store.state.fermenterId);
   assert.equal(app.loaded.identity["water.source"].calcium_ca, 0);
   assert.equal(store.state.modalOpen, false);
 });
@@ -140,6 +148,7 @@ test("openModal seeds the dialog from the first asset of each kind", () => {
   assert.equal(store.state.busy, false);
   assert.equal(store.state.name, "");
   assert.equal(store.state.equipmentId, store.equipmentOptions()[0].value);
+  assert.equal(store.state.fermenterId, store.fermenterOptions()[0].value);
   assert.equal(store.state.styleId, store.styleOptions()[0].value);
   assert.equal(store.state.waterId, "unknown");
 

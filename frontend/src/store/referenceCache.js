@@ -20,6 +20,7 @@
 
 import artifact from "../engine/artifact.json" with { type: "json" };
 import equipmentRaw from "../../../data/seeds/equipment.json" with { type: "json" };
+import fermenters from "../../../data/seeds/fermenters.json" with { type: "json" };
 import malts from "../../../data/seeds/malts.json" with { type: "json" };
 import standardMalts from "../../../data/seeds/standard-malts.json" with { type: "json" };
 import hops from "../../../data/seeds/hops.json" with { type: "json" };
@@ -40,6 +41,7 @@ const equipment = ingestEquipment(equipmentRaw, artifact);
 
 const BASE_REFERENCES = {
   equipment,
+  fermenter: fermenters,
   yeast: yeasts,
   hop: hops,
   style: styles,
@@ -53,6 +55,7 @@ const allMalts = { ...malts, ...standardMalts };
 
 const BASE_SEEDS = {
   equipment,
+  fermenters,
   malts: allMalts,
   hops,
   hopProducts,
@@ -118,6 +121,19 @@ export function assertReferencePair({ cache, library }, dev = import.meta.env?.D
       "reference assets must arrive together: pass both cache and library, or neither"
     );
   }
+}
+
+// Pre-landing-page bootstrap: the seed default vessels, no water source, no
+// style. The landing page replaces this with the batch's identity snapshot.
+export function bootstrapIdentity(artifactSpec, cache) {
+  const equipmentId = artifactSpec.constants?.default_equipment_profile_id?.value;
+  const fermenterId = artifactSpec.constants?.default_fermenter_profile_id?.value;
+  return {
+    equipment: cache.references.equipment?.[equipmentId] ?? {},
+    fermenter: cache.references.fermenter?.[fermenterId] ?? {},
+    "water.source": {},
+    style: {},
+  };
 }
 
 export function createReferenceCache() {

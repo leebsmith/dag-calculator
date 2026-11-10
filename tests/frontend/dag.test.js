@@ -6,7 +6,7 @@ import { loadArtifact, makeFixtures, makeFixturesWithYeast, EQUIPMENT } from "./
 
 function syntheticArtifact(nodes) {
   return {
-    schema_version: 11,
+    schema_version: 12,
     nodes,
     dimensions: { dimensionless: { base_unit: "1", kind: "identity", units: {} } },
     constants: {},

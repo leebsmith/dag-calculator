@@ -25,17 +25,18 @@ delete; a correction is a new record. They are merged into the picker's referenc
 cache (`record > seed`) so they can be chosen exactly like a seed, but choosing
 one **copies it into the batch** (§4). The kind registry shared by frontend and
 backend is [`data/catalogs.json`](../../data/catalogs.json); `style`, `malt`,
-`yeast`, `hop`, `hop_product`, `sugar`, `equipment`, `water_report`, and
-`water_target` support records.
+`yeast`, `hop`, `hop_product`, `sugar`, `equipment`, `fermenter`, `water_report`,
+and `water_target` support records.
 
 Records fall into two classes by role. **Identity sources** — `style`,
-`equipment`, `water_report` — define a batch: one of each is snapshotted into its
-identity at creation. They are equal co-requisites and are authored in the
-Library's *Sources* section; a style is forked from an existing record before it
-is edited, and every record is sealed on save. **Formulation records** — the
-remaining kinds — are step-local, snapshotted into the batch's selections when
-picked, and authored in *Ingredients*. A fork keeps display lineage in
-`forked_from_id` / `forked_from_name`; that is a snapshot, never a live edge.
+`equipment`, `fermenter`, `water_report` — define a batch: one of each is
+snapshotted into its identity at creation. They are equal co-requisites and are
+authored in the Library's *Sources* section; a style is forked from an existing
+record before it is edited, and every record is sealed on save. **Formulation
+records** — the remaining kinds — are step-local, snapshotted into the batch's
+selections when picked, and authored in *Ingredients*. A fork keeps display
+lineage in `forked_from_id` / `forked_from_name`; that is a snapshot, never a
+live edge.
 
 Physical constants (sucrose yield, salt stoichiometry, acid properties) live in
 the artifact's `constants`/`functions`, **not** in seed JSON — seed data is
@@ -115,7 +116,21 @@ coefficient: both shipped rigs seed Palmer's baseline 0.125 gal/lb (1.043176 L/k
 and `constants.k_abs_true` is the fallback when no rig value is supplied.
 `hlt_starting_volume_l` is **batch-level**, not an equipment field.
 
-### 2.5 `water_report` / `water_target`
+### 2.5 `fermenter`
+
+The cold-side vessel, separate from the hot-side rig. `fermenter` carries
+identity (`id`, `name`, `description`) and two volumes: `max_volume_l` (the hard
+capacity, `> 0`) and `nominal_volume_l` (the nominal cold packaged volume for
+that vessel, `> 0`). Neither carries headroom — capacity is a ceiling, not a
+target.
+
+Both volumes are required and `nominal_volume_l` may not exceed `max_volume_l`;
+that is a cross-field rule in both record validators, since a domain sees only
+`$value`. `batch.v_ferm` declares `fermenter.nominal_volume_l` as its `default`,
+so a new batch opens at the vessel's nominal fill, and the host clamp plus the
+blocking `fermenter_not_overfilled` relation keep it at or below capacity.
+
+### 2.6 `water_report` / `water_target`
 
 - `water_report` — `{ report_id, date_reported, laboratory, sample_id, source_name,
   location, calcium_ca, magnesium_mg, sodium_na, sulfate_so4, chloride_cl,
@@ -136,7 +151,7 @@ and `constants.k_abs_true` is the fallback when no rig value is supplied.
   authority; the picker may display the implied ratio. RO is a *source report*,
   not a target profile.
 
-### 2.6 `style`
+### 2.7 `style`
 
 BJCP (2021) beer styles, keyed by the BJCP style number (`1A`…`34C`), plus the
 six Specialty IPA sub-types keyed `21B <Name>` (e.g. `21B Black IPA`).
@@ -172,7 +187,7 @@ tags. `batch.target_abv` inherits the artifact default
 yeast cap. The Style step then re-centers the ABV target on the fixed-AA ray
 (see `docs/attenuation-model.md` §6.3).
 
-### 2.7 `hop`
+### 2.8 `hop`
 
 Brewing hops scraped from beer-analytics.com, keyed by a slug of the hop name.
 
@@ -188,7 +203,7 @@ it via Tinseth. The seed is built by `scripts/build-hops-seed.mjs` from
 `data/sources/beer-analytics-hops.json` (produced by
 `scripts/scrape/hop_scraper.py`).
 
-### 2.8 `standard-malts` — generic representatives (the default set)
+### 2.9 `standard-malts` — generic representatives (the default set)
 
 `seeds/standard-malts.json` is a **derived** catalog of one generic
 representative per used standard-malt class (81), each conforming to the `malt`
@@ -227,7 +242,7 @@ representative for a newly populated class). `make seeds` runs
 `seeds-fermentables` → `seeds-standard-malts`, and a guard fails if the committed
 file diverges from the derived medians, so drift is an explicit, reviewable diff.
 
-### 2.9 `hop_product`
+### 2.10 `hop_product`
 
 Five single-product presets plus one row per lupulin variety. Every row annotates
 a leaf; the authoritative product record — leaves, scalars, per-variety tables,
@@ -252,7 +267,7 @@ Alpha is a preset, not a constant: the harvest differs and the certificate is
 authoritative, so the card asks for the lot assay and prints the published range
 where the row carries one.
 
-### 2.10 `mash_rest` / `mash-schedules`
+### 2.11 `mash_rest` / `mash-schedules`
 
 `mash-rests.json` is the rest catalog, keyed by `rest_id` and conforming to the
 `mash_rest_definition` schema:

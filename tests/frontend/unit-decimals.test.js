@@ -53,7 +53,7 @@ test("editable number inputs render their natural value (no fixed-decimal paddin
 
   // The volume input must not be padded to the unit's 1-decimal precision, or a
   // debounced re-render would rewrite a mid-keystroke "6" into "6.0".
-  assert.equal(field().display, "20");
+  assert.equal(field().display, "23.091");
   app.edit(field(), "6");
   assert.equal(field().display, "6");
 }));

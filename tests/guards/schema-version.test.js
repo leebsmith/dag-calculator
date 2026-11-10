@@ -32,10 +32,10 @@ test("the artifact grammar revision matches the validator and generated docs", (
   const a = artifact();
   assert.deepEqual(
     [...SUPPORTED_SCHEMA_VERSIONS],
-    [11],
+    [12],
     "SUPPORTED_SCHEMA_VERSIONS must require exactly the Jexl revision"
   );
-  assert.equal(a.schema_version, 11, "artifact schema_version must be 11");
+  assert.equal(a.schema_version, 12, "artifact schema_version must be 12");
 
   const inventory = read("docs/dag-artifacts/inventory.md");
   const inventoryVersion = inventory.match(/`schema_version`: \*\*(\d+)\*\*/);

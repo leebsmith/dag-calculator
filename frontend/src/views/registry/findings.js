@@ -27,6 +27,11 @@ export const RELATION_FINDINGS = {
     message: ({ lhs, rhs }, format) =>
       `Pre-boil volume ${format(lhs)} exceeds the kettle capacity ${format(rhs)}.`,
   },
+  fermenter_not_overfilled: {
+    label: "Fermenter capacity",
+    message: ({ lhs, rhs }, format) =>
+      `Packaged volume ${format(lhs)} exceeds the fermenter capacity ${format(rhs)}.`,
+  },
   mash_tun_not_overfilled: {
     label: "Mash tun capacity",
     message: ({ lhs, rhs }, format) =>
@@ -93,47 +98,45 @@ export function actionFor(relation) {
 
 // Operand paths per relation. The dimension comes from the artifact via the
 // caller's `read`; nothing here declares a unit.
+const OPERANDS = {
+  hlt_not_overfilled: (read) => ({
+    lhs: read("batch.hlt_starting_volume_l"),
+    rhs: read("equipment.max_hlt_volume_l"),
+  }),
+  hlt_above_coil_floor: (read) => ({
+    lhs: read("batch.hlt_starting_volume_l"),
+    rhs: read("equipment.hlt_coil_floor_l"),
+  }),
+  hlt_demand_not_overfilled: (read) => ({
+    lhs: read("solver.batch.hlt.v_hlt_top_up"),
+    rhs: read("equipment.max_hlt_volume_l"),
+  }),
+  kettle_not_overfilled: (read) => ({
+    lhs: read("solver.batch.v_pre_boil"),
+    rhs: read("equipment.max_kettle_volume_l"),
+  }),
+  fermenter_not_overfilled: (read) => ({
+    lhs: read("batch.v_ferm"),
+    rhs: read("fermenter.max_volume_l"),
+  }),
+  mash_tun_not_overfilled: (read) => {
+    const mash = read("mash.mash_phase_volume_l");
+    const sparge = read("mash.sparge_phase_volume_l");
+    const peak = (mash.value ?? -Infinity) >= (sparge.value ?? -Infinity) ? mash : sparge;
+    return { lhs: peak, rhs: read("equipment.max_mash_tun_volume_l") };
+  },
+  mash_thickness_above_equipment_floor: (read) => ({
+    thickness: read("solver.batch.mash_thickness_l_per_kg"),
+    floor: read("equipment.min_lgr_l_per_kg"),
+  }),
+  mash_thickness_below_ceiling: (read, readConstant) => ({
+    thickness: read("solver.batch.mash_thickness_l_per_kg"),
+    ceiling: readConstant("max_mash_thickness_l_per_kg"),
+  }),
+};
+
 export function findingOperands(id, read, readConstant = () => ({ value: undefined, dimension: null })) {
-  switch (id) {
-    case "hlt_not_overfilled":
-      return {
-        lhs: read("batch.hlt_starting_volume_l"),
-        rhs: read("equipment.max_hlt_volume_l"),
-      };
-    case "hlt_above_coil_floor":
-      return {
-        lhs: read("batch.hlt_starting_volume_l"),
-        rhs: read("equipment.hlt_coil_floor_l"),
-      };
-    case "hlt_demand_not_overfilled":
-      return {
-        lhs: read("solver.batch.hlt.v_hlt_top_up"),
-        rhs: read("equipment.max_hlt_volume_l"),
-      };
-    case "kettle_not_overfilled":
-      return {
-        lhs: read("solver.batch.v_pre_boil"),
-        rhs: read("equipment.max_kettle_volume_l"),
-      };
-    case "mash_tun_not_overfilled": {
-      const mash = read("mash.mash_phase_volume_l");
-      const sparge = read("mash.sparge_phase_volume_l");
-      const peak = (mash.value ?? -Infinity) >= (sparge.value ?? -Infinity) ? mash : sparge;
-      return { lhs: peak, rhs: read("equipment.max_mash_tun_volume_l") };
-    }
-    case "mash_thickness_above_equipment_floor":
-      return {
-        thickness: read("solver.batch.mash_thickness_l_per_kg"),
-        floor: read("equipment.min_lgr_l_per_kg"),
-      };
-    case "mash_thickness_below_ceiling":
-      return {
-        thickness: read("solver.batch.mash_thickness_l_per_kg"),
-        ceiling: readConstant("max_mash_thickness_l_per_kg"),
-      };
-    default:
-      return {};
-  }
+  return OPERANDS[id]?.(read, readConstant) ?? {};
 }
 
 // `operands` and `format` are optional so the metadata (id, label, severity,

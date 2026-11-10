@@ -208,7 +208,7 @@ engine.domainStates()     // [{ nodeId, holds, … }]  (root/choice nodes; holds
 engine.fieldDomainStates()      // [{ selectionNodeId, field, holds, … }]
 engine.collectionDomainStates() // [{ nodeId, index, field, holds, … }]
 
-engine.identity          // { equipment, "water.source", style } snapshots
+engine.identity          // { equipment, fermenter, "water.source", style } snapshots
 engine.setRoot(id, v)  unsetRoot(id)  getRoot(id)  hasRoot(id)
 engine.setCollection(id, rows)  setReferences(map)
 
@@ -314,6 +314,7 @@ constraints apply to that value. These flows are deliberate and few; envelopes
 |---|---|---|---|
 | `batch.target_abv` | `style.abv_min` / `style.abv_max` | Style-step number input | seeded to the band midpoint; clamped to the fixed-AA ray interval; Batch step read-only |
 | `batch.hlt_starting_volume_l` | `equipment.max_hlt_volume_l` | root `default` reference | default while unset; clamped to the equipment envelope on edit |
+| `batch.v_ferm` | `fermenter.nominal_volume_l` | root `default` reference | default while unset; clamped to `fermenter.max_volume_l` on edit, and the blocking `fermenter_not_overfilled` relation keeps packaged volume at or below capacity |
 | `batch.attenuation_derate_points` | — | per-batch root | points subtracted from the published maximum; starts at 0 |
 
 `batch.yeast_cap = max(0, batch.yeast.attenuation_cap_pct − batch.attenuation_derate_points)`.
@@ -404,7 +405,7 @@ It complements `grammar.md` (node *shape*) and `docs/engine.md` (runtime *API*).
 | selection | `output.schema`, `ref` | component type + the root holding the chosen id |
 | derived | `inputs`, `expr`, `output` | alias→path edges, Jexl string, output type |
 | boundary | `binding`, `resolution`, `inputs`, `outputs`, `domain.codes` | contract only (§2.5, `grammar.md`) |
-| namespace | `id.split(".")[0]` | graph slices: `mash` · `water` · `grist` · `batch` · `solver`; identity namespaces: `equipment`, `style`, `water.source` |
+| namespace | `id.split(".")[0]` | graph slices: `mash` · `water` · `grist` · `batch` · `solver`; identity namespaces: `equipment`, `fermenter`, `style`, `water.source` |
 
 Referenced sections (look up by the ids found above): `dimensions`, `constants`,
 `taxonomies`, `functions`, `primitive_schemas`.
@@ -418,8 +419,8 @@ Accessor: none — read `artifact.nodes[id]` directly.
 | Accessor | Returns |
 |---|---|
 | `engine.get(id)` | the memoized, lazy value — by kind: scalar (root/choice/derived), `rows[]` (collection), the selected component or `null` (selection), `{ outputs, fingerprint }` (boundary). A valueless node returns `undefined`. |
-| `engine.resolve(path)` | a value by **dotted path** — node id, or a boundary output / selection field / collection field, **or an identity namespace field** (`equipment.mash_tun_mass_kg`, `style.og_min`, `water.source.calcium_ca`) |
-| `engine.identity` | the immutable identity snapshot passed at construction: `{ equipment, "water.source", style }`; values are components, not ids |
+| `engine.resolve(path)` | a value by **dotted path** — node id, or a boundary output / selection field / collection field, **or an identity namespace field** (`equipment.mash_tun_mass_kg`, `fermenter.max_volume_l`, `style.og_min`, `water.source.calcium_ca`) |
+| `engine.identity` | the immutable identity snapshot passed at construction: `{ equipment, fermenter, "water.source", style }`; values are components, not ids |
 | `engine.getRoot(id)` / `engine.hasRoot(id)` | the **explicitly-set** store value for a root/choice (distinct from the evaluated value, which folds in `default`); identity values are never roots |
 | `engine.setRoot(id, v)` / `engine.unsetRoot(id)` | write / drop an explicit root or choice value; unsetting restores the `default` (or leaves the node valueless) |
 | `engine.setCollection(id, rows)` | write a collection |

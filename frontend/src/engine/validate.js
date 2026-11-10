@@ -4,7 +4,7 @@ import { compileExpression } from "./expression.js";
 import { resolveReference } from "./paths.js";
 
 const NODE_KINDS = ["root", "collection", "selection", "choice", "derived", "boundary"];
-export const SUPPORTED_SCHEMA_VERSIONS = [11];
+export const SUPPORTED_SCHEMA_VERSIONS = [12];
 
 export function validateArtifact(artifact) {
   if (artifact === null || typeof artifact !== "object") {

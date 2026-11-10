@@ -58,6 +58,7 @@ def recorded(monkeypatch) -> ExtractedRecipe:
             identity={
                 "style": {"id": "s1", "name": "Black IPA"},
                 "equipment": {"id": "e1", "name": "20 L rig"},
+                "fermenter": {"id": "f1", "name": "7 gal fermenter"},
                 "water.source": {"id": "w1", "name": "Tap"},
             },
         ),

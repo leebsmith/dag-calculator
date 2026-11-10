@@ -1,12 +1,13 @@
 {
-  "schema_version": 11,
+  "schema_version": 12,
   "meta": {
     "name": "batch-brewing-calculator-logic",
-    "description": "Canonical business-logic DAG (schema_version 11, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+    "description": "Canonical business-logic DAG (schema_version 12, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
     "status": "complete"
   },
   "identity": {
     "equipment": "equipment",
+    "fermenter": "fermenter",
     "water.source": "water_report",
     "style": "style"
   },
@@ -239,6 +240,10 @@
       "value": "herms-30l",
       "dimension": "reference"
     },
+    "default_fermenter_profile_id": {
+      "value": "fermenter-7gal",
+      "dimension": "reference"
+    },
     "default_target_abv": {
       "value": 5.5,
       "dimension": "abv"
@@ -258,10 +263,6 @@
     "default_target_ibu": {
       "value": 30,
       "dimension": "ibu"
-    },
-    "default_v_ferm_l": {
-      "value": 20,
-      "dimension": "volume"
     },
     "default_attenuation_derate_points": {
       "value": 0,
@@ -994,6 +995,19 @@
         "domain": "$value > 0"
       }
     },
+    "fermenter": {
+      "id": {},
+      "name": {},
+      "description": {},
+      "max_volume_l": {
+        "dimension": "volume",
+        "domain": "$value > 0"
+      },
+      "nominal_volume_l": {
+        "dimension": "volume",
+        "domain": "$value > 0"
+      }
+    },
     "grist_row": {
       "catalog_id": {},
       "name": {},
@@ -1507,7 +1521,7 @@
     "batch.v_ferm": {
       "kind": "root",
       "dimension": "volume",
-      "default": "constants.default_v_ferm_l",
+      "default": "fermenter.nominal_volume_l",
       "domain": "$value > 0"
     },
     "batch.boil_time_min": {
@@ -2939,6 +2953,11 @@
       "id": "kettle_not_overfilled",
       "blocking": true,
       "predicate": "(solver.batch.v_pre_boil <= equipment.max_kettle_volume_l)"
+    },
+    {
+      "id": "fermenter_not_overfilled",
+      "blocking": true,
+      "predicate": "(batch.v_ferm <= fermenter.max_volume_l)"
     },
     {
       "id": "mash_tun_not_overfilled",

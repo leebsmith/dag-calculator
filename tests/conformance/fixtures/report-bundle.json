@@ -1,17 +1,18 @@
 {
   "bundle_format": 7,
   "artifact": {
-    "schema_version": 11,
-    "hash": "sha256:6883a5fd81c31ccdaa71513ca0ae636b5ea2fca608afb17f298bcce0f271f69b",
+    "schema_version": 12,
+    "hash": "sha256:106dcecf55df3765cc1e9a9fb541e608e1cd45a7e032723497089bb0e35e1bf8",
     "content": {
-      "schema_version": 11,
+      "schema_version": 12,
       "meta": {
         "name": "batch-brewing-calculator-logic",
-        "description": "Canonical business-logic DAG (schema_version 11, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
+        "description": "Canonical business-logic DAG (schema_version 12, full population). Every input, selection, collection, derived value, boundary contract, schema, function, constant, taxonomy, and relation required by the brewing calculator, verified against the known-good solver code (batch_solver.py, water.py, utils.py) and the boundary contracts (boundary.py).",
         "status": "complete"
       },
       "identity": {
         "equipment": "equipment",
+        "fermenter": "fermenter",
         "water.source": "water_report",
         "style": "style"
       },
@@ -244,6 +245,10 @@
           "value": "herms-30l",
           "dimension": "reference"
         },
+        "default_fermenter_profile_id": {
+          "value": "fermenter-7gal",
+          "dimension": "reference"
+        },
         "default_target_abv": {
           "value": 5.5,
           "dimension": "abv"
@@ -263,10 +268,6 @@
         "default_target_ibu": {
           "value": 30,
           "dimension": "ibu"
-        },
-        "default_v_ferm_l": {
-          "value": 20,
-          "dimension": "volume"
         },
         "default_attenuation_derate_points": {
           "value": 0,
@@ -999,6 +1000,19 @@
             "domain": "$value > 0"
           }
         },
+        "fermenter": {
+          "id": {},
+          "name": {},
+          "description": {},
+          "max_volume_l": {
+            "dimension": "volume",
+            "domain": "$value > 0"
+          },
+          "nominal_volume_l": {
+            "dimension": "volume",
+            "domain": "$value > 0"
+          }
+        },
         "grist_row": {
           "catalog_id": {},
           "name": {},
@@ -1512,7 +1526,7 @@
         "batch.v_ferm": {
           "kind": "root",
           "dimension": "volume",
-          "default": "constants.default_v_ferm_l",
+          "default": "fermenter.nominal_volume_l",
           "domain": "$value > 0"
         },
         "batch.boil_time_min": {
@@ -2944,6 +2958,11 @@
           "id": "kettle_not_overfilled",
           "blocking": true,
           "predicate": "(solver.batch.v_pre_boil <= equipment.max_kettle_volume_l)"
+        },
+        {
+          "id": "fermenter_not_overfilled",
+          "blocking": true,
+          "predicate": "(batch.v_ferm <= fermenter.max_volume_l)"
         },
         {
           "id": "mash_tun_not_overfilled",
@@ -5559,6 +5578,12 @@
         "kettle_transfer_loss_l": 0.5,
         "trub_loss_l": 0.5
       },
+      "fermenter": {
+        "id": "fermenter-7gal",
+        "name": "7 gal Fermenter",
+        "max_volume_l": 26.497882,
+        "nominal_volume_l": 23.091012
+      },
       "water.source": {
         "report_id": "w-2026-01",
         "laboratory": "Ward Labs",
@@ -7481,5 +7506,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:f99f1b442bc40a015824180cbe6aa8d7b379833ccf13f1ffe423d868388fa32a"
+  "content_hash": "sha256:e8db09ae6c7d3f5ca2136c84b32af3a42cf595897c85409261906dd9a4c820bf"
 }

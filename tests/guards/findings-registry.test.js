@@ -31,6 +31,10 @@ const SAMPLES = {
     lhs: { value: 44, dimension: "volume" },
     rhs: { value: 40, dimension: "volume" },
   },
+  fermenter_not_overfilled: {
+    lhs: { value: 30, dimension: "volume" },
+    rhs: { value: 26.5, dimension: "volume" },
+  },
   mash_tun_not_overfilled: {
     lhs: { value: 44, dimension: "volume" },
     rhs: { value: 40, dimension: "volume" },

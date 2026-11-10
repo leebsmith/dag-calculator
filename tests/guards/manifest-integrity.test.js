@@ -67,6 +67,7 @@ const IDENTITY_DERIVED = [
   "batch.target_ibu",
   "batch.target_og",
   "batch.target_srm",
+  "batch.v_ferm",
 ];
 
 function collectRefs(expression) {

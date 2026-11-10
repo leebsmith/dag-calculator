@@ -43,7 +43,7 @@ export const CATALOG_KINDS = Object.keys(CATALOGS);
 
 // Reference data has two classes. Identity sources define a batch (one of each is
 // snapshotted into its identity); formulation records are step-local selections.
-export const IDENTITY_KINDS = ["style", "equipment", "water_report"];
+export const IDENTITY_KINDS = ["style", "equipment", "fermenter", "water_report"];
 export const INGREDIENT_KINDS = CATALOG_KINDS.filter((kind) => !IDENTITY_KINDS.includes(kind));
 
 export function catalogClass(kind) {
@@ -275,7 +275,25 @@ function validateArtifactComponent(artifact, meta, component) {
     }
   }
   validateYeastAttenuation(meta, component, errors);
+  validateFermenterVolumes(meta, component, errors);
   return errors;
+}
+
+// A fermenter's nominal packaged volume can never exceed the vessel's capacity.
+// Both volumes are required: a record without them cannot seed a batch target.
+function validateFermenterVolumes(meta, component, errors) {
+  if (meta.schema !== "fermenter") return;
+  const max = component.max_volume_l;
+  const nominal = component.nominal_volume_l;
+  if (typeof max !== "number" || !Number.isFinite(max)) {
+    errors.push({ field: "max_volume_l", message: "max_volume_l is required" });
+  }
+  if (typeof nominal !== "number" || !Number.isFinite(nominal)) {
+    errors.push({ field: "nominal_volume_l", message: "nominal_volume_l is required" });
+  }
+  if (typeof max === "number" && typeof nominal === "number" && nominal > max) {
+    errors.push({ field: "nominal_volume_l", message: "must not exceed max_volume_l" });
+  }
 }
 
 function validateYeastAttenuation(meta, component, errors) {

@@ -44,7 +44,7 @@ def test_the_fixture_is_a_self_sufficient_freeze():
     assert bundle.batch.id == "frozen-1"
     assert bundle.batch.status == "frozen"
     assert bundle.batch.parent_batch_id == "draft-1"
-    assert set(bundle.batch.identity) == {"equipment", "water.source", "style"}
+    assert set(bundle.batch.identity) == {"equipment", "fermenter", "water.source", "style"}
     assert bundle.state.valuation["solver.batch"]["sg_post_boil"] == 1.055
     assert bundle.state.collections["mash.rests"][0]["rest_id"] == "beta"
     assert bundle.catalog.nodes["solver.water.mash_additions.gypsum_kg"].unit == "g"

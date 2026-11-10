@@ -2,9 +2,9 @@
 
 The library holds two kinds of records:
 
-1. **Artifact-backed records** — styles, equipment, water reports, malts, hops,
-   sugars and the other catalogs declared in `data/catalogs.json`. Their fields
-   are primitive schemas in `data/artifact.json`.
+1. **Artifact-backed records** — styles, equipment, fermenters, water reports, malts,
+   hops, sugars and the other catalogs declared in `data/catalogs.json`. Their
+   fields are primitive schemas in `data/artifact.json`.
 2. **Non-DAG records** — authored measurement documents whose schema is not part
    of the artifact grammar. Their schemas live in `data/record_schemas.json` and
    their catalog metadata in `data/record_catalogs.json`.
@@ -62,7 +62,9 @@ They share these rules:
 - `min_items`, `ordered_by`, and `unique_by`
 
 Artifact dimensions, domains and taxonomies are reused; the record layer does
-not introduce a second dimension system.
+not introduce a second dimension system. A cross-field rule that a domain cannot
+express lives in both validators: a `fermenter` record requires both volumes, and
+`nominal_volume_l` may not exceed `max_volume_l`.
 
 ## Library editor
 

@@ -5,7 +5,7 @@ import { refKey, resolveReference } from "../../engine/paths.js";
 import { ignoreError } from "../../observability.js";
 import { fromBase } from "../../engine/units.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
-import { unitSymbol } from "../../utils.js";
+import { formatWithDecimals, unitSymbol } from "../../utils.js";
 import { applyPresentation, presentationFor } from "../registry/presentation.js";
 import { formatCell } from "./cell.js";
 
@@ -108,6 +108,11 @@ export function valuateScalar(field, engine, ctx, nl) {
       resolve: (path) => engine.resolve(path),
       displayFloor: (base) =>
         unitId && artifact ? fromBase(artifact, field.dimension, unitId, base, nl) : base,
+      displayQuantity: (base) => {
+        const converted =
+          unitId && artifact ? fromBase(artifact, field.dimension, unitId, base, nl) : base;
+        return `${formatWithDecimals(converted, decimals)}${out.unit ? " " + out.unit : ""}`;
+      },
       reportError: ctx.reportError,
     });
   }

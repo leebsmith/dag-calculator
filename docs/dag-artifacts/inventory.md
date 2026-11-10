@@ -3,7 +3,7 @@
 Generated from `data/artifact.json` — do not edit by hand. Re-sync after
 any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
-- `schema_version`: **11**
+- `schema_version`: **12**
 
 ## Dimensions
 
@@ -71,6 +71,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `brew_checklist_step` | `note` (—), `skip_reason` (—), `skipped` (type boolean), `step_id` (—) |
 | `dry_hop_row` | `application_event` (taxonomy hop_application_event, default "high_krausen"), `application_stage` (taxonomy hop_addition_stage, default "fermentation"), `contact_duration_min` (dimension time, default null), `contact_until` (taxonomy hop_contact_until, default null), `hop_id` (—), `notes` (—), `product_type` (taxonomy hop_product_form, default "t90_pellet"), `quantity` (dimension dimensionless), `time_of_application` (—), `unit` (taxonomy hop_unit, default "g"), `variety` (—) |
 | `equipment` | `description` (—), `grain_absorption_factor_l_per_kg` (dimension mash_thickness, domain "$value > 0"), `hlt_coil_floor_l` (dimension volume, domain "$value >= 0"), `hlt_dead_space_l` (dimension volume, domain "$value >= 0"), `hlt_transfer_loss_l` (dimension volume, domain "$value >= 0"), `id` (—), `kettle_dead_space_l` (dimension volume, domain "$value >= 0"), `kettle_transfer_loss_l` (dimension volume, domain "$value >= 0"), `mash_dead_space_l` (dimension volume, domain "$value >= 0"), `mash_heating_rate_c_per_min` (dimension temperature_delta_per_time, domain "$value > 0"), `mash_transfer_loss_l` (dimension volume, domain "$value >= 0"), `mash_tun_mass_kg` (dimension mass, domain "$value > 0"), `mash_tun_specific_heat` (dimension specific_heat, domain "$value > 0"), `max_hlt_volume_l` (dimension volume, domain "$value > 0"), `max_kettle_volume_l` (dimension volume, domain "$value > 0"), `max_mash_tun_volume_l` (dimension volume, domain "$value > 0"), `min_lgr_l_per_kg` (dimension mash_thickness, domain "$value > 0"), `name` (—), `nominal_boil_off_rate_l_per_hr` (dimension volume_per_time, domain "$value > 0"), `nominal_conversion_efficiency` (dimension percentage, domain "$value > 0 && $value <= 1"), `shrinkage_pct` (dimension percentage, domain "$value >= 0 && $value <= 0.2"), `trub_loss_l` (dimension volume, domain "$value >= 0") |
+| `fermenter` | `description` (—), `id` (—), `max_volume_l` (dimension volume, domain "$value > 0"), `name` (—), `nominal_volume_l` (dimension volume, domain "$value > 0") |
 | `grist_row` | `catalog_id` (—), `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain "$value >= 0"), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain "$value >= 0 && $value <= 1"), `fermentability_method` (—), `fermentability_provenance` (—), `moisture_fraction` (dimension percentage, domain "$value >= 0 && $value <= 1"), `name` (—), `notes` (—), `parts` (dimension dimensionless), `pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `yield_basis` (—), `yield_fraction` (dimension percentage, domain "$value >= 0 && $value <= 1"), `yield_provenance` (—) |
 | `hop` | `alpha_acid_max_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `alpha_acid_min_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `alpha_acid_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `alpha_rating` (—), `beta_acid_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `category` (—), `flavor_profiles` (—), `id` (—), `name` (—), `notes` (—), `origin` (—), `pairings` (—), `purpose` (—), `recipes_count` (—), `synonym` (—), `url` (—) |
 | `hop_product` | `alpha_acid_max_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `alpha_acid_min_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `alpha_acid_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `brand` (—), `id` (—), `manufacturer` (—), `name` (—), `notes` (—), `product_form` (taxonomy hop_product_form), `url` (—) |
@@ -132,6 +133,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_boil_time_min` | 60 | `time` |
 | `default_calcium_floor_ppm` | 50 | `concentration` |
 | `default_equipment_profile_id` | "herms-30l" | `reference` |
+| `default_fermenter_profile_id` | "fermenter-7gal" | `reference` |
 | `default_grain_moisture_fraction` | 0.04 | `percentage` |
 | `default_grain_temp_c` | 20 | `temperature` |
 | `default_mash_heating_rate_c_per_min` | 1 | `temperature_delta_per_time` |
@@ -144,7 +146,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `default_target_ibu` | 30 | `ibu` |
 | `default_target_mash_ph` | 5.4 | `ph` |
 | `default_target_og` | 1.05 | `gravity` |
-| `default_v_ferm_l` | 20 | `volume` |
 | `ethanol_density` | 0.7907 | `dimensionless` |
 | `fermentability_prior_acid` | 0.635 | `percentage` |
 | `fermentability_prior_base` | 0.643 | `percentage` |
@@ -310,6 +311,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 
 | id | blocking |
 |---|---|
+| `fermenter_not_overfilled` | true |
 | `hlt_above_coil_floor` | false |
 | `hlt_demand_not_overfilled` | true |
 | `hlt_not_overfilled` | true |

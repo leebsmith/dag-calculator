@@ -165,7 +165,8 @@ starts `unchecked`.
 The Map stage names every undecided line under its count and marks each of those
 rows, so the notice and the lines it refers to cannot drift apart.
 
-The delta table compares what the imported recipe stated with what this rig solves, per target
+The delta table compares what the imported recipe stated with what this rig and
+its fermenter solve, per target
 and per line: solved grist mass, solved hop mass per pool, and the ratio between
 them. Where a mass is authored rather than solved (dry hops), the table says so.
 

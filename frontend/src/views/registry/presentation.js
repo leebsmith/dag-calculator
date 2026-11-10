@@ -26,8 +26,17 @@ const TARGET_ABV = {
   },
 };
 
+const FERMENTER_CAPACITY = {
+  hint: {
+    path: "fermenter.max_volume_l",
+    format: (max, _detail, _extra, readers) =>
+      readers?.displayQuantity ? `Maximum capacity ${readers.displayQuantity(max)}.` : null,
+  },
+};
+
 const FIELD_OVERRIDES = {
   "batch.target_abv": TARGET_ABV,
+  "batch.v_ferm": FERMENTER_CAPACITY,
   // Apparent extract can sit at or below 0 °P when a near-1.0 attenuation cap
   // and sugar leave almost no residue. The FG readout is a floor at SG 1.000
   // (0 °P in Plato), never a sub-gravity number.
@@ -38,6 +47,11 @@ export const CLAMP_BOUNDS = {
   "batch.hlt_starting_volume_l": {
     low: "equipment.hlt_coil_floor_l",
     high: "equipment.max_hlt_volume_l",
+  },
+  // A high-only envelope: the domain supplies the positive floor, the vessel
+  // supplies the hard ceiling.
+  "batch.v_ferm": {
+    high: "fermenter.max_volume_l",
   },
 };
 
@@ -76,7 +90,7 @@ export function applyPresentation(out, rule, readers) {
       value = null;
     }
     if (typeof value === "number" && Number.isFinite(value)) {
-      out.hint = rule.hint.format(value, detail, extra);
+      out.hint = rule.hint.format(value, detail, extra, readers);
     }
   }
 }

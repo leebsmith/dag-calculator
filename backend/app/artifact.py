@@ -372,7 +372,28 @@ def validate_component(kind: str, component: Any) -> list[str]:
     errors = _header_errors(component, meta)
     _validate_declared_fields(artifact, schema, component, errors)
     _validate_yeast_attenuation(kind, component, errors)
+    _validate_fermenter_volumes(kind, component, errors)
     return errors
+
+
+def _validate_fermenter_volumes(kind: str, component: dict, errors: list[str]) -> None:
+    """Both volumes are required and the nominal can never exceed the capacity."""
+    if kind != "fermenter" or not isinstance(component, dict):
+        return
+    max_volume = component.get("max_volume_l")
+    nominal = component.get("nominal_volume_l")
+    if not isinstance(max_volume, (int, float)) or isinstance(max_volume, bool):
+        errors.append("max_volume_l: max_volume_l is required")
+    if not isinstance(nominal, (int, float)) or isinstance(nominal, bool):
+        errors.append("nominal_volume_l: nominal_volume_l is required")
+    if (
+        isinstance(max_volume, (int, float))
+        and not isinstance(max_volume, bool)
+        and isinstance(nominal, (int, float))
+        and not isinstance(nominal, bool)
+        and nominal > max_volume
+    ):
+        errors.append("nominal_volume_l: must not exceed max_volume_l")
 
 
 def _validate_yeast_attenuation(kind: str, component: dict, errors: list[str]) -> None:

@@ -25,6 +25,19 @@ export function seedSugarShareParts({ engine }) {
   return true;
 }
 
+// Drafts saved before the fermenter identity namespace existed carry no cold-side
+// vessel, so `batch.v_ferm`'s default resolves to nothing. Attach the default
+// record once; the autosave that follows persists the sealed snapshot. A
+// read-only batch keeps its historical identity: `setIdentity` is a no-op there.
+export function seedFermenterIdentity({ session, cache, defaultId }) {
+  const identity = session.identity?.() ?? {};
+  if (identity.fermenter && Object.keys(identity.fermenter).length > 0) return false;
+  const record = cache?.references?.fermenter?.[defaultId];
+  if (!record) return false;
+  session.setIdentity("fermenter", record);
+  return true;
+}
+
 // The import projection once normalised a `pct` onto sugar rows, but the sugar
 // item schema declares only `parts` (the share) and `resolved_mass_kg`. An
 // undeclared row field is rejected by the report bundle's catalog-coverage

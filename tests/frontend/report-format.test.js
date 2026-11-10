@@ -28,8 +28,8 @@ test("formatted values carry text, number, and the display symbol", async () => 
   const formatted = app.reportFormatted();
 
   assert.deepEqual(formatted["batch.v_ferm"], {
-    text: "20.0 L",
-    number: "20.0",
+    text: "23.1 L",
+    number: "23.1",
     unit: "L",
   });
   assert.equal(formatted["solver.batch.apparent_attenuation"].text, "75.0%");

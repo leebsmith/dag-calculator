@@ -9,11 +9,11 @@
 import artifact from "../engine/artifact.json" with { type: "json" };
 import { createSession } from "./session.js";
 import { resolveBoundarySeam } from "./boundarySeam.js";
-import { assertReferencePair, createReferenceCache } from "../store/referenceCache.js";
+import { assertReferencePair, bootstrapIdentity, createReferenceCache } from "../store/referenceCache.js";
 import {
   dropSugarRowPct, materializeSelections,
   migrateAttenuationDerate, migrateLegacyYeastCap,
-  seedIdentityResiduals, seedSugarShareParts,
+  seedFermenterIdentity, seedIdentityResiduals, seedSugarShareParts,
 } from "../store/batchMigrations.js";
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
 import { dropLegacyDoughIn, migrateWhirlpoolCoordinates } from "./legacyMigrations.js";
@@ -57,16 +57,10 @@ import { assertNoCollisions, BASE_KEYS, composeLayers, installerSurfaceGaps } fr
 import { INSTALLERS } from "./installers.js";
 import * as fmt from "../utils.js";
 import { requireObservability } from "../observability.js";
-// Pre-landing-page bootstrap: the seed default equipment, no water source, no
-// style. The landing page replaces this with the batch's identity snapshot.
-function bootstrapIdentity(artifactSpec, cache) {
-  const equipmentId = artifactSpec.constants?.default_equipment_profile_id?.value;
-  return {
-    equipment: cache.references.equipment?.[equipmentId] ?? {},
-    "water.source": {},
-    style: {},
-  };
-}
+// Pre-landing-page bootstrap lives with the reference cache; this module only
+// needs the default fermenter id for the legacy-draft repair.
+const DEFAULT_FERMENTER_ID = artifact.constants?.default_fermenter_profile_id?.value;
+
 // Reference assets: the browser entry owns the cache and the library that fills
 // it, and injects both. A bare test app falls back to a fresh pair.
 function referenceAssets(options, observability, onChange) {
@@ -209,12 +203,13 @@ export function createStepApp(options = {}) {
       this.onBatchLoad?.();
       const migrated = dropLegacyDoughIn(session.engine);
       const migratedWhirlpool = migrateWhirlpoolCoordinates(session.engine);
+      const fermenter = seedFermenterIdentity({ session, cache, defaultId: DEFAULT_FERMENTER_ID });
       const seeded = this.seedIdentityResiduals();
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
       const sugarParts = this.seedSugarShareParts();
       const changed = [
-        seeded, materialized, synced, migrated, migratedWhirlpool,
+        seeded, materialized, synced, migrated, migratedWhirlpool, fermenter,
         migratedChecklist.changed, migratedDerate, migrateLegacyYeastCap({ session }), sugarParts,
         dropSugarRowPct({ engine: session.engine }),
       ].some(Boolean);

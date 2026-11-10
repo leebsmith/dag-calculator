@@ -118,7 +118,7 @@ test("loadArtifact rejects a choice default outside its taxonomy", () => {
   assert.throws(() => loadArtifact(bad), /not a member of taxonomy/);
 });
 
-test("loadArtifact requires schema_version 11 and rejects unknown versions", () => {
+test("loadArtifact requires the current schema version and rejects unknown versions", () => {
   const bad = structuredClone(artifact);
   bad.schema_version = 99;
   assert.throws(() => loadArtifact(bad), /Unsupported schema_version/);

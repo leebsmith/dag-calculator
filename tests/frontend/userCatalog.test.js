@@ -134,6 +134,29 @@ test("validateComponent honours each catalog's title field", () => {
   assert.ok(errors.some((e) => e.field === "laboratory"));
 });
 
+test("a fermenter requires both volumes and its nominal may not exceed capacity", () => {
+  const valid = {
+    id: "fermenter-7gal",
+    name: "7 gal Fermenter",
+    max_volume_l: 26.497882,
+    nominal_volume_l: 23.091012,
+  };
+  assert.deepEqual(validateComponent(artifact, "fermenter", valid), []);
+
+  const over = validateComponent(artifact, "fermenter", {
+    ...valid,
+    nominal_volume_l: 30,
+  });
+  assert.ok(over.some((e) => e.field === "nominal_volume_l"));
+
+  const missing = validateComponent(artifact, "fermenter", {
+    id: "fermenter-7gal",
+    name: "7 gal Fermenter",
+  });
+  assert.ok(missing.some((e) => e.field === "max_volume_l"));
+  assert.ok(missing.some((e) => e.field === "nominal_volume_l"));
+});
+
 test("validateComponent rejects undeclared fields and unknown kinds", () => {
   assert.ok(
     validateComponent(artifact, "malt", { name: "X", bogus_field: 1 }).some((e) =>

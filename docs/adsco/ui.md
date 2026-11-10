@@ -427,9 +427,11 @@ badge only.
   `sugar_share_without_sugar`; a share above 90 % raises `sugar_share_high`.
   Both are non-blocking advisories: they describe the authored intent, and the
   solve reports the truth of what was authored.
-- **Capacity** — kettle, mash tun (peak of the mash and sparge phases) and HLT
-  liquor demand report critically: the solve completes and every readout stays
-  alive, but the batch cannot be frozen.
+- **Capacity** — kettle, mash tun (peak of the mash and sparge phases), HLT
+  liquor demand and the fermenter's packaged volume report critically: the solve
+  completes and every readout stays alive, but the batch cannot be frozen. The
+  Batch Sparge field shows the fermenter's maximum as a hint and clamps the
+  authored `batch.v_ferm` to it on commit.
 - **Mash thickness ceiling** — a policy warning when the resolved thickness
   exceeds 2.0 qt/lb (4.1727 L/kg). Because it is advisory, it never clamps.
 - **Pin affordance** — a one-shot action inside that warning, visible only when

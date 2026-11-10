@@ -159,6 +159,12 @@ RECORD = {
             "kettle_transfer_loss_l": 0.5,
             "trub_loss_l": 0.5,
         },
+        "fermenter": {
+            "id": "fermenter-7gal",
+            "name": "7 gal Fermenter",
+            "max_volume_l": 26.497882,
+            "nominal_volume_l": 23.091012,
+        },
         "water.source": {
             "report_id": "w-2026-01",
             "laboratory": "Ward Labs",

@@ -24,7 +24,7 @@ const MASS_FIELD = {
 
 function synthetic({ fields = { mass_kg: MASS_FIELD }, boundaryInputs = { total: "batch.parts_total" } } = {}) {
   return {
-    schema_version: 11,
+    schema_version: 12,
     dimensions: DIMENSIONS,
     constants: {},
     taxonomies: {},

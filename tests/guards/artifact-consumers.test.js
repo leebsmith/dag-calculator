@@ -15,6 +15,7 @@ import { artifact } from "./util.js";
 const HOST_CONSTANTS = new Set([
   "default_runoff_ratio",
   "default_equipment_profile_id",
+  "default_fermenter_profile_id",
   // Ingredient priors, resolved copy-forward when a catalog record enters a
   // batch; no artifact expression reads them.
   "fermentability_prior_base",

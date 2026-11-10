@@ -86,7 +86,13 @@ export function createFieldActions({
       const bounds = clampBoundsFor(nodeId);
       if (!bounds) return value;
       const engine = session.getEngine();
-      return clamp(value, engine.resolve(bounds.low), engine.resolve(bounds.high));
+      const low = bounds.low ? engine.resolve(bounds.low) : -Infinity;
+      const high = bounds.high ? engine.resolve(bounds.high) : Infinity;
+      return clamp(
+        value,
+        Number.isFinite(low) ? low : -Infinity,
+        Number.isFinite(high) ? high : Infinity
+      );
     },
 
     edit(field, value) {

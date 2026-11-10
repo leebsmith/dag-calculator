@@ -1,6 +1,7 @@
-// Batch setup: the identity triplet (style / equipment / water source) and the
-// user-owned assets it is drawn from. Engine-free by design — this store only
-// touches the injected catalog client, the seed reference cache, and persistence.
+// Batch setup: the identity quartet (style / equipment / fermenter / water
+// source) and the user-owned assets it is drawn from. Engine-free by design —
+// this store only touches the injected catalog client, the seed reference cache,
+// and persistence.
 //
 // Every mutation goes through `this.state` (the object Alpine observes through
 // its reactive proxy). Writing a closure-captured raw object would update the
@@ -19,6 +20,7 @@ import { requireObservability } from "../observability.js";
 const PREREQUISITES = [
   { kind: "style", label: "styles" },
   { kind: "equipment", label: "rigs" },
+  { kind: "fermenter", label: "fermenters" },
   { kind: "water_report", label: "water sources" },
 ];
 
@@ -62,6 +64,7 @@ export function createSetupStore({
       error: "",
       name: "",
       equipmentId: "",
+      fermenterId: "",
       waterId: "",
       styleId: "",
       file: null,
@@ -82,6 +85,14 @@ export function createSetupStore({
     equipmentOptions() {
       void this.revision;
       const records = assets.references.equipment ?? {};
+      return Object.entries(records)
+        .map(([id, record]) => ({ value: id, label: record.name ?? id }))
+        .sort((a, b) => a.label.localeCompare(b.label));
+    },
+
+    fermenterOptions() {
+      void this.revision;
+      const records = assets.references.fermenter ?? {};
       return Object.entries(records)
         .map(([id, record]) => ({ value: id, label: record.name ?? id }))
         .sort((a, b) => a.label.localeCompare(b.label));
@@ -148,6 +159,7 @@ export function createSetupStore({
       this.state.file = null;
       this.state.filename = "";
       this.state.equipmentId = this.equipmentOptions()[0]?.value ?? "";
+      this.state.fermenterId = this.fermenterOptions()[0]?.value ?? "";
       this.state.waterId = "unknown";
       this.state.styleId = this.styleOptions()[0]?.value ?? "";
     },
@@ -170,7 +182,7 @@ export function createSetupStore({
     // An import needs the same sealed identity a batch does, plus one document.
     canStartImport() {
       const s = this.state;
-      return Boolean(s.file && s.equipmentId && s.waterId && s.styleId);
+      return Boolean(s.file && s.equipmentId && s.fermenterId && s.waterId && s.styleId);
     },
 
     // One button, one label: what it is doing right now, named by the step it
@@ -207,17 +219,19 @@ export function createSetupStore({
     canCreate() {
       const s = this.state;
       if (!s.name.trim()) return false;
-      return Boolean(s.equipmentId && s.waterId && s.styleId);
+      return Boolean(s.equipmentId && s.fermenterId && s.waterId && s.styleId);
     },
 
     identity() {
       const s = this.state;
       const equipment = this.component("equipment", s.equipmentId);
+      const fermenter = this.component("fermenter", s.fermenterId);
       const water = s.waterId === "unknown" ? UNKNOWN_WATER : this.component("water_report", s.waterId);
       const style = this.component("style", s.styleId);
       return {
         style: { ...style },
         equipment: { ...equipment },
+        fermenter: { ...fermenter },
         "water.source": { ...water },
       };
     },

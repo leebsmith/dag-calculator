@@ -27,6 +27,7 @@ SEED_FILES = {
     "hop": ["hops.json"],
     "hop_product": ["hop-products.json"],
     "equipment": ["equipment.json"],
+    "fermenter": ["fermenters.json"],
     "water_report": ["water_reports.json"],
     "water_target": ["water_target_profiles.json"],
     "style": ["styles.json"],
@@ -157,6 +158,27 @@ def test_validator_rejects_non_finite_dimensions():
 def test_validator_rejects_unknown_kinds_and_non_objects():
     assert artifact_module.validate_component("nope", {})
     assert artifact_module.validate_component("malt", None)
+
+
+def test_validator_requires_a_fermenter_capacity_that_bounds_its_nominal():
+    valid = {
+        "id": "fermenter-7gal",
+        "name": "7 gal Fermenter",
+        "max_volume_l": 26.497882,
+        "nominal_volume_l": 23.091012,
+    }
+    assert artifact_module.validate_component("fermenter", valid) == []
+
+    over = artifact_module.validate_component(
+        "fermenter", {**valid, "nominal_volume_l": 30}
+    )
+    assert any("nominal_volume_l" in error for error in over)
+
+    missing = artifact_module.validate_component(
+        "fermenter", {"id": "fermenter-7gal", "name": "7 gal Fermenter"}
+    )
+    assert any("max_volume_l" in error for error in missing)
+    assert any("nominal_volume_l" in error for error in missing)
 
 
 @pytest.mark.parametrize("kind", list(SEED_FILES))

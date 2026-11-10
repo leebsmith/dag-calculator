@@ -485,3 +485,15 @@ _29 paths_
 | `style.style_comparison` | Style Comparison | identity | — | — | — | — |
 | `style.tags` | Tags | identity | — | — | — | — |
 | `style.type` | Type | identity | — | — | — | beer, mead, cider |
+
+## `fermenter`
+
+_5 paths_
+
+| Path | Label | Kind | Dimension | Unit | Decimals | Options |
+|---|---|---|---|---|---|---|
+| `fermenter.description` | Description | identity | — | — | — | — |
+| `fermenter.id` | ID | identity | — | — | — | — |
+| `fermenter.max_volume_l` | Maximum capacity | identity | volume | L | 1 | — |
+| `fermenter.name` | Name | identity | — | — | — | — |
+| `fermenter.nominal_volume_l` | Nominal packaged volume | identity | volume | L | 1 | — |

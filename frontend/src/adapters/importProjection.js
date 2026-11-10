@@ -22,12 +22,35 @@ import { makeWhirlpoolRow } from "../views/producer/whirlpoolPolicy.js";
 import { WHIRLPOOL_ROW_DEFAULTS } from "../views/registry/hops.js";
 import { makeTraceMaltRow } from "../views/producer/traceMaltRows.js";
 import { normalizedRowShares, rowDefaults } from "../views/producer/authoring.js";
+import { formatWithDecimals } from "../utils.js";
 import { gravityPointsToSg, massKg } from "../views/import/ledger.js";
 import { catalogKindFor } from "../store/importMatch.js";
 
 const MASS_UNITS = new Set(["g", "kg", "oz", "lb"]);
 // The extraction's unit ids are lowercase; the artifact's are not. Map at the seam.
 const VOLUME_UNIT = { l: "L", gal: "gal" };
+
+// Capacity is a hard ceiling: an imported volume above it is clamped, and the
+// note makes the adjustment visible in the gate instead of silently shrinking
+// the batch.
+function clampToFermenter(roots, identity) {
+  const capacity = identity?.fermenter?.max_volume_l;
+  const target = roots["batch.v_ferm"];
+  if (typeof capacity !== "number" || capacity <= 0) return [];
+  if (typeof target !== "number" || target <= capacity) return [];
+  roots["batch.v_ferm"] = capacity;
+  return [
+    {
+      node: "batch.v_ferm",
+      severity: "advisory",
+      code: "FERM_VOLUME_CLAMPED",
+      message:
+        `the source volume ${formatWithDecimals(target, 1)} L exceeds the fermenter ` +
+        `capacity ${formatWithDecimals(capacity, 1)} L; clamped to ` +
+        `${formatWithDecimals(capacity, 1)} L`,
+    },
+  ];
+}
 
 export function projectImport({
   payload,
@@ -43,6 +66,7 @@ export function projectImport({
   // would report a dangling reference instead of the ledger finding that says so.
   const rows = ledger.filter((row) => row.decision === "mapped" && row.ref && resolvable(row, catalog));
   const roots = targetRoots(payload, rows);
+  const notes = clampToFermenter(roots, identity);
   if (fraction != null) roots["batch.whirlpool_ibu_fraction"] = fraction;
   const collections = {
     "grist.major_malts": sharesOf(
@@ -74,6 +98,7 @@ export function projectImport({
   return {
     identity,
     roots: { ...roots, ...yeastRoot(rows, yeastOutcome), ...waterRoot(targetProfile) },
+    notes,
     collections: Object.fromEntries(
       Object.entries(collections).map(([nodeId, list]) => [nodeId, completeRows(nodeId, list)])
     ),

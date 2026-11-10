@@ -126,6 +126,15 @@
                 commit: 'change'
               },
               {
+                id: 'batch-fermenter',
+                type: 'select',
+                label: 'Fermenter',
+                read: () => $store.setup.state.fermenterId,
+                write: (value) => { $store.setup.state.fermenterId = value; },
+                options: () => $store.setup.fermenterOptions(),
+                commit: 'change'
+              },
+              {
                 id: 'batch-water',
                 type: 'select',
                 label: 'Water source',
@@ -142,12 +151,12 @@
 
         <p class="form-hint" x-show="!$store.setup.state.busy && ($store.setup.state.mode === 'scratch' ? !$store.setup.canCreate() : !$store.setup.canStartImport())">
           <span x-show="$store.setup.state.mode === 'scratch'">
-            Choose a name, a style, a rig, and a water source. Records are created and sealed in the
-            Library's Sources section.
+            Choose a name, a style, a rig, a fermenter, and a water source. Records are created and
+            sealed in the Library's Sources section.
           </span>
           <span x-show="$store.setup.state.mode === 'recipe'">
-            Choose a style, a rig, and a water source, then pick a PDF. The identity is sealed into
-            the batch this import will become.
+            Choose a style, a rig, a fermenter, and a water source, then pick a PDF. The identity is
+            sealed into the batch this import will become.
           </span>
         </p>
 

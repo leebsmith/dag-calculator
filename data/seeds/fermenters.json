@@ -1,0 +1,9 @@
+{
+  "fermenter-7gal": {
+    "id": "fermenter-7gal",
+    "name": "7 gal Fermenter",
+    "description": "7 gal fermenter: 6.1 gal nominal packaged volume.",
+    "max_volume_l": 26.497882,
+    "nominal_volume_l": 23.091012
+  }
+}

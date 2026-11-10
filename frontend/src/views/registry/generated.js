@@ -96,6 +96,8 @@ export const generatedRegistry = {
   "equipment.nominal_boil_off_rate_l_per_hr": {"label":"Nominal boil-off rate"},
   "equipment.nominal_conversion_efficiency": {"label":"Nominal conversion efficiency"},
   "equipment.shrinkage_pct": {"label":"Shrinkage"},
+  "fermenter.max_volume_l": {"label":"Maximum capacity"},
+  "fermenter.nominal_volume_l": {"label":"Nominal packaged volume"},
   "grist.finished_beer_srm": {"label":"Beer color"},
   "grist.major_malts": {"label":"Grain bill"},
   "grist.major_malts.category": {"label":"Type"},

@@ -32,6 +32,7 @@ const IDENTITY = {
   },
   "water.source": { id: "w", name: "Tap", calcium_ca: 60, magnesium_mg: 10, sodium_na: 20,
     sulfate_so4: 80, chloride_cl: 40, alkalinity_as_caco3: 60 },
+  fermenter: { id: "f", name: "7 gal", max_volume_l: 26.497882, nominal_volume_l: 23.091012 },
 };
 
 const BATCH = {
@@ -139,6 +140,19 @@ test("a water failure is advisory, never a veto", async () => {
   const result = await runGate({ state: withTargets, fetchImpl });
   assert.equal(result.blocking.filter((finding) => finding.node === "solver.water").length, 0);
   assert.equal(result.advisory.some((finding) => finding.node === "solver.water"), true);
+});
+
+test("projection notes surface as advisory findings, never blocking", async () => {
+  const { fetchImpl } = fakeFetch();
+  const note = {
+    node: "batch.v_ferm",
+    severity: "advisory",
+    code: "FERM_VOLUME_CLAMPED",
+    message: "clamped to capacity",
+  };
+  const result = await runGate({ state: { ...state(), notes: [note] }, fetchImpl });
+  assert.equal(result.advisory.some((finding) => finding.code === "FERM_VOLUME_CLAMPED"), true);
+  assert.equal(result.blocking.some((finding) => finding.code === "FERM_VOLUME_CLAMPED"), false);
 });
 
 test("unresolved lines are part of the summary, not the findings", async () => {

@@ -55,6 +55,14 @@
     "references_key": "equipment",
     "seed_key": "equipment"
   },
+  "fermenter": {
+    "label": "Fermenter",
+    "schema": "fermenter",
+    "id_field": "id",
+    "title_field": "name",
+    "references_key": "fermenter",
+    "seed_key": "fermenters"
+  },
   "water_report": {
     "label": "Water Report",
     "schema": "water_report",

@@ -216,3 +216,16 @@ test("the projection never seeds identity-derived roots", () => {
   assert.equal("batch.conversion_efficiency" in state.roots, false);
   assert.equal("batch.delta_v_evap" in state.roots, false);
 });
+
+test("an imported volume above the fermenter capacity is clamped and flagged", () => {
+  const identity = { fermenter: { max_volume_l: 18, nominal_volume_l: 17 } };
+  const state = projectImport({ payload: payload(), ledger: mapped(), catalog, identity });
+
+  assert.equal(state.roots["batch.v_ferm"], 18, "clamped to the capacity");
+  assert.equal(state.notes.length, 1);
+  assert.equal(state.notes[0].code, "FERM_VOLUME_CLAMPED");
+  assert.match(state.notes[0].message, /exceeds the fermenter capacity/);
+
+  const fits = projectImport({ payload: payload(), ledger: mapped(), catalog });
+  assert.deepEqual(fits.notes, [], "no note when the source fits or has no fermenter");
+});

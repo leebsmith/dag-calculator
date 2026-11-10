@@ -105,7 +105,7 @@ def test_an_identity_must_be_complete(service):
 
 
 def test_a_complete_identity_is_stored(service):
-    identity = {"style": {"name": "Bitter"}, "equipment": {"name": "Rig"}}
+    identity = {"style": {"name": "Bitter"}, "equipment": {"name": "Rig"}, "fermenter": {"name": "7 gal"}}
     record = service.create("u1", upload(identity=identity))
     assert record.identity == identity
 
@@ -142,7 +142,7 @@ def test_status_moves_only_along_the_flow(service):
 
 def test_identity_and_ledger_are_editable_before_commit(service):
     record = service.create("u1", upload())
-    identity = {"style": {"name": "Bitter"}, "equipment": {"name": "Rig"}}
+    identity = {"style": {"name": "Bitter"}, "equipment": {"name": "Rig"}, "fermenter": {"name": "7 gal"}}
     ledger = [{"line_id": "l1", "decision": "mapped"}]
     updated = service.update(
         "u1", record.id, UpdateImportRequest(identity=identity, ledger=ledger)

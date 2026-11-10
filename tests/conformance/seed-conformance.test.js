@@ -48,6 +48,7 @@ function domainHolds(domain, value) {
 // Catalogs: file -> schema, plus the schema's identity field.
 const CATALOGS = [
   ["equipment.json", "equipment", "id"],
+  ["fermenters.json", "fermenter", "id"],
   ["malts.json", "malt", "id"],
   ["standard-malts.json", "malt", "id"],
   ["hops.json", "hop", "id"],

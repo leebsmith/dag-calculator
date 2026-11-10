@@ -50,6 +50,7 @@ export async function runGate({ state, references = {}, api, fetchImpl, reportEr
 
   const water = hasWaterTargets ? waterSummary(engine, reportError) : null;
   const findings = failureFindings(runner.statuses, nodes, buildErrors(engine, runner.statuses, nodes, reportError));
+  findings.push(...(state.notes ?? []));
   if (!hasWaterTargets) {
     findings.push({
       node: "solver.water",

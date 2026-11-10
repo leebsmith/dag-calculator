@@ -43,7 +43,7 @@ MAX_DOCUMENT_BYTES = gemini.MAX_INLINE_BYTES
 PDF_MAGIC = b"%PDF"
 # Identity is a sealed snapshot at batch creation, so an import that carries one
 # must carry the two components the batch contract requires.
-REQUIRED_IDENTITY = ("equipment", "style")
+REQUIRED_IDENTITY = ("equipment", "fermenter", "style")
 
 
 class ImportNotFound(Exception):

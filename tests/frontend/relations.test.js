@@ -16,6 +16,7 @@ test("relationStates() evaluates every declared relation", () => {
   for (const s of states) assert.equal(typeof s.holds, "boolean");  assert.deepEqual(
     states.map((s) => s.id).sort(),
     [
+      "fermenter_not_overfilled",
       "hlt_above_coil_floor",
       "hlt_demand_not_overfilled",
       "hlt_not_overfilled",
@@ -35,6 +36,7 @@ test("relations hold under the default fixtures", () => {
   assert.equal(states.mash_thickness_above_equipment_floor, true); // 3.0 >= 2.295
   assert.equal(states.mash_thickness_below_ceiling, true); // 3.0 <= 4.1727
   assert.equal(states.mash_tun_not_overfilled, true); // 17.1 <= 40 (phase volumes)
+  assert.equal(states.fermenter_not_overfilled, true); // 23.1 <= 26.5 (nominal default)
 });
 
 test("a violated relation reports holds:false", () => {

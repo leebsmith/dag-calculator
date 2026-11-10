@@ -140,7 +140,8 @@ A `selection` holds a `ref` (component id). Choosing a component **copies it
 forward** into the batch's `selections` snapshot, and the selection resolves to a
 **read-only view** of that snapshot — selections are never mutated. Only the two
 switchable references (water target profile, yeast) remain selections; equipment,
-water source, and style are identity (see §2.5). The library
+fermenter, water source, and style are identity (see §2.5–2.7 of
+`seed-substrate.md`). The library
 (seeds + the user's records) is consulted only when a legacy draft has a
 non-empty ref and no snapshot; the normal load path materialises the snapshot and
 persists it on the next save. Library edits therefore cannot perturb a loaded
