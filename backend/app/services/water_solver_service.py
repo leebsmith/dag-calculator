@@ -14,7 +14,6 @@ from app.schemas.boundary import (
     IonProfile,
     MashPhStatus,
     SaltAdditions,
-    SaltDistribution,
     WaterPrescription,
     WaterSolverRequest,
     WaterSolverResponse,
@@ -100,25 +99,6 @@ def _to_input(req: WaterSolverRequest) -> WaterChemistryInput:
     )
 
 
-def _post_hlt_ions(result, req: WaterSolverRequest) -> IonProfile:
-    """Reconstruct the treated HLT vector from the sealed core's documented rule.
-
-    ``core/water/orchestration.py`` computes ``post_hlt = source + added`` under
-    ``PROPORTIONAL`` and bare ``source`` under ``MASH_ONLY``, but does not return
-    it. Both are derivable here: under ``PROPORTIONAL`` the HLT vector equals the
-    mash vector (same per-litre dose, by construction); under ``MASH_ONLY`` it is
-    the request's source ions. Unknown modes fail loudly rather than guessing.
-    """
-    if req.salt_distribution is SaltDistribution.PROPORTIONAL:
-        return _to_long_ions(result.post_salt_mash_ions)
-    if req.salt_distribution is SaltDistribution.MASH_ONLY:
-        return req.source
-    raise SolverServiceError(
-        "UNKNOWN_SALT_DISTRIBUTION",
-        f"Unknown salt distribution {req.salt_distribution.value!r}.",
-    )
-
-
 def _to_response(result, req: WaterSolverRequest) -> WaterSolverResponse:
     return WaterSolverResponse(
         strategy=WaterStrategy(result.strategy),
@@ -140,8 +120,9 @@ def _to_response(result, req: WaterSolverRequest) -> WaterSolverResponse:
             0.0,
         ),
         post_salt_mash_ions=_to_long_ions(result.post_salt_mash_ions),
-        post_salt_hlt_ions=_post_hlt_ions(result, req),
+        post_salt_hlt_ions=_to_long_ions(result.post_salt_hlt_ions),
         post_dose_mash_ions=_to_long_ions(result.post_dose_mash_ions),
+        post_dose_hlt_ions=_to_long_ions(result.post_dose_hlt_ions),
         total_added_salt_mass_g=result.total_added_salt_mass_g,
         added_mineral_tds_ppm=result.added_mineral_tds_ppm,
         grist_buckets_kg=result.grist_buckets_kg,

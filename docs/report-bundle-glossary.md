@@ -352,7 +352,7 @@ _36 paths_
 
 ## Solver — water chemistry
 
-_45 paths_
+_51 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -370,6 +370,12 @@ _45 paths_
 | `solver.water.mash_additions.gypsum_kg` | Mash gypsum | output | mass | g | 1 | — |
 | `solver.water.mash_additions.nacl_kg` | Mash table salt | output | mass | g | 1 | — |
 | `solver.water.mash_additions.pickling_lime_kg` | Mash pickling lime | output | mass | g | 1 | — |
+| `solver.water.post_dose_hlt_ions.alkalinity_as_caco3` | Alkalinity | output | concentration | ppm | 1 | — |
+| `solver.water.post_dose_hlt_ions.calcium_ca` | Calcium | output | concentration | ppm | 1 | — |
+| `solver.water.post_dose_hlt_ions.chloride_cl` | Chloride | output | concentration | ppm | 1 | — |
+| `solver.water.post_dose_hlt_ions.magnesium_mg` | Magnesium | output | concentration | ppm | 1 | — |
+| `solver.water.post_dose_hlt_ions.sodium_na` | Sodium | output | concentration | ppm | 1 | — |
+| `solver.water.post_dose_hlt_ions.sulfate_so4` | Sulfate | output | concentration | ppm | 1 | — |
 | `solver.water.post_dose_mash_ions.alkalinity_as_caco3` | Alkalinity | output | concentration | ppm | 1 | — |
 | `solver.water.post_dose_mash_ions.calcium_ca` | Calcium | output | concentration | ppm | 1 | — |
 | `solver.water.post_dose_mash_ions.chloride_cl` | Chloride | output | concentration | ppm | 1 | — |

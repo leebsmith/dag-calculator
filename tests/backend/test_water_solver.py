@@ -16,6 +16,7 @@ from app.core.water.dosing import solve_salt_dose
 from app.core.water.inputs import GrainEntry
 from app.core.water.salts import _salt_ion_coeffs
 from app.schemas.boundary import (
+    IonProfile,
     MashPhStatus,
     SaltDistribution,
     WaterSolverErrorCode,
@@ -116,6 +117,63 @@ def test_post_salt_hlt_ions_proportional_matches_mash():
         make_water_request(salt_distribution=SaltDistribution.PROPORTIONAL)
     )
     assert resp.post_salt_hlt_ions == resp.post_salt_mash_ions
+
+
+def test_post_salt_hlt_ions_excludes_the_grist_only_agent():
+    # HYBRID supplies an alkalinity buffer from the preferred agent; that agent is
+    # applied to the grist only, so the sparge liquor must not carry its ions.
+    req = make_water_request(
+        strategy=WaterStrategy.HYBRID,
+        salt_distribution=SaltDistribution.PROPORTIONAL,
+        source=IonProfile(
+            calcium_ca=10.0,
+            magnesium_mg=2.0,
+            sodium_na=8.0,
+            sulfate_so4=5.0,
+            chloride_cl=7.0,
+            alkalinity_as_caco3=10.0,
+        ),
+        target=IonProfile(
+            calcium_ca=0.0,
+            magnesium_mg=0.0,
+            sodium_na=0.0,
+            sulfate_so4=50.0,
+            chloride_cl=30.0,
+            alkalinity_as_caco3=40.0,
+        ),
+        preferred_alkaline_agent="BAKING_SODA",
+    )
+    resp = solve_water_request(req)
+    assert resp.post_salt_mash_ions.sodium_na > req.source.sodium_na
+    assert resp.post_salt_hlt_ions.sodium_na == req.source.sodium_na
+
+
+def test_post_dose_hlt_applies_the_sparge_acid():
+    req = make_water_request(salt_distribution=SaltDistribution.MASH_ONLY)
+    resp = solve_water_request(req)
+    assert resp.sparge_additions.acid_l > 0.0
+    assert resp.post_dose_hlt_ions.alkalinity_as_caco3 < resp.post_salt_hlt_ions.alkalinity_as_caco3
+    # The acid anion is not tracked: every other ion is unchanged.
+    for field in ("calcium_ca", "magnesium_mg", "sodium_na", "sulfate_so4", "chloride_cl"):
+        assert getattr(resp.post_dose_hlt_ions, field) == getattr(
+            resp.post_salt_hlt_ions, field
+        )
+
+
+def test_post_dose_hlt_without_source_alkalinity_is_unchanged():
+    req = make_water_request(
+        source=IonProfile(
+            calcium_ca=10.0,
+            magnesium_mg=2.0,
+            sodium_na=8.0,
+            sulfate_so4=5.0,
+            chloride_cl=7.0,
+            alkalinity_as_caco3=0.0,
+        )
+    )
+    resp = solve_water_request(req)
+    assert resp.sparge_additions.acid_l == 0.0
+    assert resp.post_dose_hlt_ions == resp.post_salt_hlt_ions
 
 
 def test_post_salt_hlt_ions_mash_only_is_source():

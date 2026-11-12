@@ -88,8 +88,6 @@ export const WATER_NODES = {
   residualHlt: "solver.water.prescription.residual_hlt_water_l",
   mashAdditions: "solver.water.mash_additions",
   spargeAdditions: "solver.water.sparge_additions",
-  postMashIons: "solver.water.post_salt_mash_ions",
-  postHltIons: "solver.water.post_salt_hlt_ions",
   kettleBlend: "water.kettle_blend",
   kettleRatio: "water.kettle_blend.sulfate_chloride_ratio",
   targetRatio: "water.target.sulfate_chloride_ratio",

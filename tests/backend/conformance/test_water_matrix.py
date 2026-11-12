@@ -174,10 +174,16 @@ def _assert_doses_finite(out) -> None:
             assert math.isfinite(value) and value >= 0.0, key
     for value in (out.alkaline_agent_g, out.mash_acid_ml, out.sparge_acid_ml):
         assert math.isfinite(value) and value >= 0.0
-    for field in ("post_salt_mash_ions", "post_dose_mash_ions"):
+    for field in (
+        "post_salt_mash_ions",
+        "post_dose_mash_ions",
+        "post_salt_hlt_ions",
+        "post_dose_hlt_ions",
+    ):
         ions = getattr(out, field)
         for ion in IONS:
             assert math.isfinite(ions[ion]) and ions[ion] >= 0.0, (field, ion)
+    assert out.post_dose_hlt_ions["alk"] <= out.post_salt_hlt_ions["alk"] + 1e-9
 
 
 def _assert_mash_ph(inp: WaterChemistryInput, out) -> None:

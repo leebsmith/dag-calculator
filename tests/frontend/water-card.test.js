@@ -14,8 +14,14 @@ async function loadWaterSource(app, source) {
 test("kettle blend nodes reduce to the treated vector and the helper weights volumes", withFreshApp((app) => {
   app.compute();
 
-  // Stub fixtures: both vessels carry the same treated vector.
+  // The kettle blends the corrected (post-dose) vectors, not the salts-only ones.
   assert.equal(app.engine.get("water.kettle_blend.calcium_ca"), 60);
+  assert.ok(
+    Math.abs(
+      app.engine.get("water.kettle_blend.alkalinity_as_caco3") -
+        app.engine.call("blend_ion", [34, 12, 10, 14, 14])
+    ) < 1e-9
+  );
   for (const { ion } of WATER_IONS) {
     assert.equal(typeof app.engine.get(`water.kettle_blend.${ion}`), "number");
   }

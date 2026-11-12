@@ -88,14 +88,19 @@ displacement fraction for top-up — not a solver change.
 
 ## 5. What the calculator shows, and what it still cannot verify
 
-The water card shows three ion vectors, each with a signed delta against the target
+The card shows the corrected vectors, each with a signed delta against the target
 profile:
 
 | Block | Source | Meaning |
 |---|---|---|
-| **Treated mash** | `post_salt_mash_ions` (solver) | What the grist receives, in solution |
-| **Treated HLT** | `post_salt_hlt_ions` (solver) | What the sparge liquor receives. Under `MASH_ONLY` this equals the source report |
-| **Kettle (blended)** | Host mass balance over delivered runnings and sparge | What the tun and HLT carry into the boil, weighted by volume |
+| **Treated mash** | `post_dose_mash_ions` (solver) | What the grist receives, in solution: flavour salts, any alkaline agent, and the acid/alkali correction to `water.target_mash_ph` |
+| **Treated HLT** | `post_dose_hlt_ions` (solver) | What the sparge liquor receives: flavour salts under `PROPORTIONAL` (the grist-only agent is excluded), then its own acid correction. Under `MASH_ONLY` it starts from the source report |
+| **Kettle (blended)** | Host mass balance over delivered runnings and sparge | The two corrected vectors carried into the boil, weighted by volume |
+
+The HLT acid dose is modelled as neutralising the HLT's residual alkalinity (the
+proxy for a 5.80 sparge pH), so the treated HLT's alkalinity is the calcium and
+magnesium residual-alkalinity term rather than zero. That assumption is why the
+kettle alkalinity is below the mash's whenever a sparge acid is prescribed.
 
 The kettle block is an **estimate**: it assumes uniform concentration per vessel and
 full mixing. It is not a measurement, and the SO4:Cl readout is derived from it.

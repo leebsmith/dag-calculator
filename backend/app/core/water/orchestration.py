@@ -8,7 +8,7 @@ projected from that one stream at the end.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from app.core.errors import SolverValidationError
@@ -74,6 +74,8 @@ class WaterChemistryOutput:
     alkaline_agent_g: float
     post_salt_mash_ions: dict
     post_dose_mash_ions: dict
+    post_salt_hlt_ions: dict
+    post_dose_hlt_ions: dict
     residual_hlt_water_l: float
     grist_buckets_kg: dict
     warnings: list[str] = field(default_factory=list)
@@ -94,6 +96,14 @@ class MashCorrection:
     dose_kind: str | None
     meq_total: float
     unreachable: dict[str, Any] | None
+
+
+@dataclass(frozen=True)
+class _SpargeCorrection:
+    """Phase 7 acid demand for the HLT liquor and its alkalinity effect."""
+
+    acid_ml: float
+    alk_correction_ppm: float
 
 
 @dataclass(frozen=True)
@@ -127,13 +137,27 @@ def _gate_inputs(inp: WaterChemistryInput, events: list[TelemetryEvent]) -> None
 def _stage1_ions(
     inp: WaterChemistryInput, dose: SaltDose
 ) -> tuple[dict[str, float], dict[str, float], dict[str, float], bool]:
-    """Phase 4: post-salt mash and HLT vectors before the pH correction."""
+    """Phase 4: post-salt mash and HLT vectors before the pH correction.
+
+    The alkaline agent is grist-only by construction (see ``_resolve_allocations``),
+    so the HLT vector is built from the flavor-salt dose alone.
+    """
     added = ions_added_ppm(
         dose, inp.gypsum_form, inp.cacl2_form, preferred_alkaline_agent=inp.preferred_alkaline_agent
     )
     post_salt = add_ions(inp.source, added)
     proportional = inp.salt_distribution.upper() == "PROPORTIONAL"
-    post_hlt = add_ions(inp.source, added) if proportional else dict(inp.source)
+    if proportional:
+        flavor_only = replace(dose, alkaline_agent_g_per_l=0.0)
+        hlt_added = ions_added_ppm(
+            flavor_only,
+            inp.gypsum_form,
+            inp.cacl2_form,
+            preferred_alkaline_agent=inp.preferred_alkaline_agent,
+        )
+        post_hlt = add_ions(inp.source, hlt_added)
+    else:
+        post_hlt = dict(inp.source)
     return added, post_salt, post_hlt, proportional
 
 
@@ -302,10 +326,13 @@ def _emit_mash_findings(
 
 def _resolve_sparge_acid(
     inp: WaterChemistryInput, post_hlt: dict[str, float], events: list[TelemetryEvent]
-) -> float:
-    """Phase 7: acid demand that caps the sparge liquor at the target pH."""
+) -> _SpargeCorrection:
+    """Phase 7: acid demand that caps the sparge liquor at the target pH.
+
+    Neutralising the HLT's residual alkalinity is the model's proxy for reaching
+    ``SPARGE_ACID_PH``; the reported alkalinity reduction is exactly that RA.
+    """
     ra_hlt = residual_alkalinity(post_hlt["ca"], post_hlt["mg"], post_hlt.get("alk", 0.0))
-    sparge_acid_ml = 0.0
 
     if inp.source.get("alk", 0.0) > 0.0 and ra_hlt > 0.0:
         sparge_meq_l = ra_hlt / 50.0
@@ -317,7 +344,15 @@ def _resolve_sparge_acid(
                 sparge_acid_ml, inp.acid_medium, sparge_meq_l * inp.v_hlt_treat_l
             )
         )
-    return sparge_acid_ml
+        return _SpargeCorrection(acid_ml=sparge_acid_ml, alk_correction_ppm=ra_hlt)
+    return _SpargeCorrection(acid_ml=0.0, alk_correction_ppm=0.0)
+
+
+def _post_dose_hlt(post_hlt: dict[str, float], correction: _SpargeCorrection) -> dict[str, float]:
+    """The HLT liquor after the sparge-acid correction; only alkalinity moves."""
+    post_dose = dict(post_hlt)
+    post_dose["alk"] = max(0.0, post_hlt.get("alk", 0.0) - correction.alk_correction_ppm)
+    return post_dose
 
 
 def _dose_grams(dose: SaltDose, volume_l: float) -> dict[str, float]:
@@ -438,8 +473,9 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
     )
     _emit_mash_findings(inp, correction, post_salt, predicted_ph, status, events)
 
-    # 7. Sparge acid prescription
-    sparge_acid_ml = _resolve_sparge_acid(inp, post_hlt, events)
+    # 7. Sparge acid prescription and its alkalinity effect on the HLT liquor
+    sparge_correction = _resolve_sparge_acid(inp, post_hlt, events)
+    post_dose_hlt = _post_dose_hlt(post_hlt, sparge_correction)
 
     # 8. Physical mass allocations for mash and sparge liquor
     allocation = _resolve_allocations(inp, dose, correction, proportional)
@@ -466,10 +502,12 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
         mash_dose_g=allocation.mash_dose_g,
         sparge_dose_g=allocation.sparge_dose_g,
         mash_acid_ml=correction.mash_acid_ml,
-        sparge_acid_ml=sparge_acid_ml,
+        sparge_acid_ml=sparge_correction.acid_ml,
         alkaline_agent_g=allocation.alkaline_agent_g,
         post_salt_mash_ions=post_salt,
         post_dose_mash_ions=post_dose,
+        post_salt_hlt_ions=post_hlt,
+        post_dose_hlt_ions=post_dose_hlt,
         residual_hlt_water_l=residual_hlt,
         grist_buckets_kg=buckets,
         warnings=warnings,

@@ -468,6 +468,7 @@ class WaterSolverResponse(BoundaryModel):
     post_salt_mash_ions: IonProfile
     post_salt_hlt_ions: IonProfile
     post_dose_mash_ions: IonProfile
+    post_dose_hlt_ions: IonProfile
     total_added_salt_mass_g: float
     added_mineral_tds_ppm: float
     grist_buckets_kg: dict[str, float]

@@ -1752,8 +1752,8 @@
     "water.kettle_blend.calcium_ca": {
       "kind": "derived",
       "inputs": {
-        "mash": "solver.water.post_salt_mash_ions.calcium_ca",
-        "hlt": "solver.water.post_salt_hlt_ions.calcium_ca",
+        "mash": "solver.water.post_dose_mash_ions.calcium_ca",
+        "hlt": "solver.water.post_dose_hlt_ions.calcium_ca",
         "run1": "solver.batch.cascade.v_run1",
         "run2": "solver.batch.cascade.v_run2",
         "sparge": "solver.batch.cascade.v_sparge"
@@ -1766,8 +1766,8 @@
     "water.kettle_blend.magnesium_mg": {
       "kind": "derived",
       "inputs": {
-        "mash": "solver.water.post_salt_mash_ions.magnesium_mg",
-        "hlt": "solver.water.post_salt_hlt_ions.magnesium_mg",
+        "mash": "solver.water.post_dose_mash_ions.magnesium_mg",
+        "hlt": "solver.water.post_dose_hlt_ions.magnesium_mg",
         "run1": "solver.batch.cascade.v_run1",
         "run2": "solver.batch.cascade.v_run2",
         "sparge": "solver.batch.cascade.v_sparge"
@@ -1780,8 +1780,8 @@
     "water.kettle_blend.sodium_na": {
       "kind": "derived",
       "inputs": {
-        "mash": "solver.water.post_salt_mash_ions.sodium_na",
-        "hlt": "solver.water.post_salt_hlt_ions.sodium_na",
+        "mash": "solver.water.post_dose_mash_ions.sodium_na",
+        "hlt": "solver.water.post_dose_hlt_ions.sodium_na",
         "run1": "solver.batch.cascade.v_run1",
         "run2": "solver.batch.cascade.v_run2",
         "sparge": "solver.batch.cascade.v_sparge"
@@ -1794,8 +1794,8 @@
     "water.kettle_blend.sulfate_so4": {
       "kind": "derived",
       "inputs": {
-        "mash": "solver.water.post_salt_mash_ions.sulfate_so4",
-        "hlt": "solver.water.post_salt_hlt_ions.sulfate_so4",
+        "mash": "solver.water.post_dose_mash_ions.sulfate_so4",
+        "hlt": "solver.water.post_dose_hlt_ions.sulfate_so4",
         "run1": "solver.batch.cascade.v_run1",
         "run2": "solver.batch.cascade.v_run2",
         "sparge": "solver.batch.cascade.v_sparge"
@@ -1808,8 +1808,8 @@
     "water.kettle_blend.chloride_cl": {
       "kind": "derived",
       "inputs": {
-        "mash": "solver.water.post_salt_mash_ions.chloride_cl",
-        "hlt": "solver.water.post_salt_hlt_ions.chloride_cl",
+        "mash": "solver.water.post_dose_mash_ions.chloride_cl",
+        "hlt": "solver.water.post_dose_hlt_ions.chloride_cl",
         "run1": "solver.batch.cascade.v_run1",
         "run2": "solver.batch.cascade.v_run2",
         "sparge": "solver.batch.cascade.v_sparge"
@@ -1822,8 +1822,8 @@
     "water.kettle_blend.alkalinity_as_caco3": {
       "kind": "derived",
       "inputs": {
-        "mash": "solver.water.post_salt_mash_ions.alkalinity_as_caco3",
-        "hlt": "solver.water.post_salt_hlt_ions.alkalinity_as_caco3",
+        "mash": "solver.water.post_dose_mash_ions.alkalinity_as_caco3",
+        "hlt": "solver.water.post_dose_hlt_ions.alkalinity_as_caco3",
         "run1": "solver.batch.cascade.v_run1",
         "run2": "solver.batch.cascade.v_run2",
         "sparge": "solver.batch.cascade.v_sparge"
@@ -2446,6 +2446,24 @@
           "dimension": "concentration"
         },
         "post_dose_mash_ions.alkalinity_as_caco3": {
+          "dimension": "concentration"
+        },
+        "post_dose_hlt_ions.calcium_ca": {
+          "dimension": "concentration"
+        },
+        "post_dose_hlt_ions.magnesium_mg": {
+          "dimension": "concentration"
+        },
+        "post_dose_hlt_ions.sodium_na": {
+          "dimension": "concentration"
+        },
+        "post_dose_hlt_ions.sulfate_so4": {
+          "dimension": "concentration"
+        },
+        "post_dose_hlt_ions.chloride_cl": {
+          "dimension": "concentration"
+        },
+        "post_dose_hlt_ions.alkalinity_as_caco3": {
           "dimension": "concentration"
         },
         "total_added_salt_mass_g": {
