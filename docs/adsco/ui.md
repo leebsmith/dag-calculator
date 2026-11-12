@@ -143,6 +143,10 @@ the ions it declares a number for (`null` floats).
 - **Route line**: one line under the grid — the target set and its exactness.
 - **Audit log**: collapsible drawer grouped by category; INFO collapsed, NOTE
   neutral, WARNING/ERROR surfaced. Host-side only (never a DAG output).
+- **Calcium minimum**: graded only by a route that applied it, and only once —
+  the shortfall warning names the finished concentration, the floor, and that
+  the pinned equalities took precedence. A baseline batch carries no floor
+  finding.
 
 ## Brew-day prescription
 

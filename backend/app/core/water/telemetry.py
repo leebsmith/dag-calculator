@@ -319,7 +319,8 @@ def sparse_equalities_only() -> TelemetryEvent:
         "OPT_SPARSE_EQUALITIES_ONLY",
         OPTIMIZATION,
         NOTE,
-        "Sparse solve could not satisfy all constraints; solving equalities only.",
+        "Sparse solve could not also meet the calcium minimum; the pinned "
+        "equalities are preserved and the shortfall is reported.",
     )
 
 

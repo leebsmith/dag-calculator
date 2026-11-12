@@ -17,7 +17,6 @@ from app.core.water.telemetry import (
     clone_weighted_compromise,
     flavor_target_below_source,
     lp_lexicographic_tie_break,
-    lp_relaxation_applied,
     pinned_target_below_source,
     sparse_equalities_only,
 )
@@ -60,32 +59,6 @@ def _flavor_dose(
     )
 
 
-def _projected_ca(
-    source_ca: float,
-    flavor: SaltDose,
-    gyp: dict[str, float],
-    cacl2: dict[str, float],
-) -> float:
-    added = (
-        flavor.gypsum_g_per_l * gyp.get("ca", 0.0)
-        + flavor.cacl2_g_per_l * cacl2.get("ca", 0.0)
-    )
-    return source_ca + added
-
-
-def _floor_shortfall_event(
-    source_ca: float,
-    flavor: SaltDose,
-    gyp: dict[str, float],
-    cacl2: dict[str, float],
-    calcium_floor_ppm: float,
-    events: list[TelemetryEvent] | None,
-) -> None:
-    projected = _projected_ca(source_ca, flavor, gyp, cacl2)
-    if projected < calcium_floor_ppm - 1e-6 and events is not None:
-        events.append(calcium_floor_unreachable(projected, calcium_floor_ppm))
-
-
 def _primary_solution(
     c_primary: list[float],
     a_eq: list[list[float]],
@@ -97,8 +70,6 @@ def _primary_solution(
     capped = _solve_lp(c_primary, a_eq, b_eq, a_ub, b_ub)
     if capped.success:
         return capped
-    if events is not None:
-        events.append(lp_relaxation_applied())
     relaxed = _solve_lp(c_primary, a_eq, b_eq, None, None)
     if not relaxed.success:
         raise SolverValidationError(
@@ -152,7 +123,7 @@ def _minimal_salt_vector(
     nacl: dict[str, float],
     need_so4: float,
     need_cl: float,
-    calcium_cap: float,
+    calcium_gap: float,
     events: list[TelemetryEvent] | None,
 ) -> list[float]:
     a_eq = [
@@ -160,8 +131,9 @@ def _minimal_salt_vector(
         [0.0, cacl2.get("cl", 0.0), 0.0, nacl.get("cl", 0.0)],
     ]
     b_eq = [need_so4, need_cl]
-    a_ub = [[gyp.get("ca", 0.0), cacl2.get("ca", 0.0), 0.0, 0.0]]
-    b_ub = [calcium_cap]
+    # The calcium floor is a minimum: added Ca must cover the gap to it.
+    a_ub = [[-gyp.get("ca", 0.0), -cacl2.get("ca", 0.0), 0.0, 0.0]]
+    b_ub = [-calcium_gap]
     c_primary = [sum(s.values()) for s in salts]
 
     res = _primary_solution(c_primary, a_eq, b_eq, a_ub, b_ub, events)
@@ -193,11 +165,7 @@ def _solve_linear_minimalist(
         return flavor
 
     source_ca = source.get("ca", 0.0)
-    if source_ca < calcium_floor_ppm:
-        _floor_shortfall_event(source_ca, flavor, gyp, cacl2, calcium_floor_ppm, events)
-        return flavor
-
-    # Hard source: added Ca <= max(0, floor - source)
+    calcium_gap = max(0.0, calcium_floor_ppm - source_ca)
     x = _minimal_salt_vector(
         salts,
         gyp,
@@ -206,9 +174,12 @@ def _solve_linear_minimalist(
         nacl,
         need_so4,
         need_cl,
-        max(0.0, calcium_floor_ppm - source_ca),
+        calcium_gap,
         events,
     )
+    final_ca = source_ca + x[0] * gyp.get("ca", 0.0) + x[1] * cacl2.get("ca", 0.0)
+    if final_ca < calcium_floor_ppm - 1e-6 and events is not None:
+        events.append(calcium_floor_unreachable(final_ca, calcium_floor_ppm))
     return SaltDose(
         gypsum_g_per_l=x[0],
         cacl2_g_per_l=x[1],

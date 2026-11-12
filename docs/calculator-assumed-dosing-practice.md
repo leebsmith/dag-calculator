@@ -47,6 +47,17 @@ Consequences worth stating plainly:
 - `PROPORTIONAL` means one per-litre concentration applied to both vessels. The grams
   differ only because the volumes differ.
 
+### The calcium minimum
+
+The calcium floor is a **minimum**, not a ceiling. A dosing route adds calcium
+until the finished mash reaches it, whenever the pinned equalities leave room; a
+flavour dose that happens to carry extra calcium is allowed, and a source already
+above the minimum needs no extra calcium at all. When the equalities cannot also
+reach the minimum, the solver keeps the equalities, reports one
+`GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE` warning, and does not grade the floor a
+second time. `BASELINE` and `FLAVOR` never apply it, so they carry no floor
+finding.
+
 ## 3. Volume basis
 
 | Quantity | Node | Definition |

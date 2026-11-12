@@ -182,6 +182,73 @@ def test_uncorrected_mash_ph_is_reported():
     assert resp.prescription.uncorrected_mash_ph > resp.prescription.predicted_mash_ph
 
 
+def test_baseline_does_not_grade_the_calcium_floor():
+    req = make_water_request(
+        source=IonProfile(
+            calcium_ca=10.0,
+            magnesium_mg=2.0,
+            sodium_na=8.0,
+            sulfate_so4=5.0,
+            chloride_cl=7.0,
+            alkalinity_as_caco3=40.0,
+        ),
+        strategy=WaterStrategy.BASELINE,
+        custom_pinned_ions=[],
+    )
+    resp = solve_water_request(req)
+    codes = {event["code"] for event in resp.telemetry}
+    assert "GUARDRAIL_CALCIUM_BELOW_FLOOR" not in codes
+    assert "GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE" not in codes
+
+
+def test_calcium_shortfall_is_reported_once():
+    req = make_water_request(
+        target=IonProfile(
+            calcium_ca=0.0,
+            magnesium_mg=0.0,
+            sodium_na=0.0,
+            sulfate_so4=20.0,
+            chloride_cl=10.0,
+            alkalinity_as_caco3=0.0,
+        ),
+        strategy=WaterStrategy.CALCIUM_FLOOR,
+        custom_pinned_ions=["so4", "cl"],
+        calcium_floor_ppm=50.0,
+    )
+    resp = solve_water_request(req)
+    floor = [
+        event
+        for event in resp.telemetry
+        if event["code"]
+        in ("GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE", "GUARDRAIL_CALCIUM_BELOW_FLOOR")
+    ]
+    assert len(floor) == 1
+    assert floor[0]["code"] == "GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE"
+
+
+def test_custom_pin_reports_one_floor_finding():
+    req = make_water_request(
+        target=IonProfile(
+            calcium_ca=0.0,
+            magnesium_mg=0.0,
+            sodium_na=0.0,
+            sulfate_so4=50.0,
+            chloride_cl=120.0,
+            alkalinity_as_caco3=0.0,
+        ),
+        strategy=WaterStrategy.CUSTOM,
+        custom_pinned_ions=["so4", "cl", "na"],
+        calcium_floor_ppm=200.0,
+    )
+    resp = solve_water_request(req)
+    floor = [
+        event
+        for event in resp.telemetry
+        if event["code"] == "GUARDRAIL_CALCIUM_BELOW_FLOOR"
+    ]
+    assert len(floor) == 1
+
+
 def test_post_salt_hlt_ions_mash_only_is_source():
     req = make_water_request(salt_distribution=SaltDistribution.MASH_ONLY)
     resp = solve_water_request(req)

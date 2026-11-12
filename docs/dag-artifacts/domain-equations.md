@@ -471,14 +471,18 @@ The six working ions: `calcium_ca`, `magnesium_mg`, `sodium_na`, `sulfate_so4`,
 `chloride_cl`, `alkalinity_as_caco3` (ppm, except alkalinity as CaCO₃). `source`
 is read from the `water.source` identity record (copied forward from records,
 read-only in the batch); `target` is read from the editable `water.target.*`
-roots, seeded from the selected preset's declared ions. The routed `strategy` is
-derived from the checked set (`checked ∩ positive target`): `{}` → `BASELINE`,
+roots, seeded from the selected preset's declared ions. The route is derived
+from the checked set as the `water.route` node: `{}` → `BASELINE`,
 `{SO₄,Cl}` → `CALCIUM_FLOOR`, `{SO₄,Cl,alk}` → `HYBRID`, all six → `OPTIMIZE`,
 anything else → `CUSTOM` with those ions as pins. The UI never writes `AUTO`,
 though the solver still accepts it for API clients. `target` alkalinity is the
 root's `alkalinity_as_caco3` while `source` alkalinity is the report's
-`total_alkalinity_caco3`. `calcium_floor_ppm` is the editable
-`water.calcium_floor_ppm` root (seeded from the profile); `custom_pinned_ions`
+`total_alkalinity_caco3`. `calcium_floor_ppm` is a **minimum**
+(`final Ca ≥ floor`) applied by every dosing route, relaxed with one
+`GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE` warning when the pinned equalities cannot
+also meet it; `BASELINE` and `FLAVOR` do not apply it, so the audit does not
+grade them. It is the editable `water.calcium_floor_ppm` root (seeded from the
+profile); `custom_pinned_ions`
 is the checked subset in the `water.pinned_ions` collection — ignored by the
 named strategies, and the equality set for `CUSTOM`. A checked ion with no
 positive target is dropped by the request builder rather than sent as a zero

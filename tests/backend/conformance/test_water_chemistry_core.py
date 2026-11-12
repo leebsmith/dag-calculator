@@ -156,28 +156,31 @@ def test_tier2_calcium_floor_hits_target_ions():
     assert source["cl"] + added["cl"] == pytest.approx(60.0, abs=1e-4)
 
 
-def test_tier2_flavor_first_for_soft_source():
-    # Below the floor: flavor salts are used as-is (calcium may overshoot).
+def test_tier2_meets_the_calcium_minimum_for_a_soft_source():
+    # Below the floor: the dose must raise calcium to the minimum, and the
+    # pinned flavour equalities must still hold.
     source = _ions(ca=21.5, mg=5.0, na=10.0, so4=9.0, cl=3.0, alk=78.0)
     target = _ions(ca=50.0, mg=5.0, na=10.0, so4=100.0, cl=60.0)
     dose, _, _ = solve_salt_dose(
         "CALCIUM_FLOOR", source, target, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0
     )
-    assert dose.gypsum_g_per_l > 0
-    assert dose.cacl2_g_per_l > 0
-    assert dose.epsom_g_per_l == 0
-    assert dose.nacl_g_per_l == 0
+    added = ions_added_ppm(dose, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE")
+    assert source["ca"] + added["ca"] >= 50.0 - 1e-4
+    assert source["so4"] + added["so4"] == pytest.approx(100.0, abs=1e-4)
+    assert source["cl"] + added["cl"] == pytest.approx(60.0, abs=1e-4)
 
 
-def test_tier2_caps_added_calcium_for_hard_source():
-    # Above the floor: no calcium is added; sulfate/chloride go to Epsom/NaCl.
+def test_tier2_does_not_cap_added_calcium_when_the_source_meets_the_floor():
+    # At or above the floor: the minimum is already met, so the mass-minimal
+    # flavour dose may add calcium; the floor is not a ceiling.
     source = _ions(ca=120.0, mg=5.0, na=10.0, so4=9.0, cl=3.0, alk=78.0)
     target = _ions(ca=50.0, mg=5.0, na=10.0, so4=100.0, cl=60.0)
     dose, _, _ = solve_salt_dose(
         "CALCIUM_FLOOR", source, target, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE", 50.0
     )
     added = ions_added_ppm(dose, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE")
-    assert added["ca"] < 1e-6
+    assert added["ca"] > 0.0
+    assert source["ca"] + added["ca"] >= 50.0 - 1e-6
     assert source["so4"] + added["so4"] == pytest.approx(100.0, abs=1e-4)
 
 

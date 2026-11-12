@@ -406,6 +406,7 @@ def _emit_operational_findings(
     added: dict[str, float],
     post_dose: dict[str, float],
     events: list[TelemetryEvent],
+    strategy: str,
 ) -> float:
     """Phase 9: brewhouse diagnostics; returns the residual HLT liquor."""
     residual_hlt = max(0.0, inp.v_hlt_treat_l - inp.v_sparge_demand_l)
@@ -424,8 +425,17 @@ def _emit_operational_findings(
     if so4_total > HARD_SULFATE_MAX_PPM:
         events.append(sulfate_harshness_ceiling(so4_total))
 
-    # Calcium floor audit
-    if post_dose["ca"] < inp.calcium_floor_ppm - 1e-6:
+    # Calcium minimum audit: only when a dosing route applied it, and never as a
+    # second wording of a finding the solver already emitted.
+    floor_applied = strategy not in ("BASELINE", "FLAVOR")
+    already_reported = any(
+        event.code == "GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE" for event in events
+    )
+    if (
+        floor_applied
+        and not already_reported
+        and post_dose["ca"] < inp.calcium_floor_ppm - 1e-6
+    ):
         events.append(calcium_below_floor(post_dose["ca"], inp.calcium_floor_ppm))
 
     return residual_hlt
@@ -492,7 +502,7 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
         )
 
     # 9. Brewhouse diagnostics and guardrail checks
-    residual_hlt = _emit_operational_findings(inp, added, post_dose, events)
+    residual_hlt = _emit_operational_findings(inp, added, post_dose, events, resolved_strat)
 
     warnings, notes = derive_findings(events)
 
