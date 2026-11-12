@@ -11,7 +11,6 @@ import {
   WATER_NODES as N,
   constraintStatusFor,
   routeSummary,
-  strategyForHeld,
   targetWarningFor,
 } from "../../views/registry/water.js";
 import {
@@ -77,10 +76,9 @@ export function refreshWaterCard(app, ctx) {
     const checkedSet = new Set(checked);
     const valued = valuedPins(engine.get(N.pinnedIons));
     const valuedSet = new Set(valued);
-    const stored = engine.get(N.strategy) ?? "";
-    const effectiveMode = !stored || stored === "AUTO" ? strategyForHeld(valued) : stored;
+    const route = engine.get(N.route) ?? "";
     const resolvedMode =
-      resolveValue(engine, N.resolvedStrategy, ctx.observability.reportError) ?? effectiveMode;
+      resolveValue(engine, N.resolvedStrategy, ctx.observability.reportError) ?? route;
     const uncorrectedPh = read(N.uncorrectedPh);
     const correctedPh = read(N.predictedPh);
     const phCorrected =
@@ -111,7 +109,7 @@ export function refreshWaterCard(app, ctx) {
       const isValued = valuedSet.has(pin) && typeof targetVal === "number";
       const below = isValued && typeof sourceVal === "number" && targetVal < sourceVal;
       let status = "Auto";
-      if (isChecked) status = isValued ? constraintStatusFor(effectiveMode, pin) : "No value";
+      if (isChecked) status = isValued ? constraintStatusFor(route, pin) : "No value";
       return {
         ion,
         pin,
@@ -232,7 +230,7 @@ export function refreshWaterCard(app, ctx) {
     app.waterWarningCount = warningCount;
 
     app.waterSummary = {
-      mode: effectiveMode,
+      mode: route,
       resolvedMode,
       targetLine,
       targetWarning,

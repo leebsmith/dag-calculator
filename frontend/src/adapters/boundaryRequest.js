@@ -157,7 +157,7 @@ export const WATER_FIELDS = {
   v_sparge_demand_l: { path: "solver.batch.cascade.v_sparge" },
   mash_thickness_l_per_kg: { path: "solver.batch.mash_thickness_l_per_kg" },
   target_mash_ph: { path: "water.target_mash_ph" },
-  strategy: { path: "water.strategy" },
+  strategy: { path: "water.route" },
   salt_distribution: { path: "water.salt_distribution" },
   acid_medium: { path: "water.acid_medium" },
   gypsum_form: { path: "water.gypsum_form" },

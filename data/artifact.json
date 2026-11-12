@@ -1719,10 +1719,15 @@
       "default": "constants.default_target_mash_ph",
       "domain": "$value >= 4 && $value <= 7"
     },
-    "water.strategy": {
-      "kind": "choice",
-      "taxonomy": "strategy",
-      "default": "((water.target_profile_id != \"\") ? water.target_profile.mode : \"AUTO\")"
+    "water.route": {
+      "kind": "derived",
+      "inputs": {
+        "pins": "water.pinned_ions"
+      },
+      "expr": "((pins | sum_expr(\"1\", null, $context)) == 0 ? \"BASELINE\" : ((pins | sum_expr(\"1\", null, $context)) == 6 ? \"OPTIMIZE\" : (((pins | sum_expr(\"((row.ion == \\\"so4\\\") ? 1 : 0) + ((row.ion == \\\"cl\\\") ? 2 : 0)\", null, $context)) == 3 && (pins | sum_expr(\"1\", null, $context)) == 2) ? \"CALCIUM_FLOOR\" : ((pins | sum_expr(\"((row.ion == \\\"so4\\\") ? 1 : 0) + ((row.ion == \\\"cl\\\") ? 2 : 0) + ((row.ion == \\\"alk\\\") ? 4 : 0)\", null, $context)) == 7 && (pins | sum_expr(\"1\", null, $context)) == 3) ? \"HYBRID\" : \"CUSTOM\")))",
+      "output": {
+        "taxonomy": "strategy"
+      }
     },
     "water.salt_distribution": {
       "kind": "choice",
@@ -2312,7 +2317,7 @@
         "v_sparge_demand_l": "solver.batch.cascade.v_sparge",
         "mash_thickness_l_per_kg": "solver.batch.mash_thickness_l_per_kg",
         "target_mash_ph": "water.target_mash_ph",
-        "strategy": "water.strategy",
+        "strategy": "water.route",
         "salt_distribution": "water.salt_distribution",
         "acid_medium": "water.acid_medium",
         "gypsum_form": "water.gypsum_form",

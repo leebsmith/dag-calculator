@@ -44,36 +44,36 @@ user-facing text names a solver mode.
 
 ### P0 — Decision record
 
-- [ ] `plans/2026-11-12-water-treatment-model.md` records decisions and the gap
+- [x] `plans/2026-11-12-water-treatment-model.md` records decisions and the gap
       register (this file), with the claims header above.
-- [ ] Add the two out-of-scope items to `TODO.md`.
+- [x] Add the two out-of-scope items to `TODO.md`.
 
 ### P1 — Corrected vectors and honest disclosure
 
-- [ ] Core: HLT vector gets flavour salts only (grist-only agent excluded).
-- [ ] Core: sparge acid returns `(ml, alk_correction_ppm)`.
-- [ ] Core: compute and return `post_dose_hlt_ions`; return `post_salt_hlt_ions`.
-- [ ] Service: delete `_post_hlt_ions`; map both HLT vectors.
-- [ ] Schema: `WaterSolverResponse.post_dose_hlt_ions`.
-- [ ] Artifact: declare six `post_dose_hlt_ions` outputs; repoint the six kettle
+- [x] Core: HLT vector gets flavour salts only (grist-only agent excluded).
+- [x] Core: sparge acid returns `(ml, alk_correction_ppm)`.
+- [x] Core: compute and return `post_dose_hlt_ions`; return `post_salt_hlt_ions`.
+- [x] Service: delete `_post_hlt_ions`; map both HLT vectors.
+- [x] Schema: `WaterSolverResponse.post_dose_hlt_ions`.
+- [x] Artifact: declare six `post_dose_hlt_ions` outputs; repoint the six kettle
       inputs to the post-dose vectors.
-- [ ] Doubles (`tests/fixtures/boundaryDouble.js`, `tests/frontend/helpers.js`):
+- [x] Doubles (`tests/fixtures/boundaryDouble.js`, `tests/frontend/helpers.js`):
       add the new outputs; make stage-2 alkalinity differ from stage 1.
-- [ ] Tests: HLT rules (proportional/mash-only/zero-alk/agent), matrix
+- [x] Tests: HLT rules (proportional/mash-only/zero-alk/agent), matrix
       invariants, kettle regression.
-- [ ] Guards: ALLOW both stage-1 outputs; delete `postMashIons` and
+- [x] Guards: ALLOW both stage-1 outputs; delete `postMashIons` and
       `postHltIons` registry constants.
-- [ ] Docs: domain equations §3.2 and the dosing-practice §5 + sparge-acid
+- [x] Docs: domain equations §3.2 and the dosing-practice §5 + sparge-acid
       assumption.
-- [ ] `make generate` (bundle fixture, inventory, glossary).
-- [ ] Core/service/schema/artifact/doubles: `prescription.uncorrected_mash_ph`
+- [x] `make generate` (bundle fixture, inventory, glossary).
+- [x] Core/service/schema/artifact/doubles: `prescription.uncorrected_mash_ph`
       output, with tests.
-- [ ] Card: `waterVerdict.phLine` (before → after + both doses).
-- [ ] Labels: pH-objective hint (always corrected; objectives optional).
-- [ ] Card: floated-ion driver hint for alkalinity, keyed to the pH pair.
-- [ ] Card: remove the target-grid lock; derive the selection from the objective
+- [x] Card: `waterVerdict.phLine` (before → after + both doses).
+- [x] Labels: pH-objective hint (always corrected; objectives optional).
+- [x] Card: floated-ion driver hint for alkalinity, keyed to the pH pair.
+- [x] Card: remove the target-grid lock; derive the selection from the objective
       set.
-- [ ] Docs: ui.md pH line, grid notes, target-selector table.
+- [x] Docs: ui.md pH line, grid notes, target-selector table.
 
 ### P2 — Route derived in the artifact
 

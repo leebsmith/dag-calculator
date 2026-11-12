@@ -145,8 +145,8 @@ blocking `fermenter_not_overfilled` relation keep it at or below capacity.
   is selected; `mode` is retained as authored metadata. A profile declares **only the ions its
   `mode` targets** — flavour profiles carry SO₄/Cl, buffer profiles add
   alkalinity, and only the all-six clone profile carries every ion. `mode` is
-  authored metadata: applying a profile writes `water.strategy = AUTO` and the
-  router must derive the same mode from the declared ions. The
+  authored metadata: the route is derived from the declared ions as `water.route`,
+  and it must reproduce the profile's `mode`. The
   `sulfate_chloride_ratio` field is removed — the ion vector is the only
   authority; the picker may display the implied ratio. RO is a *source report*,
   not a target profile.

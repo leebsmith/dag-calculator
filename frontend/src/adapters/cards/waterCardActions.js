@@ -6,7 +6,6 @@ import {
   WATER_ION_BY_PIN,
   WATER_IONS,
   WATER_NODES as N,
-  strategyForHeld,
 } from "../../views/registry/water.js";
 import { ignoreError } from "../../observability.js";
 import {
@@ -16,7 +15,6 @@ import {
   positivePins,
   presetPins,
   seedTargetValue,
-  valuedPins,
 } from "../../views/waterLogic.js";
 
 // These read helpers keep a silent default for direct unit tests; the water
@@ -152,7 +150,6 @@ function targetActions({ cache, engine, getView }) {
       view.setRoot(N.targetProfileId, preset ? value : "");
       engine.setCollection(N.pinnedIons, pinnedRows(held));
       view.pickSelection(N.targetProfileId, preset ? value : "");
-      if (!preset) view.setRoot(N.strategy, strategyForHeld(valuedPins(engine.get(N.pinnedIons))));
       view.scheduleSolve();
       view.notify();
     },
@@ -175,7 +172,6 @@ function targetActions({ cache, engine, getView }) {
         view.setRoot(nodeId, seedTargetValue(engine.identity?.[N.sourceReport], pin));
         view.clearWaterPreset();
       }
-      view.setRoot(N.strategy, strategyForHeld(checkedPins(engine.get(N.pinnedIons))));
       view.scheduleSolve();
       view.notify();
     },
@@ -220,7 +216,6 @@ function inputActions({ engine, getView }) {
       const parsed = Number(raw);
       if (!Number.isFinite(parsed) || parsed < 0) return;
       view.writeWaterState({ [`${N.target}.${WATER_ION_BY_PIN[pin]}`]: parsed });
-      view.setRoot(N.strategy, strategyForHeld(checkedPins(engine.get(N.pinnedIons))));
       view.scheduleSolve();
       view.notify();
     },
@@ -229,9 +224,9 @@ function inputActions({ engine, getView }) {
 
 function syncActions({ engine, getView, observability }) {
   return {
-    // Load-time normalisation: legacy drafts carry values but no checked set,
-    // and possibly a stale AUTO strategy. Seed the set from positive targets
-    // and write the derived strategy. Returns true when anything changed.
+    // Load-time normalisation: legacy drafts carry values but no checked set.
+    // Seed the set from positive targets; the route is derived from it.
+    // Returns true when anything changed.
     syncWaterTargets() {
       let changed = false;
       let pins = checkedPins(engine.get(N.pinnedIons));
@@ -245,11 +240,6 @@ function syncActions({ engine, getView, observability }) {
           changed = true;
         }
       }
-      const strategy = strategyForHeld(valuedPins(engine.get(N.pinnedIons)));
-      if (engine.get(N.strategy) !== strategy) {
-        engine.setRoot(N.strategy, strategy);
-        changed = true;
-      }
       return changed;
     },
 
@@ -259,7 +249,6 @@ function syncActions({ engine, getView, observability }) {
       const view = getView();
       for (const { ion } of WATER_IONS) view.unsetRoot(`${N.target}.${ion}`);
       view.unsetRoot(N.calciumFloor);
-      view.unsetRoot(N.strategy);
     },
 
     // Convert inherited targets into explicit overrides, so clearing the profile

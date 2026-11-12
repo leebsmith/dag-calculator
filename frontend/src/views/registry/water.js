@@ -29,17 +29,6 @@ export function heldFromProfile(profile) {
   return WATER_IONS.filter(({ ion }) => typeof profile?.[ion] === "number").map((row) => row.pin);
 }
 
-// The router's canonical strategy for a checked-with-value set. Every other
-// subset is the sparse linear engine with these ions as pins.
-export function strategyForHeld(held) {
-  const set = new Set(held);
-  if (set.size === 0) return "BASELINE";
-  if (set.size === 6) return "OPTIMIZE";
-  if (set.size === 2 && set.has("so4") && set.has("cl")) return "CALCIUM_FLOOR";
-  if (set.size === 3 && set.has("so4") && set.has("cl") && set.has("alk")) return "HYBRID";
-  return "CUSTOM";
-}
-
 const ION_SHORT = { ca: "Ca", mg: "Mg", na: "Na", so4: "SO₄", cl: "Cl", alk: "Alk" };
 
 export function constraintLabel(held) {
@@ -93,7 +82,7 @@ export const WATER_NODES = {
   targetRatio: "water.target.sulfate_chloride_ratio",
   postDoseIons: "solver.water.post_dose_mash_ions",
   resolvedStrategy: "solver.water.strategy",
-  strategy: "water.strategy",
+  route: "water.route",
   target: "water.target",
   targetProfileId: "water.target_profile_id",
   targetMashPh: "water.target_mash_ph",

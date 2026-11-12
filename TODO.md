@@ -89,6 +89,14 @@ tracks only what is outstanding.
   registry, pinned to the Python router by a fixture. Moving it into `data/artifact.json`
   would remove the duplication outright, but `constants` is scalar-only today, so it
   needs a non-scalar value kind (grammar + `schema_version` + inventory + docs).
+* **Water treatment model** — `plans/2026-11-12-water-treatment-model.md`: objectives /
+  guardrails / corrections vocabulary, corrected-vector kettle, pH disclosure,
+  artifact-derived routing, stage-1 vector removal.
+* **HLT volume readouts** — `solver.water.prescription.residual_hlt_water_l` (treated
+  minus sparge demand) and `batch.surplus_sparge_capacity` (deliverable minus demand)
+  are both "left in the HLT" with different bases; name one, or both explicitly.
+* **Water field provenance** — a `seed`/`↺` affordance for the calcium minimum and the
+  mash-pH objective, so a default value and an authored one are visibly different.
 * **Recipe critiquers** — two prose-only LLM assistants (mash/yeast/style and
   boil/whirlpool) that critique a completed recipe against the background
   documents in `docs/mashing/reference/` and `docs/hops/reference/`; on demand,

@@ -286,8 +286,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water.mash_adjustment.sulfate_so4` | derived |
 | `water.pinned_ions` | collection |
 | `water.preferred_alkaline_agent` | choice |
+| `water.route` | derived |
 | `water.salt_distribution` | choice |
-| `water.strategy` | choice |
 | `water.target.alkalinity_as_caco3` | root |
 | `water.target.calcium_ca` | root |
 | `water.target.chloride_cl` | root |

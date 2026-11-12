@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 import { sharedTestApp } from "../frontend/appHelpers.js";
-import { WATER_IONS, strategyForHeld } from "../../frontend/src/views/registry/water.js";
+import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 
 const fixture = JSON.parse(
   readFileSync(new URL("./fixtures/ion-constraints.json", import.meta.url), "utf8")
@@ -84,7 +84,6 @@ test("CUSTOM constrains exactly the checked ions", async () => {
 });
 
 test("FLAVOR is not reachable: the checked set cannot express a floor-less pair", () => {
-  assert.equal(strategyForHeld(["so4", "cl"]), "CALCIUM_FLOOR");
   assert.ok(fixture.modes.FLAVOR.length > 0, "fixture still documents the legacy alias");
 });
 

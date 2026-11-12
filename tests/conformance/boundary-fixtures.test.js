@@ -104,7 +104,7 @@ const WATER_VALUES = {
   "solver.batch.cascade.v_sparge": 14.0,
   "solver.batch.mash_thickness_l_per_kg": 3.0,
   "water.target_mash_ph": 5.4,
-  "water.strategy": "CALCIUM_FLOOR",
+  "water.route": "CALCIUM_FLOOR",
   "water.salt_distribution": "PROPORTIONAL",
   "water.acid_medium": "LACTIC_88",
   "water.gypsum_form": "GYPSUM_DIHYDRATE",

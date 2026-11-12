@@ -6,7 +6,8 @@ differ; decisions are recorded in `plans/adsco-contract.md` (§ Locked decisions
 
 ## State model — one source of truth
 
-- **Mode**: `water.strategy` (radio), the only persisted mode selector.
+- **Route**: `water.route`, derived from `water.pinned_ions`; never persisted.
+  The persisted state is the objective set and its values.
 - **Target values**: six editable roots `water.target.<ion>`.
 - **Calcium floor**: `water.target_profile.calcium_floor_ppm` (or its root), editable.
 - **Mode-5 pins**: `water.pinned_ions` collection.
@@ -91,8 +92,8 @@ the checked set; there is no separate mode control and the UI never writes
 - The empty set is one state with one name: the grid stays interactive, and
   ticking any ion composes a set from it. Unticking the last objective returns to
   it, so a user can cycle through presets without a reset control.
-- The checked set is stored in `water.pinned_ions`; `water.strategy` is derived
-  from `checked ∩ has-value`: {} → BASELINE, {SO₄,Cl} → CALCIUM_FLOOR,
+- The checked set is stored in `water.pinned_ions`; `water.route` is derived
+  from it: {} → BASELINE, {SO₄,Cl} → CALCIUM_FLOOR,
   {SO₄,Cl,alk} → HYBRID, all six → OPTIMIZE, anything else → CUSTOM with those
   ions as pins.
 - A checked ion with no value is excluded and hinted (`no target entered`); it is

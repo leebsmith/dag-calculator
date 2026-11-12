@@ -259,6 +259,7 @@ _67 paths_
 | `water.pinned_ions` | Pinned Ions | collection | — | — | — | — |
 | `water.pinned_ions.ion` | Ion | field | — | — | — | ca, mg, na, so4, cl, alk |
 | `water.preferred_alkaline_agent` | Alkaline agent | choice | — | — | — | BAKING_SODA, CHALK, PICKLING_LIME |
+| `water.route` | Route | derived | — | — | — | — |
 | `water.salt_distribution` | Salt distribution | choice | — | — | — | MASH_ONLY, PROPORTIONAL |
 | `water.source.bicarbonate_hco3` | Bicarbonate Hco3 | identity | concentration | ppm | 1 | — |
 | `water.source.calcium_ca` | Calcium | identity | concentration | ppm | 1 | — |
@@ -283,7 +284,6 @@ _67 paths_
 | `water.source.total_hardness_caco3` | Total Hardness Caco3 | identity | concentration | ppm | 1 | — |
 | `water.source.total_iron_fe` | Total Iron Fe | identity | concentration | ppm | 1 | — |
 | `water.source.total_phosphorus_p` | Total Phosphorus P | identity | concentration | ppm | 1 | — |
-| `water.strategy` | Strategy | choice | — | — | — | FLAVOR, CALCIUM_FLOOR, OPTIMIZE, AUTO, HYBRID, BASELINE, CUSTOM |
 | `water.target.alkalinity_as_caco3` | Alkalinity | root | concentration | ppm | 1 | — |
 | `water.target.calcium_ca` | Calcium | root | concentration | ppm | 1 | — |
 | `water.target.chloride_cl` | Chloride | root | concentration | ppm | 1 | — |
