@@ -120,8 +120,6 @@ def _to_response(result, req: WaterSolverRequest) -> WaterSolverResponse:
             req.preferred_alkaline_agent.value,
             0.0,
         ),
-        post_salt_mash_ions=_to_long_ions(result.post_salt_mash_ions),
-        post_salt_hlt_ions=_to_long_ions(result.post_salt_hlt_ions),
         post_dose_mash_ions=_to_long_ions(result.post_dose_mash_ions),
         post_dose_hlt_ions=_to_long_ions(result.post_dose_hlt_ions),
         total_added_salt_mass_g=result.total_added_salt_mass_g,

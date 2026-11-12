@@ -58,8 +58,6 @@ const ALIASES = {
   mash_additions: "solver.water",
   sparge_additions: "solver.water",
   post_dose_mash_ions: "solver.water",
-  post_salt_mash_ions: "solver.water",
-  post_salt_hlt_ions: "solver.water",
 };
 
 // Heads that are deliberately not artifact or bundle paths.

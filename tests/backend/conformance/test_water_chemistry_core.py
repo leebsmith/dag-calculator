@@ -233,6 +233,54 @@ def test_orchestration_sparge_acid_prescribed_on_alkaline_source():
     assert out.sparge_acid_ml > 0
 
 
+# --- Treated vectors --------------------------------------------------------
+
+
+def test_hlt_vector_matches_the_mash_without_an_agent():
+    out = solve_water_chemistry(_request(salt_distribution="PROPORTIONAL"))
+    assert out.post_salt_hlt_ions == out.post_salt_mash_ions
+
+
+def test_hlt_vector_excludes_the_grist_only_agent():
+    # The agent is applied to the grist only, so the sparge liquor must not
+    # carry its ions even under a split distribution.
+    source = _ions(ca=10.0, mg=2.0, na=8.0, so4=5.0, cl=7.0, alk=10.0)
+    out = solve_water_chemistry(
+        _request(
+            strategy="HYBRID",
+            salt_distribution="PROPORTIONAL",
+            source=source,
+            target=_ions(ca=0.0, mg=0.0, na=0.0, so4=50.0, cl=30.0, alk=40.0),
+            preferred_alkaline_agent="BAKING_SODA",
+        )
+    )
+    assert out.post_salt_mash_ions["na"] > source["na"]
+    assert out.post_salt_hlt_ions["na"] == source["na"]
+
+
+def test_mash_only_hlt_vector_is_the_source():
+    inp = _request(salt_distribution="MASH_ONLY")
+    out = solve_water_chemistry(inp)
+    assert out.post_salt_hlt_ions == inp.source
+
+
+def test_post_dose_hlt_applies_the_sparge_acid():
+    inp = _request(salt_distribution="MASH_ONLY")
+    out = solve_water_chemistry(inp)
+    assert out.sparge_acid_ml > 0.0
+    assert out.post_dose_hlt_ions["alk"] < out.post_salt_hlt_ions["alk"]
+    # The acid anion is not tracked: every other ion is unchanged.
+    for ion in ("ca", "mg", "na", "so4", "cl"):
+        assert out.post_dose_hlt_ions[ion] == out.post_salt_hlt_ions[ion]
+
+
+def test_post_dose_hlt_without_source_alkalinity_is_unchanged():
+    inp = _request(source=_ions(ca=10.0, mg=2.0, na=8.0, so4=5.0, cl=7.0, alk=0.0))
+    out = solve_water_chemistry(inp)
+    assert out.sparge_acid_ml == 0.0
+    assert out.post_dose_hlt_ions == out.post_salt_hlt_ions
+
+
 def test_orchestration_ro_bypasses_sparge_acid():
     out = solve_water_chemistry(_request(source=_ions()))
     assert out.sparge_acid_ml == 0.0

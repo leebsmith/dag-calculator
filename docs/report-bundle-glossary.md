@@ -352,7 +352,7 @@ _36 paths_
 
 ## Solver — water chemistry
 
-_52 paths_
+_40 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -382,18 +382,6 @@ _52 paths_
 | `solver.water.post_dose_mash_ions.magnesium_mg` | Magnesium | output | concentration | ppm | 1 | — |
 | `solver.water.post_dose_mash_ions.sodium_na` | Sodium | output | concentration | ppm | 1 | — |
 | `solver.water.post_dose_mash_ions.sulfate_so4` | Sulfate | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_hlt_ions.alkalinity_as_caco3` | Alkalinity | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_hlt_ions.calcium_ca` | Calcium | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_hlt_ions.chloride_cl` | Chloride | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_hlt_ions.magnesium_mg` | Magnesium | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_hlt_ions.sodium_na` | Sodium | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_hlt_ions.sulfate_so4` | Sulfate | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_mash_ions.alkalinity_as_caco3` | Alkalinity | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_mash_ions.calcium_ca` | Calcium | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_mash_ions.chloride_cl` | Chloride | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_mash_ions.magnesium_mg` | Magnesium | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_mash_ions.sodium_na` | Sodium | output | concentration | ppm | 1 | — |
-| `solver.water.post_salt_mash_ions.sulfate_so4` | Sulfate | output | concentration | ppm | 1 | — |
 | `solver.water.prescription.mash_ph_status` | Mash pH status | output | — | — | — | OPTIMAL, LOW, HIGH |
 | `solver.water.prescription.predicted_mash_ph` | Predicted mash pH | output | ph | pH | 2 | — |
 | `solver.water.prescription.residual_hlt_water_l` | Residual HLT water | output | volume | L | 1 | — |

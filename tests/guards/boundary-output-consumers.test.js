@@ -15,14 +15,6 @@ const ALLOW = new Map([
   ["solver.water.grist_buckets_kg.", "grist-bucket diagnostic for future reporting"],
   ["solver.water.total_added_salt_mass_g", "mineral-mass diagnostic for future reporting"],
   ["solver.water.added_mineral_tds_ppm", "TDS diagnostic for future reporting"],
-  [
-    "solver.water.post_salt_mash_ions.",
-    "stage-1 mash vector (salts only); the grid and the kettle read the post-dose vector",
-  ],
-  [
-    "solver.water.post_salt_hlt_ions.",
-    "stage-1 HLT vector (salts only); the kettle reads the post-dose vector",
-  ],
   ["solver.batch.hlt.v_hlt_required", "names the sparge demand behind the top-up target; equal to it unless the coil floor binds"],
 ]);
 

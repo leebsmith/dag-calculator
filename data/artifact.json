@@ -2390,42 +2390,6 @@
         "sparge_additions.pickling_lime_kg": {
           "dimension": "mass"
         },
-        "post_salt_mash_ions.calcium_ca": {
-          "dimension": "concentration"
-        },
-        "post_salt_mash_ions.magnesium_mg": {
-          "dimension": "concentration"
-        },
-        "post_salt_mash_ions.sodium_na": {
-          "dimension": "concentration"
-        },
-        "post_salt_mash_ions.sulfate_so4": {
-          "dimension": "concentration"
-        },
-        "post_salt_mash_ions.chloride_cl": {
-          "dimension": "concentration"
-        },
-        "post_salt_mash_ions.alkalinity_as_caco3": {
-          "dimension": "concentration"
-        },
-        "post_salt_hlt_ions.calcium_ca": {
-          "dimension": "concentration"
-        },
-        "post_salt_hlt_ions.magnesium_mg": {
-          "dimension": "concentration"
-        },
-        "post_salt_hlt_ions.sodium_na": {
-          "dimension": "concentration"
-        },
-        "post_salt_hlt_ions.sulfate_so4": {
-          "dimension": "concentration"
-        },
-        "post_salt_hlt_ions.chloride_cl": {
-          "dimension": "concentration"
-        },
-        "post_salt_hlt_ions.alkalinity_as_caco3": {
-          "dimension": "concentration"
-        },
         "grist_buckets_kg.BASE": {
           "dimension": "mass"
         },

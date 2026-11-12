@@ -499,10 +499,8 @@ unmodelled grist/SMB contributions — lives in
 | `prescription` `{ predicted_mash_ph, uncorrected_mash_ph, mash_ph_status, residual_hlt_water_l }` | ph / ph / taxonomy / volume |
 | `mash_additions` `{ gypsum_kg, cacl2_kg, epsom_kg, nacl_kg, acid_l, (baking_soda_kg \| chalk_kg \| pickling_lime_kg) }` | mass / volume |
 | `sparge_additions` `{ … }` | mass / volume |
-| `post_salt_mash_ions` | ions — stage 1: source + flavour salts + the grist-only alkaline agent |
-| `post_salt_hlt_ions` | ions — stage 1 HLT vector: source + flavour salts under `PROPORTIONAL` (the grist-only agent is excluded), the source ions under `MASH_ONLY` |
 | `post_dose_mash_ions` | ions — the full post-addition mash vector (flavour salts + alkaline agent + acid-neutralized alkalinity) |
-| `post_dose_hlt_ions` | ions — the sparge liquor after its acid correction: `post_salt_hlt_ions` with the prescribed acid's residual-alkalinity reduction applied; other ions unchanged |
+| `post_dose_hlt_ions` | ions — the sparge liquor after its acid correction: the stage-1 HLT vector with the prescribed acid's residual-alkalinity reduction applied; other ions unchanged |
 | `total_added_salt_mass_g` | mass — total dosed salt mass (flavor salts + agent) |
 | `added_mineral_tds_ppm` | concentration — added mineral mass normalized to the mash volume |
 | `grist_buckets_kg` | mass (per grain type) |
@@ -511,8 +509,8 @@ unmodelled grist/SMB contributions — lives in
 
 Derived water readouts: `water.kettle_blend.<ion>` volume-weights the two
 **post-correction** vectors — `post_dose_mash_ions` and `post_dose_hlt_ions` — by
-`v_run1 + v_run2` and `v_sparge`; the stage-1 `post_salt_*` vectors are
-diagnostics and never feed a readout.
+`v_run1 + v_run2` and `v_sparge`. The stage-1 vectors stay internal to the
+boundary: the wire carries only the post-dose vectors.
 `water.kettle_blend.sulfate_chloride_ratio` and
 `water.target.sulfate_chloride_ratio` guard `chloride > 0`. The grid shows
 post-addition, kettle, and Δ columns; Δ formatting remains host-side.

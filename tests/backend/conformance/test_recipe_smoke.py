@@ -113,7 +113,7 @@ def test_default_recipe_generates_end_to_end():
     for dose in additions:
         assert all(value >= 0.0 for value in dose.model_dump().values())
 
-    ions = water.post_salt_mash_ions.model_dump()
+    ions = water.post_dose_mash_ions.model_dump()
     assert all(math.isfinite(v) and v >= 0.0 for v in ions.values())
     assert set(water.grist_buckets_kg) == set(GRAIN_ACIDITY)
     assert sum(water.grist_buckets_kg.values()) > 0.0

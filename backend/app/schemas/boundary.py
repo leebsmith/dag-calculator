@@ -469,8 +469,6 @@ class WaterSolverResponse(BoundaryModel):
     prescription: WaterPrescription
     mash_additions: SaltAdditions
     sparge_additions: SaltAdditions
-    post_salt_mash_ions: IonProfile
-    post_salt_hlt_ions: IonProfile
     post_dose_mash_ions: IonProfile
     post_dose_hlt_ions: IonProfile
     total_added_salt_mass_g: float
