@@ -3,10 +3,9 @@
 // and sodium; a held objective it moved is held before the correction, not in
 // the finished water.
 
-import { constraintStatusFor } from "./registry/water.js";
 import { fmtDelta, fmtPpm, ionDelta } from "./waterLogic.js";
+import { NO_OBJECTIVE, rowState } from "./waterMessages.js";
 
-const NO_TARGET = "(none)";
 const CORRECTION_IONS = new Set(["ca", "na", "alk"]);
 const DRIFT_TOLERANCE = 0.05;
 
@@ -18,19 +17,6 @@ function hasDrifted(pin, isChecked, isValued, postDoseVal, targetVal) {
     typeof postDoseVal === "number" &&
     Math.abs(postDoseVal - targetVal) > DRIFT_TOLERANCE
   );
-}
-
-function rowState({ isChecked, isValued, below, drifted, phCorrected, pin, route }) {
-  if (!isChecked) {
-    const hint = pin === "alk" && phCorrected ? "moved by the mash-pH correction" : "";
-    return { status: "Floated", hint };
-  }
-  if (!isValued) return { status: "Unset", hint: "no target entered" };
-  const base = constraintStatusFor(route, pin);
-  if (drifted && base === "Held") {
-    return { status: "Held (pre-correction)", hint: "moved by the mash-pH correction" };
-  }
-  return { status: base, hint: below ? "below source" : "" };
 }
 
 /**
@@ -80,7 +66,7 @@ export function ionRows({
       targetValue: typeof targetVal === "number" ? targetVal : 0,
       sourceValue: typeof sourceVal === "number" ? sourceVal : 0,
       belowSource: isValued && below,
-      valueText: isValued ? fmtPpm(targetVal) : NO_TARGET,
+      valueText: isValued ? fmtPpm(targetVal) : NO_OBJECTIVE,
       sourceText: fmtPpm(sourceVal),
       postDoseText: fmtPpm(postDoseVal),
       kettleText: fmtPpm(kettleVal),

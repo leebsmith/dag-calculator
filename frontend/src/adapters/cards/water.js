@@ -9,12 +9,9 @@ import { fieldOr, formatQuantity } from "../../utils.js";
 import {
   WATER_IONS,
   WATER_NODES as N,
-  routeSummary,
-  targetWarningFor,
 } from "../../views/registry/water.js";
 import {
   doseRows,
-  calciumFloorNotice,
   checkedPins,
   fmtL,
   optionLabelFor,
@@ -25,6 +22,7 @@ import {
   waterTargetOptionsOf,
   waterVerdictView,
 } from "../../views/waterLogic.js";
+import { floorNotice, routeLine, targetWarning } from "../../views/waterMessages.js";
 import { ionRows } from "../../views/waterRows.js";
 import { ratioReadout } from "../../views/waterRatio.js";
 import {
@@ -124,8 +122,8 @@ export function refreshWaterCard(app, ctx) {
     const basis = `Masses assume ${gypsum} · ${cacl2} · ${acid}`;
     const notModelled =
       "Not modelled: grist ions and metabisulfite (≤ ~8 mg/L SO₄ per tablet/15 US gal; ~15 mg/L in a 30 L HLT).";
-    const targetLine = routeSummary(valued);
-    const targetWarning = targetWarningFor(valued);
+    const targetLine = routeLine(valued);
+    const targetWarningText = targetWarning(valued);
 
     const instructionSetup =
       `Fill the HLT to ${fmtL(hltStart)}. Add 1 crushed metabisulfite tablet per 15 US gal. ` +
@@ -157,7 +155,7 @@ export function refreshWaterCard(app, ctx) {
       sourceDetail: sourceDetailText(sourceComponent),
       target: fieldOr(ctx.fieldsById, N.targetProfileId),
       floor: fieldOr(ctx.fieldsById, N.calciumFloor),
-      floorNotice: calciumFloorNotice(
+      floorNotice: floorNotice(
         checkedSet.size,
         checkedSet.has("ca"),
         read(N.calciumFloor),
@@ -216,7 +214,7 @@ export function refreshWaterCard(app, ctx) {
       mode: route,
       resolvedMode,
       targetLine,
-      targetWarning,
+      targetWarning: targetWarningText,
       proportional,
       basis,
       mashDose: mashDoses.rows,

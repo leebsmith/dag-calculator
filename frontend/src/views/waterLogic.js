@@ -3,11 +3,8 @@
 // handlers and the engine reads stay in adapters/cards/water.js.
 
 import { fieldOr, formatQuantity, formatValue, formatWithDecimals, joinNonEmpty } from "../utils.js";
-import {
-  WATER_ION_BY_PIN,
-  constraintLabel,
-  heldFromProfile,
-} from "./registry/water.js";
+import { WATER_ION_BY_PIN, heldFromProfile } from "./registry/water.js";
+import { constraintLabel, phLine } from "./waterMessages.js";
 import { registry } from "./registry/index.js";
 
 const ADDITIONS = [
@@ -187,41 +184,6 @@ export function valuedPins(rows) {
 }
 
 /**
- * Compose the mash-pH disclosure line: the uncorrected pH, the corrected pH,
- * and the resolved correction at each destination.
- *
- * @pure
- * @param {number|null} uncorrectedPh
- * @param {number|null} correctedPh
- * @param {ReadonlyArray<{ readonly key: string, readonly label: string, readonly text: string }>} mashRows
- * @param {ReadonlyArray<{ readonly key: string, readonly label: string, readonly text: string }>} spargeRows
- * @returns {string}
- */
-export function phLine(uncorrectedPh, correctedPh, mashRows, spargeRows) {
-  const fmt = (value) =>
-    typeof value === "number" && Number.isFinite(value)
-      ? formatWithDecimals(value, 2)
-      : null;
-  const before = fmt(uncorrectedPh);
-  const after = fmt(correctedPh);
-  if (before == null || after == null) return "—";
-  const corrections = [
-    ...correctionRows(mashRows, "grist"),
-    ...correctionRows(spargeRows, "HLT"),
-  ];
-  const suffix = corrections.length > 0 ? ` · ${corrections.join(" · ")}` : " · no correction";
-  return `${before} → ${after}${suffix}`;
-}
-
-const CORRECTION_KEYS = new Set(["acid_l", "baking_soda_kg", "chalk_kg", "pickling_lime_kg"]);
-
-function correctionRows(rows, destination) {
-  return rows
-    .filter((row) => CORRECTION_KEYS.has(row.key))
-    .map((row) => `${destination} ${row.label} ${row.text}`);
-}
-
-/**
  * One line for the source report's identity detail.
  *
  * @pure
@@ -287,25 +249,6 @@ export function waterVerdictView({
     predictedPh: predictedDisplay || "—",
     status: statusDisplay || "",
   };
-}
-
-/**
- * The contradiction notice for the calcium minimum: a pinned calcium objective is
- * the stronger declaration, so a minimum above it is not applied.
- *
- * @pure
- * @param {boolean} caPinned
- * @param {number|null} floor
- * @param {number|null} caTarget
- * @returns {string}
- */
-export function calciumFloorNotice(pinnedCount, caPinned, floor, caTarget) {
-  if (pinnedCount === 0) return "Not used: no ion objectives are held.";
-  if (!caPinned || typeof floor !== "number" || typeof caTarget !== "number") return "";
-  if (floor > caTarget) {
-    return `Above the pinned calcium objective (${fmtPpm(caTarget)} ppm); the objective wins.`;
-  }
-  return `Not used while calcium is an objective (${fmtPpm(caTarget)} ppm).`;
 }
 
 /**
