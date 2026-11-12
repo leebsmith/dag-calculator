@@ -136,7 +136,7 @@ Options lead with the constraint set and name the style as an example:
 | preset `dark-stout` | `SO₄/Cl/Alk — Dark / Stout` |
 | preset `soft-pilsner` | `All six — Soft Pilsner` |
 | pseudo | `No objectives — no ion objectives` (first) |
-| pseudo | `Freeform entry — compose your own set` (last) |
+| pseudo | `Custom objectives — compose your own set` (last) |
 
 Presets are sorted by constraint-set size, then label. A profile record targets
 the ions it declares a number for (`null` floats).

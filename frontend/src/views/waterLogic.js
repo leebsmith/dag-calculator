@@ -152,9 +152,9 @@ export function waterTargetOptionsOf(cache) {
     .filter((option) => option.size > 0)
     .sort((a, b) => a.size - b.size || a.label.localeCompare(b.label));
   return [
-    { value: "none", label: "No targets — no ion targets" },
+    { value: "none", label: "No objectives — no ion objectives" },
     ...presets.map(({ value, label }) => ({ value, label })),
-    { value: "freeform", label: "Freeform entry — compose your own set" },
+    { value: "freeform", label: "Custom objectives — compose your own set" },
   ];
 }
 

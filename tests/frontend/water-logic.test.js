@@ -102,10 +102,10 @@ test("waterTargetOptionsOf builds sorted preset options without mutating the cac
   };
   const before = structuredClone(cache);
   assert.deepEqual(waterTargetOptionsOf(cache), [
-    { value: "none", label: "No targets — no ion targets" },
+    { value: "none", label: "No objectives — no ion objectives" },
     { value: "hoppy", label: "SO₄/Cl — Hoppy" },
     { value: "soft", label: "All six — Soft" },
-    { value: "freeform", label: "Freeform entry — compose your own set" },
+    { value: "freeform", label: "Custom objectives — compose your own set" },
   ]);
   assert.deepEqual(cache, before);
 });

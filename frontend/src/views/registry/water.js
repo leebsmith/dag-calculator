@@ -33,7 +33,7 @@ const ION_SHORT = { ca: "Ca", mg: "Mg", na: "Na", so4: "SO₄", cl: "Cl", alk: "
 
 export function constraintLabel(held) {
   const ordered = WATER_IONS.map((row) => row.pin).filter((pin) => held.includes(pin));
-  if (ordered.length === 0) return "No targets";
+  if (ordered.length === 0) return "No objectives";
   if (ordered.length === 6) return "All six";
   return ordered.map((pin) => ION_SHORT[pin]).join("/");
 }
