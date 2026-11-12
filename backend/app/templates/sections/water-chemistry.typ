@@ -105,14 +105,7 @@
 
 #let objective-line() = {
   let profile = first-text(("water.target_profile.name", "water.target_profile_id"))
-  let strategy = text-or("solver.water.strategy")
-  if profile != none {
-    if strategy != none { profile + " — " + strategy } else { profile }
-  } else if strategy != none {
-    strategy + " (no target profile)"
-  } else {
-    "No target profile"
-  }
+  if profile != none { profile } else { "Custom objectives" }
 }
 
 #let predicted-ph() = {

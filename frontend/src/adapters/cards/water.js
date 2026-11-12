@@ -36,7 +36,7 @@ import {
   waterDescriptors,
 } from "./waterCardActions.js";
 
-const AUTO_TARGET = "(Auto)";
+const NO_TARGET = "(none)";
 
 export function createWaterCard(ctx) {
   const actions = waterActions(ctx);
@@ -108,19 +108,19 @@ export function refreshWaterCard(app, ctx) {
       const isChecked = checkedSet.has(pin);
       const isValued = valuedSet.has(pin) && typeof targetVal === "number";
       const below = isValued && typeof sourceVal === "number" && targetVal < sourceVal;
-      let status = "Auto";
-      if (isChecked) status = isValued ? constraintStatusFor(route, pin) : "No value";
+      let status = "Floated";
+      if (isChecked) status = isValued ? constraintStatusFor(route, pin) : "Unset";
       return {
         ion,
         pin,
         label,
-        checkboxLabel: `Target ${label}`,
-        inputLabel: `${label} target (ppm)`,
+        checkboxLabel: `Objective ${label}`,
+        inputLabel: `${label} objective (ppm)`,
         checked: isChecked,
         targetValue: typeof targetVal === "number" ? targetVal : 0,
         sourceValue: typeof sourceVal === "number" ? sourceVal : 0,
         belowSource: isValued && below,
-        valueText: isValued ? fmtPpm(targetVal) : AUTO_TARGET,
+        valueText: isValued ? fmtPpm(targetVal) : NO_TARGET,
         sourceText: fmtPpm(sourceVal),
         postDoseText: fmtPpm(postDoseVal),
         kettleText: fmtPpm(kettleVal),

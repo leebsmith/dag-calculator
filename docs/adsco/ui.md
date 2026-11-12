@@ -38,11 +38,11 @@ behind `libraryRevision`.
 
 The water card is four labelled regions, in this order:
 
-1. **Water plan** — source report picker, target preset picker, calcium floor,
-   target mash pH, the target-vs-actual grid, route line, kettle ratio, the
+1. **Water plan** — source report picker, objective preset picker, calcium floor,
+   mash pH objective, the objective-vs-actual grid, route line, kettle ratio, the
    mash-pH line (before → after plus the resolved correction at each
    destination), and actionable warnings. This is the primary decision surface.
-2. **Treatment** — salt distribution, acid medium, gypsum and CaCl₂ forms, and
+2. **Practice** — salt distribution, acid medium, gypsum and CaCl₂ forms, and
    the alkaline agent.
 3. **Prescription** — dosing volume, residual HLT, nonzero mash/sparge additions,
    dosing-basis footnote, and destinations. A nonzero sparge acid dose carries the
@@ -72,7 +72,7 @@ Additions that format to `0.0` at the chosen precision are suppressed. A vessel
 with no additions reads `No mash additions` / `No sparge additions`; a vessel
 with a mix adds `Only nonzero additions shown.`
 
-## Target selector
+## Objective selector
 
 One select decides which ions the solver must satisfy. Routing is *derived* from
 the checked set; there is no separate mode control and the UI never writes
@@ -80,47 +80,50 @@ the checked set; there is no separate mode control and the UI never writes
 
 | Selection | Checked ions | Values | Route |
 | --- | --- | --- | --- |
-| No targets | none | cleared | BASELINE |
-| A preset | the preset's ions | the preset's values | derived from the set |
-| Freeform entry | none at first | cleared | derived as ions are checked |
+| No objectives | none | cleared | BASELINE |
+| A profile | the profile's ions | the profile's values | derived from the set |
+| Custom objectives | none at first | cleared | derived as ions are checked |
 
-- The checkbox means **target this ion**: checked ⇒ the solver holds or optimises
+- The checkbox means **hold this ion**: checked ⇒ the solver holds or optimises
   it. Unchecking clears that cell.
-- Presets are value bundles: selecting one clears every value, checks its ions
+- Profiles are value bundles: selecting one clears every value, checks its ions
   and fills them. Editing the checked set detaches the preset (the selector then
-  reads Freeform); editing a held value keeps it.
+  reads Custom objectives); editing a held value keeps it.
 - The empty set is one state with one name: the grid stays interactive, and
   ticking any ion composes a set from it. Unticking the last objective returns to
-  it, so a user can cycle through presets without a reset control.
+  it, so a user can cycle through profiles without a reset control.
 - The checked set is stored in `water.pinned_ions`; `water.route` is derived
   from it: {} → BASELINE, {SO₄,Cl} → CALCIUM_FLOOR,
   {SO₄,Cl,alk} → HYBRID, all six → OPTIMIZE, anything else → CUSTOM with those
   ions as pins.
-- A checked ion with no value is excluded and hinted (`no target entered`); it is
-  never sent as a zero target.
+- A checked ion with no value is excluded and hinted (`no objective entered`); it
+  is never sent as a zero objective.
 
-## Target vs actual grid (the hero)
+## Objective vs actual grid (the hero)
 
-One row per ion, with the Target checkbox and value in the same table:
+One row per ion, with the Objective checkbox and value in the same table:
 
 ```
-Target  Ion         Source  Target value  Post-addition  Δ      Status
-[x]     Calcium     12.0    60            72.4           +12.4  Target
-[ ]     Sulfate     15.0    (Auto)        250.0          —      Auto
-[ ]     Alkalinity  35.0    (Auto)        35.0           —      Auto
+Objective  Ion         Source  Objective value  Post-addition  Δ      Status
+[x]        Calcium     12.0    60               72.4           +12.4  Held
+[ ]        Sulfate     15.0    (none)           250.0          —      Floated
+[ ]        Alkalinity  35.0    (none)           35.0           —      Floated
 ```
 
-- Checked + value: the cell is an input; that ion is a constraint.
-- Unchecked: the cell reads `(Auto)`; the ion floats.
-- Checked + empty: `No value` status with a hint; excluded from the solve.
-- Status vocabulary: `Target` (hard equality), `Buffer` (alkalinity held via the
-  agent, so its Δ is expected to be non-zero), `Best fit` (all six — least
-  squares, nothing held exactly), `No value` (unfinished entry), `Auto` (floated).
-- `Δ = post − target` is only meaningful for held ions; floated rows render `—`.
-- The line under the grid names the route: `Targets: SO₄/Cl (2) — exact`,
-  `Targets: all six — best fit, nothing held exactly`, `No targets — baseline`.
+- Checked + value: the cell is an input; that ion is a held objective.
+- Unchecked: the cell reads `(none)`; the ion floats. When the pH correction
+  moved it, the row hints `moved by the mash-pH correction`.
+- Checked + empty: `Unset` status with a hint; excluded from the solve.
+- Status vocabulary: `Held` (hard equality), `Held (min)` (a minimum, e.g. the
+  buffered alkalinity, so its Δ is expected to be non-zero), `Best fit` (all six
+  — least squares, nothing held exactly), `Unset` (unfinished entry), `Floated`
+  (no objective).
+- `Δ = post − objective` is only meaningful for held ions; floated rows render `—`.
+- The line under the grid names the route: `Objectives: SO₄/Cl (2) — exact`,
+  `Objectives: all six — best fit, nothing held exactly`,
+  `No objectives — no mineral dosing; mash pH still corrected`.
   Five checked is allowed but flagged `exactly determined, may be infeasible`.
-  Six checked routes to best fit and warns that no individual target is
+  Six checked routes to best fit and warns that no individual objective is
   guaranteed.
 
 ## Preset labels
@@ -132,7 +135,7 @@ Options lead with the constraint set and name the style as an example:
 | preset `hoppy-ipa` | `SO₄/Cl — Hoppy / IPA` |
 | preset `dark-stout` | `SO₄/Cl/Alk — Dark / Stout` |
 | preset `soft-pilsner` | `All six — Soft Pilsner` |
-| pseudo | `No targets — no ion targets` (first) |
+| pseudo | `No objectives — no ion objectives` (first) |
 | pseudo | `Freeform entry — compose your own set` (last) |
 
 Presets are sorted by constraint-set size, then label. A profile record targets
@@ -140,7 +143,7 @@ the ions it declares a number for (`null` floats).
 
 ## Telemetry
 
-- **Route line**: one line under the grid — the target set and its exactness.
+- **Route line**: one line under the grid — the objective set and its exactness.
 - **Audit log**: collapsible drawer grouped by category; INFO collapsed, NOTE
   neutral, WARNING/ERROR surfaced. Host-side only (never a DAG output).
 - **Calcium minimum**: graded only by a route that applied it, and only once —

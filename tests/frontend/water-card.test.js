@@ -78,15 +78,15 @@ test("the checked set drives the grid and the derived strategy", withFreshApp((a
   assert.deepEqual(app.waterSummary.valuedPins, ["so4", "cl"]);
   const rows = Object.fromEntries(app.waterSummary.ions.map((row) => [row.ion, row]));
   assert.equal(rows.sulfate_so4.checked, true);
-  assert.equal(rows.sulfate_so4.status, "Target");
+  assert.equal(rows.sulfate_so4.status, "Held");
   assert.equal(rows.sulfate_so4.valueText, "250.0");
   assert.equal(rows.sulfate_so4.deltaText, "-150.0");
   assert.equal(rows.chloride_cl.valueText, "50.0");
 
   for (const ion of ["calcium_ca", "magnesium_mg", "sodium_na", "alkalinity_as_caco3"]) {
     assert.equal(rows[ion].checked, false);
-    assert.equal(rows[ion].status, "Auto");
-    assert.equal(rows[ion].valueText, "(Auto)");
+    assert.equal(rows[ion].status, "Floated");
+    assert.equal(rows[ion].valueText, "(none)");
     assert.equal(rows[ion].deltaText, "—");
   }
 }));
@@ -226,7 +226,7 @@ test("target changes recalculate immediately and queue a save", withFreshApp((ap
   assert.equal(app.master.getRoot("water.target.calcium_ca"), undefined);
   assert.equal(app.master.getRoot("water.target_profile_id"), "");
   assert.equal(cleared.checked, false);
-  assert.equal(cleared.valueText, "(Auto)");
+  assert.equal(cleared.valueText, "(none)");
   assert.equal(cleared.deltaText, "—");
   assert.equal(app.waterSummary.checkedPins.length, 5);
   assert.equal(app.waterSummary.mode, "CUSTOM");
@@ -338,7 +338,7 @@ test("five and six checked are allowed and warned", withFreshApp((app) => {
   app.compute();
   assert.equal(app.waterSummary.mode, "CUSTOM");
   assert.match(app.waterSummary.targetLine, /exactly determined, may be infeasible/);
-  assert.match(app.waterSummary.targetWarning, /5 targets/);
+  assert.match(app.waterSummary.targetWarning, /5 objectives/);
   assert.match(app.waterSummary.targetWarning, /may fail/);
 
   app.toggleWaterTarget("alk");
@@ -347,7 +347,7 @@ test("five and six checked are allowed and warned", withFreshApp((app) => {
   assert.equal(app.waterSummary.mode, "OPTIMIZE");
   assert.match(app.waterSummary.targetLine, /best fit, nothing held exactly/);
   assert.match(app.waterSummary.targetWarning, /best fit, not exact/);
-  assert.match(app.waterSummary.targetWarning, /guarantees no individual target/);
+  assert.match(app.waterSummary.targetWarning, /no individual objective/);
 }));
 
 test("the selector lists constraints first and keeps the pseudo-options at the ends", withFreshApp((app) => {

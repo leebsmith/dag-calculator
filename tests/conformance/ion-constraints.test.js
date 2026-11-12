@@ -31,7 +31,7 @@ async function appFor(pins) {
 
 function constrained(rows) {
   return rows
-    .filter((row) => row.status !== "Auto" && row.status !== "No value")
+    .filter((row) => row.status !== "Floated" && row.status !== "Unset")
     .map((row) => PIN_BY_ION[row.ion])
     .sort();
 }
@@ -55,11 +55,11 @@ test("the checked set routes to the solver's observed constraint set", async () 
     assert.deepEqual(constrained(app.waterSummary.ions), [...pins].sort(), mode);
     for (const row of app.waterSummary.ions) {
       const expected =
-        row.status === "Auto"
-          ? "Auto"
+        row.status === "Floated"
+          ? "Floated"
           : mode === "HYBRID" && PIN_BY_ION[row.ion] === "alk"
-            ? "Buffer"
-            : "Target";
+            ? "Held (min)"
+            : "Held";
       assert.equal(row.status, expected, `${mode}/${row.ion}`);
     }
   }
@@ -68,7 +68,7 @@ test("the checked set routes to the solver's observed constraint set", async () 
 test("BASELINE constrains nothing, matching the solver", async () => {
   const app = await appFor([]);
   assert.deepEqual(constrained(app.waterSummary.ions), fixture.modes.BASELINE);
-  for (const row of app.waterSummary.ions) assert.equal(row.valueText, "(Auto)");
+  for (const row of app.waterSummary.ions) assert.equal(row.valueText, "(none)");
 });
 
 test("CUSTOM constrains exactly the checked ions", async () => {
@@ -78,7 +78,7 @@ test("CUSTOM constrains exactly the checked ions", async () => {
     assert.equal(app.waterSummary.mode, "CUSTOM", key);
     assert.deepEqual(constrained(app.waterSummary.ions), [...expected].sort(), key);
     for (const row of app.waterSummary.ions) {
-      if (!pins.includes(PIN_BY_ION[row.ion])) assert.equal(row.status, "Auto");
+      if (!pins.includes(PIN_BY_ION[row.ion])) assert.equal(row.status, "Floated");
     }
   }
 });

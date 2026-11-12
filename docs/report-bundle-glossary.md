@@ -241,7 +241,7 @@ _67 paths_
 |---|---|---|---|---|---|---|
 | `water.acid_medium` | Acid medium | choice | — | — | — | LACTIC_88, PHOSPHORIC_10, PHOSPHORIC_85 |
 | `water.cacl2_form` | CaCl2 form | choice | — | — | — | CACL2_DIHYDRATE, CACL2_ANHYDROUS |
-| `water.calcium_floor_ppm` | Calcium floor | root | concentration | ppm | 1 | — |
+| `water.calcium_floor_ppm` | Calcium minimum | root | concentration | ppm | 1 | — |
 | `water.gypsum_form` | Gypsum form | choice | — | — | — | GYPSUM_DIHYDRATE, GYPSUM_ANHYDROUS |
 | `water.kettle_blend.alkalinity_as_caco3` | Alkalinity | derived | concentration | ppm | 1 | — |
 | `water.kettle_blend.calcium_ca` | Calcium | derived | concentration | ppm | 1 | — |
@@ -291,11 +291,11 @@ _67 paths_
 | `water.target.sodium_na` | Sodium | root | concentration | ppm | 1 | — |
 | `water.target.sulfate_chloride_ratio` | Sulfate Chloride Ratio | derived | dimensionless | — | — | — |
 | `water.target.sulfate_so4` | Sulfate | root | concentration | ppm | 1 | — |
-| `water.target_mash_ph` | Target mash pH | root | ph | pH | 2 | — |
+| `water.target_mash_ph` | Mash pH objective | root | ph | pH | 2 | — |
 | `water.target_profile` | Target Profile | selection | — | — | — | — |
 | `water.target_profile.alkalinity_as_caco3` | Alkalinity (as CaCO3) | field | concentration | ppm | 1 | — |
 | `water.target_profile.calcium_ca` | Calcium | field | concentration | ppm | 1 | — |
-| `water.target_profile.calcium_floor_ppm` | Calcium floor | field | concentration | ppm | 1 | — |
+| `water.target_profile.calcium_floor_ppm` | Calcium minimum | field | concentration | ppm | 1 | — |
 | `water.target_profile.chloride_cl` | Chloride | field | concentration | ppm | 1 | — |
 | `water.target_profile.description` | Description | field | — | — | — | — |
 | `water.target_profile.id` | ID | field | — | — | — | — |
@@ -305,7 +305,7 @@ _67 paths_
 | `water.target_profile.notes` | Notes | field | — | — | — | — |
 | `water.target_profile.sodium_na` | Sodium | field | concentration | ppm | 1 | — |
 | `water.target_profile.sulfate_so4` | Sulfate | field | concentration | ppm | 1 | — |
-| `water.target_profile_id` | Targets | root | reference | — | — | — |
+| `water.target_profile_id` | Ion objectives | root | reference | — | — | — |
 
 ## Solver — batch sparge
 

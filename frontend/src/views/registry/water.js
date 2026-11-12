@@ -18,8 +18,8 @@ export const WATER_IONS = [
 // checked target set instead of routing independently.
 export function constraintStatusFor(mode, pin) {
   if (mode === "OPTIMIZE") return "Best fit";
-  if (mode === "HYBRID" && pin === "alk") return "Buffer";
-  return "Target";
+  if (mode === "HYBRID" && pin === "alk") return "Held (min)";
+  return "Held";
 }
 
 export const WATER_ION_BY_PIN = Object.fromEntries(WATER_IONS.map((row) => [row.pin, row.ion]));
@@ -41,18 +41,18 @@ export function constraintLabel(held) {
 // One line under the grid: what the solver will actually do with this set.
 export function routeSummary(held) {
   const count = held.length;
-  if (count === 0) return "No targets — baseline (no salt dosing)";
-  if (count === 6) return "Targets: all six — best fit, nothing held exactly";
+  if (count === 0) return "No objectives — no mineral dosing; mash pH still corrected";
+  if (count === 6) return "Objectives: all six — best fit, nothing held exactly";
   const suffix = count === 5 ? "exactly determined, may be infeasible" : "exact";
-  return `Targets: ${constraintLabel(held)} (${count}) — ${suffix}`;
+  return `Objectives: ${constraintLabel(held)} (${count}) — ${suffix}`;
 }
 
 export function targetWarningFor(held) {
   if (held.length === 5) {
-    return "5 targets — exactly determined. The solver may fail to find a feasible dose; unpin one to leave a degree of freedom.";
+    return "5 objectives — exactly determined. The solver may fail to find a feasible dose; unpin one to leave a degree of freedom.";
   }
   if (held.length === 6) {
-    return "All six targets — best fit, not exact. The solver minimises error and guarantees no individual target.";
+    return "All six objectives — best fit, not exact. The solver minimises error and guarantees no individual objective.";
   }
   return "";
 }
