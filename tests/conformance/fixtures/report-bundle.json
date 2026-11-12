@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:cff662254bf4b5ab3cf1b82f059e18ba52b96267ec4cbe0846be59c785c9d413",
+    "hash": "sha256:bb583133f3b1dcaa4c53d02f56d16f0cda17d28f5cc71dd7f7bb0b64d73f6c09",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -2331,6 +2331,9 @@
               "taxonomy": "strategy"
             },
             "prescription.predicted_mash_ph": {
+              "dimension": "ph"
+            },
+            "prescription.uncorrected_mash_ph": {
               "dimension": "ph"
             },
             "prescription.mash_ph_status": {
@@ -8146,5 +8149,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:b6746ee38084e5d62dc913baabcb1127fa32cdd3f8e75cd5840474840b3a855b"
+  "content_hash": "sha256:220cf9eb9a5cce4bd5fd6502163e38f492e3dd9134209b4a66162a12e16fdb65"
 }

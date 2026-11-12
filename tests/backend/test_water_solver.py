@@ -176,6 +176,12 @@ def test_post_dose_hlt_without_source_alkalinity_is_unchanged():
     assert resp.post_dose_hlt_ions == resp.post_salt_hlt_ions
 
 
+def test_uncorrected_mash_ph_is_reported():
+    resp = solve_water_request(make_water_request())
+    assert resp.mash_additions.acid_l > 0.0
+    assert resp.prescription.uncorrected_mash_ph > resp.prescription.predicted_mash_ph
+
+
 def test_post_salt_hlt_ions_mash_only_is_source():
     req = make_water_request(salt_distribution=SaltDistribution.MASH_ONLY)
     resp = solve_water_request(req)

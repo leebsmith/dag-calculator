@@ -352,7 +352,7 @@ _36 paths_
 
 ## Solver — water chemistry
 
-_51 paths_
+_52 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -397,6 +397,7 @@ _51 paths_
 | `solver.water.prescription.mash_ph_status` | Mash pH status | output | — | — | — | OPTIMAL, LOW, HIGH |
 | `solver.water.prescription.predicted_mash_ph` | Predicted mash pH | output | ph | pH | 2 | — |
 | `solver.water.prescription.residual_hlt_water_l` | Residual HLT water | output | volume | L | 1 | — |
+| `solver.water.prescription.uncorrected_mash_ph` | Mash pH before correction | output | ph | pH | 2 | — |
 | `solver.water.sparge_additions.acid_l` | Sparge acid | output | volume | ml (mL) | 1 | — |
 | `solver.water.sparge_additions.baking_soda_kg` | Sparge baking soda | output | mass | g | 1 | — |
 | `solver.water.sparge_additions.cacl2_kg` | Sparge calcium chloride | output | mass | g | 1 | — |

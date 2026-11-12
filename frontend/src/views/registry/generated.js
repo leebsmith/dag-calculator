@@ -167,6 +167,7 @@ export const generatedRegistry = {
   "solver.water.prescription.mash_ph_status": {"label":"Mash pH status","optionLabels":{"OPTIMAL":"Optimal","LOW":"Low","HIGH":"High"}},
   "solver.water.prescription.predicted_mash_ph": {"label":"Predicted mash pH"},
   "solver.water.prescription.residual_hlt_water_l": {"label":"Residual HLT water"},
+  "solver.water.prescription.uncorrected_mash_ph": {"label":"Mash pH before correction"},
   "solver.water.sparge_additions.acid_l": {"label":"Sparge acid","displayUnit":"ml"},
   "solver.water.sparge_additions.baking_soda_kg": {"label":"Sparge baking soda","displayUnit":"g"},
   "solver.water.sparge_additions.cacl2_kg": {"label":"Sparge calcium chloride","displayUnit":"g"},

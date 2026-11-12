@@ -592,6 +592,9 @@
   "solver.water.prescription.predicted_mash_ph": {
     "label": "Predicted mash pH"
   },
+  "solver.water.prescription.uncorrected_mash_ph": {
+    "label": "Mash pH before correction"
+  },
   "solver.water.prescription.residual_hlt_water_l": {
     "label": "Residual HLT water"
   },

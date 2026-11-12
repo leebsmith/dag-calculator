@@ -104,6 +104,7 @@ def _to_response(result, req: WaterSolverRequest) -> WaterSolverResponse:
         strategy=WaterStrategy(result.strategy),
         prescription=WaterPrescription(
             predicted_mash_ph=result.predicted_mash_ph,
+            uncorrected_mash_ph=result.uncorrected_mash_ph,
             mash_ph_status=MashPhStatus(result.mash_ph_status),
             residual_hlt_water_l=result.residual_hlt_water_l,
         ),

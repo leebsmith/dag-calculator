@@ -492,7 +492,7 @@ unmodelled grist/SMB contributions — lives in
 | Field | Dimension |
 |---|---|
 | `strategy` | taxonomy |
-| `prescription` `{ predicted_mash_ph, mash_ph_status, residual_hlt_water_l }` | ph / taxonomy / volume |
+| `prescription` `{ predicted_mash_ph, uncorrected_mash_ph, mash_ph_status, residual_hlt_water_l }` | ph / ph / taxonomy / volume |
 | `mash_additions` `{ gypsum_kg, cacl2_kg, epsom_kg, nacl_kg, acid_l, (baking_soda_kg \| chalk_kg \| pickling_lime_kg) }` | mass / volume |
 | `sparge_additions` `{ … }` | mass / volume |
 | `post_salt_mash_ions` | ions — stage 1: source + flavour salts + the grist-only alkaline agent |

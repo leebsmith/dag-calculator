@@ -454,6 +454,10 @@ class SaltAdditions(BoundaryModel):
 
 class WaterPrescription(BoundaryModel):
     predicted_mash_ph: Annotated[float, Field(description="Modeled mash pH")]
+    uncorrected_mash_ph: Annotated[
+        float,
+        Field(description="Modeled mash pH before the acid/alkaline correction"),
+    ]
     mash_ph_status: MashPhStatus = Field(description="Interpretation: HIGH, LOW, or OPTIMAL")
     residual_hlt_water_l: Annotated[float, Field(description="Remaining treated HLT water (L)")]
 

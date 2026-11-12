@@ -128,6 +128,7 @@ export function waterOutputs() {
   return {
     strategy: "CALCIUM_FLOOR",
     "prescription.predicted_mash_ph": 5.4,
+    "prescription.uncorrected_mash_ph": 5.62,
     "prescription.mash_ph_status": "OPTIMAL",
     "prescription.residual_hlt_water_l": 0.0,
     ...additions("mash_additions"),

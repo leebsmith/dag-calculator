@@ -2328,6 +2328,9 @@
         "prescription.predicted_mash_ph": {
           "dimension": "ph"
         },
+        "prescription.uncorrected_mash_ph": {
+          "dimension": "ph"
+        },
         "prescription.mash_ph_status": {
           "taxonomy": "ph_status"
         },

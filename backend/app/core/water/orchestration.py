@@ -65,6 +65,7 @@ from app.core.water.telemetry import (
 @dataclass(frozen=True)
 class WaterChemistryOutput:
     predicted_mash_ph: float
+    uncorrected_mash_ph: float
     mash_ph_status: str  # OPTIMAL | LOW | HIGH
     strategy: str
     mash_dose_g: dict
@@ -497,6 +498,7 @@ def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
 
     return WaterChemistryOutput(
         predicted_mash_ph=predicted_ph,
+        uncorrected_mash_ph=correction.ph_stage1,
         mash_ph_status=status,
         strategy=resolved_strat,
         mash_dose_g=allocation.mash_dose_g,
