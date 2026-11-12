@@ -110,14 +110,18 @@ Objective  Ion         Source  Objective value  Post-addition  Δ      Status
 [ ]        Alkalinity  35.0    (none)           35.0           —      Floated
 ```
 
-- Checked + value: the cell is an input; that ion is a held objective.
+- Checked + value: the cell is an input; that ion is a held objective. If the
+  finished value differs because the pH correction moved it, the status reads
+  `Held (pre-correction)` and the hint says `moved by the mash-pH correction`.
 - Unchecked: the cell reads `(none)`; the ion floats. When the pH correction
   moved it, the row hints `moved by the mash-pH correction`.
 - Checked + empty: `Unset` status with a hint; excluded from the solve.
-- Status vocabulary: `Held` (hard equality), `Held (min)` (a minimum, e.g. the
-  buffered alkalinity, so its Δ is expected to be non-zero), `Best fit` (all six
-  — least squares, nothing held exactly), `Unset` (unfinished entry), `Floated`
-  (no objective).
+- Status vocabulary: `Held` (hard equality in the finished water), `Held
+  (pre-correction)` (the equality held, then the pH correction moved the finished
+  value — the hint names the driver), `Held (min)` (a minimum, e.g. the buffered
+  alkalinity, so its Δ is expected to be non-zero), `Best fit` (all six — least
+  squares, nothing held exactly), `Unset` (unfinished entry), `Floated` (no
+  objective).
 - `Δ = post − objective` is only meaningful for held ions; floated rows render `—`.
 - The line under the grid names the route: `Objectives: SO₄/Cl (2) — exact`,
   `Objectives: all six — best fit, nothing held exactly`,

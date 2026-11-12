@@ -9,17 +9,13 @@ import { fieldOr, formatQuantity } from "../../utils.js";
 import {
   WATER_IONS,
   WATER_NODES as N,
-  constraintStatusFor,
   routeSummary,
   targetWarningFor,
 } from "../../views/registry/water.js";
 import {
   doseRows,
-  fmtDelta,
   checkedPins,
   fmtL,
-  fmtPpm,
-  ionDelta,
   optionLabelFor,
   severityRank,
   sourceDetailText,
@@ -28,6 +24,7 @@ import {
   waterTargetOptionsOf,
   waterVerdictView,
 } from "../../views/waterLogic.js";
+import { ionRows } from "../../views/waterRows.js";
 import { ratioReadout } from "../../views/waterRatio.js";
 import {
   num,
@@ -35,8 +32,6 @@ import {
   waterActions,
   waterDescriptors,
 } from "./waterCardActions.js";
-
-const NO_TARGET = "(none)";
 
 export function createWaterCard(ctx) {
   const actions = waterActions(ctx);
@@ -100,36 +95,17 @@ export function refreshWaterCard(app, ctx) {
       ratio.targetText && ratio.deltaFactorText
         ? `${ratio.targetText} target → ${ratio.asSolvedText} kettle, ${ratio.deltaFactorText}`
         : ratio.asSolvedText;
-    const ions = WATER_IONS.map(({ ion, pin, label, source }) => {
-      const sourceVal = read(`${N.sourceReport}.${source}`);
-      const targetVal = read(`${N.target}.${ion}`);
-      const postDoseVal = read(`${N.postDoseIons}.${ion}`);
-      const kettleVal = read(`${N.kettleBlend}.${ion}`);
-      const isChecked = checkedSet.has(pin);
-      const isValued = valuedSet.has(pin) && typeof targetVal === "number";
-      const below = isValued && typeof sourceVal === "number" && targetVal < sourceVal;
-      let status = "Floated";
-      if (isChecked) status = isValued ? constraintStatusFor(route, pin) : "Unset";
-      return {
-        ion,
-        pin,
-        label,
-        checkboxLabel: `Objective ${label}`,
-        inputLabel: `${label} objective (ppm)`,
-        checked: isChecked,
-        targetValue: typeof targetVal === "number" ? targetVal : 0,
-        sourceValue: typeof sourceVal === "number" ? sourceVal : 0,
-        belowSource: isValued && below,
-        valueText: isValued ? fmtPpm(targetVal) : NO_TARGET,
-        sourceText: fmtPpm(sourceVal),
-        postDoseText: fmtPpm(postDoseVal),
-        kettleText: fmtPpm(kettleVal),
-        deltaText: isValued ? fmtDelta(ionDelta(postDoseVal, targetVal)) : "—",
-        status,
-        hint: !isChecked && pin === "alk" && phCorrected
-          ? "moved by the mash-pH correction"
-          : isChecked && !isValued ? "no target entered" : below ? "below source" : "",
-      };
+    const ions = ionRows({
+      ions: WATER_IONS,
+      checked: checkedSet,
+      valued: valuedSet,
+      route,
+      phCorrected,
+      read,
+      sourceReport: N.sourceReport,
+      target: N.target,
+      postDose: N.postDoseIons,
+      kettleBlend: N.kettleBlend,
     });
 
     const notes = [];

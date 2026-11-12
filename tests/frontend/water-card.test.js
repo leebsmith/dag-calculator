@@ -171,6 +171,20 @@ test("checking an ion on a preset keeps the other checked values", withFreshApp(
   assert.equal(app.master.getRoot("water.target_profile_id"), "");
 }));
 
+test("a held ion the pH correction moved is labelled pre-correction", withFreshApp((app) => {
+  app.selectWaterTarget("freeform");
+  for (const pin of ["so4", "cl", "ca", "alk"]) app.toggleWaterTarget(pin);
+  app.editWaterTarget("ca", "60");
+  app.editWaterTarget("alk", "60");
+  app.compute();
+
+  const rows = Object.fromEntries(app.waterSummary.ions.map((row) => [row.ion, row]));
+  assert.equal(rows.alkalinity_as_caco3.status, "Held (pre-correction)");
+  assert.equal(rows.alkalinity_as_caco3.hint, "moved by the mash-pH correction");
+  assert.equal(rows.alkalinity_as_caco3.deltaText, "-26.0");
+  assert.equal(rows.calcium_ca.status, "Held");
+}));
+
 test("a floated ion moved by the pH correction names its driver", withFreshApp((app) => {
   app.compute();
   const alk = app.waterSummary.ions.find((row) => row.ion === "alkalinity_as_caco3");
