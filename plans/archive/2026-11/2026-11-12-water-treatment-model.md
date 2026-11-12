@@ -130,6 +130,34 @@ user-facing text names a solver mode.
 3. **Pristine batch.** Ca objective unset/floated (not 50); calcium minimum 50
    with the guardrail hint; no calcium finding; pH line present.
 
+## Gap register
+
+| # | Gap at audit | Resolution |
+|---|---|---|
+| G1 | `water.strategy` persisted; frontend and backend both routed | P2: `water.route` derived in the artifact; frontend routing deleted |
+| G2 | Mode names user-facing | P4: objective vocabulary; report objective line drops the code |
+| G3 | "Target" meant objective, pH and minimum | P4: objectives / objectives values / calcium minimum |
+| G4 | Kettle read the stage-1 vector | P1: kettle blends both post-dose vectors |
+| G5 | HLT carried the grist-only alkaline agent | P1: HLT built from the flavour dose alone |
+| G6 | No corrected HLT vector | P1: `post_dose_hlt_ions` |
+| G7 | Pre-correction pH hidden in telemetry | P1: `prescription.uncorrected_mash_ph` + the before → after line |
+| G8 | Floated alkalinity labelled `Auto` | P1: `Floated` + `moved by the mash-pH correction` driver hint |
+| G9 | Calcium audited when unapplied, and twice | P3: audit gated to applied routes; one finding |
+| G10 | Mode 1 capped added calcium | P3: minimum in every dosing route |
+| G11 | Relaxation blamed the equalities | P3: wording fixed; equalities are never relaxed (infeasible → `SALT_SOLVE_FAILED`) |
+| G12 | Objectives re-derived from positive target values on load | Follow-up: only a selected profile seeds a missing set; values never imply objectives |
+| G13 | Sticky grid lock; one state, two names | P1: lock removed; selection derived from the objective set |
+| G14 | Stage-1 vectors on the wire with no reader | P5: removed from the artifact and response |
+| G15 | Two "left in the HLT" volumes | Deferred: `TODO.md` |
+| G16 | Doc drift (ui model, practice §5, engine) | P1–P4: living docs revised |
+
+## Outcome
+
+`make verify` green. The card now reads: objectives in, one treated vector per
+vessel, a `before → after` pH line naming both corrections, and a kettle that is
+the blend of what the two vessels actually hold. No user-facing text names a
+solver mode.
+
 ## Verification
 
 - Per commit: `make check` for the touched surface; `make test` before a phase
