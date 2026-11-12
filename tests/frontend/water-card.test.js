@@ -131,6 +131,31 @@ test("clearing a checked ion's value unchecks it", withFreshApp((app) => {
   assert.deepEqual(app.waterSummary.checkedPins, []);
 }));
 
+test("legacy values without a checked set do not invent objectives", async () => {
+  const app = createTestApp();
+  await app.boot();
+  await app.loadState({
+    roots: {
+      "water.target.sulfate_so4": 120,
+      "water.target.alkalinity_as_caco3": 60,
+    },
+  });
+  app.compute();
+  assert.deepEqual(app.waterSummary.checkedPins, []);
+  assert.equal(app.waterTargetSelection, "none");
+  assert.equal(app.waterSummary.mode, "BASELINE");
+});
+
+test("a pristine batch floats calcium and states the pH objective", withFreshApp((app) => {
+  app.compute();
+  const ca = app.waterSummary.ions.find((row) => row.ion === "calcium_ca");
+  assert.equal(ca.checked, false);
+  assert.equal(ca.valueText, "(none)");
+  assert.equal(ca.status, "Floated");
+  assert.equal(app.waterPlan.floor.display, "50");
+  assert.match(app.waterVerdict.phLine, /→/);
+}));
+
 test("a floated ion moved by the pH correction names its driver", withFreshApp((app) => {
   app.compute();
   const alk = app.waterSummary.ions.find((row) => row.ion === "alkalinity_as_caco3");

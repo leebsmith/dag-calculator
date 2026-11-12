@@ -5,7 +5,6 @@
 import { fieldOr, formatQuantity, formatValue, formatWithDecimals, joinNonEmpty } from "../utils.js";
 import {
   WATER_ION_BY_PIN,
-  WATER_IONS,
   constraintLabel,
   heldFromProfile,
 } from "./registry/water.js";
@@ -340,14 +339,4 @@ export function seedTargetValue(source, pin) {
   return Number.isFinite(seed) ? seed : 0;
 }
 
-/**
- * The pins with a positive target value, in the registry's ion order.
- *
- * @pure
- * @param {(pin: string) => number} targetOf
- * @returns {string[]}
- */
-export function positivePins(targetOf) {
-  return WATER_IONS.filter(({ pin }) => targetOf(pin) > 0).map(({ pin }) => pin);
-}
 

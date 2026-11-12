@@ -5,11 +5,10 @@
 // test, so a suite pays for one boot instead of one per test.
 //
 // The reset is the adapter's sign-out `teardown()` (runner, session, input
-// drafts, navigation, compute) plus the two creation-time steps it deliberately
+// drafts, navigation, compute) plus the creation-time step it deliberately
 // leaves alone: `teardown()` keeps device-local unit prefs, so `resetUnits()`
-// clears them, and the water strategy root is derived by `boot()`'s
-// `syncWaterTargets()`, so it is re-derived. The seeded yeast is re-applied last,
-// exactly as `createTestApp()` applies it.
+// clears them. The seeded yeast is re-applied last, exactly as
+// `createTestApp()` applies it.
 //
 // What a reset does NOT clear is card-local draft state — `maltDraft`,
 // `catalogDraft`, `rowMenu`, `sortOpen`, open drawers and dialogs. A suite that
@@ -68,7 +67,6 @@ async function bootSharedApp() {
 
 function resetToBaseline(app) {
   app.teardown();
-  app.syncWaterTargets();
   // `teardown()` keeps device-local unit prefs on purpose (sign-out preserves
   // them); the reset must not, so clear them when the previous test left any.
   if (Object.keys(app.unitMode).length > 0) app.resetUnits();

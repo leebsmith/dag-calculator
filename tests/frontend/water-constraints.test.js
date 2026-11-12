@@ -5,7 +5,6 @@ import {
   checkedPins,
   nextPinned,
   pinnedRows,
-  positivePins,
   presetPins,
   seedTargetValue,
   valuedPins,
@@ -52,8 +51,3 @@ test("a checked ion seeds from the source concentration, else zero", () => {
   assert.equal(seedTargetValue(null, "ca"), 0);
 });
 
-test("positive pins follow the registry's ion order", () => {
-  const targets = { ca: 0, mg: 5, na: 0, so4: 100, cl: 50, alk: 0 };
-  assert.deepEqual(positivePins((pin) => targets[pin]), ["mg", "so4", "cl"]);
-  assert.deepEqual(positivePins(() => 0), []);
-});

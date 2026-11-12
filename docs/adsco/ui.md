@@ -8,13 +8,13 @@ differ; decisions are recorded in `plans/adsco-contract.md` (§ Locked decisions
 
 - **Route**: `water.route`, derived from `water.pinned_ions`; never persisted.
   The persisted state is the objective set and its values.
-- **Target values**: six editable roots `water.target.<ion>`.
-- **Calcium floor**: `water.target_profile.calcium_floor_ppm` (or its root), editable.
-- **Mode-5 pins**: `water.pinned_ions` collection.
-- **Template**: a quick-fill affordance, **not** persisted selection. Applying a
-  template sets mode + values + floor, then becomes inert; the dropdown shows a
-  `(Modified)` marker when any value diverges from the applied template, and
-  resets to "Custom / None" if the user switches the radio manually.
+- **Objective values**: six editable roots `water.target.<ion>`.
+- **Calcium minimum**: `water.target_profile.calcium_floor_ppm` (or its root),
+  editable; a minimum applied by the dosing routes, not an objective.
+- **Objectives**: `water.pinned_ions` collection.
+- **Profile**: a quick-fill affordance, **not** persisted selection. Applying a
+  profile sets the objective set, values and minimum, then becomes inert; the
+  selector reads Custom objectives once the set is edited.
 
 ## Recompute
 

@@ -12,7 +12,6 @@ import {
   checkedPins,
   nextPinned,
   pinnedRows,
-  positivePins,
   presetPins,
   seedTargetValue,
 } from "../../views/waterLogic.js";
@@ -31,13 +30,6 @@ export function resolveValue(engine, path, reportError = ignoreError) {
 export function num(engine, path, reportError = ignoreError) {
   const v = resolveValue(engine, path, reportError);
   return typeof v === "number" && Number.isFinite(v) ? v : null;
-}
-
-export function targetValue(engine, pin, reportError = ignoreError) {
-  const ion = WATER_ION_BY_PIN[pin];
-  if (!ion) return 0;
-  const value = resolveValue(engine, `${N.target}.${ion}`, reportError);
-  return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
 function initialState() {
@@ -222,25 +214,18 @@ function inputActions({ engine, getView }) {
   };
 }
 
-function syncActions({ engine, getView, observability }) {
+function syncActions({ engine, getView }) {
   return {
-    // Load-time normalisation: legacy drafts carry values but no checked set.
-    // Seed the set from positive targets; the route is derived from it.
-    // Returns true when anything changed.
+    // Load-time normalisation for a legacy draft: a selected profile with no
+    // objective set seeds the set from the profile's declared ions. Values alone
+    // never imply an objective — the checked set is the declaration.
     syncWaterTargets() {
-      let changed = false;
-      let pins = checkedPins(engine.get(N.pinnedIons));
-      if (pins.length === 0) {
-        const positives = positivePins(
-          (pin) => targetValue(engine, pin, observability.reportError)
-        );
-        if (positives.length > 0) {
-          engine.setCollection(N.pinnedIons, pinnedRows(positives));
-          pins = positives;
-          changed = true;
-        }
-      }
-      return changed;
+      if (checkedPins(engine.get(N.pinnedIons)).length > 0) return false;
+      if (!engine.get(N.targetProfileId)) return false;
+      const held = presetPins(engine.get(N.targetProfile));
+      if (held.length === 0) return false;
+      engine.setCollection(N.pinnedIons, pinnedRows(held));
+      return true;
     },
 
     // Drop every inherited target so the selected profile (or absence) supplies

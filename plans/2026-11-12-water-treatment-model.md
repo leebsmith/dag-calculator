@@ -77,45 +77,45 @@ user-facing text names a solver mode.
 
 ### P2 — Route derived in the artifact
 
-- [ ] Spike: confirm a taxonomy-returning derived node may reduce a collection.
-- [ ] Add `water.route` (derived) reproducing `strategyForHeld` from
+- [x] Spike: confirm a taxonomy-returning derived node may reduce a collection.
+- [x] Add `water.route` (derived) reproducing `strategyForHeld` from
       `water.pinned_ions`; remove the `water.strategy` root.
-- [ ] Boundary input and adapter map to `water.route`; delete the frontend
+- [x] Boundary input and adapter map to `water.route`; delete the frontend
       routing function and all strategy root writes.
-- [ ] Regenerate the default-request fixture; update its root map.
-- [ ] Tests: parity, mode/status assertions, draft-with-old-root behaviour.
-- [ ] Docs: ui.md state model, domain equations inputs.
+- [x] Regenerate the default-request fixture; update its root map.
+- [x] Tests: parity, mode/status assertions, draft-with-old-root behaviour.
+- [x] Docs: ui.md state model, domain equations inputs.
 
 ### P3 — Guardrail semantics and findings
 
-- [ ] Mode 1 floor becomes `Ca >= floor` (same lower bound as Mode 5).
-- [ ] Fix the relaxation wording (guardrail, not equalities).
-- [ ] Tests: Mode 1 above/below/infeasible floor; re-pin values.
-- [ ] Audit only when applied: skip BASELINE, suppress when the unreachable
+- [x] Mode 1 floor becomes `Ca >= floor` (same lower bound as Mode 5).
+- [x] Fix the relaxation wording (guardrail, not equalities).
+- [x] Tests: Mode 1 above/below/infeasible floor; re-pin values.
+- [x] Audit only when applied: skip BASELINE, suppress when the unreachable
       finding already exists.
-- [ ] Tests: pristine batch has no floor finding; shortfall yields one.
-- [ ] Docs: findings section; calcium-minimum hint.
+- [x] Tests: pristine batch has no floor finding; shortfall yields one.
+- [x] Docs: findings section; calcium-minimum hint.
 
 ### P4 — Vocabulary
 
-- [ ] Labels: "Ion objectives", "Calcium minimum", "Mash pH objective"; drop
+- [x] Labels: "Ion objectives", "Calcium minimum", "Mash pH objective"; drop
       user-facing strategy labels.
-- [ ] Card: "Objective (ppm)" column, "Objective <ion>" checkbox, "Practice"
+- [x] Card: "Objective (ppm)" column, "Objective <ion>" checkbox, "Practice"
       region.
-- [ ] Statuses: Held / Held (min) / Best fit / Floated / Unset; route line in
+- [x] Statuses: Held / Held (min) / Best fit / Floated / Unset; route line in
       objective terms.
-- [ ] Tests: all status and route-line assertions.
-- [ ] Docs: ui.md vocabulary, practice wording.
-- [ ] Report: objective line drops the strategy code.
+- [x] Tests: all status and route-line assertions.
+- [x] Docs: ui.md vocabulary, practice wording.
+- [x] Report: objective line drops the strategy code.
 
 ### P5 — Surface removal
 
-- [ ] Remove the twelve stage-1 outputs from the artifact and response schema;
+- [x] Remove the twelve stage-1 outputs from the artifact and response schema;
       keep them as core locals.
-- [ ] Move provider assertions to core-level tests; drop stage-1 keys from the
+- [x] Move provider assertions to core-level tests; drop stage-1 keys from the
       doubles; remove the ALLOW entries.
-- [ ] Docs: outputs table; grep for stale references.
-- [ ] `make generate`; `make verify`.
+- [x] Docs: outputs table; grep for stale references.
+- [x] `make generate`; `make verify`.
 
 ## Acceptance scenarios
 
