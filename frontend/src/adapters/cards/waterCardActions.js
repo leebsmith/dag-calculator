@@ -65,8 +65,6 @@ function initialState() {
       warningLabel: "0 warnings",
     },
 
-    waterTargetLocked: false,
-
     waterDetailsOpen: false,
 
     waterPlan: {
@@ -93,6 +91,7 @@ function initialState() {
     waterVerdict: {
       targetLine: "",
       ratioLine: "",
+      phLine: "",
       predictedPh: "—",
       status: "",
     },
@@ -153,7 +152,6 @@ function targetActions({ cache, engine, getView }) {
       view.setRoot(N.targetProfileId, preset ? value : "");
       engine.setCollection(N.pinnedIons, pinnedRows(held));
       view.pickSelection(N.targetProfileId, preset ? value : "");
-      view.waterTargetLocked = value === "none";
       if (!preset) view.setRoot(N.strategy, strategyForHeld(valuedPins(engine.get(N.pinnedIons))));
       view.scheduleSolve();
       view.notify();
@@ -161,7 +159,6 @@ function targetActions({ cache, engine, getView }) {
 
     toggleWaterTarget(pin) {
       const view = getView();
-      if (view.waterTargetLocked) return;
       const rows = engine.get(N.pinnedIons) ?? [];
       const checked = rows.some((row) => row.ion === pin);
       engine.setCollection(N.pinnedIons, nextPinned(rows, pin));
@@ -178,7 +175,6 @@ function targetActions({ cache, engine, getView }) {
         view.setRoot(nodeId, seedTargetValue(engine.identity?.[N.sourceReport], pin));
         view.clearWaterPreset();
       }
-      view.waterTargetLocked = false;
       view.setRoot(N.strategy, strategyForHeld(checkedPins(engine.get(N.pinnedIons))));
       view.scheduleSolve();
       view.notify();
@@ -237,7 +233,6 @@ function syncActions({ engine, getView, observability }) {
     // and possibly a stale AUTO strategy. Seed the set from positive targets
     // and write the derived strategy. Returns true when anything changed.
     syncWaterTargets() {
-      const view = getView();
       let changed = false;
       let pins = checkedPins(engine.get(N.pinnedIons));
       if (pins.length === 0) {
@@ -250,7 +245,6 @@ function syncActions({ engine, getView, observability }) {
           changed = true;
         }
       }
-      view.waterTargetLocked = !engine.get(N.targetProfileId) && pins.length === 0;
       const strategy = strategyForHeld(valuedPins(engine.get(N.pinnedIons)));
       if (engine.get(N.strategy) !== strategy) {
         engine.setRoot(N.strategy, strategy);
@@ -328,7 +322,7 @@ export function waterDescriptors({ getView }) {
         if (id) {
           return view.waterTargetOptions.some((option) => option.value === id) ? id : "freeform";
         }
-        return view.waterTargetLocked ? "none" : "freeform";
+        return view.waterSummary.checkedPins.length === 0 ? "none" : "freeform";
       },
     },
   };

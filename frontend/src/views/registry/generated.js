@@ -193,7 +193,7 @@ export const generatedRegistry = {
   "water.gypsum_form": {"label":"Gypsum form","optionLabels":{"GYPSUM_DIHYDRATE":"Dihydrate (CaSO₄·2H₂O)","GYPSUM_ANHYDROUS":"Anhydrous (CaSO₄)"}},
   "water.preferred_alkaline_agent": {"label":"Alkaline agent","optionLabels":{"BAKING_SODA":"Baking soda (NaHCO₃)","CHALK":"Chalk (CaCO₃)","PICKLING_LIME":"Pickling lime (Ca(OH)₂)"}},
   "water.salt_distribution": {"label":"Salt distribution","optionLabels":{"PROPORTIONAL":"Split — grist and HLT","MASH_ONLY":"Mash only salts"}},
-  "water.target_mash_ph": {"label":"Target mash pH"},
+  "water.target_mash_ph": {"label":"Target mash pH","hint":"Always corrected: the grist receives the acid or alkali that lands this pH. No ion objective is required."},
   "water.target_profile.alkalinity_as_caco3": {"label":"Alkalinity (as CaCO3)"},
   "water.target_profile.calcium_ca": {"label":"Calcium"},
   "water.target_profile.calcium_floor_ppm": {"label":"Calcium floor"},

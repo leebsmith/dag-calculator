@@ -146,7 +146,7 @@ const GRAMMAR_COMPLEXITY = {
 const LIFECYCLE_COMPLEXITY = {
   "adapters/boundaryRunner.js": 27,
   "adapters/cards/catalogDraft.js": 16,
-  "adapters/cards/water.js": 38,
+  "adapters/cards/water.js": 34,
   "adapters/fieldAttribution.js": 18,
   "adapters/stepAdapter.js": 10,
   "adapters/stepView.js": 19,

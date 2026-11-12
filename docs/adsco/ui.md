@@ -38,8 +38,9 @@ behind `libraryRevision`.
 The water card is four labelled regions, in this order:
 
 1. **Water plan** — source report picker, target preset picker, calcium floor,
-   target mash pH, the target-vs-actual grid, route line, kettle ratio, predicted
-   mash pH/status, and actionable warnings. This is the primary decision surface.
+   target mash pH, the target-vs-actual grid, route line, kettle ratio, the
+   mash-pH line (before → after plus the resolved correction at each
+   destination), and actionable warnings. This is the primary decision surface.
 2. **Treatment** — salt distribution, acid medium, gypsum and CaCl₂ forms, and
    the alkaline agent.
 3. **Prescription** — dosing volume, residual HLT, nonzero mash/sparge additions,
@@ -78,7 +79,7 @@ the checked set; there is no separate mode control and the UI never writes
 
 | Selection | Checked ions | Values | Route |
 | --- | --- | --- | --- |
-| No targets | none (locked) | cleared | BASELINE |
+| No targets | none | cleared | BASELINE |
 | A preset | the preset's ions | the preset's values | derived from the set |
 | Freeform entry | none at first | cleared | derived as ions are checked |
 
@@ -87,8 +88,9 @@ the checked set; there is no separate mode control and the UI never writes
 - Presets are value bundles: selecting one clears every value, checks its ions
   and fills them. Editing the checked set detaches the preset (the selector then
   reads Freeform); editing a held value keeps it.
-- No targets is enforced — the checkboxes are disabled. Freeform is the compose
-  state, starting empty.
+- The empty set is one state with one name: the grid stays interactive, and
+  ticking any ion composes a set from it. Unticking the last objective returns to
+  it, so a user can cycle through presets without a reset control.
 - The checked set is stored in `water.pinned_ions`; `water.strategy` is derived
   from `checked ∩ has-value`: {} → BASELINE, {SO₄,Cl} → CALCIUM_FLOOR,
   {SO₄,Cl,alk} → HYBRID, all six → OPTIMIZE, anything else → CUSTOM with those

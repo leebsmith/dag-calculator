@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { createTestApp, withFreshApp } from "./appHelpers.js";
+import { BOUNDARY_DOUBLE } from "../fixtures/boundaryDouble.js";
 import { ionDelta } from "../../frontend/src/views/waterLogic.js";
 import { WATER_IONS } from "../../frontend/src/views/registry/water.js";
 
@@ -130,20 +131,40 @@ test("clearing a checked ion's value unchecks it", withFreshApp((app) => {
   assert.deepEqual(app.waterSummary.checkedPins, []);
 }));
 
-test("No targets locks the grid; Freeform unlocks it", withFreshApp((app) => {
-  assert.equal(app.waterTargetLocked, true, "an untargeted draft opens locked");
+test("a floated ion moved by the pH correction names its driver", withFreshApp((app) => {
+  app.compute();
+  const alk = app.waterSummary.ions.find((row) => row.ion === "alkalinity_as_caco3");
+  assert.equal(alk.checked, false);
+  assert.equal(alk.hint, "moved by the mash-pH correction");
+}));
+
+test("a floated ion is not annotated when the correction is zero", withFreshApp((app) => {
+  app.compute();
+  const alk = app.waterSummary.ions.find((row) => row.ion === "alkalinity_as_caco3");
+  assert.equal(alk.hint, "");
+}, {
+  boundaries: {
+    ...BOUNDARY_DOUBLE,
+    water_chemistry_solver: (inputs) => ({
+      ...BOUNDARY_DOUBLE.water_chemistry_solver(inputs),
+      "prescription.predicted_mash_ph": 5.62,
+    }),
+  },
+}));
+
+test("the empty objective set is interactive and reads No objectives", withFreshApp((app) => {
+  assert.equal(app.waterTargetSelection, "none");
 
   app.toggleWaterTarget("so4");
   app.compute();
-  assert.deepEqual(app.waterSummary.checkedPins, [], "a locked grid ignores toggles");
+  assert.deepEqual(app.waterSummary.checkedPins, ["so4"]);
+  assert.equal(app.waterTargetSelection, "freeform");
 
-  app.selectWaterTarget("freeform");
-  assert.equal(app.waterTargetLocked, false);
-  app.toggleWaterTarget("ca");
-  app.editWaterTarget("ca", "60");
+  app.toggleWaterTarget("so4");
   app.compute();
-  assert.deepEqual(app.waterSummary.checkedPins, ["ca"]);
-  assert.equal(app.waterSummary.mode, "CUSTOM");
+  assert.deepEqual(app.waterSummary.checkedPins, []);
+  assert.equal(app.waterTargetSelection, "none");
+  assert.equal(app.waterSummary.mode, "BASELINE");
 }));
 
 test("presets clear the previous targets, fill their ions and derive the strategy", withFreshApp((app) => {
@@ -158,7 +179,7 @@ test("presets clear the previous targets, fill their ions and derive the strateg
   assert.equal(app.engine.get("water.calcium_floor_ppm"), 15);
   assert.equal(app.waterSummary.mode, "OPTIMIZE");
   assert.equal(app.waterSummary.checkedPins.length, 6);
-  assert.equal(app.waterTargetLocked, false);
+  assert.equal(app.waterTargetSelection, "soft-pilsner");
 
   app.selectWaterTarget("hoppy-ipa");
   app.compute();
@@ -268,6 +289,10 @@ test("water readouts use the fixed precision policy", async () => {
   assert.equal(rows.sulfate_so4.deltaText, "-150.0");
   assert.equal(rows.chloride_cl.postDoseText, "50.0");
   assert.equal(app.waterVerdict.predictedPh, "5.40");
+  assert.equal(
+    app.waterVerdict.phLine,
+    "5.62 → 5.40 · grist 88% lactic acid 0.5 mL"
+  );
   assert.equal(app.waterPrescription.mash[0].text, "2.0 g");
   assert.equal(app.waterPrescription.doseVolumeText, "16.0 L");
 });

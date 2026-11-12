@@ -2,7 +2,7 @@
 // target-selector options, and the fixed-precision readouts. The effectful
 // handlers and the engine reads stay in adapters/cards/water.js.
 
-import { fieldOr, formatQuantity, formatValue, formatWithDecimals } from "../utils.js";
+import { fieldOr, formatQuantity, formatValue, formatWithDecimals, joinNonEmpty } from "../utils.js";
 import {
   WATER_ION_BY_PIN,
   WATER_IONS,
@@ -185,6 +185,108 @@ export function checkedPins(rows) {
  */
 export function valuedPins(rows) {
   return checkedPins(rows);
+}
+
+/**
+ * Compose the mash-pH disclosure line: the uncorrected pH, the corrected pH,
+ * and the resolved correction at each destination.
+ *
+ * @pure
+ * @param {number|null} uncorrectedPh
+ * @param {number|null} correctedPh
+ * @param {ReadonlyArray<{ readonly key: string, readonly label: string, readonly text: string }>} mashRows
+ * @param {ReadonlyArray<{ readonly key: string, readonly label: string, readonly text: string }>} spargeRows
+ * @returns {string}
+ */
+export function phLine(uncorrectedPh, correctedPh, mashRows, spargeRows) {
+  const fmt = (value) =>
+    typeof value === "number" && Number.isFinite(value)
+      ? formatWithDecimals(value, 2)
+      : null;
+  const before = fmt(uncorrectedPh);
+  const after = fmt(correctedPh);
+  if (before == null || after == null) return "—";
+  const corrections = [
+    ...correctionRows(mashRows, "grist"),
+    ...correctionRows(spargeRows, "HLT"),
+  ];
+  const suffix = corrections.length > 0 ? ` · ${corrections.join(" · ")}` : " · no correction";
+  return `${before} → ${after}${suffix}`;
+}
+
+const CORRECTION_KEYS = new Set(["acid_l", "baking_soda_kg", "chalk_kg", "pickling_lime_kg"]);
+
+function correctionRows(rows, destination) {
+  return rows
+    .filter((row) => CORRECTION_KEYS.has(row.key))
+    .map((row) => `${destination} ${row.label} ${row.text}`);
+}
+
+/**
+ * One line for the source report's identity detail.
+ *
+ * @pure
+ * @param {Readonly<Record<string, unknown>>|null|undefined} component
+ * @returns {string}
+ */
+export function sourceDetailText(component) {
+  if (!component) return "";
+  const title = component.source_name || component.laboratory || component.report_id || "";
+  const laboratory =
+    component.laboratory && component.laboratory !== title ? component.laboratory : "";
+  const report = component.report_id ? `report ${component.report_id}` : "";
+  return joinNonEmpty([laboratory, report, component.date_reported || ""], " · ");
+}
+
+/**
+ * Assemble the water-plan view model.
+ *
+ * @pure
+ * @param {{ readonly sourceTitle: string, readonly sourceDetail: string,
+ *   readonly target: object, readonly floor: object, readonly mashPh: object }} args
+ * @returns {object}
+ */
+export function waterPlanView({ sourceTitle, sourceDetail, target, floor, mashPh }) {
+  return {
+    source: {
+      label: "Source water",
+      title: sourceTitle,
+      detail: sourceDetail,
+      hint: "Fixed by the batch identity",
+    },
+    target,
+    floor,
+    mashPh,
+  };
+}
+
+/**
+ * Assemble the water verdict (route line, ratio line, pH disclosure).
+ *
+ * @pure
+ * @param {{ readonly targetLine: string, readonly ratioLine: string,
+ *   readonly uncorrectedPh: number|null, readonly correctedPh: number|null,
+ *   readonly predictedDisplay: string, readonly statusDisplay: string,
+ *   readonly mashRows: ReadonlyArray<object>, readonly spargeRows: ReadonlyArray<object> }} args
+ * @returns {object}
+ */
+export function waterVerdictView({
+  targetLine,
+  ratioLine,
+  uncorrectedPh,
+  correctedPh,
+  predictedDisplay,
+  statusDisplay,
+  mashRows,
+  spargeRows,
+}) {
+  return {
+    targetLine,
+    ratioLine,
+    phLine: phLine(uncorrectedPh, correctedPh, mashRows, spargeRows),
+    predictedPh: predictedDisplay || "—",
+    status: statusDisplay || "",
+  };
 }
 
 /**

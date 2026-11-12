@@ -98,6 +98,7 @@ export const WATER_NODES = {
   targetProfileId: "water.target_profile_id",
   targetMashPh: "water.target_mash_ph",
   predictedPh: "solver.water.prescription.predicted_mash_ph",
+  uncorrectedPh: "solver.water.prescription.uncorrected_mash_ph",
   phStatus: "solver.water.prescription.mash_ph_status",
   waterBoundary: "solver.water",
   calciumFloor: "water.calcium_floor_ppm",

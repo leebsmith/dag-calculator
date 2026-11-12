@@ -713,7 +713,8 @@
     }
   },
   "water.target_mash_ph": {
-    "label": "Target mash pH"
+    "label": "Target mash pH",
+    "hint": "Always corrected: the grist receives the acid or alkali that lands this pH. No ion objective is required."
   },
   "water.target_profile.alkalinity_as_caco3": {
     "label": "Alkalinity (as CaCO3)"

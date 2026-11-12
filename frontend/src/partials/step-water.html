@@ -102,7 +102,6 @@
                     type="checkbox"
                     class="form-checkbox"
                     :checked="r.checked"
-                    :disabled="waterTargetLocked"
                     :aria-label="r.checkboxLabel"
                     @change="toggleWaterTarget(r.pin)"
                   />
@@ -144,8 +143,8 @@
       <p class="text-xs text-warning" x-show="waterSummary.targetWarning" x-text="waterSummary.targetWarning"></p>
       <p class="text-sm font-semibold text-primary" x-text="waterVerdict.ratioLine"></p>
       <p class="text-sm">
-        <span class="text-muted">Predicted mash pH </span>
-        <span class="tabular-nums" x-text="waterVerdict.predictedPh"></span>
+        <span class="text-muted">Mash pH </span>
+        <span class="tabular-nums" x-text="waterVerdict.phLine"></span>
         <span class="text-muted" x-show="waterVerdict.status" x-text="' · ' + waterVerdict.status"></span>
       </p>
       <button

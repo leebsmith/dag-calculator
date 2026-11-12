@@ -5,7 +5,7 @@
 // and roots — no engine path resolution leaks into the template. Node ids live
 // in the registry (WATER_NODES).
 
-import { fieldOr, formatQuantity, joinNonEmpty } from "../../utils.js";
+import { fieldOr, formatQuantity } from "../../utils.js";
 import {
   WATER_IONS,
   WATER_NODES as N,
@@ -23,8 +23,11 @@ import {
   ionDelta,
   optionLabelFor,
   severityRank,
+  sourceDetailText,
   valuedPins,
+  waterPlanView,
   waterTargetOptionsOf,
+  waterVerdictView,
 } from "../../views/waterLogic.js";
 import { ratioReadout } from "../../views/waterRatio.js";
 import {
@@ -78,6 +81,12 @@ export function refreshWaterCard(app, ctx) {
     const effectiveMode = !stored || stored === "AUTO" ? strategyForHeld(valued) : stored;
     const resolvedMode =
       resolveValue(engine, N.resolvedStrategy, ctx.observability.reportError) ?? effectiveMode;
+    const uncorrectedPh = read(N.uncorrectedPh);
+    const correctedPh = read(N.predictedPh);
+    const phCorrected =
+      uncorrectedPh != null &&
+      correctedPh != null &&
+      Math.abs(uncorrectedPh - correctedPh) > 1e-9;
 
     // The target ratio is only a comparison basis when both flavor ions are
     // constrained; otherwise the readout stays as-solved only.
@@ -119,7 +128,9 @@ export function refreshWaterCard(app, ctx) {
         kettleText: fmtPpm(kettleVal),
         deltaText: isValued ? fmtDelta(ionDelta(postDoseVal, targetVal)) : "—",
         status,
-        hint: isChecked && !isValued ? "no target entered" : below ? "below source" : "",
+        hint: !isChecked && pin === "alk" && phCorrected
+          ? "moved by the mash-pH correction"
+          : isChecked && !isValued ? "no target entered" : below ? "below source" : "",
       };
     });
 
@@ -160,35 +171,19 @@ export function refreshWaterCard(app, ctx) {
       (t) => t?.severity === "WARNING" || t?.severity === "ERROR"
     ).length;
 
-    const predictedField = fieldOr(ctx.fieldsById, N.predictedPh);
-    const statusField = fieldOr(ctx.fieldsById, N.phStatus);
     const doseVolumeField = fieldOr(ctx.fieldsById, N.vHltTreat);
     const residualField = fieldOr(ctx.fieldsById, N.residualHlt);
 
     const sourceComponent = engine.identity?.[N.sourceReport] ?? {};
     const sourceTitle =
       sourceComponent.source_name || sourceComponent.laboratory || sourceComponent.report_id || "";
-    const sourceDetail = joinNonEmpty(
-      [
-        sourceComponent.laboratory && sourceComponent.laboratory !== sourceTitle
-          ? sourceComponent.laboratory
-          : "",
-        sourceComponent.report_id ? `report ${sourceComponent.report_id}` : "",
-        sourceComponent.date_reported || "",
-      ],
-      " · "
-    );
-    app.waterPlan = {
-      source: {
-        label: "Source water",
-        title: sourceTitle,
-        detail: sourceDetail,
-        hint: "Fixed by the batch identity",
-      },
+    app.waterPlan = waterPlanView({
+      sourceTitle,
+      sourceDetail: sourceDetailText(sourceComponent),
       target: fieldOr(ctx.fieldsById, N.targetProfileId),
       floor: fieldOr(ctx.fieldsById, N.calciumFloor),
       mashPh: fieldOr(ctx.fieldsById, N.targetMashPh),
-    };
+    });
     app.waterTreatmentFields = [
       N.saltDistribution,
       N.acidMedium,
@@ -199,12 +194,18 @@ export function refreshWaterCard(app, ctx) {
       .map((id) => fieldOr(ctx.fieldsById, id))
       .filter((field) => field.id);
 
-    app.waterVerdict = {
+    // The pH objective is always corrected: name the before, the after, and the
+    // resolved correction at each destination.
+    app.waterVerdict = waterVerdictView({
       targetLine,
       ratioLine,
-      predictedPh: predictedField.display || "—",
-      status: statusField.display || "",
-    };
+      uncorrectedPh: read(N.uncorrectedPh),
+      correctedPh: read(N.predictedPh),
+      predictedDisplay: fieldOr(ctx.fieldsById, N.predictedPh).display,
+      statusDisplay: fieldOr(ctx.fieldsById, N.phStatus).display,
+      mashRows: mashDoses.rows,
+      spargeRows: spargeDoses.rows,
+    });
 
     const spargeAcid = spargeDoses.rows.find((dose) => dose.key === "acid_l");
 
@@ -265,7 +266,6 @@ export function refreshWaterCard(app, ctx) {
 
 export const KEYS = [
   "waterSummary",
-  "waterTargetLocked",
   "waterDetailsOpen",
   "waterPlan",
   "waterTreatmentFields",
