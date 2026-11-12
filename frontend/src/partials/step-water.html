@@ -36,7 +36,7 @@
               write: () => commitWaterNumber(inputKey('water', waterPlan.floor.id), waterPlan.floor),
               step: 1,
               commit: 'change',
-              hint: () => waterPlan.floor.hint,
+              hint: () => waterPlan.floorNotice || waterPlan.floor.hint,
               hints: [
                 {
                   text: 'Outside the allowed range',

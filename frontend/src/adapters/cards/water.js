@@ -14,6 +14,7 @@ import {
 } from "../../views/registry/water.js";
 import {
   doseRows,
+  calciumFloorNotice,
   checkedPins,
   fmtL,
   optionLabelFor,
@@ -156,6 +157,11 @@ export function refreshWaterCard(app, ctx) {
       sourceDetail: sourceDetailText(sourceComponent),
       target: fieldOr(ctx.fieldsById, N.targetProfileId),
       floor: fieldOr(ctx.fieldsById, N.calciumFloor),
+      floorNotice: calciumFloorNotice(
+        checkedSet.has("ca"),
+        read(N.calciumFloor),
+        read(`${N.target}.calcium_ca`)
+      ),
       mashPh: fieldOr(ctx.fieldsById, N.targetMashPh),
     });
     app.waterTreatmentFields = [

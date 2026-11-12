@@ -245,7 +245,7 @@ export function sourceDetailText(component) {
  *   readonly target: object, readonly floor: object, readonly mashPh: object }} args
  * @returns {object}
  */
-export function waterPlanView({ sourceTitle, sourceDetail, target, floor, mashPh }) {
+export function waterPlanView({ sourceTitle, sourceDetail, target, floor, floorNotice, mashPh }) {
   return {
     source: {
       label: "Source water",
@@ -255,6 +255,7 @@ export function waterPlanView({ sourceTitle, sourceDetail, target, floor, mashPh
     },
     target,
     floor,
+    floorNotice,
     mashPh,
   };
 }
@@ -286,6 +287,22 @@ export function waterVerdictView({
     predictedPh: predictedDisplay || "—",
     status: statusDisplay || "",
   };
+}
+
+/**
+ * The contradiction notice for the calcium minimum: a pinned calcium objective is
+ * the stronger declaration, so a minimum above it is not applied.
+ *
+ * @pure
+ * @param {boolean} caPinned
+ * @param {number|null} floor
+ * @param {number|null} caTarget
+ * @returns {string}
+ */
+export function calciumFloorNotice(caPinned, floor, caTarget) {
+  if (!caPinned || typeof floor !== "number" || typeof caTarget !== "number") return "";
+  if (floor <= caTarget) return "";
+  return `Above the pinned calcium objective (${fmtPpm(caTarget)} ppm); the objective wins.`;
 }
 
 /**

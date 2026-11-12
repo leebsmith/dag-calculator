@@ -171,6 +171,19 @@ test("checking an ion on a preset keeps the other checked values", withFreshApp(
   assert.equal(app.master.getRoot("water.target_profile_id"), "");
 }));
 
+test("a minimum above a pinned calcium objective says the objective wins", withFreshApp((app) => {
+  app.selectWaterTarget("freeform");
+  app.toggleWaterTarget("ca");
+  app.editWaterTarget("ca", "60");
+  app.compute();
+  assert.equal(app.waterPlan.floorNotice, "");
+
+  app.editWaterNumber("floor", app.waterPlan.floor, "200");
+  app.commitWaterNumber("floor", app.waterPlan.floor);
+  app.compute();
+  assert.match(app.waterPlan.floorNotice, /objective wins/);
+}));
+
 test("a held ion the pH correction moved is labelled pre-correction", withFreshApp((app) => {
   app.selectWaterTarget("freeform");
   for (const pin of ["so4", "cl", "ca", "alk"]) app.toggleWaterTarget(pin);
