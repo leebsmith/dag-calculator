@@ -102,6 +102,7 @@ class SolverErrorResponse(BoundaryModel):
     code: str
     message: str
     details: dict[str, Any] = Field(default_factory=dict)
+    messages: list[dict[str, Any]] = Field(default_factory=list)
 
 
 # -----------------------------------------------------------------------------

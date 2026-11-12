@@ -162,5 +162,6 @@ export function boundaryErrorView(error) {
     code: typeof error.code === "string" ? error.code : "",
     message: typeof error.message === "string" ? error.message : "",
     label: solverErrorLabel(error.code),
+    messages: Array.isArray(error.messages) ? error.messages : [],
   };
 }

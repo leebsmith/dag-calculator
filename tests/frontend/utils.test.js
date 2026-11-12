@@ -166,9 +166,9 @@ test("solverErrorLabel names declared codes and degrades to a generic label", ()
 test("boundaryErrorView keeps the raw code and message beside the label", () => {
   assert.deepEqual(
     boundaryErrorView({ code: "MASH_TOO_THIN", message: "too thin" }),
-    { code: "MASH_TOO_THIN", message: "too thin", label: "Mash is too thin for the grain bed" }
+    { code: "MASH_TOO_THIN", message: "too thin", label: "Mash is too thin for the grain bed", messages: [] }
   );
-  assert.deepEqual(boundaryErrorView({}), { code: "", message: "", label: "Solver error" });
+  assert.deepEqual(boundaryErrorView({}), { code: "", message: "", label: "Solver error", messages: [] });
   assert.equal(boundaryErrorView(null), null);
   assert.equal(boundaryErrorView(undefined), null);
 });

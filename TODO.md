@@ -97,6 +97,14 @@ tracks only what is outstanding.
   are both "left in the HLT" with different bases; name one, or both explicitly.
 * **Water field provenance** — a `seed`/`↺` affordance for the calcium minimum and the
   mash-pH objective, so a default value and an authored one are visibly different.
+* **Boundary message envelope (parked)** — findings travel as the 200 `telemetry`
+  list; errors as 422 `code/message` plus an additive `messages` chain of the
+  findings that preceded the failure. The card merges both into one log; the old
+  client gate was removed. Full unification (one carrier, one key, always-200) is
+  parked: reopen only if a second card wants the same merged log, errors routinely
+  carry more than one condition, or a new boundary consumer needs identical
+  handling. Renaming the success key `telemetry` → `messages` is not worth the
+  frozen-bundle churn.
 * **Recipe critiquers** — two prose-only LLM assistants (mash/yeast/style and
   boil/whirlpool) that critique a completed recipe against the background
   documents in `docs/mashing/reference/` and `docs/hops/reference/`; on demand,

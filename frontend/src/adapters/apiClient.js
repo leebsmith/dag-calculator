@@ -37,11 +37,13 @@ async function responseError(res) {
         .join("; ")
     : null;
   const detail = typeof payload.detail === "string" ? payload.detail : null;
-  return new SolverError(
+  const error = new SolverError(
     payload.code ?? ((validation || res.status === 422) ? "VALIDATION" : "HTTP_ERROR"),
     payload.message ?? validation ?? detail ?? `HTTP ${res.status}`,
     payload.details ?? {}
   );
+  error.messages = Array.isArray(payload.messages) ? payload.messages : [];
+  return error;
 }
 
 async function authHeaders(tokenProvider, withJson) {

@@ -172,6 +172,49 @@ test("checking an ion on a preset keeps the other checked values", withFreshApp(
   assert.equal(app.master.getRoot("water.target_profile_id"), "");
 }));
 
+test("a failed solve keeps the messages that preceded it", async () => {
+  const failure = {
+    code: "ION_TARGET_BELOW_SOURCE",
+    message: "Target below source for SO4 50.0 ppm against a source of 60.0 ppm.",
+    details: {},
+    messages: [
+      {
+        code: "GUARDRAIL_CALCIUM_FLOOR_OVERRIDDEN",
+        category: "GUARDRAIL",
+        severity: "WARNING",
+        message: "floor overridden",
+        context: {},
+      },
+      {
+        code: "ION_TARGET_BELOW_SOURCE",
+        category: "VALIDATION",
+        severity: "ERROR",
+        message: "Target below source for SO4 50.0 ppm against a source of 60.0 ppm.",
+        context: {},
+      },
+    ],
+  };
+  const fetchImpl = async (url, options) => {
+    if (url.includes("water")) {
+      return { ok: false, status: 422, json: async () => failure };
+    }
+    const body = JSON.parse(options.body);
+    const data = url.includes("batch")
+      ? BOUNDARY_DOUBLE.batch_sparge_solver(body)
+      : BOUNDARY_DOUBLE.hop_bitterness_solver(body);
+    return { ok: true, status: 200, json: async () => data };
+  };
+  const app = createTestApp({ remote: true, fetchImpl });
+  await app.boot();
+
+  assert.equal(app.boundaryError.code, "ION_TARGET_BELOW_SOURCE");
+  assert.deepEqual(
+    app.waterDetails.telemetry.map((entry) => entry.code),
+    ["ION_TARGET_BELOW_SOURCE", "GUARDRAIL_CALCIUM_FLOOR_OVERRIDDEN"]
+  );
+  assert.equal(app.waterWarningCount, 1);
+});
+
 test("a minimum above a pinned calcium objective says the objective wins", withFreshApp((app) => {
   app.selectWaterTarget("freeform");
   app.toggleWaterTarget("ca");
@@ -386,8 +429,8 @@ test("telemetry severity drives the warning count and keeps the full log in deta
   };
   app.compute();
 
-  assert.equal(app.waterWarningCount, 2);
-  assert.equal(app.waterSummary.warningLabel, "2 warnings");
+  assert.equal(app.waterWarningCount, 1);
+  assert.equal(app.waterSummary.warningLabel, "1 warning");
   assert.equal(app.waterDetails.telemetry.length, 3);
 }));
 

@@ -136,5 +136,5 @@ def solve_water_request(req: WaterSolverRequest) -> WaterSolverResponse:
     try:
         result = solve_water_chemistry(_to_input(req))
     except SolverValidationError as exc:
-        raise SolverServiceError(exc.code, exc.message) from exc
+        raise SolverServiceError(exc.code, exc.message, {"messages": exc.messages}) from exc
     return _to_response(result, req)

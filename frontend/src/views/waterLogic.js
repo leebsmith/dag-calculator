@@ -118,6 +118,22 @@ export function fmtDelta(value) {
 }
 
 /**
+ * The water log: the failure's own envelope plus any findings a successful solve
+ * carried, ordered by severity. The banner shows the error; the log keeps the
+ * chain that led to it.
+ *
+ * @pure
+ * @param {ReadonlyArray<object>|null|undefined} errorMessages
+ * @param {ReadonlyArray<object>|null|undefined} telemetry
+ * @returns {Array<object>}
+ */
+export function waterLog(errorMessages, telemetry) {
+  const entries = [...(errorMessages ?? []), ...(telemetry ?? [])];
+  entries.sort((a, b) => severityRank(b?.severity) - severityRank(a?.severity));
+  return entries;
+}
+
+/**
  * Rank telemetry severities for display ordering.
  *
  * @pure

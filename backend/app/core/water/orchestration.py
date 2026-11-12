@@ -458,9 +458,33 @@ def _emit_operational_findings(
 def solve_water_chemistry(inp: WaterChemistryInput) -> WaterChemistryOutput:
     """Execute complete ADSCO water chemistry formulation.
 
-    Pure, deterministic boundary function matching the existing signature.
+    Pure, deterministic boundary function matching the existing signature. A
+    failure carries the findings accumulated before it, so a warning is never
+    lost because the solve could not finish.
     """
     events: list[TelemetryEvent] = []
+    try:
+        return _solve(inp, events)
+    except SolverValidationError as exc:
+        exc.messages = _error_messages(exc, events)
+        raise
+
+
+def _error_messages(exc: SolverValidationError, events: list[TelemetryEvent]) -> list[dict]:
+    items = [event.to_dict() for event in events]
+    items.append(
+        TelemetryEvent(
+            code=exc.code,
+            category="VALIDATION",
+            severity="ERROR",
+            message=exc.message,
+            context={},
+        ).to_dict()
+    )
+    return items
+
+
+def _solve(inp: WaterChemistryInput, events: list[TelemetryEvent]) -> WaterChemistryOutput:
 
     # 1. Gatekeeping validation
     _gate_inputs(inp, events)

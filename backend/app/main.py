@@ -128,7 +128,10 @@ def solve_batch(req: BatchSolverRequest, _user: RateLimitedUser) -> BatchSolverR
         return JSONResponse(
             status_code=422,
             content=SolverErrorResponse(
-                code=exc.code, message=exc.message, details=exc.details
+                code=exc.code,
+                message=exc.message,
+                details=exc.details,
+                messages=exc.details.get("messages", []),
             ).model_dump(),
         )
 
@@ -142,7 +145,10 @@ def solve_water(req: WaterSolverRequest, _user: RateLimitedUser) -> WaterSolverR
         return JSONResponse(
             status_code=422,
             content=SolverErrorResponse(
-                code=exc.code, message=exc.message, details=exc.details
+                code=exc.code,
+                message=exc.message,
+                details=exc.details,
+                messages=exc.details.get("messages", []),
             ).model_dump(),
         )
 
@@ -155,7 +161,10 @@ def solve_hops(req: HopSolverRequest, _user: RateLimitedUser) -> HopSolverRespon
         return JSONResponse(
             status_code=422,
             content=SolverErrorResponse(
-                code=exc.code, message=exc.message, details=exc.details
+                code=exc.code,
+                message=exc.message,
+                details=exc.details,
+                messages=exc.details.get("messages", []),
             ).model_dump(),
         )
 

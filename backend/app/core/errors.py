@@ -22,6 +22,8 @@ class SolverValidationError(ValueError):
         super().__init__(message)
         self.code = code
         self.message = message
+        # Findings accumulated before the failure (host-side envelope).
+        self.messages: list = []
 
 
 @dataclass(frozen=True)

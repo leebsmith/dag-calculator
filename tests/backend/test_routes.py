@@ -152,6 +152,7 @@ def test_solver_failure_maps_to_the_error_envelope(client, monkeypatch):
         "code": "NO_SOLUTION",
         "message": "no root in bracket",
         "details": {"iterations": 12},
+        "messages": [],
     }
 
 
@@ -165,6 +166,7 @@ def test_water_solver_failure_maps_to_the_error_envelope(client, monkeypatch):
     assert response.status_code == 422
     assert response.json()["code"] == "INFEASIBLE"
     assert response.json()["details"] == {}
+    assert response.json()["messages"] == []
 
 
 def test_upsert_creates_a_draft_owned_by_the_caller(client):

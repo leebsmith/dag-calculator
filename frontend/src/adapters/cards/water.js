@@ -15,9 +15,9 @@ import {
   checkedPins,
   fmtL,
   optionLabelFor,
-  severityRank,
   sourceDetailText,
   valuedPins,
+  waterLog,
   waterPlanView,
   waterTargetOptionsOf,
   waterVerdictView,
@@ -138,11 +138,8 @@ export function refreshWaterCard(app, ctx) {
       : `After the strike is drawn and the HLT is topped up to ${fmtL(doseVolume)}: no salts in the HLT. ` +
         `${spargeDoseText ? `Add ${spargeDoseText} only.` : "No additions — underlet with untreated water."} ${fmtL(deliveredSparge)} ships.`;
 
-    const telemetry = (ctx.waterTelemetry?.telemetry ?? []).slice();
-    telemetry.sort((a, b) => severityRank(b.severity) - severityRank(a.severity));
-    const warningCount = telemetry.filter(
-      (t) => t?.severity === "WARNING" || t?.severity === "ERROR"
-    ).length;
+    const telemetry = waterLog(ctx.boundaryError?.messages, ctx.waterTelemetry?.telemetry);
+    const warningCount = telemetry.filter((t) => t?.severity === "WARNING").length;
 
     const doseVolumeField = fieldOr(ctx.fieldsById, N.vHltTreat);
     const residualField = fieldOr(ctx.fieldsById, N.residualHlt);
