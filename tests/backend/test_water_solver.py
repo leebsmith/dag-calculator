@@ -185,6 +185,38 @@ def test_custom_pin_reports_one_floor_finding():
     assert len(floor) == 1
 
 
+def test_high_sodium_is_reported():
+    # Table salt and baking soda can push sodium past the published maximum; it
+    # is a taste convention, so it warns and never clamps the dose.
+    req = make_water_request(
+        target=IonProfile(
+            calcium_ca=0.0,
+            magnesium_mg=0.0,
+            sodium_na=150.0,
+            sulfate_so4=0.0,
+            chloride_cl=0.0,
+            alkalinity_as_caco3=0.0,
+        ),
+        strategy=WaterStrategy.CUSTOM,
+        custom_pinned_ions=["na"],
+    )
+    resp = solve_water_request(req)
+    sodium = [
+        event
+        for event in resp.telemetry
+        if event["code"] == "GUARDRAIL_SODIUM_ABOVE_RECOMMENDED"
+    ]
+    assert len(sodium) == 1
+    assert sodium[0]["severity"] == "WARNING"
+    assert resp.post_dose_mash_ions.sodium_na >= 150.0 - 1e-6
+
+
+def test_typical_sodium_is_not_reported():
+    resp = solve_water_request(make_water_request())
+    codes = {event["code"] for event in resp.telemetry}
+    assert "GUARDRAIL_SODIUM_ABOVE_RECOMMENDED" not in codes
+
+
 def test_mash_only_zeroes_sparge_salts_but_keeps_acid():
     req = make_water_request(salt_distribution=SaltDistribution.MASH_ONLY)
     resp = solve_water_request(req)

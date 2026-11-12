@@ -27,6 +27,7 @@ from app.core.water.constants import (
     MASH_PH_OPTIMAL_LOW,
     MASH_PH_TARGET_TOLERANCE,
     RECOMMENDED_CALCIUM_MIN_PPM,
+    RECOMMENDED_SODIUM_MAX_PPM,
     SPARGE_ACID_PH,
 )
 
@@ -249,6 +250,19 @@ def sulfate_harshness_ceiling(actual_so4: float) -> TelemetryEvent:
         f"{HARD_SULFATE_MAX_PPM:.0f} ppm.",
         actual_so4=actual_so4,
         limit=HARD_SULFATE_MAX_PPM,
+    )
+
+
+def sodium_above_recommended(actual_na: float) -> TelemetryEvent:
+    return _event(
+        "GUARDRAIL_SODIUM_ABOVE_RECOMMENDED",
+        GUARDRAIL,
+        WARNING,
+        f"Sodium above the recommended maximum: Total Na+ reached {actual_na:.1f} ppm "
+        f"(recommended max {RECOMMENDED_SODIUM_MAX_PPM:.0f} ppm). Table salt and baking "
+        "soda raise it; Gose and stout may go higher by design.",
+        actual_na=actual_na,
+        limit=RECOMMENDED_SODIUM_MAX_PPM,
     )
 
 
@@ -526,6 +540,7 @@ TELEMETRY_CODES: frozenset[str] = frozenset(
         "GUARDRAIL_SOURCE_CONTAMINANT_DETECTED",
         "GUARDRAIL_MAGNESIUM_TOXICITY_CEILING",
         "GUARDRAIL_SULFATE_HARSHNESS_CEILING",
+        "GUARDRAIL_SODIUM_ABOVE_RECOMMENDED",
         "GUARDRAIL_PH_MODEL_OUT_OF_RANGE",
         "OPT_LP_RELAXATION_APPLIED",
         "OPT_LP_LEXICOGRAPHIC_TIE_BREAK",

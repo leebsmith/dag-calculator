@@ -58,6 +58,15 @@ reach the minimum, the solver keeps the equalities, reports one
 second time. `BASELINE` and `FLAVOR` never apply it, so they carry no floor
 finding.
 
+### Ion ceilings
+
+Magnesium warns at 40 ppm and above 50, sulfate above 400, and sodium above the
+recommended 50 (`GUARDRAIL_SODIUM_ABOVE_RECOMMENDED`). All of these are taste
+conventions: they warn on the finished water and never clamp the dose, because a
+Gose or a stout may deliberately exceed them. Table salt and baking soda are the
+usual sodium sources, so a sodium warning on a dark grist usually comes from the
+alkaline agent rather than a mineral target.
+
 ## 3. Volume basis
 
 | Quantity | Node | Definition |

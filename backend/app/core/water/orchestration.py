@@ -34,6 +34,7 @@ from app.core.water.constants import (
     RA_CA_COEFF,
     RA_MG_COEFF,
     RECOMMENDED_CALCIUM_MIN_PPM,
+    RECOMMENDED_SODIUM_MAX_PPM,
     SALT_COEFFS,
     SPARGE_ACID_PH,
 )
@@ -54,6 +55,7 @@ from app.core.water.telemetry import (
     minimal_mass_achieved,
     ph_model_out_of_range,
     salt_dissolution_limit,
+    sodium_above_recommended,
     source_contaminant_detected,
     sparge_acid_prescribed,
     sulfate_harshness_ceiling,
@@ -424,6 +426,11 @@ def _emit_operational_findings(
     so4_total = post_dose.get("so4", 0.0)
     if so4_total > HARD_SULFATE_MAX_PPM:
         events.append(sulfate_harshness_ceiling(so4_total))
+
+    # Sodium is a taste convention, not a physical limit: warn, never clamp.
+    na_total = post_dose.get("na", 0.0)
+    if na_total > RECOMMENDED_SODIUM_MAX_PPM + 1e-6:
+        events.append(sodium_above_recommended(na_total))
 
     # Calcium minimum audit: only when a dosing route applied it, and never as a
     # second wording of a finding the solver already emitted.
