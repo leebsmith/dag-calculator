@@ -689,7 +689,7 @@
   },
   "water.calcium_floor_ppm": {
     "label": "Calcium minimum",
-    "hint": "A minimum, not a target: applied by any dosing route, relaxed when the pinned objectives cannot reach it (reported in Details), and not used when nothing is dosed."
+    "hint": "A guardrail, not a target: the dose adds calcium until the finished mash reaches this minimum, relaxed and reported in Details when the pinned objectives leave no room."
   },
   "water.gypsum_form": {
     "label": "Gypsum form",

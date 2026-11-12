@@ -299,7 +299,8 @@ export function waterVerdictView({
  * @param {number|null} caTarget
  * @returns {string}
  */
-export function calciumFloorNotice(caPinned, floor, caTarget) {
+export function calciumFloorNotice(pinnedCount, caPinned, floor, caTarget) {
+  if (pinnedCount === 0) return "Not used: no ion objectives are held.";
   if (!caPinned || typeof floor !== "number" || typeof caTarget !== "number") return "";
   if (floor > caTarget) {
     return `Above the pinned calcium objective (${fmtPpm(caTarget)} ppm); the objective wins.`;

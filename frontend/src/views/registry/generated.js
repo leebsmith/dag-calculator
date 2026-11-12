@@ -189,7 +189,7 @@ export const generatedRegistry = {
   "style.srm_min": {"label":"Color min"},
   "water.acid_medium": {"label":"Acid medium","optionLabels":{"LACTIC_88":"88% lactic acid","PHOSPHORIC_10":"10% phosphoric acid","PHOSPHORIC_85":"85% phosphoric acid"}},
   "water.cacl2_form": {"label":"CaCl2 form","optionLabels":{"CACL2_DIHYDRATE":"Dihydrate (CaCl₂·2H₂O)","CACL2_ANHYDROUS":"Anhydrous (CaCl₂)"}},
-  "water.calcium_floor_ppm": {"label":"Calcium minimum","hint":"A minimum, not a target: applied by any dosing route, relaxed when the pinned objectives cannot reach it (reported in Details), and not used when nothing is dosed."},
+  "water.calcium_floor_ppm": {"label":"Calcium minimum","hint":"A guardrail, not a target: the dose adds calcium until the finished mash reaches this minimum, relaxed and reported in Details when the pinned objectives leave no room."},
   "water.gypsum_form": {"label":"Gypsum form","optionLabels":{"GYPSUM_DIHYDRATE":"Dihydrate (CaSO₄·2H₂O)","GYPSUM_ANHYDROUS":"Anhydrous (CaSO₄)"}},
   "water.preferred_alkaline_agent": {"label":"Alkaline agent","optionLabels":{"BAKING_SODA":"Baking soda (NaHCO₃)","CHALK":"Chalk (CaCO₃)","PICKLING_LIME":"Pickling lime (Ca(OH)₂)"}},
   "water.salt_distribution": {"label":"Salt distribution","optionLabels":{"PROPORTIONAL":"Split — grist and HLT","MASH_ONLY":"Mash only salts"}},

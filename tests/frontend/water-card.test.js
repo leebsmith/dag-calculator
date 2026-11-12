@@ -153,6 +153,7 @@ test("a pristine batch floats calcium and states the pH objective", withFreshApp
   assert.equal(ca.valueText, "(none)");
   assert.equal(ca.status, "Floated");
   assert.equal(app.waterPlan.floor.display, "50");
+  assert.match(app.waterPlan.floorNotice, /no ion objectives are held/);
   assert.match(app.waterVerdict.phLine, /→/);
 }));
 

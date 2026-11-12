@@ -158,6 +158,7 @@ export function refreshWaterCard(app, ctx) {
       target: fieldOr(ctx.fieldsById, N.targetProfileId),
       floor: fieldOr(ctx.fieldsById, N.calciumFloor),
       floorNotice: calciumFloorNotice(
+        checkedSet.size,
         checkedSet.has("ca"),
         read(N.calciumFloor),
         read(`${N.target}.calcium_ca`)
