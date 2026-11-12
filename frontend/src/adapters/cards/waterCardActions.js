@@ -161,6 +161,9 @@ function targetActions({ cache, engine, getView }) {
       } else {
         // Checked ions are always valued: seed from the batch's water source,
         // which is the only non-infeasible starting point (salts only add).
+        // Materialize the other checked ions first: detaching the preset must
+        // not drop values they still inherit from it.
+        view.materializeWaterTargets();
         view.setRoot(nodeId, seedTargetValue(engine.identity?.[N.sourceReport], pin));
         view.clearWaterPreset();
       }

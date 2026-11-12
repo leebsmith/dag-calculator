@@ -156,6 +156,21 @@ test("a pristine batch floats calcium and states the pH objective", withFreshApp
   assert.match(app.waterVerdict.phLine, /→/);
 }));
 
+test("checking an ion on a preset keeps the other checked values", withFreshApp((app) => {
+  app.selectWaterTarget("malty-amber");
+  app.editWaterTarget("alk", "90");
+  app.toggleWaterTarget("ca");
+  app.compute();
+
+  assert.deepEqual(app.waterSummary.checkedPins, ["so4", "cl", "alk", "ca"]);
+  assert.equal(app.master.getRoot("water.target.sulfate_so4"), 50);
+  assert.equal(app.master.getRoot("water.target.chloride_cl"), 120);
+  assert.equal(app.master.getRoot("water.target.alkalinity_as_caco3"), 90);
+  assert.equal(app.engine.get("water.target.sulfate_so4"), 50);
+  assert.equal(app.engine.get("water.target.chloride_cl"), 120);
+  assert.equal(app.master.getRoot("water.target_profile_id"), "");
+}));
+
 test("a floated ion moved by the pH correction names its driver", withFreshApp((app) => {
   app.compute();
   const alk = app.waterSummary.ions.find((row) => row.ion === "alkalinity_as_caco3");
