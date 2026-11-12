@@ -44,7 +44,6 @@ import { createHopFormatters } from "../views/hopsLogic.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
-import { bindGate, waterTargetGate } from "./waterGate.js";
 import { createFieldAttribution } from "./fieldAttribution.js";
 import { createFieldActions } from "./fieldActions.js";
 import { createProseValidation } from "./proseValidation.js";
@@ -405,7 +404,6 @@ export function createStepApp(options = {}) {
   const runner = createBoundaryRunner({
     session,
     remote,
-    gate: bindGate(waterTargetGate),
     preGate: (id, engine) => {
       if (id !== "solver.batch") return null;
       const cap = engine.resolve("batch.yeast_cap");

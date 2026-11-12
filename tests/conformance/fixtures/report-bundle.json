@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:ecd474dcbc3c648dd42b6222074f1c1a5cefc1e2a222c8b5a5b290693d45eb6a",
+    "hash": "sha256:049efe49e57f2aa35d8a24f0ea8e94aec522f31ec554370b6abff5da3f47d512",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -2460,7 +2460,8 @@
               "UNKNOWN_SALT_FORM",
               "SALT_SOLVE_FAILED",
               "UNKNOWN_STRATEGY",
-              "PINNED_IONS_REQUIRED"
+              "PINNED_IONS_REQUIRED",
+              "ION_TARGET_BELOW_SOURCE"
             ]
           }
         },
@@ -8118,5 +8119,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:a03ce312c4d42e3c80a2c18e0e7b0803bce761c358e46cdb2a16a45f6b4b7be0"
+  "content_hash": "sha256:45a09f0ea34173a2aefb638ebb1901affc7b944981fed6b89b85348182e698f6"
 }

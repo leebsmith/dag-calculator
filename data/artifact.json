@@ -2455,7 +2455,8 @@
           "UNKNOWN_SALT_FORM",
           "SALT_SOLVE_FAILED",
           "UNKNOWN_STRATEGY",
-          "PINNED_IONS_REQUIRED"
+          "PINNED_IONS_REQUIRED",
+          "ION_TARGET_BELOW_SOURCE"
         ]
       }
     },

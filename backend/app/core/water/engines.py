@@ -15,9 +15,7 @@ from app.core.water.telemetry import (
     calcium_floor_unreachable,
     clone_constraint_relaxed,
     clone_weighted_compromise,
-    flavor_target_below_source,
     lp_lexicographic_tie_break,
-    pinned_target_below_source,
     sparse_equalities_only,
 )
 
@@ -35,16 +33,23 @@ def _solve_lp(c, a_eq=None, b_eq=None, a_ub=None, b_ub=None):
     )
 
 
-def _below_source_events(
-    source: dict[str, float], target: dict[str, float], events: list[TelemetryEvent] | None
+def _reject_below_source(
+    source: dict[str, float], target: dict[str, float], ions: Sequence[str]
 ) -> None:
-    if events is None:
+    """Salts only add ions: an equality below the source cannot be held."""
+    short = [ion for ion in ions if target.get(ion, 0.0) < source.get(ion, 0.0) - 1e-9]
+    if not short:
         return
-    for ion in ("so4", "cl"):
-        target_ppm = target.get(ion, 0.0)
-        source_ppm = source.get(ion, 0.0)
-        if target_ppm < source_ppm - 1e-9:
-            events.append(flavor_target_below_source(ion, target_ppm, source_ppm))
+    detail = ", ".join(
+        f"{ion.upper()} {target.get(ion, 0.0):.1f} ppm against a source of "
+        f"{source.get(ion, 0.0):.1f} ppm"
+        for ion in short
+    )
+    raise SolverValidationError(
+        "ION_TARGET_BELOW_SOURCE",
+        f"Target below source for {detail}. Salts only add ions — raise the target "
+        "or unpin it.",
+    )
 
 
 def _flavor_dose(
@@ -158,7 +163,7 @@ def _solve_linear_minimalist(
     need_so4 = max(0.0, target.get("so4", 0.0) - source.get("so4", 0.0))
     need_cl = max(0.0, target.get("cl", 0.0) - source.get("cl", 0.0))
 
-    _below_source_events(source, target, events)
+    _reject_below_source(source, target, ("so4", "cl"))
     flavor = _flavor_dose(need_so4, need_cl, gyp, cacl2)
     if unbounded_ca:
         # Pure unconstrained flavor dosing (Ca floats freely)
@@ -312,11 +317,7 @@ def _solve_dynamic_sparse(
 
     pinned = list(pinned_ions)
 
-    for ion in pinned:
-        if target.get(ion, 0.0) < source.get(ion, 0.0) - 1e-9:
-            events.append(
-                pinned_target_below_source(ion, target.get(ion, 0.0), source.get(ion, 0.0))
-            )
+    _reject_below_source(source, target, pinned)
 
     a_eq = []
     b_eq = []

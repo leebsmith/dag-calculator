@@ -150,33 +150,6 @@ def router_auto_best_fit() -> TelemetryEvent:
 # ---------------------------------------------------------------------------
 
 
-def flavor_target_below_source(ion: str, target_ppm: float, source_ppm: float) -> TelemetryEvent:
-    return _event(
-        "FLAVOR_TARGET_BELOW_SOURCE",
-        GUARDRAIL,
-        WARNING,
-        f"{ion.upper()} target is {target_ppm:.1f} ppm but the source already carries "
-        f"{source_ppm:.1f} ppm; salts only add, so the kettle will stay above the target.",
-        ion=ion,
-        target=target_ppm,
-        source=source_ppm,
-    )
-
-
-def pinned_target_below_source(ion: str, target_ppm: float, source_ppm: float) -> TelemetryEvent:
-    return _event(
-        "PINNED_TARGET_BELOW_SOURCE",
-        GUARDRAIL,
-        WARNING,
-        f"{ion.upper()} is pinned at {target_ppm:.1f} ppm but the source already carries "
-        f"{source_ppm:.1f} ppm; salts only add, so that pin cannot be reached - unpin it "
-        "to free the other targets.",
-        ion=ion,
-        target=target_ppm,
-        source=source_ppm,
-    )
-
-
 def calcium_floor_unreachable(actual: float, floor: float) -> TelemetryEvent:
     return _event(
         "GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE",
@@ -546,8 +519,6 @@ TELEMETRY_CODES: frozenset[str] = frozenset(
         "ROUTER_MODE_4_BASELINE_ONLY",
         "ROUTER_MODE_5_CUSTOM_SPARSE",
         "ROUTER_AUTO_BEST_FIT",
-        "FLAVOR_TARGET_BELOW_SOURCE",
-        "PINNED_TARGET_BELOW_SOURCE",
         "GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE",
         "GUARDRAIL_CALCIUM_FLOOR_OVERRIDDEN",
         "GUARDRAIL_CALCIUM_BELOW_FLOOR",

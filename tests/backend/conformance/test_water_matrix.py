@@ -102,9 +102,7 @@ SCENARIOS = [
         "chloride-heavy-amber-auto",
         _request("amber", "chloride-heavy", {"cl": 150.0, "so4": 30.0}),
         {
-            "held": {"so4": 30.0},
-            "at_least": {"cl": 250.0},
-            "telemetry": ["FLAVOR_TARGET_BELOW_SOURCE"],
+            "error": "ION_TARGET_BELOW_SOURCE",
         },
         id="chloride-heavy-amber-auto",
     ),
@@ -162,7 +160,7 @@ SCENARIOS = [
             strategy="CUSTOM",
             custom_pinned_ions=["ca"],
         ),
-        {"telemetry": ["PINNED_TARGET_BELOW_SOURCE"]},
+        {"error": "ION_TARGET_BELOW_SOURCE"},
         id="custom-pin-below-source",
     ),
 ]
@@ -234,7 +232,11 @@ def _assert_invariants(inp: WaterChemistryInput, out) -> None:
 
 @pytest.mark.parametrize(("label", "inp", "expect"), SCENARIOS)
 def test_scenario_invariants(label, inp, expect):
-    out = solve_water_chemistry(inp)
+    try:
+        out = solve_water_chemistry(inp)
+    except SolverValidationError as exc:
+        assert expect.get("error") == exc.code, (label, exc.code)
+        return
     _assert_invariants(inp, out)
 
     for ion, ppm in expect.get("held", {}).items():
@@ -318,5 +320,10 @@ def test_seeded_combination_sweep():
             calcium_floor_ppm=floor,
             target_mash_ph=ph,
         )
-        out = solve_water_chemistry(inp)
+        try:
+            out = solve_water_chemistry(inp)
+        except SolverValidationError as exc:
+            # Random targets can sit below the source; salts only add ions.
+            assert exc.code == "ION_TARGET_BELOW_SOURCE", (beer, water, exc.code)
+            continue
         _assert_invariants(inp, out)

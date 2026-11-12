@@ -40,11 +40,6 @@ function blockNode(blocked, extras, setStatus, id, message) {
   setStatus(id, "blocked");
 }
 
-function errorNode(extras, setStatus, id) {
-  extras[id] = null;
-  setStatus(id, "error");
-}
-
 function pendingNode(extras, setStatus, id) {
   extras[id] = null;
   setStatus(id, "pending");
@@ -60,7 +55,6 @@ export function createBoundaryRunner({
   debounceMs = 300,
   compute,
   onState,
-  gate = () => null,
   preGate = () => null,
 }) {
   const client = api ?? createApiClient({ fetchImpl });
@@ -141,13 +135,6 @@ export function createBoundaryRunner({
             continue;
           }
           const { binding, inputs, fingerprint } = engine.boundaryRequest(id);
-          const gateMessage = gate(binding, inputs);
-          if (gateMessage) {
-            if (!firstError) firstError = new Error(gateMessage);
-            errorNode(extras, setStatus, id);
-            index += 1;
-            continue;
-          }
           if (engine.hasBoundaryResult(fingerprint)) {
             restoreBoundaryExtra(extras, extrasByFingerprint, id, fingerprint);
             setStatus(id, "ok");

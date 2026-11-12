@@ -169,7 +169,7 @@ def test_custom_pin_reports_one_floor_finding():
         target=IonProfile(
             calcium_ca=0.0,
             magnesium_mg=0.0,
-            sodium_na=0.0,
+            sodium_na=20.0,
             sulfate_so4=50.0,
             chloride_cl=120.0,
             alkalinity_as_caco3=0.0,
@@ -249,6 +249,32 @@ def test_typical_chloride_is_not_reported():
     assert "GUARDRAIL_CHLORIDE_ABOVE_RECOMMENDED" not in codes
 
 
+def test_below_source_pin_is_rejected():
+    req = make_water_request(
+        source=IonProfile(
+            calcium_ca=21.5,
+            magnesium_mg=5.0,
+            sodium_na=10.0,
+            sulfate_so4=60.0,
+            chloride_cl=3.0,
+            alkalinity_as_caco3=78.0,
+        ),
+        target=IonProfile(
+            calcium_ca=0.0,
+            magnesium_mg=0.0,
+            sodium_na=0.0,
+            sulfate_so4=50.0,
+            chloride_cl=120.0,
+            alkalinity_as_caco3=0.0,
+        ),
+        strategy=WaterStrategy.CUSTOM,
+        custom_pinned_ions=["so4"],
+    )
+    with pytest.raises(SolverServiceError) as exc:
+        solve_water_request(req)
+    assert exc.value.code == "ION_TARGET_BELOW_SOURCE"
+
+
 def test_pinned_calcium_above_the_ceiling_names_the_maximum():
     req = make_water_request(
         target=IonProfile(
@@ -320,7 +346,7 @@ def test_error_surface_complete():
         "INVALID_MASH_VOLUME", "INVALID_SPARGE_VOLUME", "UNKNOWN_GRAIN_TYPE",
         "UNKNOWN_ACID_MEDIUM", "UNKNOWN_ALKALINE_AGENT", "UNKNOWN_SALT_FORM",
         "SALT_SOLVE_FAILED", "UNKNOWN_STRATEGY",
-        "PINNED_IONS_REQUIRED",
+        "PINNED_IONS_REQUIRED", "ION_TARGET_BELOW_SOURCE",
     }
     assert declared == expected
 

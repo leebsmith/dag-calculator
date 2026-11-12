@@ -121,6 +121,7 @@ export const SOLVER_ERROR_LABELS = {
   UNKNOWN_SALT_FORM: "Unknown salt form",
   SALT_SOLVE_FAILED: "No salt dose satisfies the target",
   UNKNOWN_STRATEGY: "Unknown water strategy",
+  ION_TARGET_BELOW_SOURCE: "Target below source",
   PINNED_IONS_REQUIRED: "Pin at least one ion",
   INVALID_HOP_INPUT: "Hop charge is invalid",
   INVALID_GRAVITY: "Gravity is invalid for the hop model",

@@ -98,6 +98,9 @@ the checked set; there is no separate mode control and the UI never writes
   ions as pins.
 - A checked ion with no value is excluded and hinted (`no objective entered`); it
   is never sent as a zero objective.
+- An objective below the source is refused by the solver
+  (`ION_TARGET_BELOW_SOURCE`): salts only add ions. The row hints `below source`
+  before the solve runs, so the refusal is never a surprise.
 
 ## Objective vs actual grid (the hero)
 

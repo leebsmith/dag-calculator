@@ -144,7 +144,7 @@ const GRAMMAR_COMPLEXITY = {
 };
 
 const LIFECYCLE_COMPLEXITY = {
-  "adapters/boundaryRunner.js": 27,
+  "adapters/boundaryRunner.js": 25,
   "adapters/cards/catalogDraft.js": 16,
   "adapters/cards/water.js": 32,
   "adapters/fieldAttribution.js": 18,
@@ -161,7 +161,7 @@ const LIFECYCLE_COMPLEXITY = {
 };
 
 const STATEMENT_PINS = {
-  "adapters/boundaryRunner.js": 66,
+  "adapters/boundaryRunner.js": 60,
   "adapters/cards/water.js": 63,
   "adapters/stepAdapter.js": 32,
   "engine/sha256.js": 44,
@@ -178,7 +178,7 @@ const PARAM_PINS = {
 };
 
 const DEPTH_PINS = {
-  "adapters/boundaryRunner.js": 5,
+  "adapters/boundaryRunner.js": 4,
   "engine/dag.js": 5,
 };
 
@@ -186,7 +186,7 @@ const FUNCTION_LINE_PINS = {
   "views/producer/reportFormat.js": 87,
   "engine/dag.js": 269,
   "engine/validate.js": 47,
-  "adapters/boundaryRunner.js": 208,
+  "adapters/boundaryRunner.js": 200,
   "views/producer/stylePlot.js": 67,
 };
 
@@ -194,7 +194,7 @@ const FILE_LINE_PINS = {
   "adapters/cards/hops.js": 363,
   "adapters/cards/late-additions.js": 305,
   "adapters/cards/water.js": 277,
-  "adapters/stepAdapter.js": 454,
+  "adapters/stepAdapter.js": 452,
   "views/producer/stylePlot.js": 422,
   "engine/dag.js": 366,
   "engine/expression.js": 404,
