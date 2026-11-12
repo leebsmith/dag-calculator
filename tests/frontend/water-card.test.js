@@ -215,6 +215,88 @@ test("a failed solve keeps the messages that preceded it", async () => {
   assert.equal(app.waterWarningCount, 1);
 });
 
+test("an unreachable mash pH objective is reported, not approximated", withFreshApp((app) => {
+  app.compute();
+  app.boundaryExtras["solver.water"] = {
+    telemetry: [
+      {
+        code: "TARGET_MASH_PH_UNREACHABLE",
+        category: "ENZYMATIC",
+        severity: "WARNING",
+        message: "Target 6.5 is above the model ceiling.",
+        context: {},
+      },
+    ],
+    warnings: ["Target 6.5 is above the model ceiling."],
+    notes: [],
+  };
+  app.compute();
+
+  assert.equal(app.waterVerdict.status, "High");
+  assert.match(app.waterVerdict.phLine, /6\.00/);
+  assert.equal(app.waterWarningCount, 1);
+  assert.equal(app.waterDetails.telemetry[0].code, "TARGET_MASH_PH_UNREACHABLE");
+}, {
+  boundaries: {
+    ...BOUNDARY_DOUBLE,
+    water_chemistry_solver: (inputs) => ({
+      ...BOUNDARY_DOUBLE.water_chemistry_solver(inputs),
+      "prescription.mash_ph_status": "HIGH",
+      "prescription.predicted_mash_ph": 6.0,
+    }),
+  },
+}));
+
+test("an emptied objective set reloads with one name and keeps the floor", async () => {
+  const app = createTestApp();
+  await app.boot();
+  app.selectWaterTarget("malty-amber");
+  app.compute();
+  for (const pin of [...app.waterSummary.checkedPins]) app.toggleWaterTarget(pin);
+  app.editWaterNumber("floor", app.waterPlan.floor, "35");
+  app.commitWaterNumber("floor", app.waterPlan.floor);
+  app.compute();
+  assert.equal(app.waterTargetSelection, "none");
+
+  const state = app.draftState();
+  const app2 = createTestApp();
+  await app2.boot();
+  await app2.loadState(state);
+  app2.compute();
+
+  assert.equal(app2.waterTargetSelection, "none");
+  assert.equal(app2.waterPlan.floor.display, "35");
+  assert.deepEqual(app2.waterSummary.checkedPins, []);
+  assert.equal(app2.waterSummary.mode, "BASELINE");
+
+  app2.toggleWaterTarget("so4");
+  app2.compute();
+  assert.deepEqual(app2.waterSummary.checkedPins, ["so4"]);
+});
+
+test("the kettle follows the HLT vector when the distribution changes", withFreshApp((app) => {
+  const row = (a) => a.waterSummary.ions.find((r) => r.ion === "alkalinity_as_caco3");
+  app.compute();
+  const proportionalKettle = row(app).kettleText;
+  const postDose = row(app).postDoseText;
+
+  app.setRoot("water.salt_distribution", "MASH_ONLY");
+  app.compute();
+
+  assert.notEqual(row(app).kettleText, proportionalKettle);
+  assert.equal(row(app).postDoseText, postDose);
+  assert.equal(app.waterSummary.proportional, false);
+}, {
+  boundaries: {
+    ...BOUNDARY_DOUBLE,
+    water_chemistry_solver: (inputs) => ({
+      ...BOUNDARY_DOUBLE.water_chemistry_solver(inputs),
+      "post_dose_hlt_ions.alkalinity_as_caco3":
+        inputs.salt_distribution === "MASH_ONLY" ? 78.0 : 34.0,
+    }),
+  },
+}));
+
 test("a minimum above a pinned calcium objective says the objective wins", withFreshApp((app) => {
   app.selectWaterTarget("freeform");
   app.toggleWaterTarget("ca");

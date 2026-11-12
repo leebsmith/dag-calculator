@@ -10,6 +10,7 @@ import {
   WATER_STATUS,
   floorNotice,
   phLine,
+  phStatusLabel,
   routeLine,
   rowState,
   statusFor,
@@ -52,6 +53,14 @@ test("the pH line names the correction or says none", () => {
   const acid = [{ key: "acid_l", label: "88% lactic acid", text: "1.4 mL" }];
   assert.equal(phLine(5.91, 5.4, acid, []), "5.91 → 5.40 · grist 88% lactic acid 1.4 mL");
   assert.equal(phLine(5.4, 5.4, [], []), "5.40 → 5.40 · no correction");
+});
+
+test("the pH status uses its declared option label", () => {
+  assert.equal(
+    phStatusLabel({ value: "HIGH", display: "HIGH", optionLabels: { HIGH: "High" } }),
+    "High"
+  );
+  assert.equal(phStatusLabel(null), "");
 });
 
 test("the floor notice states the state it is in", () => {

@@ -38,6 +38,10 @@ function fmtPpm(value) {
     : "—";
 }
 
+export function phStatusLabel(field) {
+  return field?.optionLabels?.[field?.value] ?? field?.display ?? "";
+}
+
 export function constraintLabel(held) {
   const ordered = WATER_IONS.map((row) => row.pin).filter((pin) => held.includes(pin));
   if (ordered.length === 0) return "No objectives";

@@ -22,7 +22,7 @@ import {
   waterTargetOptionsOf,
   waterVerdictView,
 } from "../../views/waterLogic.js";
-import { floorNotice, routeLine, targetWarning } from "../../views/waterMessages.js";
+import { floorNotice, phStatusLabel, routeLine, targetWarning } from "../../views/waterMessages.js";
 import { ionRows } from "../../views/waterRows.js";
 import { ratioReadout } from "../../views/waterRatio.js";
 import {
@@ -178,7 +178,7 @@ export function refreshWaterCard(app, ctx) {
       uncorrectedPh: read(N.uncorrectedPh),
       correctedPh: read(N.predictedPh),
       predictedDisplay: fieldOr(ctx.fieldsById, N.predictedPh).display,
-      statusDisplay: fieldOr(ctx.fieldsById, N.phStatus).display,
+      statusDisplay: phStatusLabel(fieldOr(ctx.fieldsById, N.phStatus)),
       mashRows: mashDoses.rows,
       spargeRows: spargeDoses.rows,
     });
