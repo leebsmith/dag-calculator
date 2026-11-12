@@ -27,6 +27,7 @@ from app.core.water.constants import (
     MASH_PH_OPTIMAL_LOW,
     MASH_PH_TARGET_TOLERANCE,
     RECOMMENDED_CALCIUM_MIN_PPM,
+    RECOMMENDED_CHLORIDE_MAX_PPM,
     RECOMMENDED_SODIUM_MAX_PPM,
     SPARGE_ACID_PH,
 )
@@ -263,6 +264,19 @@ def sodium_above_recommended(actual_na: float) -> TelemetryEvent:
         "soda raise it; Gose and stout may go higher by design.",
         actual_na=actual_na,
         limit=RECOMMENDED_SODIUM_MAX_PPM,
+    )
+
+
+def chloride_above_recommended(actual_cl: float) -> TelemetryEvent:
+    return _event(
+        "GUARDRAIL_CHLORIDE_ABOVE_RECOMMENDED",
+        GUARDRAIL,
+        WARNING,
+        f"Chloride above the recommended maximum: Total Cl- reached {actual_cl:.1f} ppm "
+        f"(recommended max {RECOMMENDED_CHLORIDE_MAX_PPM:.0f} ppm). Table salt and calcium "
+        "chloride raise it; malt-forward and hazy beers may go higher by design.",
+        actual_cl=actual_cl,
+        limit=RECOMMENDED_CHLORIDE_MAX_PPM,
     )
 
 
@@ -540,6 +554,7 @@ TELEMETRY_CODES: frozenset[str] = frozenset(
         "GUARDRAIL_SOURCE_CONTAMINANT_DETECTED",
         "GUARDRAIL_MAGNESIUM_TOXICITY_CEILING",
         "GUARDRAIL_SULFATE_HARSHNESS_CEILING",
+        "GUARDRAIL_CHLORIDE_ABOVE_RECOMMENDED",
         "GUARDRAIL_SODIUM_ABOVE_RECOMMENDED",
         "GUARDRAIL_PH_MODEL_OUT_OF_RANGE",
         "OPT_LP_RELAXATION_APPLIED",

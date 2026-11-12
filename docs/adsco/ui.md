@@ -154,9 +154,9 @@ the ions it declares a number for (`null` floats).
   the shortfall warning names the finished concentration, the floor, and that
   the pinned equalities took precedence. A baseline batch carries no floor
   finding.
-- **Ion ceilings**: magnesium (40/50 ppm), sulfate (400) and sodium (50) warn on
-  the finished water and never clamp a dose; the sodium warning names table salt
-  and baking soda as the sources and the styles that go higher by design.
+- **Ion ceilings**: magnesium (40/50 ppm), sulfate (400), sodium (50) and chloride
+  (300) warn on the finished water and never clamp a dose; the sodium and chloride
+  warnings name their sources and the styles that go higher by design.
 
 ## Brew-day prescription
 

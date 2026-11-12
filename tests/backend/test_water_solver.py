@@ -217,6 +217,36 @@ def test_typical_sodium_is_not_reported():
     assert "GUARDRAIL_SODIUM_ABOVE_RECOMMENDED" not in codes
 
 
+def test_high_chloride_is_reported():
+    req = make_water_request(
+        target=IonProfile(
+            calcium_ca=0.0,
+            magnesium_mg=0.0,
+            sodium_na=0.0,
+            sulfate_so4=0.0,
+            chloride_cl=350.0,
+            alkalinity_as_caco3=0.0,
+        ),
+        strategy=WaterStrategy.CUSTOM,
+        custom_pinned_ions=["cl"],
+    )
+    resp = solve_water_request(req)
+    chloride = [
+        event
+        for event in resp.telemetry
+        if event["code"] == "GUARDRAIL_CHLORIDE_ABOVE_RECOMMENDED"
+    ]
+    assert len(chloride) == 1
+    assert chloride[0]["severity"] == "WARNING"
+    assert resp.post_dose_mash_ions.chloride_cl >= 350.0 - 1e-6
+
+
+def test_typical_chloride_is_not_reported():
+    resp = solve_water_request(make_water_request())
+    codes = {event["code"] for event in resp.telemetry}
+    assert "GUARDRAIL_CHLORIDE_ABOVE_RECOMMENDED" not in codes
+
+
 def test_mash_only_zeroes_sparge_salts_but_keeps_acid():
     req = make_water_request(salt_distribution=SaltDistribution.MASH_ONLY)
     resp = solve_water_request(req)

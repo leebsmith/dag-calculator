@@ -86,6 +86,30 @@ CASES = {
         ),
         target=ZERO_IONS,
     ),
+    "sodium-heavy": make_water_request(
+        strategy=WaterStrategy.BASELINE,
+        source=IonProfile(
+            calcium_ca=90.0,
+            magnesium_mg=10.0,
+            sodium_na=80.0,
+            sulfate_so4=40.0,
+            chloride_cl=30.0,
+            alkalinity_as_caco3=150.0,
+        ),
+        target=ZERO_IONS,
+    ),
+    "chloride-heavy": make_water_request(
+        strategy=WaterStrategy.BASELINE,
+        source=IonProfile(
+            calcium_ca=90.0,
+            magnesium_mg=10.0,
+            sodium_na=30.0,
+            sulfate_so4=40.0,
+            chloride_cl=350.0,
+            alkalinity_as_caco3=150.0,
+        ),
+        target=ZERO_IONS,
+    ),
 }
 
 CORE_CASES = [

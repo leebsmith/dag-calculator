@@ -34,6 +34,7 @@ from app.core.water.constants import (
     RA_CA_COEFF,
     RA_MG_COEFF,
     RECOMMENDED_CALCIUM_MIN_PPM,
+    RECOMMENDED_CHLORIDE_MAX_PPM,
     RECOMMENDED_SODIUM_MAX_PPM,
     SALT_COEFFS,
     SPARGE_ACID_PH,
@@ -47,6 +48,7 @@ from app.core.water.telemetry import (
     alkaline_dose_prescribed,
     calcium_below_floor,
     calcium_floor_overridden,
+    chloride_above_recommended,
     derive_findings,
     hlt_surplus,
     magnesium_toxicity_ceiling,
@@ -427,10 +429,15 @@ def _emit_operational_findings(
     if so4_total > HARD_SULFATE_MAX_PPM:
         events.append(sulfate_harshness_ceiling(so4_total))
 
-    # Sodium is a taste convention, not a physical limit: warn, never clamp.
-    na_total = post_dose.get("na", 0.0)
-    if na_total > RECOMMENDED_SODIUM_MAX_PPM + 1e-6:
-        events.append(sodium_above_recommended(na_total))
+    # Sodium and chloride are taste conventions, not physical limits: warn,
+    # never clamp. One audit loop so the two ceilings cannot drift apart.
+    for ion, limit, finding in (
+        ("na", RECOMMENDED_SODIUM_MAX_PPM, sodium_above_recommended),
+        ("cl", RECOMMENDED_CHLORIDE_MAX_PPM, chloride_above_recommended),
+    ):
+        total = post_dose.get(ion, 0.0)
+        if total > limit + 1e-6:
+            events.append(finding(total))
 
     # Calcium minimum audit: only when a dosing route applied it, and never as a
     # second wording of a finding the solver already emitted.
