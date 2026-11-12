@@ -689,7 +689,7 @@
   },
   "water.calcium_floor_ppm": {
     "label": "Calcium minimum",
-    "hint": "A minimum, not a target: applied by any dosing route, relaxed and reported when the pinned objectives cannot reach it, and not used when nothing is dosed."
+    "hint": "A minimum, not a target: applied by any dosing route, relaxed when the pinned objectives cannot reach it (reported in Details), and not used when nothing is dosed."
   },
   "water.gypsum_form": {
     "label": "Gypsum form",
