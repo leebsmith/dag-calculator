@@ -274,6 +274,28 @@ def _solve_nonlinear_cloner(
     )
 
 
+def _max_reachable_calcium(
+    source: dict[str, float],
+    target: dict[str, float],
+    salts: list[dict[str, float]],
+    pinned: list[str],
+) -> float | None:
+    """The highest finished calcium the other pinned equalities allow.
+
+    Used only to explain an infeasible pin set: an equality on calcium can be
+    ordered above what the remaining equalities leave available.
+    """
+    other = [ion for ion in pinned if ion != "ca"]
+    if not other:
+        return None
+    a_eq = [[salt.get(ion, 0.0) for salt in salts] for ion in other]
+    b_eq = [max(0.0, target.get(ion, 0.0) - source.get(ion, 0.0)) for ion in other]
+    res = _solve_lp([-salt.get("ca", 0.0) for salt in salts], a_eq, b_eq)
+    if not res.success:
+        return None
+    return source.get("ca", 0.0) - float(res.fun)
+
+
 def _solve_dynamic_sparse(
     source: dict[str, float],
     target: dict[str, float],
@@ -319,9 +341,17 @@ def _solve_dynamic_sparse(
         if not res.success:
             count = len(pinned)
             noun = "target" if count == 1 else "targets"
+            detail = ""
+            if "ca" in pinned:
+                max_ca = _max_reachable_calcium(source, target, salts, pinned)
+                if max_ca is not None:
+                    detail = (
+                        f" The most this set can reach is {max_ca:.1f} ppm calcium "
+                        f"against a pinned {target.get('ca', 0.0):.1f} ppm."
+                    )
             raise SolverValidationError(
                 "SALT_SOLVE_FAILED",
-                f"No salt dose can satisfy all {count} pinned {noun}. "
+                f"No salt dose can satisfy all {count} pinned {noun}.{detail} "
                 "Unpin one ion to leave a degree of freedom, or choose a target preset.",
             )
 

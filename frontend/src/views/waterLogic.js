@@ -301,8 +301,10 @@ export function waterVerdictView({
  */
 export function calciumFloorNotice(caPinned, floor, caTarget) {
   if (!caPinned || typeof floor !== "number" || typeof caTarget !== "number") return "";
-  if (floor <= caTarget) return "";
-  return `Above the pinned calcium objective (${fmtPpm(caTarget)} ppm); the objective wins.`;
+  if (floor > caTarget) {
+    return `Above the pinned calcium objective (${fmtPpm(caTarget)} ppm); the objective wins.`;
+  }
+  return `Not used while calcium is an objective (${fmtPpm(caTarget)} ppm).`;
 }
 
 /**

@@ -176,7 +176,7 @@ test("a minimum above a pinned calcium objective says the objective wins", withF
   app.toggleWaterTarget("ca");
   app.editWaterTarget("ca", "60");
   app.compute();
-  assert.equal(app.waterPlan.floorNotice, "");
+  assert.match(app.waterPlan.floorNotice, /Not used while calcium is an objective/);
 
   app.editWaterNumber("floor", app.waterPlan.floor, "200");
   app.commitWaterNumber("floor", app.waterPlan.floor);

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import re
+
 import pytest
 from conftest import make_water_request
 
@@ -245,6 +247,28 @@ def test_typical_chloride_is_not_reported():
     resp = solve_water_request(make_water_request())
     codes = {event["code"] for event in resp.telemetry}
     assert "GUARDRAIL_CHLORIDE_ABOVE_RECOMMENDED" not in codes
+
+
+def test_pinned_calcium_above_the_ceiling_names_the_maximum():
+    req = make_water_request(
+        target=IonProfile(
+            calcium_ca=200.0,
+            magnesium_mg=0.0,
+            sodium_na=0.0,
+            sulfate_so4=50.0,
+            chloride_cl=120.0,
+            alkalinity_as_caco3=80.0,
+        ),
+        strategy=WaterStrategy.CUSTOM,
+        custom_pinned_ions=["ca", "so4", "cl", "alk"],
+    )
+    with pytest.raises(SolverServiceError) as exc:
+        solve_water_request(req)
+    assert exc.value.code == "SALT_SOLVE_FAILED"
+    message = str(exc.value)
+    match = re.search(r"reach is ([\d.]+) ppm", message)
+    assert match, message
+    assert float(match.group(1)) < 200.0
 
 
 def test_mash_only_zeroes_sparge_salts_but_keeps_acid():
