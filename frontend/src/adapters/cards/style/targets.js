@@ -44,8 +44,8 @@ function pinActions({ engine, getView }) {
       view.setRoot(N.scalePin, value);
       view.clearInputDraft(view.inputKey("field", "scale-target"));
       view.syncScalePinState();
-      view.syncScalePreviewState?.();
       view.scheduleSolve();
+      view.syncScalePreviewState?.();
       view.notify();
     },
 

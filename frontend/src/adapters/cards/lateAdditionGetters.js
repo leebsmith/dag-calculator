@@ -24,6 +24,33 @@ function numberAt(engine, path, fallback = 0, reportError = ignoreError) { // te
   }
 }
 
+export function previewInputs(engine, reportError = ignoreError) { // test-only default
+  let rows = [];
+  let dose = 0;
+  let ready = false;
+  try {
+    const { fingerprint } = engine.boundaryRequest(N.solver);
+    ready = engine.hasBoundaryResult(fingerprint);
+  } catch (err) {
+    reportError("lateAdditions.scalePreviews", err);
+  }
+  if (ready) {
+    try {
+      const raw = engine.resolve(N.preview);
+      rows = Array.isArray(raw) ? raw : [];
+    } catch (err) {
+      reportError("lateAdditions.scalePreviews", err);
+    }
+    dose = numberAt(engine, N.dose, 0, reportError);
+  }
+  return {
+    rows,
+    dose,
+    intent: engine.get(N.intent) ?? "dose",
+    share: Number(engine.get(N.share)) || 0,
+  };
+}
+
 export function stateDescriptors({ engine, getView }) {
   return {
     lateAdditionIntentState: { configurable: true, writable: true, value: null },

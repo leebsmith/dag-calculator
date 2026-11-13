@@ -3,7 +3,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { sharedTestApp } from "./appHelpers.js";
+import { createTestApp, sharedTestApp } from "./appHelpers.js";
+import { batchOutputs, identityFixture, waterOutputs } from "./helpers.js";
 
 const SUGAR = {
   sugar_id: "dextrose",
@@ -68,6 +69,34 @@ test("the radios switch the persisted scale pin", async () => {
   assert.equal(app.engine.get("batch.scale_pin"), "fg");
   assert.equal(app.activeScaleTargetRoot, "batch.target_fg");
   assert.equal(app.scalePreviewRows.find((row) => row.active).pin, "fg");
+});
+
+test("a pin change schedules a solve while the sugar preview data is stale", async () => {
+  const calls = [];
+  const fetchImpl = async (url, init = {}) => {
+    const body = init.body ? JSON.parse(init.body) : null;
+    calls.push({ url, body });
+    return {
+      ok: true,
+      status: 200,
+      json: async () => (url === "/solve/batch" ? batchOutputs() : waterOutputs()),
+    };
+  };
+  const app = createTestApp({ remote: true, fetchImpl, debounceMs: 60_000 });
+  await app.loadState({
+    identity: identityFixture(),
+    roots: {},
+    collections: { "batch.sugars": [{ ...SUGAR }] },
+    selections: {},
+  });
+
+  assert.doesNotThrow(() => app.setScalePin("og"));
+  assert.equal(app.engine.get("batch.scale_pin"), "og");
+
+  await app.solveNow();
+  const lastBatch = calls.filter((call) => call.url === "/solve/batch").at(-1);
+  assert.equal(lastBatch.body.scale_pin, "og");
+  app.teardown();
 });
 
 test("the active target edits and resets to the identity default", async () => {

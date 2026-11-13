@@ -6,7 +6,7 @@ import {
   catalogDraftLayer,
   createCatalogDraft,
 } from "./catalogDraft.js";
-import { allocationDescriptors, displayDescriptors, stateDescriptors } from "./lateAdditionGetters.js";
+import { allocationDescriptors, displayDescriptors, previewInputs, stateDescriptors } from "./lateAdditionGetters.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
 import { columnValueLabel, sugarEffectLabels } from "../../views/producer/lateAdditionRows.js";
 import { scalePreviewState } from "../../views/producer/scalePreview.js";
@@ -113,16 +113,7 @@ function previewActions({ engine, artifact, getView, observability }) {
   return {
     syncScalePreviewState(pin = getView().scalePin) {
       const view = getView();
-      let rows = [];
-      try {
-        const raw = engine.resolve(N.preview);
-        rows = Array.isArray(raw) ? raw : [];
-      } catch (err) {
-        observability.reportError("lateAdditions.scalePreviews", err);
-      }
-      const intent = engine.get(N.intent) ?? "dose";
-      const share = Number(engine.get(N.share)) || 0;
-      const dose = Number(engine.get(N.dose)) || 0;
+      const { rows, dose, intent, share } = previewInputs(engine, observability.reportError);
       const state = scalePreviewState({
         rows,
         style: engine.identity?.style ?? {},

@@ -1,6 +1,7 @@
 // Presentation metadata for the late-additions slice (sugar collection + readout).
 export const LATE_ADDITION_NODES = {
   collection: "batch.sugars",
+  solver: "solver.batch",
   intent: "batch.late_addition_intent",
   share: "batch.sugar_extract_share",
   mass: "grist.sugars_mass",
