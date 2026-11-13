@@ -121,6 +121,20 @@ test("the pinned locus follows the pin kind", async () => {
   assert.match(app.stylePreview.pinLabel, /^ABV [\d.]+%$/);
 });
 
+test("the static plot geometry survives a pin change", async () => {
+  const app = await styledApp();
+  const before = app.stylePreview;
+
+  app.setScalePin("og");
+  app.compute();
+  const after = app.stylePreview;
+
+  assert.equal(after.polygon, before.polygon);
+  assert.equal(after.contours, before.contours);
+  assert.equal(after.bandPath, before.bandPath);
+  assert.notEqual(after.pinPath, before.pinPath, "the pinned locus still changes");
+});
+
 test("the pinned label names the pin's own target in the display unit", async () => {
   const app = await styledApp();
 

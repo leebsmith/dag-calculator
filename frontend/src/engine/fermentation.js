@@ -4,6 +4,9 @@
 // artifact (`artifactFunctions.js`), which mirrors backend/app/core/utils.py.
 
 import { artifactConstant, callArtifactFunction } from "./artifactFunctions.js";
+import { apparentExtractForRealExtract, cutaiaRealExtract } from "./realExtract.js";
+
+export { apparentExtractForRealExtract, cutaiaRealExtract };
 
 // Solver extract-point conversion (kg extract per GU·L), matching
 // backend/app/core/batch_solver.py::GAMMA_METRIC.
@@ -34,10 +37,7 @@ export function apparentToRealAttenuation(apparentAttenuation, oe = INGREDIENT_R
   if (!Number.isFinite(apparentAttenuation) || !(oe > 0)) return apparentAttenuation;
   const aa = Math.min(Math.max(apparentAttenuation, 0), 1);
   const ae = oe * (1 - aa);
-  const abw =
-    (artifactConstant("cutaia_a") + artifactConstant("cutaia_b") * oe) * (oe - ae);
-  const re = callArtifactFunction("cutaia_real_extract", [abw, ae]);
-  return (oe - re) / oe;
+  return (oe - cutaiaRealExtract(oe, ae)) / oe;
 }
 
 // ABV along a fixed-AE (horizontal) edge is quadratic in OE; solve for OE.
@@ -76,29 +76,6 @@ export function oeForAbvAtAe(ae, targetAbv) {
 
 // Cutaia real extract at one extract point (%), mirroring
 // utils.cutaia_real_extract. The artifact function takes (abw, ae).
-export function cutaiaRealExtract(oe, ae) {
-  const abw =
-    (artifactConstant("cutaia_a") + artifactConstant("cutaia_b") * oe) * (oe - ae);
-  return callArtifactFunction("cutaia_real_extract", [abw, ae]);
-}
-
-// AE that holds a real extract at one OE. The regression is monotone in AE, so
-// bisection lands within display precision.
-export function apparentExtractForRealExtract(oe, realExtract) {
-  if (!Number.isFinite(oe) || oe <= 0) return null;
-  if (!Number.isFinite(realExtract) || realExtract < 0 || realExtract > oe) return null;
-  const f = (ae) => cutaiaRealExtract(oe, ae) - realExtract;
-  if (f(0) > 0 || f(oe) < 0) return null;
-  let lo = 0;
-  let hi = oe;
-  for (let i = 0; i < 80; i += 1) {
-    const mid = (lo + hi) / 2;
-    if (f(mid) < 0) lo = mid;
-    else hi = mid;
-  }
-  return (lo + hi) / 2;
-}
-
 // The extract points one shape can take, clipped to a box: hold the real
 // extract fraction and sweep OE. This is the locus a scale change follows, so
 // pinning a size moves the batch along it and never off it.

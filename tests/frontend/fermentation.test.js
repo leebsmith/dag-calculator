@@ -137,6 +137,20 @@ test("the real-extract inversion holds the ratio it was given", () => {
   }
 });
 
+test("the closed-form inversion holds across the extract range", () => {
+  for (const oe of [5, 8, 12, 16, 20, 24, 30, 35, 40]) {
+    for (const rdf of [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95]) {
+      const target = oe * (1 - rdf);
+      const ae = apparentExtractForRealExtract(oe, target);
+      if (ae === null) continue;
+      assert.ok(
+        Math.abs(cutaiaRealExtract(oe, ae) - target) < 1e-9,
+        `oe=${oe} rdf=${rdf} must hold the real extract`
+      );
+    }
+  }
+});
+
 test("apparent extract falls as the real extract falls", () => {
   const firm = apparentExtractForRealExtract(18, 18 * 0.5);
   const dry = apparentExtractForRealExtract(18, 18 * 0.3);

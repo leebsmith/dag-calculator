@@ -187,7 +187,7 @@ const FUNCTION_LINE_PINS = {
   "engine/dag.js": 269,
   "engine/validate.js": 47,
   "adapters/boundaryRunner.js": 200,
-  "views/producer/stylePlot.js": 67,
+  "views/producer/stylePlot.js": 52,
 };
 
 const FILE_LINE_PINS = {
@@ -195,10 +195,10 @@ const FILE_LINE_PINS = {
   "adapters/cards/late-additions.js": 296,
   "adapters/cards/water.js": 272,
   "adapters/stepAdapter.js": 452,
-  "views/producer/stylePlot.js": 422,
+  "views/producer/stylePlot.js": 193,
   "engine/dag.js": 366,
   "engine/expression.js": 404,
-  "engine/fermentation.js": 506,
+  "engine/fermentation.js": 483,
   "engine/units.js": 404,
   "engine/validate.js": 541,
   "store/persistence.js": 412,
