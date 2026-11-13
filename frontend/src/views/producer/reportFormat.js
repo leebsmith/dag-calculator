@@ -178,10 +178,9 @@ function purchaseTables({ artifact, catalog, engine, list, format, fermentables 
   };
 }
 
-function hopStrategyRows(strategy) {
-  const text = String(strategy ?? "").trim();
-  if (!text) return [];
-  return [{ text: { text } }];
+function proseRows(value) {
+  const text = String(value ?? "").trim();
+  return text ? [{ text: { text } }] : [];
 }
 
 // Per-row display strings for the fermentable tables. Grist is the malt charge
@@ -190,7 +189,7 @@ function hopStrategyRows(strategy) {
 // authored grain bill for major malts, the mass share for trace malts), and
 // `grist_pct` is its share of the whole grist. Both are largest-remainder
 // normalised so each column sums to exactly 100.0.
-export function buildReportTables(artifact, catalog, engine, strategy, reportError) {
+export function buildReportTables(artifact, catalog, engine, prose = {}, reportError) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
   const majorId = N.majorMalts;
@@ -198,10 +197,8 @@ export function buildReportTables(artifact, catalog, engine, strategy, reportErr
   const sugarId = L.collection;
   const majorMass = `${majorId}.mass_kg`;
   const majorExtract = `${majorId}.extract_kg`;
-  const majorColor = `${majorId}.color_lovibond`;
-  const majorPct = `${majorId}.pct`;
-  const traceMass = `${traceId}.mass_kg`;
-  const traceColor = `${traceId}.color_lovibond`;
+  const majorColor = `${majorId}.color_lovibond`, majorPct = `${majorId}.pct`;
+  const traceMass = `${traceId}.mass_kg`, traceColor = `${traceId}.color_lovibond`;
   const sugarMass = `${sugarId}.resolved_mass_kg`;
   const sugarColor = `${sugarId}.color_lovibond`;
   const { major, trace, sugar } = readFermentables(engine);
@@ -274,7 +271,9 @@ export function buildReportTables(artifact, catalog, engine, strategy, reportErr
     [B.steps]: checklistTable(artifact, catalog, engine, reportError),
     [P.collection]: processNoteRows(engine),
     ...purchases,
-    "report.hop_strategy": hopStrategyRows(strategy),
+    "report.hop_strategy": proseRows(prose.hopStrategy),
+    "report.discussion": proseRows(prose.discussion),
+    "report.fermentation_strategy": proseRows(prose.fermentationStrategy),
   };
 }
 

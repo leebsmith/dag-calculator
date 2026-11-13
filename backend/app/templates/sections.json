@@ -1,5 +1,9 @@
 [
   {
+    "id": "discussion",
+    "title": "Discussion"
+  },
+  {
     "id": "brewhouse",
     "title": "Brewhouse"
   },
@@ -26,6 +30,10 @@
   {
     "id": "yeast",
     "title": "Yeast"
+  },
+  {
+    "id": "fermentation-strategy",
+    "title": "Fermentation strategy"
   },
   {
     "id": "volume-ledger",

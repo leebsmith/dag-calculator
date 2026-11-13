@@ -92,12 +92,14 @@ test("booleans and taxonomy strings render as text", () => {
 test("an empty recipe still produces every declared table, empty", () => {
   const engine = engineWith();
 
-  const tables = buildReportTables(A, CATALOG, engine, "", () => {});
+  const tables = buildReportTables(A, CATALOG, engine, {}, () => {});
 
   assert.deepEqual(tables[N.majorMalts], []);
   assert.deepEqual(tables[N.traceMalts], []);
   assert.deepEqual(tables["report.hop_purchases"], []);
   assert.deepEqual(tables["report.hop_strategy"], []);
+  assert.deepEqual(tables["report.discussion"], []);
+  assert.deepEqual(tables["report.fermentation_strategy"], []);
   for (const key of [
     "batch.sugars",
     "mash.rests",
@@ -113,11 +115,34 @@ test("the strategy is carried as one raw markdown row", () => {
   const engine = engineWith();
   const strategy = "  First   paragraph.\n\nSecond paragraph.\n\n\n";
 
-  const tables = buildReportTables(A, CATALOG, engine, strategy, () => {});
+  const tables = buildReportTables(A, CATALOG, engine, { hopStrategy: strategy }, () => {});
 
   assert.deepEqual(
     tables["report.hop_strategy"].map((row) => row.text.text),
     ["First   paragraph.\n\nSecond paragraph."]
+  );
+});
+
+test("the discussion and fermentation strategy are carried as raw markdown rows", () => {
+  const engine = engineWith();
+  const tables = buildReportTables(
+    A,
+    CATALOG,
+    engine,
+    {
+      discussion: "  Where it came from.\n\n- Substitution.",
+      fermentationStrategy: "Pitch, then hold 19 °C.",
+    },
+    () => {}
+  );
+
+  assert.deepEqual(
+    tables["report.discussion"].map((row) => row.text.text),
+    ["Where it came from.\n\n- Substitution."]
+  );
+  assert.deepEqual(
+    tables["report.fermentation_strategy"].map((row) => row.text.text),
+    ["Pitch, then hold 19 °C."]
   );
 });
 
@@ -137,7 +162,7 @@ test("a grist row formats its amount, share and ppg", () => {
     },
   });
 
-  const tables = buildReportTables(A, CATALOG, engine, "", () => {});
+  const tables = buildReportTables(A, CATALOG, engine, {}, () => {});
   const [row] = tables[N.majorMalts];
 
   assert.equal(row.name.text, "Pale Ale Malt");

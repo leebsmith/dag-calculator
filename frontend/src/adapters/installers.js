@@ -26,6 +26,7 @@ import { KEYS as styleTargetsKeys } from "./cards/style/targets.js";
 import { KEYS as styleConformanceKeys } from "./cards/style/conformance.js";
 import { KEYS as hopKeys } from "./cards/hops.js";
 import { KEYS as hopStrategyKeys } from "./cards/hopsStrategy.js";
+import { KEYS as proseFieldsKeys } from "./cards/proseFields.js";
 import { KEYS as lateAdditionsKeys } from "./cards/late-additions.js";
 import { KEYS as traceMaltsKeys } from "./cards/trace-malts.js";
 import { KEYS as maltKeys } from "./cards/malt.js";
@@ -59,6 +60,7 @@ const HOP = [
   "frontend/src/adapters/cards/hopsCoolingCurve.js",
   "frontend/src/adapters/cards/hopsStrategy.js",
 ];
+const PROSE_FIELDS = ["frontend/src/adapters/cards/proseFields.js"];
 const CATALOG_DRAFT = [
   "frontend/src/adapters/cards/catalogDraft.js",
   "frontend/src/adapters/cards/catalogDraftGetters.js",
@@ -86,9 +88,7 @@ const WATER = [
 ];
 const MODAL_FOCUS = ["frontend/src/adapters/modalFocus.js"];
 const TABLE_CONFIGS = ["frontend/src/adapters/tableConfigs.js"];
-
 const STYLE_PARTIALS = ["step-style.html"];
-
 export const INSTALLERS = [
   { name: "navigation", modules: NAVIGATION, keys: navigationKeys },
   { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["step-card.html"] },
@@ -138,6 +138,7 @@ export const INSTALLERS = [
       "modal-whirlpool-cooling-ceiling.html",
     ],
   },
+  { name: "proseFields", modules: PROSE_FIELDS, keys: proseFieldsKeys, partials: ["step-discussion.html", "fermentation-strategy-section.html"] },
   {
     name: "lateAdditions",
     modules: LATE_ADDITIONS_AND_CATALOG,
@@ -188,8 +189,8 @@ export const SHARED = [
   },
   {
     key: "proseIssues",
-    owners: ["hop", "fieldActions", "brewDay"],
-    reason: "the hop, process-note, and brew-day cards bind the shared markdown validator",
+    owners: ["hop", "proseFields", "fieldActions", "brewDay"],
+    reason: "the hop, discussion, fermentation-strategy, process-note, and brew-day cards bind the shared markdown validator",
   },
   {
     key: "clearInputDraft",

@@ -4,6 +4,14 @@ import { registry } from "./registry/index.js";
 
 export const steps = [
   {
+    id: "discussion",
+    slice: "discussion",
+    title: "Discussion",
+    subtitle: "Origin, substitutions, and why this recipe looks the way it does",
+    partial: "./src/partials/step-discussion.html",
+    fields: [],
+  },
+  {
     id: "equipment",
     slice: "equipment",
     title: "Equipment",

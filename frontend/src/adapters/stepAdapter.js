@@ -26,6 +26,7 @@ import { createYeastLayers } from "./cards/yeast.js";
 import { createStyleLayers } from "./cards/style.js";
 import { createHopLayers } from "./cards/hops.js";
 import { createHopStrategyLayers } from "./cards/hopsStrategy.js";
+import { createProseFieldsLayers, proseFieldsFromState } from "./cards/proseFields.js";
 import { createLateAdditionsLayers } from "./cards/late-additions.js";
 import { createTraceMaltsLayers } from "./cards/trace-malts.js";
 import { createMaltLayers } from "./cards/malt.js";
@@ -59,7 +60,6 @@ import { requireObservability } from "../observability.js";
 // Pre-landing-page bootstrap lives with the reference cache; this module only
 // needs the default fermenter id for the legacy-draft repair.
 const DEFAULT_FERMENTER_ID = artifact.constants?.default_fermenter_profile_id?.value;
-
 // Reference assets: the browser entry owns the cache and the library that fills
 // it, and injects both. A bare test app falls back to a fresh pair.
 function referenceAssets(options, observability, onChange) {
@@ -194,7 +194,7 @@ export function createStepApp(options = {}) {
     // the current library and marked dirty so the next save persists it.
     async loadState(state) {
       this.inputDrafts = {};
-      this.hopStrategy = state?.hop_strategy;
+      Object.assign(this, proseFieldsFromState(state));
       const legacyDerate = state?.roots?.["batch.attenuation_derate"];
       const migratedChecklist = migrateChecklistCollections(state?.collections);
       session.rebuild({ ...state, collections: migratedChecklist.collections });
@@ -215,7 +215,7 @@ export function createStepApp(options = {}) {
       if (remote) await this.solveNow();
       else this.compute();
       if (changed) this.notify();
-      this.resetToStyle();
+      this.resetToDiscussion();
     },
 
     // A saved batch can author a positive sugar share while every row's parts
@@ -386,7 +386,8 @@ export function createStepApp(options = {}) {
     ...createDryHopLayers(cardCtx),
     ...createWaterLayers(cardCtx),
     ...createLibraryLayers(cardCtx),
-    ...createHopStrategyLayers(cardCtx)
+    ...createHopStrategyLayers(cardCtx),
+    ...createProseFieldsLayers(cardCtx)
   );
   liveView.current = app;
   const view = createStepView({
@@ -447,6 +448,5 @@ export function createStepApp(options = {}) {
     ];
     if (problems.length) throw new Error(`installer surface drift:\n${problems.join("\n")}`);
   }
-
   return app;
 }

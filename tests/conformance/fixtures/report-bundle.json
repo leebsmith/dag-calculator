@@ -7557,6 +7557,28 @@
         }
       }
     ],
+    "report.discussion": [
+      {
+        "text": {
+          "text": "Adapted from the 2019 homebrew club pale ale, scaled to the HERMS rig. **Substitution:** Crystal 40 replaces the original Crystal 60 for a drier finish.\n\n- Source: club newsletter, shared by the original brewer.\n- Style note: keep the bitterness at the low end of 18B.",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        }
+      }
+    ],
+    "report.fermentation_strategy": [
+      {
+        "text": {
+          "text": "Pitch one fresh pack of US-05 into 20 \u00b0C wort; no starter for this gravity.\n\n1. Hold 19 \u00b0C through high krausen.\n2. Raise to 21 \u00b0C for a diacetyl rest once the gravity is within 2 points of terminal.\n3. Crash to 2 \u00b0C before packaging.",
+          "number": null,
+          "unit": null,
+          "base": null,
+          "dimension": null
+        }
+      }
+    ],
     "report.grain_purchases": [
       {
         "name": {
@@ -8119,5 +8141,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:45a09f0ea34173a2aefb638ebb1901affc7b944981fed6b89b85348182e698f6"
+  "content_hash": "sha256:a8d9936ea3dc8054ef4506e80a3417e464c256bd42905f173f50986419b470bd"
 }

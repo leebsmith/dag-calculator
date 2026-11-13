@@ -27,7 +27,13 @@ Check = Callable[[ReportBundle], None]
 # tables derived at freeze time; every other formatted-table key must still be
 # a declared collection node.
 NAMED_REPORT_TABLES = frozenset(
-    {"report.hop_strategy", "report.hop_purchases", "report.grain_purchases"}
+    {
+        "report.hop_strategy",
+        "report.discussion",
+        "report.fermentation_strategy",
+        "report.hop_purchases",
+        "report.grain_purchases",
+    }
 )
 
 

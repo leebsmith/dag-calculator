@@ -41,6 +41,7 @@ BUNDLE = (
     / "report-bundle.json"
 )
 SECTIONS = (
+    "discussion",
     "brewhouse",
     "batch-facts",
     "mash-rests",
@@ -48,6 +49,7 @@ SECTIONS = (
     "purchases",
     "process",
     "yeast",
+    "fermentation-strategy",
     "volume-ledger",
     "liquor-ledger",
     "water-chemistry",
@@ -272,6 +274,33 @@ def test_hop_strategy_renders_markdown() -> None:
     assert "STRATEGYBOLDSENTINEL" in text
     assert "STRATEGYLISTSENTINEL" in text
     assert "**STRATEGYBOLDSENTINEL**" not in text
+
+
+def test_discussion_renders_markdown() -> None:
+    data = bundle_dict()
+    data["formatted_tables"]["report.discussion"][0]["text"]["text"] = (
+        "**DISCUSSIONBOLDSENTINEL**\n\n- DISCUSSIONLISTSENTINEL"
+    )
+
+    rendered = render(seal_bundle(data), parse_spec(sections="discussion"))
+    text = _pdf_text(rendered.data)
+
+    assert "DISCUSSIONBOLDSENTINEL" in text
+    assert "DISCUSSIONLISTSENTINEL" in text
+    assert "**DISCUSSIONBOLDSENTINEL**" not in text
+
+
+def test_fermentation_strategy_renders_markdown() -> None:
+    data = bundle_dict()
+    data["formatted_tables"]["report.fermentation_strategy"][0]["text"]["text"] = (
+        "**FERMENTBOLDSENTINEL**"
+    )
+
+    rendered = render(seal_bundle(data), parse_spec(sections="fermentation-strategy"))
+    text = _pdf_text(rendered.data)
+
+    assert "FERMENTBOLDSENTINEL" in text
+    assert "**FERMENTBOLDSENTINEL**" not in text
 
 
 def test_checklist_notes_render_markdown() -> None:

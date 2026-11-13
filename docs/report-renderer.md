@@ -271,9 +271,10 @@ Landed: the template tree, the registry contract and its guards, the pinned
 version, the local loop, the bundle-carried display strings (`formatted`,
 `formatted_tables`, `formatted_summaries`) that make the generator a string
 compositor, the FastAPI routes and `report_render.py`, and the sections —
-**Brewhouse** (`sections/brewhouse.typ`), **Batch Facts**, **Mash Rests**,
-**Hops**, **Purchases**, **Yeast**, the **Volume Ledger**, the **Liquor
-Ledger**, **Water Chemistry**, **Limits** and the **Brew Checklist**. Mash Rests
+**Discussion**, **Brewhouse** (`sections/brewhouse.typ`), **Batch Facts**,
+**Mash Rests**, **Hops**, **Purchases**, **Process notes**, **Yeast**,
+**Fermentation strategy**, the **Volume Ledger**, the **Liquor Ledger**,
+**Water Chemistry**, **Limits** and the **Brew Checklist**. Mash Rests
 prints only the enabled schedule and its total mash time; disabled canonical
 rests stay out of the report. Hops prints the batch's hopping strategy, then the
 boil, whirlpool, dry-hop and IBU tables. Purchases is the shopping list: grain

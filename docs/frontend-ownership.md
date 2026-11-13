@@ -4,10 +4,10 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **791** (533 enumerable, 258 hidden)
-- Installers: **22**
-- Card partials: **19**
-- Installers reading another installer's key: **13 of 22**
+- Declared members: **795** (537 enumerable, 258 hidden)
+- Installers: **23**
+- Card partials: **21**
+- Installers reading another installer's key: **14 of 23**
 - Cross-owner keys declared in `SHARED`: **49**
 
 ## Installers
@@ -28,6 +28,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js` | 45 | 1 | 10 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 153 | 4 | 20 |
+| `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 4 | 2 | 1 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 67 | 2 | 20 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 43 | 2 | 20 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 50 | 2 | 18 |
@@ -68,7 +69,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `openLibrary` | `libraryUi` | `hop` | the whirlpool picker links to the cooling-curve library tab |
 | `patchDraftRow` | `draftEditor` | `hop`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
-| `proseIssues` | `proseValidation` | `hop`, `fieldActions`, `brewDay` | the hop, process-note, and brew-day cards bind the shared markdown validator |
+| `proseIssues` | `proseValidation` | `hop`, `proseFields`, `fieldActions`, `brewDay` | the hop, discussion, fermentation-strategy, process-note, and brew-day cards bind the shared markdown validator |
 | `removeDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `resetField` | `fieldActions` | `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets` | shared field verbs: the card partials bind the one editing surface |
 | `resetScaleTarget` | `styleTargets` | `styleNavigator` | the style navigator reads the target selection the target card owns |

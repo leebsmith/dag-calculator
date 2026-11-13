@@ -4,6 +4,7 @@
 #import "theme.typ": document as report-document
 #import "lib/bundle.typ": bundle, batch, catalog, is-frozen
 #import "lib/format.typ": opt, short-id
+#import "sections/discussion.typ": present-discussion, render-discussion
 #import "sections/brewhouse.typ": present-brewhouse, render-brewhouse
 #import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
 #import "sections/mash-rests.typ": present-mash-rests, render-mash-rests
@@ -11,6 +12,7 @@
 #import "sections/purchases.typ": present-purchases, render-purchases
 #import "sections/process.typ": present-process, render-process
 #import "sections/yeast.typ": present-yeast, render-yeast
+#import "sections/fermentation-strategy.typ": present-fermentation-strategy, render-fermentation-strategy
 #import "sections/volume-ledger.typ": present-volume-ledger, render-volume-ledger
 #import "sections/liquor-ledger.typ": present-liquor-ledger, render-liquor-ledger
 #import "sections/water-chemistry.typ": present-water-chemistry, render-water-chemistry
@@ -23,6 +25,7 @@
 // lib/bundle.typ and take no arguments.
 //   (id: "…", title: "…", present: <fn>, render: <fn>),
 #let sections = (
+  (id: "discussion", title: "Discussion", present: present-discussion, render: render-discussion),
   (id: "brewhouse", title: "Brewhouse", present: present-brewhouse, render: render-brewhouse),
   (id: "batch-facts", title: "Batch Facts", present: present-batch-facts, render: render-batch-facts),
   (id: "mash-rests", title: "Mash Rests", present: present-mash-rests, render: render-mash-rests),
@@ -30,6 +33,7 @@
   (id: "purchases", title: "Purchases", present: present-purchases, render: render-purchases),
   (id: "process", title: "Process notes", present: present-process, render: render-process),
   (id: "yeast", title: "Yeast", present: present-yeast, render: render-yeast),
+  (id: "fermentation-strategy", title: "Fermentation strategy", present: present-fermentation-strategy, render: render-fermentation-strategy),
   (id: "volume-ledger", title: "Volume Ledger", present: present-volume-ledger, render: render-volume-ledger),
   (id: "liquor-ledger", title: "Liquor Ledger", present: present-liquor-ledger, render: render-liquor-ledger),
   (id: "water-chemistry", title: "Water Chemistry", present: present-water-chemistry, render: render-water-chemistry),

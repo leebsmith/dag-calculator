@@ -36,6 +36,8 @@ export function createSnapshotActions({
     return shapeDraftState({
       identity: session.identity(),
       hopStrategy: getView().hopStrategy,
+      discussion: getView().discussion,
+      fermentationStrategy: getView().fermentationStrategy,
       roots: master.allRoots(),
       collections: session.collections(),
       selections: session.selections(),
@@ -108,7 +110,11 @@ export function createSnapshotActions({
       artifact,
       reportCatalog(),
       session.getEngine(),
-      getView().hopStrategy ?? "",
+      {
+        hopStrategy: getView().hopStrategy ?? "",
+        discussion: getView().discussion ?? "",
+        fermentationStrategy: getView().fermentationStrategy ?? "",
+      },
       observability.reportError
     );
   }

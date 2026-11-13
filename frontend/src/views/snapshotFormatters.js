@@ -25,8 +25,8 @@ export function shapeFrozenValue(value, node) {
  * Shape the editable draft snapshot.
  *
  * @pure
- * @param {{ readonly identity: Readonly<Record<string, unknown>>, readonly hopStrategy?: string, readonly roots: Readonly<Record<string, unknown>>, readonly collections: Readonly<Record<string, unknown>>, readonly selections: Readonly<Record<string, unknown>>, readonly schemaVersion: number }} args
- * @returns {{ readonly identity: object, readonly hop_strategy: string, readonly roots: object, readonly collections: object, readonly selections: object, readonly schema_version: number }}
+ * @param {{ readonly identity: Readonly<Record<string, unknown>>, readonly hopStrategy?: string, readonly discussion?: string, readonly fermentationStrategy?: string, readonly roots: Readonly<Record<string, unknown>>, readonly collections: Readonly<Record<string, unknown>>, readonly selections: Readonly<Record<string, unknown>>, readonly schemaVersion: number }} args
+ * @returns {{ readonly identity: object, readonly hop_strategy: string, readonly discussion: string, readonly fermentation_strategy: string, readonly roots: object, readonly collections: object, readonly selections: object, readonly schema_version: number }}
  */
 function detach(value) {
   return JSON.parse(JSON.stringify(value));
@@ -35,6 +35,8 @@ function detach(value) {
 export function shapeDraftState({
   identity,
   hopStrategy,
+  discussion,
+  fermentationStrategy,
   roots,
   collections,
   selections,
@@ -43,6 +45,8 @@ export function shapeDraftState({
   return {
     identity: { ...identity },
     hop_strategy: hopStrategy ?? "",
+    discussion: discussion ?? "",
+    fermentation_strategy: fermentationStrategy ?? "",
     roots,
     // Detach the editable maps from live session state: a later row edit must
     // not rewrite a queued save payload. JSON cloning is deliberate: Alpine

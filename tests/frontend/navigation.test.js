@@ -152,15 +152,15 @@ test("resetToStep sets activeIndex, raises highwater, and syncs nav", () => {
   assert.equal(app.activeStep.id, "c");
 });
 
-test("resetToStyle selects the style step and unlocks it", () => {
-  const ui = { activeIndex: 0, highwater: 0 };
-  const steps = [{ id: "equipment" }, { id: "style" }, { id: "yeast" }];
+test("resetToDiscussion selects the discussion step", () => {
+  const ui = { activeIndex: 2, highwater: 2 };
+  const steps = [{ id: "discussion" }, { id: "equipment" }, { id: "style" }];
   const app = {};
   install(app, { ui, steps });
   app.syncNav();
 
-  app.resetToStyle();
-  assert.equal(ui.activeIndex, 1);
-  assert.equal(ui.highwater, 1);
-  assert.equal(app.activeStep.id, "style");
+  app.resetToDiscussion();
+  assert.equal(ui.activeIndex, 0);
+  assert.equal(ui.highwater, 2);
+  assert.equal(app.activeStep.id, "discussion");
 });

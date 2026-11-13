@@ -122,6 +122,8 @@ def test_enrich_bundle_injects_known_prose_cells_only() -> None:
     payload = {
         "formatted_tables": {
             "report.hop_strategy": [{"text": {"text": "**strategy**"}}],
+            "report.discussion": [{"text": {"text": "*discussion*"}}],
+            "report.fermentation_strategy": [{"text": {"text": "**ferment**"}}],
             "batch.process_notes": [
                 {"note": {"text": "*note*"}},
                 {"note": {"text": "—"}},
@@ -136,6 +138,10 @@ def test_enrich_bundle_injects_known_prose_cells_only() -> None:
     assert payload["formatted_tables"]["report.hop_strategy"][0]["text"]["blocks"][
         "children"
     ][0]["type"] == "paragraph"
+    assert "blocks" in payload["formatted_tables"]["report.discussion"][0]["text"]
+    assert "blocks" in payload["formatted_tables"]["report.fermentation_strategy"][0][
+        "text"
+    ]
     assert "blocks" in payload["formatted_tables"]["batch.process_notes"][0]["note"]
     assert "blocks" not in payload["formatted_tables"]["batch.process_notes"][1]["note"]
     assert "blocks" in payload["formatted_tables"]["batch.brew_checklist"][0]["note"]

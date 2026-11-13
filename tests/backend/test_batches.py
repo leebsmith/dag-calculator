@@ -48,6 +48,23 @@ def test_hop_strategy_is_stored_and_frozen():
     assert frozen.hop_strategy == strategy
 
 
+def test_prose_fields_are_stored_and_frozen():
+    svc = BatchService(FakeRepo())
+    discussion = "From the club newsletter.\n\nCrystal 40 substitution."
+    fermentation = "Pitch one pack; hold 19 °C."
+    rec = svc.upsert_draft(
+        "u1",
+        "batch-a",
+        DraftPayload(discussion=discussion, fermentation_strategy=fermentation),
+    )
+    assert rec.discussion == discussion
+    assert rec.fermentation_strategy == fermentation
+
+    frozen = svc.freeze_batch("u1", rec.id, freeze_payload())
+    assert frozen.discussion == discussion
+    assert frozen.fermentation_strategy == fermentation
+
+
 def test_list_is_uid_scoped():
     svc = BatchService(FakeRepo())
     svc.upsert_draft("u1", "batch-a", DraftPayload(name="A"))

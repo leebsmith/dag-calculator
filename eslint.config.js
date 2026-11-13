@@ -148,7 +148,7 @@ const LIFECYCLE_COMPLEXITY = {
   "adapters/cards/catalogDraft.js": 16,
   "adapters/cards/water.js": 32,
   "adapters/fieldAttribution.js": 18,
-  "adapters/stepAdapter.js": 10,
+  "adapters/stepAdapter.js": 9,
   "adapters/stepView.js": 19,
   "adapters/waterGate.js": 13,
   "store/library.js": 18,
@@ -201,9 +201,9 @@ const FILE_LINE_PINS = {
   "engine/fermentation.js": 506,
   "engine/units.js": 404,
   "engine/validate.js": 541,
-  "store/persistence.js": 414,
+  "store/persistence.js": 412,
   "store/recipes.js": 467,
-  "views/producer/reportFormat.js": 416,
+  "views/producer/reportFormat.js": 415,
 };
 
 const SCRIPT_COMPLEXITY = {

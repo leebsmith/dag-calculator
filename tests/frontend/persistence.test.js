@@ -20,7 +20,7 @@ function fakeClient() {
       return [...docs.values()];
     },
     async upsertBatch(id, payload, base, force = false) {
-      calls.push({ op: "upsert", id, base, force });
+      calls.push({ op: "upsert", id, base, force, body: payload });
       const existing = docs.get(id);
       if (!force && base !== undefined && existing && existing.updated_at !== base) {
         const err = new Error("conflict");
@@ -31,6 +31,9 @@ function fakeClient() {
       const rec = {
         id,
         name: payload.name,
+        hop_strategy: payload.hop_strategy ?? "",
+        discussion: payload.discussion ?? "",
+        fermentation_strategy: payload.fermentation_strategy ?? "",
         status: "draft",
         trashed: false,
         roots: payload.roots ?? {},
@@ -320,6 +323,8 @@ test("open hydrates the active batch and loads its state", async () => {
   assert.deepEqual(app.loaded, {
     identity: DEFAULT_IDENTITY,
     hop_strategy: "",
+    discussion: "",
+    fermentation_strategy: "",
     roots: { "mash.grain_temp_c": 18 },
     collections: { "grist.major_malts": [] },
     selections: {},
@@ -355,6 +360,8 @@ test("fork copies the frozen batch into a new draft with lineage and selections"
   const { client, app } = setup();
   await client.upsertBatch("frozen-1", {
     name: "Saison",
+    discussion: "From the club newsletter.",
+    fermentation_strategy: "Hold 19 °C.",
     roots: { "mash.grain_temp_c": 20 },
     collections: {},
     selections: { "batch.yeast": { id: "y1", name: "Yeast" } },
@@ -371,6 +378,8 @@ test("fork copies the frozen batch into a new draft with lineage and selections"
   assert.deepEqual(app.loaded, {
     identity: DEFAULT_IDENTITY,
     hop_strategy: "",
+    discussion: "From the club newsletter.",
+    fermentation_strategy: "Hold 19 °C.",
     roots: { "mash.grain_temp_c": 20 },
     collections: {},
     selections: { "batch.yeast": { id: "y1", name: "Yeast" } },
@@ -378,6 +387,8 @@ test("fork copies the frozen batch into a new draft with lineage and selections"
   const upsert = client.calls.find((c) => c.op === "upsert");
   assert.equal(upsert.id, created.id);
   assert.equal(upsert.base, undefined);
+  assert.equal(upsert.body.discussion, "From the club newsletter.");
+  assert.equal(upsert.body.fermentation_strategy, "Hold 19 °C.");
 });
 
 test("freezeActive posts the app's freeze payload, and only for drafts", async () => {

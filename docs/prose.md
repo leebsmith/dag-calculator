@@ -1,8 +1,9 @@
 # Markdown prose
 
 Free-text brewing fields accept markdown. The stored value is always the raw
-source; markdown becomes layout only at report time. Three authoring surfaces
-are in scope: the hopping strategy, process notes, and brew-day checklist notes.
+source; markdown becomes layout only at report time. Four recipe surfaces and
+one session surface are in scope: the hopping strategy, the discussion, the
+fermentation strategy, process notes, and brew-day checklist notes.
 
 <!-- claims: proposed prose.unsupported.image prose.unsupported.html prose.unsafe.link prose.too_long prose.too_deep prose.too_many_nodes prose.too_many_table_columns prose.too_many_table_rows prose.malformed.table prose.check_failed -->
 
@@ -63,6 +64,8 @@ with HTML disabled, strikethrough and GFM tables enabled. It normalizes the
 syntax tree into a small AST and injects it into the report or session payload:
 
 - `report.hop_strategy` is one raw-markdown row; its `text` cell gains `blocks`.
+- `report.discussion` and `report.fermentation_strategy` are one raw-markdown
+  row each; their `text` cells gain `blocks`.
 - Each `batch.process_notes.text` cell gains `blocks`.
 - Each `batch.brew_checklist.note` cell gains `blocks`.
 - Live session step notes, skip reasons, and overall notes gain adjacent prose

@@ -28,6 +28,8 @@ test("shapeDraftState copies the mutable maps and defaults the strategy", () => 
   const state = shapeDraftState({
     identity,
     hopStrategy: undefined,
+    discussion: undefined,
+    fermentationStrategy: undefined,
     roots: { a: 1 },
     collections,
     selections,
@@ -35,6 +37,8 @@ test("shapeDraftState copies the mutable maps and defaults the strategy", () => 
   });
 
   assert.equal(state.hop_strategy, "");
+  assert.equal(state.discussion, "");
+  assert.equal(state.fermentation_strategy, "");
   assert.equal(state.schema_version, 4);
   assert.deepEqual(state.roots, { a: 1 });
   assert.notEqual(state.identity, identity);
@@ -144,6 +148,8 @@ test("shapeDraftState copies identity, collections, and selections but keeps roo
   const state = shapeDraftState({
     identity,
     hopStrategy: "60/40",
+    discussion: "From the club newsletter.",
+    fermentationStrategy: "Hold 19 °C.",
     roots,
     collections,
     selections,
@@ -157,6 +163,8 @@ test("shapeDraftState copies identity, collections, and selections but keeps roo
   assert.notEqual(state.collections, collections);
   assert.notEqual(state.selections, selections);
   assert.equal(state.hop_strategy, "60/40");
+  assert.equal(state.discussion, "From the club newsletter.");
+  assert.equal(state.fermentation_strategy, "Hold 19 °C.");
 });
 
 test("shapeFreezePayload preserves conformance and provenance values", () => {

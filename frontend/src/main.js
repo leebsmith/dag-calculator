@@ -195,8 +195,8 @@ const setupStore = createSetupStore({
     recipes.scope = "all";
     recipes.view = "editor";
     recipes.syncActive();
-    // A new batch starts at the style parameterisation screen.
-    appHandle.current?.resetToStyle();
+    // A new batch starts at the discussion card.
+    appHandle.current?.resetToDiscussion();
   },
 });
 

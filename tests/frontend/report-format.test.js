@@ -333,6 +333,30 @@ test("the raw hopping strategy is preserved for the markdown renderer", async ()
   assert.equal(strategy[0].text.text, "Line one\nline two\n\nNext paragraph.");
 });
 
+test("the discussion and fermentation strategy are carried as raw markdown rows", async () => {
+  const app = await booted();
+  app.discussion = "  Where this came from.\n\n- Grain substitution.";
+  app.fermentationStrategy = "Pitch one pack.\n\nHold 19 °C.";
+  const tables = app.reportFormattedTables();
+
+  assert.deepEqual(
+    tables["report.discussion"].map((row) => row.text.text),
+    ["Where this came from.\n\n- Grain substitution."]
+  );
+  assert.deepEqual(
+    tables["report.fermentation_strategy"].map((row) => row.text.text),
+    ["Pitch one pack.\n\nHold 19 °C."]
+  );
+});
+
+test("a blank discussion or fermentation strategy emits no report rows", async () => {
+  const app = await booted();
+  app.discussion = " \n \n ";
+  app.fermentationStrategy = "";
+  assert.deepEqual(app.reportFormattedTables()["report.discussion"], []);
+  assert.deepEqual(app.reportFormattedTables()["report.fermentation_strategy"], []);
+});
+
 test("a volume dry hop prints millilitres in the purchase table", async () => {
   const app = await booted();
   app.engine.setCollection("batch.boil_hops", []);

@@ -139,6 +139,22 @@ PROCESS_NOTES = [
     {"text": "0.05 oz (1.5 g) fresh-grated ginger at flame-out"},
 ]
 
+DISCUSSION = (
+    "Adapted from the 2019 homebrew club pale ale, scaled to the HERMS rig. "
+    "**Substitution:** Crystal 40 replaces the original Crystal 60 for a drier "
+    "finish.\n\n"
+    "- Source: club newsletter, shared by the original brewer.\n"
+    "- Style note: keep the bitterness at the low end of 18B."
+)
+
+FERMENTATION_STRATEGY = (
+    "Pitch one fresh pack of US-05 into 20 °C wort; no starter for this gravity.\n\n"
+    "1. Hold 19 °C through high krausen.\n"
+    "2. Raise to 21 °C for a diacetyl rest once the gravity is within 2 points of "
+    "terminal.\n"
+    "3. Crash to 2 °C before packaging."
+)
+
 RECORD = {
     "name": "House Pale",
     "status": "frozen",
@@ -1592,6 +1608,10 @@ PAYLOAD = FreezePayload(
                     "- *Pine* backbone with a grapefruit and citrus surround."
                 )
             },
+        ],
+        "report.discussion": [{"text": FormattedValue(text=DISCUSSION)}],
+        "report.fermentation_strategy": [
+            {"text": FormattedValue(text=FERMENTATION_STRATEGY)}
         ],
         "report.grain_purchases": [
             {

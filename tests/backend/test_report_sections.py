@@ -30,12 +30,15 @@ pytestmark = pytest.mark.skipif(
 )
 
 SECTION_IDS = (
+    "discussion",
     "brewhouse",
     "batch-facts",
     "mash-rests",
     "hops",
     "purchases",
+    "process",
     "yeast",
+    "fermentation-strategy",
     "volume-ledger",
     "liquor-ledger",
     "water-chemistry",
@@ -247,6 +250,16 @@ HOPS_STRATEGY_PROBE = (
     "#metadata(present-strategy()) <probe>\n"
 )
 
+DISCUSSION_PROBE = (
+    '#import "sections/discussion.typ": present-discussion\n'
+    "#metadata(present-discussion()) <probe>\n"
+)
+
+FERMENTATION_STRATEGY_PROBE = (
+    '#import "sections/fermentation-strategy.typ": present-fermentation-strategy\n'
+    "#metadata(present-fermentation-strategy()) <probe>\n"
+)
+
 YEAST_PRESENCE_PROBE = (
     '#import "sections/yeast.typ": present-yeast\n'
     "#metadata(present-yeast()) <probe>\n"
@@ -365,6 +378,34 @@ def test_the_hop_strategy_is_absent_without_rows() -> None:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, HOPS_STRATEGY_PROBE) is False
         render(root, "hops")
+
+
+def test_the_discussion_is_present_with_its_markdown(shared_root: Path) -> None:
+    assert probe(shared_root, DISCUSSION_PROBE) is True
+
+
+def test_the_discussion_is_absent_without_rows() -> None:
+    bundle = fixture()
+    del bundle["formatted_tables"]["report.discussion"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, DISCUSSION_PROBE) is False
+        render(root, "discussion")
+
+
+def test_the_fermentation_strategy_is_present_with_its_markdown(shared_root: Path) -> None:
+    assert probe(shared_root, FERMENTATION_STRATEGY_PROBE) is True
+
+
+def test_the_fermentation_strategy_is_absent_without_rows() -> None:
+    bundle = fixture()
+    del bundle["formatted_tables"]["report.fermentation_strategy"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, FERMENTATION_STRATEGY_PROBE) is False
+        render(root, "fermentation-strategy")
 
 
 def test_the_hop_purchase_table_is_absent_without_rows() -> None:
@@ -604,20 +645,7 @@ def test_the_document_metadata_carries_the_full_identity(shared_root: Path) -> N
     meta = payload[0]["value"]
     assert meta["batch_id"] == "frozen-1"
     assert meta["content_hash"].startswith("sha256:")
-    assert meta["sections"] == [
-        "brewhouse",
-        "batch-facts",
-        "mash-rests",
-        "hops",
-        "purchases",
-        "process",
-        "yeast",
-        "volume-ledger",
-        "liquor-ledger",
-        "water-chemistry",
-        "limits",
-        "checklist",
-    ]
+    assert meta["sections"] == list(SECTION_IDS)
 
 
 def test_the_renderer_expects_the_current_bundle_format() -> None:

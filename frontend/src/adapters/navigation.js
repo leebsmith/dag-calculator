@@ -41,8 +41,8 @@ export function createNavigationActions({
     syncNav();
   }
 
-  function resetToStyle() {
-    resetToStep(Math.max(0, steps.findIndex((step) => step.id === "style")));
+  function resetToDiscussion() {
+    resetToStep(Math.max(0, steps.findIndex((step) => step.id === "discussion")));
   }
 
   function next() {
@@ -70,7 +70,7 @@ export function createNavigationActions({
     else next();
   }
 
-  return { syncNav, selectStep, resetToStep, resetToStyle, next, prev, keyNav };
+  return { syncNav, selectStep, resetToStep, resetToDiscussion, next, prev, keyNav };
 }
 
-export const KEYS = ["syncNav", "selectStep", "resetToStep", "resetToStyle", "next", "prev", "keyNav"];
+export const KEYS = ["syncNav", "selectStep", "resetToStep", "resetToDiscussion", "next", "prev", "keyNav"];

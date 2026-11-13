@@ -195,6 +195,8 @@ class BatchRepository:
             record = {
                 "name": source.get("name", "Untitled"),
                 "hop_strategy": source.get("hop_strategy", ""),
+                "discussion": source.get("discussion", ""),
+                "fermentation_strategy": source.get("fermentation_strategy", ""),
                 "status": "frozen",
                 "trashed": False,
                 "schema_version": data.get("schema_version", source.get("schema_version", 2)),

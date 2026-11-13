@@ -13,6 +13,10 @@ import {
   createHopStrategyLayers,
   KEYS as HOP_STRATEGY_KEYS,
 } from "../../frontend/src/adapters/cards/hopsStrategy.js";
+import {
+  createProseFieldsLayers,
+  KEYS as PROSE_FIELDS_KEYS,
+} from "../../frontend/src/adapters/cards/proseFields.js";
 import { createStyleLayers } from "../../frontend/src/adapters/cards/style.js";
 import { KEYS as STYLE_DECLARATION_KEYS } from "../../frontend/src/adapters/cards/style/declaration.js";
 import { KEYS as STYLE_NAVIGATOR_KEYS } from "../../frontend/src/adapters/cards/style/navigator.js";
@@ -88,6 +92,7 @@ const REMAINING_CASES = [
   ["brewDay", createBrewDayLayers, BREW_DAY_KEYS],
   ["water", createWaterLayers, WATER_KEYS],
   ["hopStrategy", createHopStrategyLayers, HOP_STRATEGY_KEYS],
+  ["proseFields", createProseFieldsLayers, PROSE_FIELDS_KEYS],
   [
     "style",
     createStyleLayers,

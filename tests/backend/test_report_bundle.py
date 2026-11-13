@@ -307,6 +307,8 @@ def test_named_report_tables_are_allowed() -> None:
         bundle(
             formatted_tables={
                 "report.hop_strategy": [{"text": {"text": "Pine backbone."}}],
+                "report.discussion": [{"text": {"text": "From the club newsletter."}}],
+                "report.fermentation_strategy": [{"text": {"text": "Hold 19 °C."}}],
                 "report.hop_purchases": [
                     {
                         "name": {"text": "Citra"},

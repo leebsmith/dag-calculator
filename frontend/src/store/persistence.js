@@ -32,9 +32,11 @@ function loadStatePayload(record) {
   return {
     ...(record.identity ? { identity: record.identity } : {}),
     hop_strategy: record.hop_strategy ?? "",
+    discussion: record.discussion ?? "",
+    fermentation_strategy: record.fermentation_strategy ?? "",
     roots: record.roots,
     collections: record.collections,
-    selections: record.selections,
+    selections: record.selections ?? {},
   };
 }
 
@@ -174,14 +176,10 @@ export function createPersistenceManager({
     const frozen = await batchSeam().getBatch(frozenId);
     assertSupported(frozen);
     const created = await batchSeam().upsertBatch(crypto.randomUUID(), {
+      ...loadStatePayload(frozen),
       name: `${frozen.name} (copy)`,
-      hop_strategy: frozen.hop_strategy ?? "",
       parent_batch_id: frozen.id,
       parent_name: frozen.name,
-      identity: frozen.identity,
-      roots: frozen.roots,
-      collections: frozen.collections,
-      selections: frozen.selections ?? {},
       schema_version: frozen.schema_version ?? 3,
     });
     active = {

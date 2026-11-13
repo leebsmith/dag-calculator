@@ -27,6 +27,8 @@ MAX_TABLE_ROWS = 50
 
 _REPORT_TABLE_CELLS = {
     "report.hop_strategy": ("text",),
+    "report.discussion": ("text",),
+    "report.fermentation_strategy": ("text",),
     "batch.process_notes": ("note",),
     "batch.brew_checklist": ("note",),
 }
