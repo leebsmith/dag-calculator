@@ -267,10 +267,32 @@ the vendor-covered core, roughly 220–300 of the 401 current ids; the remainder
 | Output | Contents | Committed |
 |---|---|---|
 | `docs/hops/vendor-fact-envelope.md` | coverage matrix, per-field verdicts, per-vendor parser notes, disagreement ledger, excluded-attributes appendix, measured ceiling | yes — this is the living artefact |
-| `tests/conformance/fixtures/hop-facts/pilot-sample.json` | the ten pilot varieties, every field, both ends of each range, with sources | yes |
+| `tests/conformance/fixtures/hop-facts/pilot-sample.json` | the ten pilot varieties, every field, both ends of each range, each observation carrying the value **as printed** and the **normalised** result | yes, as a fixture |
 | `tests/guards/hop-facts-pilot.test.js` | shape and validity of the fixture only | yes |
 | `scripts/scrape/probe_vendor_facts.py` | the probe | yes, deleted on completion |
 | extracted rows for the full sweep | the measurement | no — ephemeral |
+
+### 9.1 The fixture is a fixture, not a source
+
+The pilot sample is vendored so the matrix stays checkable once the probe is
+deleted, and so the production scrape has a golden sample to regress against. It
+is **not** an ingredient catalogue: it lives under `tests/conformance/fixtures/`,
+it never appears in `sources/manifest.json`, and no seed builder reads it. A
+vendored source is rebuild input; this is a contract artefact.
+
+Each observation carries both halves of the measurement:
+
+```
+stated_value:  "0.32"          stated_unit:  "fraction"   stated_basis: "of total oil"
+normalised:     0.32            value_kind:   "point"      source_label: "HUMULENE"
+stated_value:  "4.00 - 8.00"   stated_unit:  "percent"    stated_basis: "of total oil"
+normalised:    [0.04, 0.08]     value_kind:   "range"      source_label: "FARNESEN"
+```
+
+Stated-then-normalised is the point: it turns the mixed-convention trap into a
+regression test, so the normaliser is pinned by evidence rather than by a note in
+prose. A fixture of pre-normalised numbers would test the parser and nothing
+else.
 
 The probe script is committed so the matrix is reproducible from repo history,
 then deleted, the way the yvh scraper and its guard were removed when the
@@ -287,7 +309,10 @@ token to resolve to something that exists.
 - `hop-facts-pilot` asserts: every range has `min ≤ max`; normalised oil
   fractions sum to ≤ 1; co-humulone sits in a plausible band; every observation
   names a source, a unit and a basis; no lupulin or extract row appears in a
-  variety field.
+  variety field; every observation carries both a `stated_value` and a
+  `normalised` result; and **no seed builder reaches the fixture** — the guard
+  reads `scripts/build-*.mjs` and fails if any of them references
+  `pilot-sample`, so the fixture cannot drift into becoming a source.
 - `make check` and `make test` stay green. Nothing else changes, so a failure in
   `seed-rebuild`, `hop-product-tables` or `sources-manifest` means this plan
   touched something it said it would not.
