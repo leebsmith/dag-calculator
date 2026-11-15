@@ -1,0 +1,361 @@
+---
+title: Vendor fact envelope — availability, basis and precedence for hop attributes
+status: proposed
+program: deterministic-dag-calculator
+target_repo: ~/Development/dag-calculator
+depends_on: []
+blocks: []
+gate: the coverage matrix, the per-field verdicts and the disagreement ledger exist and are reproducible from the probe; make check and make test stay green; no seed, artifact or frontend change
+---
+
+# Vendor fact envelope
+
+A **measurement plan**, not a build. It establishes which of ten hop attributes
+can be published, from whom, against which denominator, and for how many
+varieties — before any of them enters `data/artifact.json`.
+
+The name is historical. The "envelope" is not the maximum of everything the
+vendors publish; it is a **closed set of ten attributes** chosen for this
+workstream, and the test's job is to verify that set is obtainable rather than
+to discover a larger one.
+
+## 1. Why
+
+The hop variety catalogue carries `alpha_acid_pct`, `alpha_acid_min_pct`,
+`alpha_acid_max_pct` and `beta_acid_pct`, all of which are statistics over
+recipes that brewers typed into other people's software. They have no bounds
+semantics, no composition, and no traceable source: `alpha_acid_pct` is the mean
+of the site's displayed range, and the range is the observed spread across
+crowd-entered values, so a single bad entry widens a variety's range. The `notes`
+field is generated prose with no upstream at all.
+
+Meanwhile the vendors publish real specs, with stated methods, and the
+association snapshot publishes an industry-wide survey. The question this plan
+answers is narrow and answerable: for these ten attributes, what is actually
+obtainable, in what unit, from which source, and for how many varieties?
+
+## 2. What this plan is not
+
+- No `data/artifact.json` change, no `data/seeds/` change, no frontend change.
+- No prose: `notes` is untouched, and nothing here synthesises or repairs it.
+- No committed vendor documents. We commit the extraction we derive, never the
+  third party's file — the same rule `data/sources/beer-analytics-hops.json`
+  already follows.
+- No production scraper. The probe is deleted on completion; see §9.
+- No challenge bypass. Where a source gates automated access, that is recorded
+  as a gap, not routed around.
+
+## 3. The field set
+
+Ten attributes. The denominator is part of the meaning and travels in the field
+name, because the artifact's `percentage` dimension is a unit (a fraction with a
+`pct` factor) and says nothing about what is being counted.
+
+| Attribute | Proposed field(s) | Denominator | Bound kinds seen |
+|---|---|---|---|
+| Alpha | `alpha_acid_min_pct`, `alpha_acid_max_pct` | of hop mass | range, and `up to` |
+| Beta | `beta_acid_min_pct`, `beta_acid_max_pct` | of hop mass | range, point |
+| Total oil | `total_oil_ml_per_100g`, possibly `total_oil_pct` | volume per mass, or of hop mass | range, `up to` |
+| Co-humulone | `cohumulone_pct_of_alpha` | of alpha acids | range, point, `~` |
+| Myrcene | `myrcene_pct_of_oil` | of total oil | range |
+| Humulene | `humulene_pct_of_oil` | of total oil | range |
+| Caryophyllene | `caryophyllene_pct_of_oil` | of total oil | range |
+| Farnesene | `farnesene_pct_of_oil` | of total oil | range, point |
+
+Ten attributes, eleven candidate fields, because total oil is published in two
+conventions that do not convert exactly. The verdict decides whether it becomes
+two fields or one field plus a document note.
+
+**Bound vocabulary.** `point`, `min`, `max`, `unknown` — the same four the yeast
+provenance already carries. `up to 1.4 ml/100 g` is `bound: max` with no
+minimum; it is not a range with a zero floor. Point values are recorded as
+`min = max` with `value_kind: point`.
+
+**Excluded by this plan, deliberately:** hard resins, polyphenols, xanthohumol,
+linalool, geraniol, ketones, isobutyrates, hop storage index, genetic origin,
+yield, maturity, disease ratings, acreage, aroma descriptors and narrative
+descriptions. Several are published and easy to take; they are out of scope
+because nothing consumes them. The matrix records the exclusion so a later reader
+knows the set was chosen, not overlooked.
+
+## 4. Sources
+
+| Id | Document | Access | Varieties | Attributes | Vintage |
+|---|---|---|---|---|---|
+| `hga-2020` | USA Hops Variety Snapshot 2020 (`https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf`) | PDF, `pdftotext -layout` | ~56 listed | alpha, beta, cohumulone, total oil (mL/100 g) | 2020 |
+| `hga-2017` | USA Hops Variety Snapshot 2017 (`https://www.usahops.org/cabinet/data/USAHops_VarietySnapshot_2017_SinglePage.pdf`) | PDF, `pdftotext -layout` | ~66 listed | same | 2017 |
+| `hopsteiner-vf` | `https://hopsteiner.us/variety-data-sheets/?data=1` | one HTTP GET | 100 | alpha, beta, cohumulone, total oil, humulene, farnesene | per record, `last_changed` |
+| `barthhaas-variety` | `https://www.barthhaas.com/hops-and-products/hops/<slug>` | HTML, one page per variety | portfolio | alpha, beta, total oil, all four fractions | "medium range of the last 4 years" |
+| `crosby-variety` | `https://www.crosbyhops.com/hops/varieties/<slug>` (index at `/hops/varieties/`) | HTML, one page per variety | 56 listed | alpha, beta, total oil (unit stated), co-humulone, myrcene, caryophyllene, farnesene, humulene on some | unstated |
+| `ych-variety` | `https://www.yakimachief.com/variety/<slug>` | **blocked** | — | — | — |
+
+Pinned at the time of writing:
+
+```
+HGA_VS_2020.pdf                                d6007cd0b90b9d3a8baf9f9e94ab061c76e141c82494d2c4016757f077253365
+USAHops_VarietySnapshot_2017_SinglePage.pdf    88e1523a549b42821b3643b4e209c4dbfadae574e36a2667f1069c05a95fc1fc
+hopsteiner variety-filter payload              e79fa170fc0a460e205596da95269ab6a22514d330363f1696908b7d1ba5d25f
+```
+
+### 4.1 Access notes the probe must encode
+
+**`hopsteiner-vf` needs a `Referer`.** Without one the endpoint returns `200` with
+a zero-byte body, which reads as success to a naive client. With
+`Referer: https://hopsteiner.us/variety-data-sheets/` it returns 143,639 bytes of
+`text/javascript` defining `_vf` on the page's `window`. Parse it by
+brace-matching the `_vf = { … }` literal and shimming `$()` as the identity
+function; do not execute the page's other scripts. The object is
+`{ alpha_low, alpha_high, regions, aromas, varieties }`, one entry per variety.
+
+**`ych-variety` is gated.** Every path returns `429` with a Vercel Security
+Checkpoint, including `robots.txt`. The site delivers its data through Next.js
+flight data (`__next_f` pushes), which is unstable across deploys even when
+reachable. YCH is therefore out of the probe. Two legitimate substitutes, in
+order: their published variety sheets as documents, or the YCH-derived rows in
+`kasperg3/HopDatabase` as a clearly labelled secondary cross-check. Neither is a
+primary citation. The coverage table is complete without YCH (see §4.3).
+
+**`crosby-variety` is the tidiest of the HTML sources.** Units are stated inline
+(`Total Oils 0.7-1.4 ml/100g`), open bounds appear as prose (`Up to 2.8 ml/100g`
+for Citra), and values are published **per product form on the same page** — a
+T-90 block and a CGX block — which reinforces the form separation in §7 rather
+than complicating it. Two wrinkles: humulene is present on some varieties and
+absent on others (present for Citra, Azacca, Belma, Cashmere, Centennial;
+absent for Cascade, Amarillo, Chinook in the sample), and the slugs are not
+always the variety name (`czsaaz`, `hallertaublanc`), so a guessed slug 404s.
+
+**PDFs are table-only.** `pdftotext -layout` captures both the table and the
+surrounding brochure. The 2017 sheet contradicts itself: its Cascade highlight box
+says 5.5–8.5 % alpha while its own table says 4.5–7.0 %. Extract from the table
+region and cite the page.
+
+**Units are per field, per vendor — never per source.** Hopsteiner reports
+Cascade `humulen: "0.32"` (a fraction) beside `farnesen: "4.00 - 8.00"` (a
+percent) in the same record. BarthHaas literally labels composition
+`(% OF TOTAL OIL)`. USA Hops footnotes `* OILS = ML/100G`. Hopsteiner's `oils`
+carries no unit on the page and must be resolved against their data sheet legend
+before it is normalised; the other three are mL/100 g.
+
+**Vintage is per record where the source offers one.** Hopsteiner's `last_changed`
+spans 2020-01-09 to 2026-03-12, so the endpoint is maintained unevenly: Cascade
+is a 2020 record. BarthHaas states its figures are a four-year medium range, so
+its "range" is already an average. Both are recorded as they are, never silently
+re-dated.
+
+### 4.2 Coverage measured before the sweep
+
+| Attribute | HGA 2020 | HGA 2017 | Hopsteiner | BarthHaas | Crosby |
+|---|---|---|---|---|---|
+| Alpha min/max | ✅ | ✅ | ✅ 97/100 | ✅ | ✅ |
+| Beta min/max | ✅ | ✅ | ✅ 97/100 | ✅ | ✅ |
+| Total oil | ✅ mL/100 g | ✅ mL/100 g | ✅ 100/100, unit open | ✅ mL/100 g | ✅ mL/100 g |
+| Co-humulone | ✅ | ✅ | ✅ 100/100 | ✗ | ✅ |
+| Myrcene | ✗ | ✗ | ✗ | ✅ | ✅ |
+| Humulene | ✗ | ✗ | ✅ 81/100 | ✅ | partial, per variety |
+| Caryophyllene | ✗ | ✗ | ✗ | ✅ | ✅ |
+| Farnesene | ✗ | ✗ | ✅ 79/100 | ✅ | ✅ |
+
+Two consequences. The set is obtainable, but **no single source covers it for
+every variety**: BarthHaas publishes no co-humulone, Hopsteiner publishes no
+myrcene and no caryophyllene, and Crosby's humulene is per-variety. Per-field
+precedence is therefore a requirement, not a refinement.
+
+## 5. Precedence
+
+Order is global; the election is **per field, per variety**, because the breeder
+differs by variety.
+
+```
+1. HGA, newest vintage (2020)      industry-wide survey
+2. HGA, older vintage (2017)       fills absences only
+3. Breeder                         non-US varieties start here
+4. Widest merchant coverage        YCH/Crosby (US), BarthHaas/Hopsteiner (DE/CZ)
+5. Remaining sources
+```
+
+The authoritative breeder map is a downstream deliverable and not part of this
+plan. For the test, the probe records `origin` and the candidate breeding
+programme per variety and marks the ones it cannot name. That is enough to
+report how often precedence and "widest coverage" disagree, which is the number
+that justifies building the map or dropping the rule.
+
+## 6. Synthesis rules
+
+The objective is a synthetic record for as many varieties as possible, with a
+range wherever a range can be defended. These rules make the synthesis
+deterministic and auditable; they are the part of the design the verdicts must
+support, not a licence to blend.
+
+| Source count | Rule | Recorded as |
+|---|---|---|
+| n = 1 | `precedence` — as published | `merge: precedence`, `sources_count: 1` |
+| n = 2 | `precedence`; the second source becomes a ledger entry | `merge: precedence`, `sources_count: 2` |
+| n ≥ 3 | `mean_range`: mean of the minimums, mean of the maximums | `merge: mean_range`, `sources_count: n`, `dispersion` |
+
+`mean_range` requires **three** sources. With two, a mean manufactures a range
+neither source states and there is no way to distinguish disagreement from
+error. The motivating case: Adeena myrcene is `27.3 – 29.4 %` at Crosby and
+`19.4 – 55 %` at BarthHaas; the mean-of-bounds is `23.4 – 42.2 %`, which is
+wider than one source and narrower than neither. Two sources go in the ledger,
+not through the blender.
+
+The **union envelope** (min of minimums, max of maximums) is always computed and
+always recorded in the ledger. It is not the published value, because it grows
+with source count and is therefore not comparable across varieties.
+
+Other rules:
+
+- **Normalise before deriving.** Fraction → percent is exact. mL/100 g is not
+  converted to a percentage without a stated density, so it stays its own field.
+- **Never average across form or vintage.** A 2022 lupulin figure and a 2026
+  T-90 figure are different measurements. Same for a stated crop year and a
+  four-year medium range; a blend is permitted only when flagged (`vintages`).
+- **Absence is not zero.** A field with no published value is omitted. It is not
+  imputed and not filled from another form.
+- **Every synthetic value says so.** `merge`, `sources_count` and `dispersion`
+  travel with the value, so a consumer can tell four agreeing vendors from one
+  stale page, and the UI can mark a derived figure the way priors and
+  conversions are already marked.
+
+## 7. Form spaces
+
+| Form | Sources | n | Attributes obtainable |
+|---|---|---|---|
+| variety (cone / T-90) | HGA ×2, Hopsteiner, BarthHaas, Crosby | 1–5 | up to 10 |
+| lupulin pellet | YCH Cryo 2022 only | 1 | alpha min/max, total oil mL/100 g |
+| flowable extract | five curated lines (CO₂, Hop Shot, Flex, DynaBoost, Incognito) | — | no per-variety sheet; no synthesis |
+
+Forms are separate records, so the form filter cannot be forgotten: a lupulin
+value can never leak into a variety field. This also settles the total-oil split
+— `total_oil_ml_per_100g` is the lupulin convention and the HGA/BarthHaas
+convention, and `total_oil_pct` exists only if a source states a percentage.
+
+**Lupomax is to be dropped**, leaving lupulin as one line (YCH Cryo 2022, 26
+varieties). That is a separate change and this plan does not execute it: it
+removes 16 rows from `data/sources/hop-products.json`, 16 from the seed, the
+§4.2/§4.3 tables and the "2025 wins on disagreement" sentence in
+`docs/hops/hop-products.md`, the expectations in `hop-product-tables`, and the
+manifest entry. Recording it here so it is not lost.
+
+## 8. Protocol
+
+**Pilot — ten varieties, all sources.** Cascade, Citra, Mosaic, Simcoe, Amarillo,
+Centennial, Chinook, Saaz, Magnum, Hallertau Mittelfrüh. Chosen for two US and two
+continental programmes, high and low alpha, and one variety (Saaz) whose name
+transliterates. The pilot's job is to break the parsers and the identity matching
+before the sweep, and to fix each vendor's unit conventions in writing.
+
+**Sweep.** All rows from each source, parsed as printed. One observation per
+(source, variety, field) carrying `stated_value`, `stated_unit`, `stated_basis`,
+`value_kind`, `page` or field label, and the source's own vintage claim.
+
+**Identity.** Match by name and the existing `synonym` field (`ADHA-1940`,
+`HBC 394`, …). Target ≥95 % resolve against the vendor-covered core; publish the
+unmatched list, which is the tail that will never resolve. Source slugs are not
+names — Crosby serves `czsaaz` and `hallertaublanc`, and a guessed slug 404s — so
+the probe resolves through the index page, never by constructing a URL.
+
+**Verdicts.** For each attribute: `in` (≥2 sources, ≥20 varieties, one
+normalisable basis), `document only` (passes coverage but not the basis test, or
+single-source), or `blocked` (no obtainable source). Coverage ceiling is reported
+as a number, not a promise — the union of four vendors plus the snapshots reaches
+the vendor-covered core, roughly 220–300 of the 401 current ids; the remainder
+(`Bullion 10A`, `Cegina`, `Furano Ace`) have no vendor page at all.
+
+## 9. Outputs
+
+| Output | Contents | Committed |
+|---|---|---|
+| `docs/hops/vendor-fact-envelope.md` | coverage matrix, per-field verdicts, per-vendor parser notes, disagreement ledger, excluded-attributes appendix, measured ceiling | yes — this is the living artefact |
+| `tests/conformance/fixtures/hop-facts/pilot-sample.json` | the ten pilot varieties, every field, both ends of each range, with sources | yes |
+| `tests/guards/hop-facts-pilot.test.js` | shape and validity of the fixture only | yes |
+| `scripts/scrape/probe_vendor_facts.py` | the probe | yes, deleted on completion |
+| extracted rows for the full sweep | the measurement | no — ephemeral |
+
+The probe script is committed so the matrix is reproducible from repo history,
+then deleted, the way the yvh scraper and its guard were removed when the
+collapse landed. The extracted rows are not committed because they are the
+production scrape's output, not the test's.
+
+The living doc will need a `<!-- claims: proposed … -->` declaration for the
+field names it proposes, because `docs-claims` requires every backticked dotted
+token to resolve to something that exists.
+
+## 10. Guard and gate
+
+- `docs-claims` passes on the new doc.
+- `hop-facts-pilot` asserts: every range has `min ≤ max`; normalised oil
+  fractions sum to ≤ 1; co-humulone sits in a plausible band; every observation
+  names a source, a unit and a basis; no lupulin or extract row appears in a
+  variety field.
+- `make check` and `make test` stay green. Nothing else changes, so a failure in
+  `seed-rebuild`, `hop-product-tables` or `sources-manifest` means this plan
+  touched something it said it would not.
+
+Gate: matrix, verdicts and ledger exist; each verdict is defensible from the
+numbers in the doc; the fixture is green.
+
+## 11. Relationship to other documents
+
+- `plans/assets-library.md` — **repo-internal, not a second repo.** Its §4.3 and
+  §4.4 (source records, provenance sidecar, absence-is-not-zero, facts-not-prose)
+  are adopted here as conventions. Its out-of-repo assets app, fragment/view/manifest
+  split and layer-1/layer-2 migration are superseded: nothing being acquired is
+  private, the product enumeration it was built around has collapsed to seven
+  variants, and splitting would remove the rebuild-and-diff guarantee that makes
+  the seeds auditable. Recording that supersession in `assets-library` is a
+  follow-up, not an edit this plan makes. Its §9 pilot also predates the
+  treatment collapse and needs a revision pass before anyone executes it.
+- `docs/hops/hop-products.md` — the living product document, and the model for
+  the doc this plan produces. Untouched here except by the separate Lupomax
+  removal.
+- `docs/hops/README.md` — gains an index row when the new doc lands.
+
+## 12. Risks
+
+- **YCH is gated.** If YCH turns out to be the only source for something, it
+  becomes a documented gap with a request-to-source path, not a bypass.
+- **Unit ambiguity.** Hopsteiner's `oils` and Crosby's total oil have no stated
+  unit; resolving them against databook legends is part of the sweep, and the
+  verdict may split the attribute in two.
+- **Mixed conventions inside one record.** Mitigated by per-field normalisation
+  and the fraction-sum guard.
+- **Precedence needs a breeder map.** Deferred; the probe measures how much the
+  rule matters before anyone builds it.
+- **Compounding averages.** BarthHaas's four-year medium range means `mean_range`
+  over three such sources averages averages. Acceptable if documented; not
+  acceptable to present as a measurement of a single crop.
+- **Coverage expectation.** ~220–300 of 401 is the realistic ceiling. A plan that
+  promises all 401 will fail.
+
+## 13. Open decisions
+
+1. Total oil: one field in mL/100 g with the percentage convention documented, or
+   two fields. Recommendation: two only if a source states a percentage
+   explicitly; otherwise one field.
+2. Inclusion threshold: proposed ≥2 sources **and** ≥20 varieties **and** one
+   normalisable basis. Adjust before the verdicts are written, not after.
+3. Crosby's CGX block is a second concentrate line alongside YCH Cryo. Out of
+   scope here, since §7 fixes lupulin to the YCH Cryo sheet; recording it because
+   the data is already on the page if the form space ever widens.
+4. Whether the long-term home of the matrix is `docs/hops/` or an appendix in the
+   archived plan. Recommendation: `docs/hops/`, since the parser notes outlive
+   the verdicts.
+
+## 14. Execution checklist
+
+- [ ] Add a `TODO.md` line pointing here.
+- [ ] Write the probe: `scripts/scrape/probe_vendor_facts.py`, one parser per
+      source, `OUT=` path override, `CHECK=1` to diff without writing.
+- [ ] Run the pilot over the ten varieties; fix parsers and identity matching.
+- [ ] Resolve the two unstated oil units against the vendors' own legends.
+- [ ] Run the sweep; record observations as printed.
+- [ ] Write the coverage matrix and the per-field verdicts.
+- [ ] Write the disagreement ledger, with the union envelope beside each
+      synthesised value.
+- [ ] Write the excluded-attributes appendix and the measured ceiling.
+- [ ] Add the pilot fixture and `hop-facts-pilot` guard.
+- [ ] Add the index row to `docs/hops/README.md`.
+- [ ] Run `make check` and `make test`.
+- [ ] Delete the probe; record the deletion in the plan.
+- [ ] Archive this plan when the matrix lands.
