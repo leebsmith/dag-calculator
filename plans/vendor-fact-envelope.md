@@ -345,6 +345,15 @@ Other rules:
   web.archive.org snapshot supplies the value, recorded with `archived: true`
   and the snapshot date. It ranks in the ladder as the live source would have.
 
+**The catalogue is permanently mixed, and that is not a migration state.** After
+the sweep most varieties carry a vendor or survey figure with a stated bound,
+while the tail — ADHA experimentals, landraces with no vendor page — carries an
+aggregator value or none at all. Some of that resolves as the alias table grows;
+the rest never will, because no one publishes those varieties. The design goal is
+therefore legibility, not uniformity: the basis is recorded per field and carried
+into the frozen row (§6.2), so a mixed column is explainable rather than
+invisible.
+
 ### 6.1 The aggregator tier
 
 `hopslist` is a secondary compilation: 268 varieties with all ten attributes,
@@ -364,11 +373,53 @@ So it does not enter the blend:
 - it never outranks a source at any tier above it, even when its value is closer
   to the consensus — this is a provenance rule, not a statistical one.
 
+### 6.2 Basis travels with the value
+
+A number is only interpretable with how it was known. This repo already does
+that for the other ingredient layers, so hops follow the shipped precedent rather
+than inventing an exception:
+
+```
+data/seeds/yeasts.json            attenuation_provenance: { bound, kind: "aggregator",
+                                    vendor, url, note }
+data/seeds/malts.json             yield_provenance: { bound, kind: "vendor", vendor,
+                                    url, retrieved_at, sha256 }
+frontend/.../traceMaltRows.js     yield_provenance: malt.yield_provenance   // onto the row
+report bundle                     grist_row.yield_provenance
+```
+
+Two distinct fields, easy to conflate:
+
+| Field | Meaning | Values |
+|---|---|---|
+| `*_provenance.kind` | how we know it — the mixed-basis mechanism | `vendor`, `survey`, `aggregator`, `prior` |
+| `*_basis` | what was measured, where the source states it | `conductometric`, `spectrophotometric` |
+
+`*_basis` is not a provenance class in this repo — `attenuation_basis` is
+`apparent`, `yield_basis` is `extract`. For hops it records the titration method,
+which the sources actually publish: conductometric to EBC 7.4 in Europe,
+spectrophotometric to ASBC Hops-6 in the USA. Both appear in the BarthHaas and
+HPA footnotes, so the field has a source rather than an inference.
+
+Concretely, hops gain:
+
+- `alpha_provenance`, `beta_provenance` and `oil_provenance` on `hop` — three
+  objects, because the three groups are published by different sources with
+  different bounds and different vintage;
+- the merge fields inside them (`merge`, `sources_count`, `dispersion`,
+  `crop_years`), since they describe how the value was formed;
+- `alpha_acid_basis` where the method is stated;
+- the same fields on `boil_hop_row` and `whirlpool_hop_row`, copied at selection
+  the way `traceMaltRows` copies `yield_provenance`, so a frozen batch carries
+  its own explanation;
+- a display mark for anything not vendor-sourced, following the prior convention
+  (`~`), with the source named in the tooltip.
+
 ## 7. Form spaces
 
 | Form | Sources | n | Attributes obtainable |
 |---|---|---|---|
-| variety (cone / T-90) | HGA ×2, Hopsteiner, BarthHaas, Crosby, the HPA sheet pair, the HPA catalogue, NZ Hops, `hopslist` (fill only) | 1–8 | up to 10 |
+| variety (cone / T-90) | HGA ×2, Hopsteiner, BarthHaas, Crosby, the HPA sheet pair, the HPA catalogue, NZ Hops, `hopslist` (fill only) | 1–8 | up to 11 |
 | lupulin pellet | YCH Cryo 2022 only | 1 | alpha min/max, total oil mL/100 g (§7.1) |
 | flowable extract | five curated lines (CO₂, Hop Shot, Flex, DynaBoost, Incognito) | — | no per-variety sheet; no synthesis |
 
@@ -545,6 +596,13 @@ numbers in the doc; the fixture is green.
   the seeds auditable. Recording that supersession in `assets-library` is a
   follow-up, not an edit this plan makes. Its §9 pilot also predates the
   treatment collapse and needs a revision pass before anyone executes it.
+  **Decision 8 needs a correction in that pass**: it says provenance "never rides
+  inside a seed row or a batch selection snapshot", but the shipped layers
+  already do exactly that — `data/seeds/yeasts.json` carries
+  `attenuation_provenance`, `data/seeds/malts.json` carries `yield_provenance`,
+  `traceMaltRows` copies it onto the row, and the report bundle exposes
+  `grist_row.yield_provenance`. The sidecar rule applies to the asset *release*,
+  not to the published view; §6.2 follows the shipped model.
 - `docs/hops/hop-products.md` — the living product document, and the model for
   the doc this plan produces. Untouched here except by the separate Lupomax
   removal.
@@ -628,7 +686,7 @@ numbers in the doc; the fixture is green.
 - [x] Run the pilot over the ten varieties against the original five sources.
 - [x] Add the pilot fixture and the `hop-facts-pilot` guard.
 - [x] Write the living doc and add the index row to `docs/hops/README.md`.
-- [ ] Add a `TODO.md` line pointing here.
+- [x] Add a `TODO.md` line pointing here.
 - [x] Add the `haas-sheet` and `barthhaas-sheet` parsers; the template difference
       shows up as field presence per sheet.
 - [x] Add the `hpa-catalogue` summary-table parser for the Australian portfolio.
@@ -644,6 +702,12 @@ numbers in the doc; the fixture is green.
 - [ ] Add §4.1a to `docs/hops/hop-products.md` and extend `hop-product-tables` to
       parse it.
 - [ ] Prove the form split with the Cascade ratio (Cryo ÷ T-90 ≈ 2.7).
+- [ ] Declare `alpha_provenance`, `beta_provenance`, `oil_provenance` and
+      `alpha_acid_basis` on `hop`, and the same on `boil_hop_row` and
+      `whirlpool_hop_row` (§6.2).
+- [ ] Copy the provenance onto the row at selection, the way `traceMaltRows`
+      copies `yield_provenance`; regenerate the catalog and glossary.
+- [ ] Give the display a mark for anything not vendor-sourced.
 - [ ] Resolve the two unstated oil units against the vendors' own legends.
 - [ ] Run the sweep; record observations as printed.
 - [ ] Write the coverage matrix and the per-field verdicts, including
