@@ -5,16 +5,21 @@ tracks only what is outstanding.
 
 ## Next (in order)
 
-1. **Footer bar** — the shell landed: save state and conflict recovery, step
+1. **Vendor fact envelope** — the ten hop attributes measured against the sources
+   that publish them: the first pilot, the southern-hemisphere sources and the
+   living coverage record landed; the second pilot pass and the sweep remain
+   (`plans/vendor-fact-envelope.md`, `docs/hops/vendor-fact-envelope.md`).
+
+2. **Footer bar** — the shell landed: save state and conflict recovery, step
    position, boundary status, violation count, SAI, and the enumerated findings
    list. What remains is the gravity/ABV/SRM/IBU readouts and the LIFO ordering
    of soft warnings (`plans/warnings.md` W.1–W.5, still proposed).
 
-2. **Verify the mapping flow by hand** — phases A–B are shipped and covered;
+3. **Verify the mapping flow by hand** — phases A–B are shipped and covered;
    the manual pass against the vendored PDF and a real blend record is what
    remains (`plans/mapping-plans.md`).
 
-3. **Import refinements** — the H.1 prompt/schema review, L0 prior hits, and
+4. **Import refinements** — the H.1 prompt/schema review, L0 prior hits, and
    keyboard traversal with batch actions; the editor's "Imported from…" panel
    landed (`plans/recipe-import.md` J.1/J.3).
 
