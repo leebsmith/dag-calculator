@@ -97,7 +97,15 @@ Each phase is one commit and must be green on its own; the pre-push hook runs
   suspected table misalignment (Galena). P2 resolves them; the guard fails if a
   new one appears.
 
-### P2 — synthesis
+### P2 — synthesis (landed)
+
+**The sweep is seed-driven, so it adds no varieties.** Every probe iterates the
+401 seed names and skips what it does not recognise, which means a vendor-only
+variety (Cekin, Bullion 10A, the HBC releases) has no observations to import.
+Adding them needs a source-driven pass that emits unmatched source names — a
+change to the acquisition, not to the builder. The row count therefore stays 401;
+the ~55 additions move to a follow-up and are recorded here rather than assumed.
+
 
 - Extend `scripts/build-hops-seed.mjs`: load the scrape and the facts, apply the
   rules, emit.
@@ -167,12 +175,12 @@ Each phase is one commit and must be green on its own; the pre-push hook runs
 
 ## 7. Checklist
 
-- [ ] P0: declare the fields and provenance; regenerate; document; add the alpha invariant guard.
-- [ ] P0: `make check` and `make test` green with no values changed.
-- [ ] P1: commit `data/sources/hop-facts.json` and the manifest entry; alias fixes; source-contract guard.
-- [ ] P2: builder rules; vendor-only additions; drop `notes`; re-point `url`.
-- [ ] P2: regenerate the bundle fixture; record the IBU-moving change in the commit message.
-- [ ] P2: `hop-facts` guard green, including the contradicted-zero case.
+- [x] P0: declare the fields and provenance; regenerate; document; add the alpha invariant guard.
+- [x] P0: `make check` and `make test` green with no values changed.
+- [x] P1: commit `data/sources/hop-facts.json` and the manifest entry; alias fixes; source-contract guard.
+- [x] P2: builder rules; drop `notes`; re-point `url`. Vendor-only additions are **not** possible from this sweep — see §3 below.
+- [x] P2: regenerate the bundle fixture; record the IBU-moving change in the commit message.
+- [x] P2: `hop-facts` guard green, including the contradicted-zero case.
 - [ ] P3: display marks and hop detail; no report change.
 - [ ] P4: archive the envelope plan; delete the probe.
 - [ ] `make check`, `make test`, `make verify`.

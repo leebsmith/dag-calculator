@@ -210,7 +210,7 @@ const SCRIPT_COMPLEXITY = {
   "scripts/artifact-inventory.mjs": 16,
   "scripts/build-fermentables-seed.mjs": 16,
   "scripts/build-hop-products-seed.mjs": 10,
-  "scripts/build-hops-seed.mjs": 20,
+  "scripts/build-hops-seed.mjs": 14,
   "scripts/build-styles-seed.mjs": 14,
   "scripts/build-yeasts-seed.mjs": 14,
   "scripts/describe-report-bundle.mjs": 35,

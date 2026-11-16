@@ -25,8 +25,11 @@ test("A9: yeasts seed is a pure rebuild of its source", () => {
   );
 });
 
-test("A9: hops seed is a pure rebuild of its source", () => {
-  assert.deepEqual(buildHops(json("data/sources/beer-analytics-hops.json")), json("data/seeds/hops.json"));
+test("A9: hops seed is a pure rebuild of its sources", () => {
+  assert.deepEqual(
+    buildHops(json("data/sources/beer-analytics-hops.json"), json("data/sources/hop-facts.json")),
+    json("data/seeds/hops.json")
+  );
 });
 
 test("A9: hop products seed is a pure rebuild of its source", () => {

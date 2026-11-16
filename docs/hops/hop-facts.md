@@ -1,9 +1,9 @@
 # Hop facts
 
-Status: **contract declared, values pending.** The fields below are in the
-artifact and the seed rows do not yet carry them; the synthesis that fills them
-is `plans/hop-facts-synthesis.md`. This page explains what each field means and
-what a reader is entitled to assume about it.
+Status: **populated.** The fields below are in the artifact and the seed; the
+synthesis that fills them is `plans/hop-facts-synthesis.md` and the builder is
+`scripts/build-hops-seed.mjs`. This page explains what each field means and what
+a reader is entitled to assume about it.
 
 ## 1. The rule a hop row must satisfy
 
@@ -54,6 +54,31 @@ Two fields, deliberately distinct:
 
 A hop row's `url` points at the evidence for the value it carries. Where a row is
 crowd-only, that is the aggregator page, and the row says so.
+
+## 3.1 The rules the builder applies
+
+In order, per field:
+
+1. **Identity** — the scrape supplies the row; the facts attach to it by name.
+2. **A hard zero** is not a measurement where a hop cannot be zero. Alpha, beta,
+   total oil and co-humulone drop a `0` outright: Hopsteiner's payload carries
+   `0 - 0` for three experimental varieties, and a zero there would be a hop that
+   contributes no bitterness. The oil fractions are exempt — a variety really can
+   carry almost no farnesene — so a zero stands unless another source contradicts
+   it.
+3. **Rank** — survey newest, survey older, first-party sheets, breeder sites,
+   regional merchants, aggregator last.
+4. **Merge** — three or more usable sources produce the mean of the bounds
+   (`mean_range`); fewer fall back to the top-ranked single source
+   (`precedence`). Max-only and unit-unresolved observations never enter a mean.
+5. **Record** — `sources`, `sources_count`, `merge`, `dispersion`, `bound`, the
+   printed range and the source URL; the row's `url` points at the winning
+   source, or at the aggregator page for the tail.
+
+What that yields across 401 rows: alpha is vendor or survey for 155 varieties and
+an aggregator figure for 246 (150 with no vendor sheet at all, 96 where the
+aggregator was the only source). 224 rows carry total oil, 213 co-humulone, and
+94 linalool. Every row has an alpha.
 
 ## 4. The catalogue is permanently mixed
 
