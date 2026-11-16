@@ -337,6 +337,14 @@ Other rules:
   four-year medium range; a blend is permitted only when flagged (`vintages`).
 - **Absence is not zero.** A field with no published value is omitted. It is not
   imputed and not filled from another form.
+- **A contradicted zero is not a measurement.** Some sources spell absence as
+  `0.00` — 60 of the 61 hard zeros in the sweep are Hopsteiner's, and 18 of them
+  contradict a substantial value from another source (Amarillo humulene `0.00`
+  against a Haas sheet 9–11 %). A zero that another source contradicts is
+  excluded from synthesis entirely: it does not enter a `mean_range`, it cannot
+  win `precedence`, and it does not widen the union envelope. It stays in the
+  ledger as the conflict it is. A zero that no other source contradicts is kept
+  as a point — some varieties really do carry almost no farnesene.
 - **Every synthetic value says so.** `merge`, `sources_count` and `dispersion`
   travel with the value, so a consumer can tell four agreeing vendors from one
   stale page, and the UI can mark a derived figure the way priors and
@@ -708,6 +716,9 @@ numbers in the doc; the fixture is green.
 - [ ] Copy the provenance onto the row at selection, the way `traceMaltRows`
       copies `yield_provenance`; regenerate the catalog and glossary.
 - [ ] Give the display a mark for anything not vendor-sourced.
+- [ ] Guard the contradicted-zero rule in the synthesis builder: fail if a zero
+      that another source contradicts enters `mean_range`, wins `precedence`, or
+      appears in a union envelope.
 - [ ] Resolve the two unstated oil units against the vendors' own legends.
 - [x] Run the sweep; record observations as printed.
 - [x] Write the coverage matrix and the per-field verdicts, including
