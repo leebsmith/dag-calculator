@@ -132,12 +132,15 @@ the ~55 additions move to a follow-up and are recorded here rather than assumed.
   `traceMaltRows` copies `yield_provenance`, so a frozen batch keeps its basis.
 - No report change; the oil line arrives with `plans/hop-oil-model.md`.
 
-### P4 — retire
+### P4 — retire the plan, not the tool
 
 - Archive `plans/vendor-fact-envelope.md`; the matrix and verdicts live on in
   `docs/hops/vendor-fact-envelope.md`.
-- Delete `scripts/scrape/probe_vendor_facts.py`, recording the deletion, as the
-  yvh scraper was deleted.
+- **Keep** `scripts/scrape/probe_vendor_facts.py`. It is the acquisition tool,
+  not a probe: every source changes with a crop year or a redesign, the committed
+  hashes are only checkable if the fetch can be repeated, and the deferred
+  source-driven pass needs it. The draft's "delete the probe" borrowed the yvh
+  precedent, where the scraper went because the catalogue it fed was deleted.
 
 ## 4. Guards
 
@@ -187,5 +190,5 @@ the ~55 additions move to a follow-up and are recorded here rather than assumed.
 - [x] P2: regenerate the bundle fixture; record the IBU-moving change in the commit message.
 - [x] P2: `hop-facts` guard green, including the contradicted-zero case.
 - [x] P3: display marks and hop detail; no report change.
-- [ ] P4: archive the envelope plan; delete the probe.
+- [ ] P4: archive the envelope plan; keep the probe.
 - [ ] `make check`, `make test`, `make verify`.

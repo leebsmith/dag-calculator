@@ -41,7 +41,8 @@ obtainable, in what unit, from which source, and for how many varieties?
 - No committed vendor documents. We commit the extraction we derive, never the
   third party's file — the same rule `data/sources/beer-analytics-hops.json`
   already follows.
-- No production scraper. The probe is deleted on completion; see §9.
+- **No throwaway scraper.** The probe is a maintained acquisition tool, not a
+  one-off; see §9.1.
 - No challenge bypass. Where a source gates automated access, that is recorded
   as a gap, not routed around.
 
@@ -542,8 +543,8 @@ what make the 300-plus end plausible. The remainder is identity-only.
 | `tests/conformance/fixtures/hop-facts/pilot-sample.json` | the ten pilot varieties against the original five sources, each observation carrying the value **as printed** and the **normalised** result | yes, as a fixture |
 | `tests/conformance/fixtures/hop-facts/expanded-sample.json` | the pilot ten plus the southern ten against all eleven sources — the second pass | yes, as a fixture |
 | `tests/guards/hop-facts-pilot.test.js` | shape and validity of the fixture only | yes |
-| `scripts/scrape/probe_vendor_facts.py` | the probe | yes, deleted on completion |
-| extracted rows for the full sweep | the measurement | no — ephemeral |
+| `scripts/scrape/probe_vendor_facts.py` | the acquisition tool | yes — kept and maintained |
+| extracted rows for the full sweep | the measurement | yes — committed as `data/sources/hop-facts.json` |
 
 ### 9.1 The fixture is a fixture, not a source
 
@@ -567,10 +568,22 @@ regression test, so the normaliser is pinned by evidence rather than by a note i
 prose. A fixture of pre-normalised numbers would test the parser and nothing
 else.
 
-The probe script is committed so the matrix is reproducible from repo history,
-then deleted, the way the yvh scraper and its guard were removed when the
-collapse landed. The extracted rows are not committed because they are the
-production scrape's output, not the test's.
+The probe script is committed and **stays**. Deleting it was the draft plan's
+assumption, borrowed from the yvh scraper, and it does not survive contact:
+
+- every source here is live and changes — a new crop year, a redesigned page, a
+  new sheet in the HPA library — so the facts are refreshed by re-running the
+  tool, never by editing the JSON by hand;
+- the deferred source-driven pass that would add the vendor-only varieties
+  cannot be written without it;
+- the committed hashes are only verifiable if the fetch can be repeated;
+- and the repo already keeps its scrapers (`hop_scraper.py`, `yeast_scraper.py`,
+  `whitelabs_yeast_scraper.py`). The yvh scraper went because the product
+  enumeration it fed was deleted, not because scrapers are disposable.
+
+What is ephemeral is nothing: the sweep's observations are committed as
+`data/sources/hop-facts.json` by `plans/hop-facts-synthesis.md` P1, where the
+builder consumes them. The probe is the thing that regenerates that file.
 
 The living doc will need a `<!-- claims: proposed … -->` declaration for the
 field names it proposes, because `docs-claims` requires every backticked dotted
@@ -727,5 +740,6 @@ numbers in the doc; the fixture is green.
       synthesised value.
 - [x] Write the excluded-attributes appendix and the measured ceiling.
 - [ ] Run `make check` and `make test`.
-- [ ] Delete the probe; record the deletion in the plan.
+- [x] Keep the probe as the maintained acquisition tool; the deletion in the
+      draft plan was wrong (see §9.1).
 - [ ] Archive this plan when the matrix lands.
