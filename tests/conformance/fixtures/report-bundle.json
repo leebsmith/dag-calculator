@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:796056c0f7c4502377c9c625f6f27c3237ba36e85a979a105e1b03001dc9b17e",
+    "hash": "sha256:5eec5f3cbaa454d35cbab8f84b0c7d2833d84d94d972764d3bf7d91c6be8ba24",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -828,6 +828,43 @@
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
+          "beta_acid_min_pct": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "beta_acid_max_pct": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "total_oil_ml_per_100g": {},
+          "cohumulone_pct_of_alpha": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "myrcene_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "humulene_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "caryophyllene_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "farnesene_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "linalool_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "alpha_provenance": {},
+          "beta_provenance": {},
+          "oil_provenance": {},
+          "alpha_acid_basis": {},
           "pairings": {},
           "flavor_profiles": {},
           "notes": {},
@@ -1139,6 +1176,7 @@
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
+          "alpha_provenance": {},
           "boil_time_fraction": {
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
@@ -1177,6 +1215,7 @@
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
+          "alpha_provenance": {},
           "addition_at_min": {
             "dimension": "time",
             "default": 0,
@@ -8144,5 +8183,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:25570e56288c28efd5bcdf18d82cfbb870f5c3cedbb8421d8b264ae53f515c56"
+  "content_hash": "sha256:9fb44aacfda24b883b51d6d24b56e3dbc87c69e67ecb6aefb7af462dd7b23607"
 }

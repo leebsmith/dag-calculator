@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_130 paths_
+_132 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -32,6 +32,7 @@ _130 paths_
 | `batch.attenuation_derate_points` | Batch derate (points) | root | percentage | pct (pts) | 1 | — |
 | `batch.boil_hops` | Boil hops | collection | — | — | — | — |
 | `batch.boil_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
+| `batch.boil_hops.alpha_provenance` | Alpha Provenance | field | — | — | — | — |
 | `batch.boil_hops.boil_time_fraction` | Portion of boil | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.cone_utilization` | Cone Utilization | field | dimensionless | — | — | — |
 | `batch.boil_hops.hop_id` | Hop ID | field | — | — | — | — |
@@ -122,6 +123,7 @@ _130 paths_
 | `batch.whirlpool_hops` | Whirlpool hops | collection | — | — | — | — |
 | `batch.whirlpool_hops.addition_at_min` | After flameout | field | time | min | 0 | — |
 | `batch.whirlpool_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
+| `batch.whirlpool_hops.alpha_provenance` | Alpha Provenance | field | — | — | — | — |
 | `batch.whirlpool_hops.cone_utilization` | Cone Utilization | field | dimensionless | — | — | — |
 | `batch.whirlpool_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.whirlpool_hops.initial_temp_c` | Temp | field | temperature | degC (°C) | 1 | — |

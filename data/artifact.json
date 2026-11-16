@@ -823,6 +823,43 @@
         "dimension": "percentage",
         "domain": "$value >= 0 && $value <= 1"
       },
+      "beta_acid_min_pct": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "beta_acid_max_pct": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "total_oil_ml_per_100g": {},
+      "cohumulone_pct_of_alpha": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "myrcene_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "humulene_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "caryophyllene_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "farnesene_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "linalool_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "alpha_provenance": {},
+      "beta_provenance": {},
+      "oil_provenance": {},
+      "alpha_acid_basis": {},
       "pairings": {},
       "flavor_profiles": {},
       "notes": {},
@@ -1134,6 +1171,7 @@
         "dimension": "percentage",
         "domain": "$value >= 0 && $value <= 1"
       },
+      "alpha_provenance": {},
       "boil_time_fraction": {
         "dimension": "percentage",
         "domain": "$value >= 0 && $value <= 1"
@@ -1172,6 +1210,7 @@
         "dimension": "percentage",
         "domain": "$value >= 0 && $value <= 1"
       },
+      "alpha_provenance": {},
       "addition_at_min": {
         "dimension": "time",
         "default": 0,
