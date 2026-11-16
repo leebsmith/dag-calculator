@@ -369,7 +369,7 @@ So it does not enter the blend:
 | Form | Sources | n | Attributes obtainable |
 |---|---|---|---|
 | variety (cone / T-90) | HGA ×2, Hopsteiner, BarthHaas, Crosby, the HPA sheet pair, the HPA catalogue, NZ Hops, `hopslist` (fill only) | 1–8 | up to 10 |
-| lupulin pellet | YCH Cryo 2022 only | 1 | alpha min/max, total oil mL/100 g |
+| lupulin pellet | YCH Cryo 2022 only | 1 | alpha min/max, total oil mL/100 g (§7.1) |
 | flowable extract | five curated lines (CO₂, Hop Shot, Flex, DynaBoost, Incognito) | — | no per-variety sheet; no synthesis |
 
 The southern-hemisphere varieties are **not** a separate form or portfolio
@@ -394,7 +394,49 @@ removes 16 rows from `data/sources/hop-products.json`, 16 from the seed, the
 `docs/hops/hop-products.md`, the expectations in `hop-product-tables`, and the
 manifest entry. Recording it here so it is not lost.
 
+### 7.1 Lupulin oil — the per-form gap, and where it closes
+
+The sheet that supplies lupulin alpha (`cryo-hops-product-overview-sheet-2022.pdf`,
+already cited in `docs/hops/hop-products.md`) also publishes an oil range in
+mL/100 g for all 26 varieties. The product record says so explicitly — "the sheet
+also carries oil ranges per variety, not transcribed here" — so this is a
+transcription, not an acquisition.
+
+It is the missing half of the dosing feature. Cascade T-90 is 0.7–1.4 mL/100 g;
+Cascade Cryo is 1.7–4.0. Midpoints 1.05 against 2.85 is a **2.7× oil multiplier
+per gram**, which no variety-level figure can imply.
+
+**Capture.**
+
+| File | Change |
+|---|---|
+| `data/sources/hop-products.json` | the 26 Cryo rows gain `total_oil_min_ml_per_100g`, `total_oil_max_ml_per_100g` and an authored midpoint `total_oil_ml_per_100g`, exactly as `alpha_acid_pct` is authored today |
+| `data/artifact.json` | the three fields join `hop_product` as untyped display fields with the unit in the name — the shape `plans/assets-library.md` §6.1 already specified |
+| `docs/hops/hop-products.md` | a new §4.1a table, variety against oil in mL/100 g, with the methods note (oil by distillation) and the sheet's caveat that lot and crop year move it |
+| `scripts/build-hop-products-seed.mjs` | pass-through only. Oil must **not** join `PERCENT_FIELDS`: it is mL/100 g and dividing it by 100 would be silent corruption |
+| `tests/guards/hop-product-tables.test.js` | parse §4.1a and assert the seed agrees, the way §4.1 is parsed today |
+
+The separate table is deliberate: the guard reads §4.1 as `(name, alpha)` pairs,
+so a third column would break it. §4.1a keeps the pairing and adds one small
+parser.
+
+**Acceptance.** Cryo Cascade oil midpoint ÷ T-90 Cascade oil midpoint ≈ 2.7, and
+no lupulin value may appear in a variety field. That is the check the two record
+spaces exist for.
+
+**Out of scope.** The five extract lines have no per-variety sheet, so a dose
+computed for them would be invented. Oil capture stops at lupulin; the model must
+say so rather than extrapolate.
+
+Provenance is the source id, the sheet's page, the 2022 vintage and the
+distillation method note. The authored midpoint is a seed convenience, not a
+published figure — the lot CoA overrides it, same rule as alpha.
+
+This lands as its own change **before** the sweep: 26 values from a document in
+hand, and the sweep is about variety attributes, not product ones.
+
 ## 8. Protocol
+
 
 **Pilot — ten varieties, all sources.** Cascade, Citra, Mosaic, Simcoe, Amarillo,
 Centennial, Chinook, Saaz, Magnum, Hallertau Mittelfrüh. Chosen for two US and two
@@ -535,9 +577,8 @@ numbers in the doc; the fixture is green.
 - **Compounding averages.** BarthHaas's four-year medium range means `mean_range`
   over three such sources averages averages. Acceptable if documented; not
   acceptable to present as a measurement of a single crop.
-- **Per-form oil is unwritten.** The dosing feature consumes oil per form; the
-  product rows carry alpha only. Either the sweep captures oils on the product
-  kind too, or the dose calculation is restricted to T-90 and says so.
+- **Per-form oil stops at lupulin.** §7.1 closes it for Cryo; the extract lines
+  have no per-variety sheet, so a dose for them would be invented.
 - **Unit conversion is a model constant.** mL/100 g to mg/L needs a density that
   no source publishes. It belongs in the whirlpool model, and inventing it in the
   seed would make a fact out of an assumption.
@@ -596,10 +637,13 @@ numbers in the doc; the fixture is green.
 - [x] Add `usda-cultivars` identity resolution for the tail; no measurements.
 - [x] Run the second pass: the pilot ten against the added sources, plus the
       southern ten.
-- [ ] Capture linalool in the probe: the Haas and BarthHaas sheet labels, the
+- [x] Capture linalool in the probe: the Haas and BarthHaas sheet labels, the
       Hopsteiner `linalool_oil`, and the HPA full blocks; re-run the second pass.
-- [ ] Decide whether the sweep also captures oils on the `hop_product` kind, so a
-      dose is correct for lupulin as well as T-90.
+- [ ] Transcribe the 26 Cryo oil ranges into `data/sources/hop-products.json` and
+      declare the three `hop_product` fields (§7.1).
+- [ ] Add §4.1a to `docs/hops/hop-products.md` and extend `hop-product-tables` to
+      parse it.
+- [ ] Prove the form split with the Cascade ratio (Cryo ÷ T-90 ≈ 2.7).
 - [ ] Resolve the two unstated oil units against the vendors' own legends.
 - [ ] Run the sweep; record observations as printed.
 - [ ] Write the coverage matrix and the per-field verdicts, including

@@ -347,3 +347,8 @@ parser bug, and it belongs with the alias table rather than the sweep.
 - The measured coverage ceiling across the 401 current hop ids.
 - The disagreement ledger at variety scale, with the union envelope beside each
   synthesised value.
+
+Not a sweep item, and first: the lupulin oil capture. The YCH Cryo 2022 sheet
+publishes oil in mL/100 g for all 26 varieties and the product record does not
+carry it, which is why a dose is only correct for T-90 today. See
+`plans/vendor-fact-envelope.md` §7.1.
