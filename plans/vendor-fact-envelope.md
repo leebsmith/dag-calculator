@@ -47,36 +47,67 @@ obtainable, in what unit, from which source, and for how many varieties?
 
 ## 3. The field set
 
-Ten attributes. The denominator is part of the meaning and travels in the field
-name, because the artifact's `percentage` dimension is a unit (a fraction with a
-`pct` factor) and says nothing about what is being counted.
+Eleven attributes. The denominator is part of the meaning and travels in the
+field name, because the artifact's `percentage` dimension is a unit (a fraction
+with a `pct` factor) and says nothing about what is being counted.
 
 | Attribute | Proposed field(s) | Denominator | Bound kinds seen |
 |---|---|---|---|
-| Alpha | `alpha_acid_min_pct`, `alpha_acid_max_pct` | of hop mass | range, and `up to` |
-| Beta | `beta_acid_min_pct`, `beta_acid_max_pct` | of hop mass | range, point |
 | Total oil | `total_oil_ml_per_100g`, possibly `total_oil_pct` | volume per mass, or of hop mass | range, `up to` |
-| Co-humulone | `cohumulone_pct_of_alpha` | of alpha acids | range, point, `~` |
 | Myrcene | `myrcene_pct_of_oil` | of total oil | range |
 | Humulene | `humulene_pct_of_oil` | of total oil | range |
 | Caryophyllene | `caryophyllene_pct_of_oil` | of total oil | range |
 | Farnesene | `farnesene_pct_of_oil` | of total oil | range, point |
+| Linalool | `linalool_pct_of_oil` | of total oil | range |
+| Alpha | `alpha_acid_min_pct`, `alpha_acid_max_pct` | of hop mass | range, and `up to` |
+| Beta | `beta_acid_min_pct`, `beta_acid_max_pct` | of hop mass | range, point |
+| Co-humulone | `cohumulone_pct_of_alpha` | of alpha acids | range, point, `~` |
 
-Ten attributes, eleven candidate fields, because total oil is published in two
+Eleven attributes, twelve candidate fields, because total oil is published in two
 conventions that do not convert exactly. The verdict decides whether it becomes
 two fields or one field plus a document note.
+
+The order is deliberate. The consumers in §3.1 dose by **oil**, so total oil and
+the fractions lead; alpha is the bitterness axis and sits where it belongs, on
+the layering plan's IBU side rather than as the anchor.
 
 **Bound vocabulary.** `point`, `min`, `max`, `unknown` — the same four the yeast
 provenance already carries. `up to 1.4 ml/100 g` is `bound: max` with no
 minimum; it is not a range with a zero floor. Point values are recorded as
 `min = max` with `value_kind: point`.
 
+**Document-only candidates, tracked but not schema fields:** geraniol (BarthHaas
+only), and the humulene/caryophyllene ratio (HPA full blocks only, and derivable
+from two fields we already carry). Both get a verdict so the matrix shows they
+were considered.
+
 **Excluded by this plan, deliberately:** hard resins, polyphenols, xanthohumol,
-linalool, geraniol, ketones, isobutyrates, hop storage index, genetic origin,
-yield, maturity, disease ratings, acreage, aroma descriptors and narrative
-descriptions. Several are published and easy to take; they are out of scope
-because nothing consumes them. The matrix records the exclusion so a later reader
-knows the set was chosen, not overlooked.
+ketones, isobutyrates, hop storage index, genetic origin, yield, maturity,
+disease ratings, acreage, aroma descriptors and narrative descriptions. Hop
+storage index is the notable one: **no source in this set publishes it**. It is a
+model constant or a prior, not a scraped fact, and it belongs to the retention
+work in `docs/hops/whirlpool-hopping-model.md`.
+
+### 3.1 What consumes this
+
+Two features, named so a verdict can be justified by a consumer rather than by
+availability.
+
+| Consumer | Reads | Where it is specified |
+|---|---|---|
+| Layered whirlpool — authored hot/cool IBU split and a cool-side mass ratio | alpha for the IBU side; the mass ratio is an oil dose, so total oil and the fraction profile decide what the ratio means | `plans/hop-layering-strategy.md` |
+| Whirlpool dosing by oil concentration | total oil (mL/100 g), the aroma-active fractions, vintage, and the form's oil per gram | `docs/hops/whirlpool-hopping-model.md` |
+
+Two consequences that are not optional:
+
+- **Vintage is load-bearing.** Oils degrade faster than alpha, so a variety's oil
+  figure without its crop year is weaker than its alpha figure without one.
+  `mean_range` must not cross vintages (§6), and a single-source record has to say
+  which year it came from.
+- **The unit stays the source's.** Dosing wants mg/L; total oil is published in
+  mL/100 g, and the conversion needs a density (~0.85 g/mL). That is a model
+  constant, not a hop fact — the field keeps the unit in its name and the
+  conversion lives in the whirlpool model.
 
 ## 4. Sources
 
@@ -84,11 +115,11 @@ knows the set was chosen, not overlooked.
 |---|---|---|---|---|---|
 | `hga-2020` | USA Hops Variety Snapshot 2020 (`https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf`) | PDF, `pdftotext -layout` | ~56 listed | alpha, beta, cohumulone, total oil (mL/100 g) | 2020 |
 | `hga-2017` | USA Hops Variety Snapshot 2017 (`https://www.usahops.org/cabinet/data/USAHops_VarietySnapshot_2017_SinglePage.pdf`) | PDF, `pdftotext -layout` | ~66 listed | same | 2017 |
-| `hopsteiner-vf` | `https://hopsteiner.us/variety-data-sheets/?data=1` | one HTTP GET | 100 | alpha, beta, cohumulone, total oil, humulene, farnesene | per record, `last_changed` |
+| `hopsteiner-vf` | `https://hopsteiner.us/variety-data-sheets/?data=1` | one HTTP GET | 100 | alpha, beta, cohumulone, total oil, humulene, farnesene, linalool | per record, `last_changed` |
 | `barthhaas-variety` | `https://www.barthhaas.com/hops-and-products/hops/<slug>` | HTML, one page per variety | portfolio | alpha, beta, total oil, all four fractions | "medium range of the last 4 years" |
 | `crosby-variety` | `https://www.crosbyhops.com/hops/varieties/<slug>` (index at `/hops/varieties/`) | HTML, one page per variety | 56 listed | alpha, beta, total oil (unit stated), co-humulone, myrcene, caryophyllene, farnesene, humulene on some | unstated |
 | `haas-sheet` | `https://hops.com.au/downloads/data-sheet/america/<Variety>-Data-Sheet.pdf`, 25 documents | PDF, label/value pairs | 22 of 25 carry all eight | alpha, beta, co-humulone, total oil, all four fractions, linalool, polyphenols | unstated |
-| `barthhaas-sheet` | `https://hops.com.au/downloads/data-sheet/europe/<Variety>-Data-Sheet.pdf`, 15 documents | PDF, label/value pairs | 15 | alpha, beta, total oil, myrcene | unstated |
+| `barthhaas-sheet` | `https://hops.com.au/downloads/data-sheet/europe/<Variety>-Data-Sheet.pdf`, 15 documents | PDF, label/value pairs | 15 | alpha, beta, total oil, myrcene, linalool | unstated |
 | `hpa-catalogue` | `https://hops.com.au/downloads/products/HPA-Product-Catalogue.pdf` | PDF, table plus 3 full blocks | Australian portfolio | summary: alpha, total oil (mL/100 g); 3 blocks carry composition | unstated |
 | `nzhops-products` | `https://nzhops.co.nz/collections/new-zealand-hops/products.json` | Shopify JSON | 20 | alpha range, stated in prose as `(10 – 13 % AA)` | per variant, crop year |
 | `hopslist` | `https://www.hopslist.com/hops/<category>/<slug>/`, 268 pages | HTML | 268 | all ten | ~2016; **aggregator** |
@@ -350,6 +381,12 @@ value can never leak into a variety field. This also settles the total-oil split
 — `total_oil_ml_per_100g` is the lupulin convention and the HGA/BarthHaas
 convention, and `total_oil_pct` exists only if a source states a percentage.
 
+**Per-form oil is a gap, and the dosing feature needs it.** A gram of lupulin
+concentrate carries roughly twice the oil of a gram of T-90, and the `hop_product`
+rows carry alpha only. The YCH Cryo sheet publishes oils per variety and the HPA
+sheets are per-form documents, so it is obtainable — but until it is captured, an
+oil dose computed from a variety's oil figure is only correct for T-90.
+
 **Lupomax is to be dropped**, leaving lupulin as one line (YCH Cryo 2022, 26
 varieties). That is a separate change and this plan does not execute it: it
 removes 16 rows from `data/sources/hop-products.json`, 16 from the seed, the
@@ -498,6 +535,12 @@ numbers in the doc; the fixture is green.
 - **Compounding averages.** BarthHaas's four-year medium range means `mean_range`
   over three such sources averages averages. Acceptable if documented; not
   acceptable to present as a measurement of a single crop.
+- **Per-form oil is unwritten.** The dosing feature consumes oil per form; the
+  product rows carry alpha only. Either the sweep captures oils on the product
+  kind too, or the dose calculation is restricted to T-90 and says so.
+- **Unit conversion is a model constant.** mL/100 g to mg/L needs a density that
+  no source publishes. It belongs in the whirlpool model, and inventing it in the
+  seed would make a fact out of an assumption.
 - **Coverage expectation.** ~300 of 401 is the realistic ceiling, and the tail
   that remains is identity-only. A plan that promises all 401 will fail.
 
@@ -529,6 +572,13 @@ numbers in the doc; the fixture is green.
 - **The breeder tier is named**: HPA (AU), NZ Hops (NZ), John I. Haas / USDA (US),
   BarthHaas / Hopsteiner / Hüll (DE–CZ), British Hops (UK), Slovenian Institute
   (SI).
+- **Linalool joins the closed set**, taking it to eleven, because both future
+  features dose by oil and linalool is the fraction most associated with
+  whirlpool aroma impact. Every composition source already publishes it, so the
+  cost is a label in parsers we already run. Geraniol and the
+  humulene/caryophyllene ratio stay document-only candidates.
+- **Hop storage index stays out**: no source publishes it, so it is a model
+  constant for the retention work, not a fact to scrape.
 
 ## 14. Execution checklist
 
@@ -546,6 +596,10 @@ numbers in the doc; the fixture is green.
 - [x] Add `usda-cultivars` identity resolution for the tail; no measurements.
 - [x] Run the second pass: the pilot ten against the added sources, plus the
       southern ten.
+- [ ] Capture linalool in the probe: the Haas and BarthHaas sheet labels, the
+      Hopsteiner `linalool_oil`, and the HPA full blocks; re-run the second pass.
+- [ ] Decide whether the sweep also captures oils on the `hop_product` kind, so a
+      dose is correct for lupulin as well as T-90.
 - [ ] Resolve the two unstated oil units against the vendors' own legends.
 - [ ] Run the sweep; record observations as printed.
 - [ ] Write the coverage matrix and the per-field verdicts, including
