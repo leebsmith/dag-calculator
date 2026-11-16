@@ -87,7 +87,25 @@ knows the set was chosen, not overlooked.
 | `hopsteiner-vf` | `https://hopsteiner.us/variety-data-sheets/?data=1` | one HTTP GET | 100 | alpha, beta, cohumulone, total oil, humulene, farnesene | per record, `last_changed` |
 | `barthhaas-variety` | `https://www.barthhaas.com/hops-and-products/hops/<slug>` | HTML, one page per variety | portfolio | alpha, beta, total oil, all four fractions | "medium range of the last 4 years" |
 | `crosby-variety` | `https://www.crosbyhops.com/hops/varieties/<slug>` (index at `/hops/varieties/`) | HTML, one page per variety | 56 listed | alpha, beta, total oil (unit stated), co-humulone, myrcene, caryophyllene, farnesene, humulene on some | unstated |
+| `haas-sheet` | `https://hops.com.au/downloads/data-sheet/america/<Variety>-Data-Sheet.pdf`, 25 documents | PDF, label/value pairs | 22 of 25 carry all eight | alpha, beta, co-humulone, total oil, all four fractions, linalool, polyphenols | unstated |
+| `barthhaas-sheet` | `https://hops.com.au/downloads/data-sheet/europe/<Variety>-Data-Sheet.pdf`, 15 documents | PDF, label/value pairs | 15 | alpha, beta, total oil, myrcene | unstated |
+| `hpa-catalogue` | `https://hops.com.au/downloads/products/HPA-Product-Catalogue.pdf` | PDF, table plus 3 full blocks | Australian portfolio | summary: alpha, total oil (mL/100 g); 3 blocks carry composition | unstated |
+| `nzhops-products` | `https://nzhops.co.nz/collections/new-zealand-hops/products.json` | Shopify JSON | 20 | alpha range, stated in prose as `(10 – 13 % AA)` | per variant, crop year |
+| `hopslist` | `https://www.hopslist.com/hops/<category>/<slug>/`, 268 pages | HTML | 268 | all ten | ~2016; **aggregator** |
+| `usda-cultivars` | `https://www.ars.usda.gov/pacific-west-area/corvallis-or/forage-seed-and-cereal-research-unit/people/john-henning/cultindex/` | HTML, one page per accession | ~230 | identity and pedigree **only** | 2007 |
+| `british-hops` | `https://www.britishhops.org.uk/varieties/` | HTML | 34 | alpha range | current |
 | `ych-variety` | `https://www.yakimachief.com/variety/<slug>` | **blocked** | — | — | — |
+
+Two deliberate splits. The HPA sheet library is **two sources, not one**:
+`haas-sheet` and `barthhaas-sheet` are different templates with different field
+sets, and the provenance has to say whose sheet a number came from. The HPA
+catalogue is a third, because its summary table covers the whole Australian
+portfolio while only three of its blocks carry composition.
+
+`hopslist` is the **aggregator** tier (§6.1). `usda-cultivars` is identity only:
+the cultivar pages carry accession, selection, pedigree, origin and the
+registration references, and no chemistry — Cascade's page cites the 1972 Crop
+Science registration rather than reproducing it.
 
 Pinned at the time of writing:
 
@@ -96,6 +114,7 @@ HGA_VS_2020.pdf                                d6007cd0b90b9d3a8baf9f9e94ab061c7
 USAHops_VarietySnapshot_2017_SinglePage.pdf    88e1523a549b42821b3643b4e209c4dbfadae574e36a2667f1069c05a95fc1fc
 hopsteiner variety-filter payload              e79fa170fc0a460e205596da95269ab6a22514d330363f1696908b7d1ba5d25f
 ```
+
 
 ### 4.1 Access notes the probe must encode
 
@@ -110,10 +129,10 @@ function; do not execute the page's other scripts. The object is
 **`ych-variety` is gated.** Every path returns `429` with a Vercel Security
 Checkpoint, including `robots.txt`. The site delivers its data through Next.js
 flight data (`__next_f` pushes), which is unstable across deploys even when
-reachable. YCH is therefore out of the probe. Two legitimate substitutes, in
-order: their published variety sheets as documents, or the YCH-derived rows in
-`kasperg3/HopDatabase` as a clearly labelled secondary cross-check. Neither is a
-primary citation. The coverage table is complete without YCH (see §4.3).
+reachable. YCH is therefore out of the probe. The legitimate substitute is now a
+real one rather than a fallback: HPA distributes the **John I. Haas** variety
+sheets at `haas-sheet`, first party and with stated denominators. The coverage
+table is complete without YCH (see §4.2).
 
 **`crosby-variety` is the tidiest of the HTML sources.** Units are stated inline
 (`Total Oils 0.7-1.4 ml/100g`), open bounds appear as prose (`Up to 2.8 ml/100g`
@@ -123,6 +142,42 @@ than complicating it. Two wrinkles: humulene is present on some varieties and
 absent on others (present for Citra, Azacca, Belma, Cashmere, Centennial;
 absent for Cascade, Amarillo, Chinook in the sample), and the slugs are not
 always the variety name (`czsaaz`, `hallertaublanc`), so a guessed slug 404s.
+
+**The HPA sheet library is the best-documented source in the set.** Each sheet is
+a label/value document, not a table: `Alpha (%)`, `Beta (%)`, `Cohumulone (% of
+Alpha Acids)`, `Total Oil (ml/100g)`, `Myrcene (% of Total Oil)`, and so on, with
+the America sheets carrying all eight attributes in 22 of 25 cases and the Europe
+sheets carrying four. The two BarthHaas sheets and the `barthhaas-variety` pages
+state the same methods note (conductometric titration EBC 7.4 in Europe,
+spectrophotometry ASBC Hops-6 in the USA; oil composition by gas chromatography
+ASBC Hops-17 / EBC 7.12), so the basis is documented rather than inferred.
+`Farnesene (% of Total Oil)  <1` is another open bound.
+
+**`nzhops-products` is JSON or nothing.** The HTML collection and product pages
+return `429` behind Shopify's bot protection; the `products.json` endpoint
+returns the full catalogue. Twenty products, an alpha range inside the prose
+(`(10 – 13 % AA)`) and no beta, co-humulone or oil data at all. The variants
+carry **crop year** (2019, 2020), which is the first source to expose vintage as
+a product dimension rather than a note.
+
+**`hopslist` is an aggregator, and the record says so.** 268 pages, all ten
+attributes, values mixed between points and ranges, page dates around 2016, and a
+References block pointing at hopunion, nzhops and ychhops URLs that are largely
+dead. It is a secondary compilation: it fills a field only when no vendor or
+breeder publishes it, it never contributes to a mean (§6.1), and it is recorded
+with `basis: aggregator`.
+
+**Identity sources do not measure.** `usda-cultivars` gives 230-odd names with
+accession, pedigree and registration references — that is where the tail
+(`Cekin`, `Dunav`, `Vojvodina`, `Zlatan`, `Bullion 10A`) is identified — but no
+chemistry. `british-hops` gives an alpha range for 34 British varieties. Neither
+may contribute a number to a field another source already publishes.
+
+**A dead page is cited through the archive.** Several varieties in the tail are
+documented only on pages that no longer resolve (old Hopsteiner PDF directories,
+YCH's 2013 variety PDFs, past nzhops variety pages). A web.archive.org snapshot
+is an acceptable citation, recorded with `archived: true` and the snapshot date,
+and the field is otherwise treated as published.
 
 **PDFs are table-only.** `pdftotext -layout` captures both the table and the
 surrounding brochure. The 2017 sheet contradicts itself: its Cascade highlight box
@@ -160,6 +215,42 @@ every variety**: BarthHaas publishes no co-humulone, Hopsteiner publishes no
 myrcene and no caryophyllene, and Crosby's humulene is per-variety. Per-field
 precedence is therefore a requirement, not a refinement.
 
+### 4.3 The southern hemisphere and the tail
+
+The pilot's ten varieties are all northern-hemisphere or HBC. Checked against the
+current four sources, half the southern catalogue has no coverage at all:
+
+```
+Enigma, Topaz, Superdelic, Luna, Nectaron, Wakatu, Kohatu, Taiheke,
+Pacifica, Pacific Gem, Pacific Jade, Green Bullet, Dr Rudi, Southern Cross
+```
+
+and the ones that are covered are covered once — Galaxy, Eclipse, Vic Secret,
+Pacific Sunrise, Vista and Krush by Crosby only; Ella, Pride of Ringwood and
+Summer by Hopsteiner only — which under the n ≥ 3 rule means no synthesis, ever.
+
+The new sources close it:
+
+| Added source | Varieties | Attributes it brings |
+|---|---|---|
+| `haas-sheet` | 25 (22 with all eight) | full composition for the HBC catalogue: Citra, Mosaic, Simcoe, Sabro, Strata, Talus, Krush, Idaho 7, HBC 472/522/1134, Ekuanot, Cashmere, Azacca, Bru-1, Dolcita, Nugget, Warrior, Willamette, El Dorado, Amarillo, Cascade, Centennial, Chinook, Columbus |
+| `barthhaas-sheet` | 15 | alpha, beta, total oil, myrcene for the European portfolio, from the same publisher as `barthhaas-variety` |
+| `hpa-catalogue` | Australian portfolio | alpha and total oil for every HPA variety; composition for three |
+| `nzhops-products` | 20 | alpha range plus the crop-year structure |
+| `hopslist` | 268 | all ten, as the aggregator tier, reaching landraces (`Cekin`, `Dunav`, `Vojvodina`, `Zlatan`) |
+| `usda-cultivars` | ~230 | identity and pedigree only |
+| `british-hops` | 34 | alpha range |
+
+Counted from the documents rather than parsed: the 41 HPA sheets split 22 all
+eight fields, 4 with seven, 1 with five, 12 with four, and 2 with three. The
+working assumption for `hopslist` is all ten on every page, verified on one page
+and to be confirmed in the sweep.
+
+The coverage ceiling moves accordingly. The vendor union covered roughly 220–300
+of the 401 current ids; adding the HBC sheets, the Australian and New Zealand
+portfolios and the aggregator tier is what makes the 300-plus end plausible.
+
+
 ## 5. Precedence
 
 Order is global; the election is **per field, per variety**, because the breeder
@@ -168,16 +259,19 @@ differs by variety.
 ```
 1. HGA, newest vintage (2020)      industry-wide survey
 2. HGA, older vintage (2017)       fills absences only
-3. Breeder                         non-US varieties start here
-4. Widest merchant coverage        YCH/Crosby (US), BarthHaas/Hopsteiner (DE/CZ)
-5. Remaining sources
+3. Breeder                         AU: HPA. NZ: NZ Hops. US: John I. Haas / USDA.
+                                   DE-CZ: BarthHaas, Hopsteiner, Hüll. UK: British Hops.
+                                   SI: Slovenian Institute of Hop Research.
+4. Widest merchant coverage        Crosby (US), BarthHaas/Hopsteiner (DE-CZ)
+5. hopslist                        aggregator; fills only, never a contributor
 ```
 
-The authoritative breeder map is a downstream deliverable and not part of this
-plan. For the test, the probe records `origin` and the candidate breeding
-programme per variety and marks the ones it cannot name. That is enough to
-report how often precedence and "widest coverage" disagree, which is the number
-that justifies building the map or dropping the rule.
+The breeder tier is no longer a placeholder: the AU and NZ cells are named, and
+the US cell now has a first-party sheet through HPA rather than only the gated
+YCH site. The authoritative breeder map is still a downstream deliverable — the
+probe records `origin` and the candidate programme per variety and marks the ones
+it cannot name — but the ladder is executable for the major portfolios without
+one.
 
 ## 6. Synthesis rules
 
@@ -216,14 +310,40 @@ Other rules:
   travel with the value, so a consumer can tell four agreeing vendors from one
   stale page, and the UI can mark a derived figure the way priors and
   conversions are already marked.
+- **An archived citation counts as published.** When the live page is gone, the
+  web.archive.org snapshot supplies the value, recorded with `archived: true`
+  and the snapshot date. It ranks in the ladder as the live source would have.
+
+### 6.1 The aggregator tier
+
+`hopslist` is a secondary compilation: 268 varieties with all ten attributes,
+page dates around 2016, mixed points and ranges, and references that have mostly
+rotted. It is worth having because it is the only thing that names and measures
+the landrace tail, and worth distrusting for the same reason.
+
+So it does not enter the blend:
+
+- it **fills** a field only when no vendor, breeder or survey publishes that
+  field for that variety;
+- it **never** contributes to `mean_range`, and its `sources_count` is recorded
+  separately as `aggregator_fills`;
+- a record whose value comes only from it carries `basis: aggregator`, and the
+  verdict table marks the field `in (aggregator)`, so a reader can see that the
+  number is second hand;
+- it never outranks a source at any tier above it, even when its value is closer
+  to the consensus — this is a provenance rule, not a statistical one.
 
 ## 7. Form spaces
 
 | Form | Sources | n | Attributes obtainable |
 |---|---|---|---|
-| variety (cone / T-90) | HGA ×2, Hopsteiner, BarthHaas, Crosby | 1–5 | up to 10 |
+| variety (cone / T-90) | HGA ×2, Hopsteiner, BarthHaas, Crosby, the HPA sheet pair, the HPA catalogue, NZ Hops, `hopslist` (fill only) | 1–8 | up to 10 |
 | lupulin pellet | YCH Cryo 2022 only | 1 | alpha min/max, total oil mL/100 g |
 | flowable extract | five curated lines (CO₂, Hop Shot, Flex, DynaBoost, Incognito) | — | no per-variety sheet; no synthesis |
+
+The southern-hemisphere varieties are **not** a separate form or portfolio
+space — they are more varieties in the same one, with the ladder choosing HPA or
+NZ Hops at the breeder tier.
 
 Forms are separate records, so the form filter cannot be forgotten: a lupulin
 value can never leak into a variety field. This also settles the total-oil split
@@ -249,18 +369,31 @@ before the sweep, and to fix each vendor's unit conventions in writing.
 (source, variety, field) carrying `stated_value`, `stated_unit`, `stated_basis`,
 `value_kind`, `page` or field label, and the source's own vintage claim.
 
+**Second pass over the added sources.** The first pilot ran the five original
+sources over ten northern-hemisphere varieties and is committed. Before the
+sweep, run the same ten against `haas-sheet`, `barthhaas-sheet`, `hpa-catalogue`,
+`nzhops-products` and `hopslist`, plus a southern set — Galaxy, Vic Secret,
+Enigma, Eclipse, Superdelic, Nelson Sauvin, Motueka, Riwaka, Nectaron, Pacific
+Jade — because those are the varieties the first pass could not see. Expect the
+HPA sheets to parse as label/value rather than table, and the NZ catalogue to
+supply alpha only.
+
 **Identity.** Match by name and the existing `synonym` field (`ADHA-1940`,
 `HBC 394`, …). Target ≥95 % resolve against the vendor-covered core; publish the
 unmatched list, which is the tail that will never resolve. Source slugs are not
 names — Crosby serves `czsaaz` and `hallertaublanc`, and a guessed slug 404s — so
 the probe resolves through the index page, never by constructing a URL.
+`usda-cultivars` supplies the name and pedigree for the tail even where no source
+measures it, so the unmatched list distinguishes *unknown variety* from *known
+variety with no published figure*.
 
 **Verdicts.** For each attribute: `in` (≥2 sources, ≥20 varieties, one
-normalisable basis), `document only` (passes coverage but not the basis test, or
-single-source), or `blocked` (no obtainable source). Coverage ceiling is reported
-as a number, not a promise — the union of four vendors plus the snapshots reaches
-the vendor-covered core, roughly 220–300 of the 401 current ids; the remainder
-(`Bullion 10A`, `Cegina`, `Furano Ace`) have no vendor page at all.
+normalisable basis), `in (aggregator)` (obtainable only through `hopslist`),
+`document only` (passes coverage but not the basis test), or `blocked` (no
+obtainable source). Coverage ceiling is reported as a number, not a promise: the
+original four vendors reached roughly 220–300 of the 401 current ids, and the HBC
+sheets, the Australian and New Zealand portfolios and the aggregator tier are
+what make the 300-plus end plausible. The remainder is identity-only.
 
 ## 9. Outputs
 
@@ -334,24 +467,37 @@ numbers in the doc; the fixture is green.
 - `docs/hops/hop-products.md` — the living product document, and the model for
   the doc this plan produces. Untouched here except by the separate Lupomax
   removal.
-- `docs/hops/README.md` — gains an index row when the new doc lands.
+- `docs/hops/vendor-fact-envelope.md` — the living measurement record this plan
+  produces; the pilot's coverage table and findings are already there, and the
+  sources in §4 are added to it as they are probed. The index row in
+  `docs/hops/README.md` landed with it.
 
 ## 12. Risks
 
-- **YCH is gated.** If YCH turns out to be the only source for something, it
-  becomes a documented gap with a request-to-source path, not a bypass.
+- **YCH is gated.** Its substitute is now first party (`haas-sheet`), so the gap
+  only bites where YCH publishes something the Haas sheets do not.
 - **Unit ambiguity.** Hopsteiner's `oils` and Crosby's total oil have no stated
   unit; resolving them against databook legends is part of the sweep, and the
   verdict may split the attribute in two.
 - **Mixed conventions inside one record.** Mitigated by per-field normalisation
   and the fraction-sum guard.
+- **Two templates in one sheet library.** The HPA sheets are Haas-style (eight
+  fields) or BarthHaas-style (four). A parser that assumes one will silently
+  record a European sheet as having no co-humulone *value* rather than no
+  co-humulone *field*. The field-presence count per sheet is recorded so the two
+  cannot be confused.
+- **Aggregator staleness.** `hopslist` is 2016-era with rotted references. It is
+  quarantined to fills (§6.1), but a fill is still a published value to a reader,
+  so the verdict marks it.
+- **`nzhops-products` is JSON-only.** The HTML 429s; a future probe that tries the
+  page will look like a blocked source rather than a malformed request.
 - **Precedence needs a breeder map.** Deferred; the probe measures how much the
   rule matters before anyone builds it.
 - **Compounding averages.** BarthHaas's four-year medium range means `mean_range`
   over three such sources averages averages. Acceptable if documented; not
   acceptable to present as a measurement of a single crop.
-- **Coverage expectation.** ~220–300 of 401 is the realistic ceiling. A plan that
-  promises all 401 will fail.
+- **Coverage expectation.** ~300 of 401 is the realistic ceiling, and the tail
+  that remains is identity-only. A plan that promises all 401 will fail.
 
 ## 13. Open decisions
 
@@ -366,21 +512,45 @@ numbers in the doc; the fixture is green.
 4. Whether the long-term home of the matrix is `docs/hops/` or an appendix in the
    archived plan. Recommendation: `docs/hops/`, since the parser notes outlive
    the verdicts.
+5. Whether an aggregator-filled field is displayable at all, or recorded and
+   hidden. Recommendation: displayable with the existing `~` marking, since a
+   second-hand number that says it is second hand is better than a blank.
+
+### 13.1 Decided while scoping the southern hemisphere
+
+- **The HPA sheet library is two sources**, `haas-sheet` and `barthhaas-sheet`,
+  because the templates carry different field sets and provenance must say whose
+  sheet a number came from. They are not one `hpa-sheets`.
+- **`hopslist` is the aggregator tier**, not a vendor: fills only, never blends.
+- **Southern-hemisphere varieties are more varieties in the existing space**, not
+  a new form or portfolio dimension.
+- **The breeder tier is named**: HPA (AU), NZ Hops (NZ), John I. Haas / USDA (US),
+  BarthHaas / Hopsteiner / Hüll (DE–CZ), British Hops (UK), Slovenian Institute
+  (SI).
 
 ## 14. Execution checklist
 
+- [x] Write the probe: `scripts/scrape/probe_vendor_facts.py`, one parser per
+      source, `OUT=` path override.
+- [x] Run the pilot over the ten varieties against the original five sources.
+- [x] Add the pilot fixture and the `hop-facts-pilot` guard.
+- [x] Write the living doc and add the index row to `docs/hops/README.md`.
 - [ ] Add a `TODO.md` line pointing here.
-- [ ] Write the probe: `scripts/scrape/probe_vendor_facts.py`, one parser per
-      source, `OUT=` path override, `CHECK=1` to diff without writing.
-- [ ] Run the pilot over the ten varieties; fix parsers and identity matching.
+- [ ] Add the `haas-sheet` and `barthhaas-sheet` parsers; record field presence
+      per sheet so the two templates cannot be confused.
+- [ ] Add the `hpa-catalogue` summary-table parser for the Australian portfolio.
+- [ ] Add the `nzhops-products` parser over the JSON endpoint.
+- [ ] Add the `hopslist` parser, marked aggregator in every observation.
+- [ ] Add `usda-cultivars` identity resolution for the tail; no measurements.
+- [ ] Run the second pass: the pilot ten against the added sources, plus the
+      southern ten.
 - [ ] Resolve the two unstated oil units against the vendors' own legends.
 - [ ] Run the sweep; record observations as printed.
-- [ ] Write the coverage matrix and the per-field verdicts.
+- [ ] Write the coverage matrix and the per-field verdicts, including
+      `in (aggregator)`.
 - [ ] Write the disagreement ledger, with the union envelope beside each
       synthesised value.
 - [ ] Write the excluded-attributes appendix and the measured ceiling.
-- [ ] Add the pilot fixture and `hop-facts-pilot` guard.
-- [ ] Add the index row to `docs/hops/README.md`.
 - [ ] Run `make check` and `make test`.
 - [ ] Delete the probe; record the deletion in the plan.
 - [ ] Archive this plan when the matrix lands.

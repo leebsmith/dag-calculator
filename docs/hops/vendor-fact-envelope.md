@@ -154,7 +154,84 @@ BarthHaas is nearly three times the span of Crosby's. Under the rules they go to
 the ledger and one wins on precedence, which is why the precedence ladder matters
 more than the arithmetic.
 
-## 6. Deliberately excluded
+## 6. Sources added after the pilot
+
+These were found while scoping the southern hemisphere. They are counted from
+the documents, not yet parsed, so their numbers are coverage facts rather than
+observations.
+
+### 6.1 The HPA sheet library — the HBC gap closes
+
+The HPA hop page links **41 per-variety data sheets** (25 America, 15 Europe, 1
+Australia). Two templates, and the difference is structural:
+
+| Template | Sheets | Fields |
+|---|---|---|
+| John I. Haas | 22 | alpha, beta, co-humulone (% of α), total oil (ml/100 g), myrcene, humulene, caryophyllene, farnesene, plus linalool and polyphenols |
+| BarthHaas | 12 | alpha, beta, total oil, myrcene — no co-humulone |
+| between | 5 | seven, five or three of the eight |
+
+Citra, verbatim:
+
+```
+Alpha (%)                       11.0-13.0
+Beta (%)                          3.5-4.5
+Cohumulone (% of Alpha Acids)        22-24
+Total Oil (ml/100g)                2.2-2.8
+Myrcene (% of Total Oil)             60-65
+Humulene (% of Total Oil)            11-13
+Caryophyllene (% of Total Oil)        6-8
+Farnesene (% of Total Oil)             <1
+```
+
+This is the first-party source for the Hop Breeding Company catalogue — Citra,
+Mosaic, Simcoe, Sabro, Strata, Talus, Krush, Idaho 7, HBC 472/522/1134, Ekuanot,
+Cashmere, Azacca, Bru-1, Dolcita, Nugget, Warrior, Willamette, El Dorado,
+Amarillo, Cascade, Centennial, Chinook, Columbus — which neither Hopsteiner nor
+BarthHaas lists. It also carries the same methods note as BarthHaas
+(conductometric titration EBC 7.4 / spectrophotometry ASBC Hops-6; oil
+composition by gas chromatography ASBC Hops-17, EBC 7.12).
+
+The coverage table in §3 was measured before this source; the HBC varieties there
+should be read as "absent from the European vendors" rather than "unobtainable".
+
+### 6.2 New Zealand and Australian portfolios
+
+nzhops.co.nz serves its catalogue as Shopify JSON (`products.json`); the HTML
+429s behind bot protection. Twenty products, each with an alpha range inside the
+prose (`(10 – 13 % AA)`), no beta, co-humulone or oil data, and variants that
+carry **crop year** — the first source to expose vintage as a product dimension.
+
+The HPA product catalogue adds the Australian summary table: variety, profile,
+use, alpha range, and total oil in mL/100 g, with full composition for three
+varieties.
+
+### 6.3 The aggregator and the identity sources
+
+hopslist.com publishes all ten attributes for 268 varieties, including the
+landrace tail. It is ~2016-era, mixes points and ranges, and its references point
+at dead URLs, so it is the **aggregator tier**: fills only, never blended.
+
+`usda-cultivars` is the identity source for the tail — accession, pedigree,
+origin and registration references for ~230 cultivars, with no chemistry.
+`british-hops.org.uk` adds an alpha range for 34 British varieties.
+
+### 6.4 The gap these close
+
+Measured against the original five sources, half the southern catalogue had no
+coverage at all:
+
+```
+Enigma, Topaz, Superdelic, Luna, Nectaron, Wakatu, Kohatu, Taiheke,
+Pacifica, Pacific Gem, Pacific Jade, Green Bullet, Dr Rudi, Southern Cross
+```
+
+and the covered ones were covered exactly once — Galaxy, Eclipse, Vic Secret,
+Pacific Sunrise, Vista and Krush by Crosby; Ella, Pride of Ringwood and Summer by
+Hopsteiner — which under the n ≥ 3 rule meant no synthesis at all.
+
+## 7. Deliberately excluded
+
 
 Hard resins, polyphenols, xanthohumol, linalool, geraniol, ketones, isobutyrates,
 hop storage index, genetic origin, yield, maturity, disease ratings, acreage,
@@ -162,12 +239,16 @@ aroma descriptors and narrative descriptions. Most are published and cheap to
 take; none is consumed, so none is in scope. The list is here so a later reader
 knows the set was chosen rather than exhausted.
 
-## 7. What the sweep still owes
+## 8. What the sweep still owes
 
 - The remaining ~45 Crosby pages, the whole Hopsteiner payload, and every HGA
   row, not just the pilot ten.
+- The 41 HPA sheets, the Australian summary table, the NZ catalogue and the
+  aggregator, added after the pilot.
+- Identity resolution against the USDA cultivar index, so the unmatched list
+  separates *unknown variety* from *known variety with no published figure*.
 - The Hopsteiner total-oil legend, so 4.5 resolves one way or the other.
-- Per-field verdicts: in, document only, or blocked, against the threshold.
+- Per-field verdicts: in, in (aggregator), document only, or blocked.
 - The measured coverage ceiling across the 401 current hop ids.
 - The disagreement ledger at variety scale, with the union envelope beside each
   synthesised value.
