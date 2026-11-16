@@ -49,6 +49,16 @@ tracks only what is outstanding.
   and a mass ratio, so this is a new composer plus a boundary change. Draft and
   open decisions: `plans/hop-layering-strategy.md`.
 
+* **Hop oil model** — per-form oil yield and a retention function, so the
+  whirlpool can allocate by oil mass instead of IBU share. Measured multiplier
+  for lupulin only; extracts stay out until a per-variety oil figure exists.
+  `plans/hop-oil-model.md`.
+
+* **Hop layering assistant** — composition (pairs and triplets with mass ratios)
+  and substitution (mass factor plus the trade it accepts). Depends on the oil
+  model and on the synthesized oil facts; ranks, never authors.
+  `plans/hop-layering-assistant.md`.
+
 * **Multi-strain yeast (deferred, narrowed)** — blends are now ordinary Library
   records: a yeast record with a `blend_of` composition, authored and deleted there
   only, picked by an import like any other yeast (`plans/mapping-plans.md`). What
