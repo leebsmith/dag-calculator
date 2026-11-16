@@ -89,8 +89,22 @@ HOPSTEINER_ALIASES = {
 }
 
 
+SOURCE_ALIASES = {
+    "hallertau blanc": "hallertauer blanc",
+    "diamant": "hallertauer diamant",
+    "feux coeur": "feux coeur francais",
+    "mt rainier": "mount rainier",
+    "mount rainier": "mount rainier",
+    "red earth": "red earth",
+    "willow creek": "willow creek",
+}
+
+
 def norm(name):
     text = re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m.group(1), 16)), name or "")
+    text = re.sub(r"&#(\d+);", lambda m: chr(int(m.group(1))), text)
+    text = text.replace("&nbsp;", " ").replace("&amp;", "&")
+    text = re.sub(r"['\u2019]", "", text)
     text = re.sub(r"[\u00ae\u2122\u00a9]", "", text)
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
     text = re.sub(r"[^a-z0-9]+", " ", text.lower())
@@ -188,6 +202,7 @@ def observation(variety_id, source_id, attribute, stated, unit, basis, label, **
 
 def match_variety(label, wanted):
     key = norm(label)
+    key = SOURCE_ALIASES.get(key, key)
     if key in wanted:
         return wanted[key]
     best = None
@@ -874,6 +889,7 @@ def probe_nzhops(varieties):
 HOPSLIST_ALIASES = {
     "cascade": "cascade us",
     "amarillo": "amarillo vgxp01",
+    "feux coeur francais": "feux coeur",
 }
 
 HOPSLIST_ROWS = {
@@ -908,14 +924,17 @@ def probe_hopslist(varieties):
     index, digest = hopslist_index()
     rows = []
     for name in varieties:
-        url = index.get(norm(name)) or index.get(HOPSLIST_ALIASES.get(norm(name), ""))
+        key = norm(name)
+        key = HOPSLIST_ALIASES.get(key, key)
+        url = index.get(key)
         if not url:
             continue
         slug = url.rstrip("/").split("/")[-1]
         body, _ = fetch(url, f"hopslist_{slug}.html")
         html = body.decode("utf-8", "replace")
         for label, value in re.findall(r"<td>([^<]+)</td>\s*<td>([^<]*)</td>", html, re.I):
-            field = HOPSLIST_ROWS.get(label.strip().lower())
+            key = re.sub(r"\s+", " ", label.replace("\u00a0", " ")).strip().lower()
+            field = HOPSLIST_ROWS.get(key)
             if not field:
                 continue
             attribute, unit, basis = field

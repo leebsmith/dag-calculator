@@ -32,6 +32,13 @@
       "rows": 157,
       "sha256": "d3f794532da832fb7caf88b494af69c92eafe2f06c492860690c00eb81a7abe1"
     },
+    "hop-facts.json": {
+      "mechanism": "scrape",
+      "upstream": "hopsteiner.us, barthhaas.com, crosbyhops.com, hops.com.au (data sheets and product catalogue), usahops.org, nzhops.co.nz, hopslist.com, ars.usda.gov",
+      "scraper": "scripts/scrape/probe_vendor_facts.py",
+      "rows": 3475,
+      "sha256": "4f9e17da38573584a938856bf01a31bedd587680ad8a6e6070c189a4f46cd7ae"
+    },
     "hop-products.json": {
       "mechanism": "curated",
       "upstream": "docs/hops/hop-products.md — YCH Cryo 2022 (per variety), BarthHaas Lupomax 2025 and 2023 (per variety), YCH DynaBoost, Haas Incognito, Haas Flex, Artisan Hop Shot",

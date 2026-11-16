@@ -338,25 +338,25 @@ parser bug, and it belongs with the alias table rather than the sweep.
 ## 9. The sweep
 
 All 401 seed ids against the ten measuring sources plus the identity index:
-**3,427 observations.**
+**3,475 observations** after the alias fixes — the entity-decoding and apostrophe normalisation recovered six varieties, and two more ('Red Earth', 'Willow Creek') exist in the aggregator with every value blank.
 
 | Source | Varieties |
 |---|---|
-| `hopslist` | 195 |
-| `hopsteiner-vf` | 83 |
-| `barthhaas-variety` | 78 |
+| `hopslist` | 199 |
+| `hopsteiner-vf` | 84 |
+| `barthhaas-variety` | 81 |
 | `hga-2020` | 51 |
 | `hga-2017` | 48 |
-| `crosby-variety` | 44 |
+| `crosby-variety` | 45 |
 | `hpa-catalogue` | 27 |
 | `haas-sheet` | 24 |
 | `nzhops-products` | 16 |
 | `barthhaas-sheet` | 9 |
 | `usda-cultivars` | 76 identity, no measurement |
 
-**250 of 401 varieties carry at least one measurement (62 %)**, 231 carry alpha
+**256 of 401 varieties carry at least one measurement (64 %)**, 231 carry alpha
 and total oil, and **74 carry all nine**. The vendor union was expected to reach
-290–300; it reached 250. The shortfall is the alias ceiling — Crosby serves 55
+290–300; it reached 256. The shortfall is the alias ceiling — Crosby serves 55
 pages, Hopsteiner 100, and the seed's 401 include 140 names no measuring source
 lists.
 
@@ -367,19 +367,19 @@ normalisable basis.
 
 | Field | Observations | Varieties | ≥2 sources | ≥3 sources | Verdict |
 |---|---|---|---|---|---|
-| alpha | 571 | 248 | 122 | 88 | **in** |
-| beta | 521 | 240 | 108 | 82 | **in** |
-| total oil | 545 | 233 | 113 | 87 | **in** |
-| co-humulone | 388 | 210 | 89 | 47 | **in** |
-| humulene | 373 | 213 | 94 | 48 | **in** |
-| farnesene | 337 | 196 | 87 | 42 | **in** |
-| myrcene | 308 | 201 | 74 | 22 | **in** |
-| caryophyllene | 282 | 194 | 64 | 16 | **in** |
-| linalool | 102 | 94 | 8 | 0 | **document only** |
+| alpha | 580 | 254 | 124 | 89 | **in** |
+| beta | 529 | 246 | 110 | 82 | **in** |
+| total oil | 552 | 237 | 115 | 88 | **in** |
+| co-humulone | 392 | 213 | 90 | 47 | **in** |
+| humulene | 379 | 217 | 95 | 49 | **in** |
+| farnesene | 340 | 198 | 88 | 42 | **in** |
+| myrcene | 313 | 205 | 75 | 22 | **in** |
+| caryophyllene | 287 | 198 | 65 | 16 | **in** |
+| linalool | 103 | 95 | 8 | 0 | **document only** |
 
-Eight of the eleven clear the threshold. Linalool does not, and its shape is
-what predicted it: published widely enough to exist for 94 varieties, but by a
-single source for 86 of them, because the Haas sheets print an em dash where
+Eight of the nine rows clear the threshold. Linalool does not, and its shape is
+what predicted it: published widely enough to exist for 95 varieties, but by a
+single source for 87 of them, because the Haas sheets print an em dash where
 BarthHaas prints a value.
 
 ### 9.2 A printed zero is not a measurement

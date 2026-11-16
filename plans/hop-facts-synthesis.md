@@ -87,8 +87,15 @@ Each phase is one commit and must be green on its own; the pre-push hook runs
 - Fold in the eight alias fixes (`Brewer&#8217;s Gold`, `Hallertauer Blanc` vs
   `Hallertau Blanc`, `Mount Rainier`, `Red Earth`, `Willow Creek`, …).
 - No seed change.
-- Note in the doc that the alias work buys eight varieties, not thirty: the
-  unmeasured tail is an absence problem, not a naming one.
+- Note in the doc that the alias work buys six varieties, not thirty: the
+  unmeasured tail is an absence problem, not a naming one. Two more
+  (`Red Earth`, `Willow Creek`) exist in the aggregator with every value blank.
+- Landed: `data/sources/hop-facts.json`, 3,475 observations over 256 varieties;
+  `tests/guards/hop-facts-source.test.js` pins the observation shape.
+  Ten double reads are enumerated in that guard as known collisions — a
+  catalogue with a local and an imported variety of one name (Cascade), and one
+  suspected table misalignment (Galena). P2 resolves them; the guard fails if a
+  new one appears.
 
 ### P2 — synthesis
 

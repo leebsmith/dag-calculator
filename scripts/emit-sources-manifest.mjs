@@ -39,6 +39,12 @@ const META = {
     aggregator: "scripts/scrape/bjcp/aggregator.py",
     edition: 2021,
   },
+  "hop-facts.json": {
+    mechanism: "scrape",
+    upstream:
+      "hopsteiner.us, barthhaas.com, crosbyhops.com, hops.com.au (data sheets and product catalogue), usahops.org, nzhops.co.nz, hopslist.com, ars.usda.gov",
+    scraper: "scripts/scrape/probe_vendor_facts.py",
+  },
   "hop-products.json": {
     mechanism: "curated",
     upstream:
@@ -89,6 +95,7 @@ const META = {
 export function rowCount(data) {
   if (Array.isArray(data)) return data.length;
   if (data && Array.isArray(data.entries)) return data.entries.length;
+  if (data && Array.isArray(data.observations)) return data.observations.length;
   if (data && Array.isArray(data.varieties)) return data.varieties.length;
   return Object.keys(data ?? {}).length;
 }
