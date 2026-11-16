@@ -289,7 +289,11 @@ def probe_hopsteiner(varieties):
                 unit_inferred=True,
             )
         )
-        for key, attribute in (("humulen", "humulene"), ("farnesen", "farnesene")):
+        for key, attribute in (
+            ("humulen", "humulene"),
+            ("farnesen", "farnesene"),
+            ("linalool_oil", "linalool"),
+        ):
             stated = field_of(obj, key)
             if not stated:
                 continue
@@ -666,6 +670,7 @@ SHEET_LABELS = [
     ("HUMULENE (% OF TOTAL OIL)", "humulene", "percent", PERCENT_OIL[1]),
     ("CARYOPHYLLENE (% OF TOTAL OIL)", "caryophyllene", "percent", PERCENT_OIL[1]),
     ("FARNESENE (% OF TOTAL OIL)", "farnesene", "percent", PERCENT_OIL[1]),
+    ("LINALOOL (% OF TOTAL OIL)", "linalool", "percent", PERCENT_OIL[1]),
     ("ALPHA-ACIDS", "alpha", "percent", PERCENT_MASS[1]),
     ("BETA-ACIDS", "beta", "percent", PERCENT_MASS[1]),
     ("TOTAL OIL", "total_oil", "ml_per_100g", PERCENT_MASS[1]),
@@ -673,6 +678,7 @@ SHEET_LABELS = [
     ("HUMULENE", "humulene", "percent", PERCENT_OIL[1]),
     ("CARYOPHYLLENE", "caryophyllene", "percent", PERCENT_OIL[1]),
     ("FARNESENE", "farnesene", "percent", PERCENT_OIL[1]),
+    ("LINALOOL", "linalool", "percent", PERCENT_OIL[1]),
 ]
 
 VALUE = r"(?:up to\s*)?[<>]?\s*\d+(?:\.\d+)?(?:\s*[-–]\s*\d+(?:\.\d+)?)?"

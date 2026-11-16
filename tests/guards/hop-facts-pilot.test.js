@@ -18,17 +18,18 @@ const FIXTURES = [
 const fixture = (path) => JSON.parse(read(path));
 
 const ATTRIBUTES = [
-  "alpha",
-  "beta",
   "total_oil",
-  "cohumulone",
   "myrcene",
   "humulene",
   "caryophyllene",
   "farnesene",
+  "linalool",
+  "alpha",
+  "beta",
+  "cohumulone",
 ];
 
-const OIL_FRACTIONS = ["myrcene", "humulene", "caryophyllene", "farnesene"];
+const OIL_FRACTIONS = ["myrcene", "humulene", "caryophyllene", "farnesene", "linalool"];
 
 test("every observation names a source, a unit, a basis and both halves", () => {
   const offenders = [];

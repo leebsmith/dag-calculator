@@ -8,22 +8,27 @@ or the frontend, and nothing here is a value the app consumes yet.
 The plan fixes a closed set of ten attributes. The question this page answers is
 whether that set is obtainable, and where.
 
-## 1. The ten attributes
+## 1. The attributes
 
 | Attribute | Denominator | Bound kinds observed |
 |---|---|---|
-| alpha | of hop mass | range, `up to` |
-| beta | of hop mass | range, `up to` |
 | total oil | mL/100 g, or unstated | range, `up to` |
-| co-humulone | of alpha acids | range |
 | myrcene | of total oil | range |
 | humulene | of total oil | range, fraction |
 | caryophyllene | of total oil | range |
 | farnesene | of total oil | range, fraction |
+| linalool | of total oil | range |
+| alpha | of hop mass | range, `up to` |
+| beta | of hop mass | range, `up to` |
+| co-humulone | of alpha acids | range |
 
-Ten attributes, eight rows: alpha and beta are min/max pairs. The denominator is
-part of the meaning and travels in the field name, because the artifact's
+Eleven attributes in nine rows: alpha and beta are min/max pairs. The denominator
+is part of the meaning and travels in the field name, because the artifact's
 `percentage` dimension carries a unit and says nothing about what is counted.
+
+The order is the consumers' order: the two features this feeds — layered
+whirlpool mass ratios and whirlpool dosing by oil concentration — read oil first
+and alpha on the bitterness side.
 
 ## 2. Sources reached
 
@@ -64,6 +69,9 @@ Saaz, Magnum, Hallertau Mittelfrüh. Counts are varieties out of ten.
 
 Read the rows, not the totals: **no source covers the set for every variety**,
 and the gaps are structural rather than incidental.
+
+Linalool joined the set after this measurement, so it is absent from the table
+rather than absent from the sources; its coverage is in §8.3.
 
 ## 4. Findings
 
@@ -233,17 +241,23 @@ Hopsteiner — which under the n ≥ 3 rule meant no synthesis at all.
 ## 7. Deliberately excluded
 
 
-Hard resins, polyphenols, xanthohumol, linalool, geraniol, ketones, isobutyrates,
-hop storage index, genetic origin, yield, maturity, disease ratings, acreage,
-aroma descriptors and narrative descriptions. Most are published and cheap to
-take; none is consumed, so none is in scope. The list is here so a later reader
-knows the set was chosen rather than exhausted.
+Hard resins, polyphenols, xanthohumol, ketones, isobutyrates, genetic origin,
+yield, maturity, disease ratings, acreage, aroma descriptors and narrative
+descriptions. Most are published and cheap to take; none is consumed, so none is
+in scope. The list is here so a later reader knows the set was chosen rather than
+exhausted.
+
+Two near-misses stay tracked as document-only candidates: geraniol (BarthHaas
+only) and the humulene/caryophyllene ratio (HPA full blocks only, and derivable
+from two fields already carried). Hop storage index is the one exclusion worth
+naming: no source in this set publishes it, so it is a model constant for the
+retention work rather than a scraped fact.
 
 ## 8. Second pilot: the added sources
 
 Twenty varieties — the pilot ten plus Galaxy, Vic Secret, Enigma, Eclipse,
 Superdelic, Nelson Sauvin, Motueka, Riwaka, Nectaron, Pacific Jade — against
-eleven sources. **432 observations** in `expanded-sample.json`.
+eleven sources. **446 observations** in `expanded-sample.json`.
 
 Varieties reached per source, out of twenty:
 
@@ -260,8 +274,9 @@ Varieties reached per source, out of twenty:
 | `hopslist` | 15 | broadest, aggregator tier |
 | `usda-cultivars` | 3 identity | Cascade, Centennial, Chinook |
 
-Attribute totals across the twenty: alpha 85, beta 69, total oil 80, co-humulone
-50, myrcene 38, humulene 41, caryophyllene 32, farnesene 37.
+Attribute totals across the twenty: total oil 80, myrcene 38, humulene 41,
+caryophyllene 32, farnesene 37, **linalool 14**, alpha 85, beta 69, co-humulone
+50.
 
 ### 8.1 Southern coverage is real, and thin
 
@@ -295,7 +310,20 @@ unmatched. The probe now prefers the `(US)` entry and records the alias, but the
 general lesson is that a miss must be visible: the unmatched list is part of the
 output, not a silent skip.
 
-### 8.3 HPA and NZ Hops are the breeder tier, confirmed
+### 8.3 Linalool is published, and sparse
+
+Fourteen observations across eleven varieties, from three sources: Hopsteiner
+(10), BarthHaas sheets (3), one Haas sheet (1). The Haas template prints
+`Linalool (% of Total Oil)` with an em dash for most varieties, which is data —
+"not published for this variety" — and the parser correctly records nothing
+rather than a zero.
+
+That is the honest verdict input: linalool is in the set because the dosing
+feature needs it, but it will not clear a coverage threshold on its own. It is
+either a `document only` field or an aggregator fill, and whichever it becomes,
+a dose calculation cannot assume it exists.
+
+### 8.4 HPA and NZ Hops are the breeder tier, confirmed
 
 `hpa-catalogue` parsed all six Australian rows with alpha and total oils, and the
 sheets parsed cleanly as label/value — the Haas template returns seven attributes
