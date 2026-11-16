@@ -43,6 +43,19 @@ PILOT = [
     "Hallertau Mittelfrüh",
 ]
 
+SOUTHERN = [
+    "Galaxy",
+    "Vic Secret",
+    "Enigma",
+    "Eclipse",
+    "Superdelic",
+    "Nelson Sauvin",
+    "Motueka",
+    "Riwaka",
+    "Nectaron",
+    "Pacific Jade",
+]
+
 CROSBY_SLUGS = {
     "Cascade": "cascade",
     "Citra": "citra",
@@ -78,6 +91,7 @@ HOPSTEINER_ALIASES = {
 
 def norm(name):
     text = re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m.group(1), 16)), name or "")
+    text = re.sub(r"[\u00ae\u2122\u00a9]", "", text)
     text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
     text = re.sub(r"[^a-z0-9]+", " ", text.lower())
     return text.strip()
@@ -92,15 +106,18 @@ def cache_path(name):
     return CACHE / name
 
 
-def fetch(url, name, referer=None, force=False):
+def fetch(url, name, referer=None, force=False, ua=None):
     path = cache_path(name)
     if path.exists() and not force:
         body = path.read_bytes()
     else:
-        headers = {"User-Agent": UA}
+        headers = {"User-Agent": ua or UA}
         if referer:
             headers["Referer"] = referer
         response = requests.get(url, headers=headers, timeout=45)
+        if response.status_code == 429:
+            time.sleep(20)
+            response = requests.get(url, headers=headers, timeout=45)
         response.raise_for_status()
         body = response.content
         CACHE.mkdir(parents=True, exist_ok=True)
@@ -124,11 +141,10 @@ def parse_stated(value, unit):
     numbers = [float(n) for n in re.findall(NUMBER, low)]
     if not numbers:
         return None
-    if low.startswith("up to") or low.startswith("~"):
-        kind = "max"
-        lo = hi = numbers[0] if low.startswith("up to") else numbers[0]
-        if low.startswith("up to"):
-            return {"kind": "max", "raw": text, "lo": None, "hi": numbers[0]}
+    if low.startswith(("<", "up to")):
+        return {"kind": "max", "raw": text, "lo": None, "hi": numbers[0]}
+    if low.startswith("~") and len(numbers) == 1:
+        return {"kind": "point", "raw": text, "lo": numbers[0], "hi": numbers[0]}
     kind = "point" if len(numbers) == 1 else "range"
     lo, hi = (numbers[0], numbers[0]) if kind == "point" else (min(numbers), max(numbers))
     return {"kind": kind, "raw": text, "lo": lo, "hi": hi}
@@ -622,6 +638,297 @@ def probe_hga(url, name, source_id, varieties):
     return source, [r for r in rows if r]
 
 
+SHEET_ALIASES = {
+    "hallertauer-mittelfruher": "Hallertau Mittelfrüh",
+    "hallertauer-magnum": "Magnum",
+    "saazer": "Saaz",
+    "east-kent-golding": "East Kent Goldings",
+    "spalt-spalter": "Spalt Spalter",
+    "tettnang-tettnanger": "Tettnang Tettnanger",
+    "huell-classic": "Hüll Classic",
+    "huell-melon": "Hüll Melon",
+    "bru": "BRU-1",
+    "idaho7": "Idaho 7",
+    "talus": "TALUS",
+    "el-dorado": "El Dorado",
+    "hbc-1134": "HBC 1134",
+    "hbc-472": "HBC 472",
+    "hbc-522": "HBC 522",
+    "hpa-cascade": "Cascade",
+}
+
+SHEET_LABELS = [
+    ("ALPHA (%)", "alpha", "percent", PERCENT_MASS[1]),
+    ("BETA (%)", "beta", "percent", PERCENT_MASS[1]),
+    ("COHUMULONE (% OF ALPHA ACIDS)", "cohumulone", "percent", PERCENT_ALPHA[1]),
+    ("TOTAL OIL (ML/100G)", "total_oil", "ml_per_100g", PERCENT_MASS[1]),
+    ("MYRCENE (% OF TOTAL OIL)", "myrcene", "percent", PERCENT_OIL[1]),
+    ("HUMULENE (% OF TOTAL OIL)", "humulene", "percent", PERCENT_OIL[1]),
+    ("CARYOPHYLLENE (% OF TOTAL OIL)", "caryophyllene", "percent", PERCENT_OIL[1]),
+    ("FARNESENE (% OF TOTAL OIL)", "farnesene", "percent", PERCENT_OIL[1]),
+    ("ALPHA-ACIDS", "alpha", "percent", PERCENT_MASS[1]),
+    ("BETA-ACIDS", "beta", "percent", PERCENT_MASS[1]),
+    ("TOTAL OIL", "total_oil", "ml_per_100g", PERCENT_MASS[1]),
+    ("MYRCENE", "myrcene", "percent", PERCENT_OIL[1]),
+    ("HUMULENE", "humulene", "percent", PERCENT_OIL[1]),
+    ("CARYOPHYLLENE", "caryophyllene", "percent", PERCENT_OIL[1]),
+    ("FARNESENE", "farnesene", "percent", PERCENT_OIL[1]),
+]
+
+VALUE = r"(?:up to\s*)?[<>]?\s*\d+(?:\.\d+)?(?:\s*[-–]\s*\d+(?:\.\d+)?)?"
+
+
+def sheet_urls():
+    body, _ = fetch("https://hops.com.au/hops/", "hpa_hops.html")
+    html = body.decode("utf-8", "replace")
+    return sorted(
+        set(re.findall(r"https://hops\.com\.au/downloads/data-sheet/[a-z]+/[^\"]+\.pdf", html))
+    )
+
+
+def probe_sheets(source_id, region, varieties):
+    wanted = {norm(v) for v in varieties}
+    rows = []
+    digests = []
+    seen = 0
+    for url in sheet_urls():
+        if f"/data-sheet/{region}/" not in url:
+            continue
+        stem = url.split("/")[-1].replace("-Data-Sheet.pdf", "")
+        name = SHEET_ALIASES.get(stem.lower(), stem.replace("-", " "))
+        if norm(name) not in wanted:
+            continue
+        seen += 1
+        body, digest = fetch(url, f"sheet_{stem}.pdf")
+        digests.append({"url": url, "sha256": digest})
+        path = cache_path(f"sheet_{stem}.pdf")
+        text = subprocess.run(
+            ["pdftotext", "-layout", str(path), "-"], capture_output=True, text=True, check=True
+        ).stdout
+        lines = [re.sub(r"\s+", " ", line).strip() for line in text.splitlines()]
+        for line in lines:
+            upper = line.upper()
+            for label, attribute, unit, basis in SHEET_LABELS:
+                if not upper.startswith(label):
+                    continue
+                remainder = line[len(label) :]
+                match = re.search(VALUE, remainder)
+                if not match:
+                    break
+                rows.append(
+                    observation(
+                        name,
+                        source_id,
+                        attribute,
+                        match.group(0),
+                        unit,
+                        basis,
+                        label.rstrip("*"),
+                        page_url=url,
+                    )
+                )
+                break
+    source = {
+        "id": source_id,
+        "url": "https://hops.com.au/hops/",
+        "retrieved_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "sha256": digests,
+        "varieties": seen,
+    }
+    return source, [r for r in rows if r]
+
+
+def probe_hpa_catalogue(varieties):
+    url = "https://hops.com.au/downloads/products/HPA-Product-Catalogue.pdf"
+    body, digest = fetch(url, "HPA-Product-Catalogue.pdf")
+    path = cache_path("HPA-Product-Catalogue.pdf")
+    text = subprocess.run(
+        ["pdftotext", "-layout", str(path), "-"], capture_output=True, text=True, check=True
+    ).stdout
+    wanted = {norm(v): v for v in varieties}
+    rows = []
+    for line in text.splitlines():
+        if not line.strip():
+            continue
+        match = re.match(
+            rf"^([A-Za-z][A-Za-z0-9\u00ae\u2122 .'\-]{{2,30}}?)\s{{2,}}.*?"
+            rf"({NUMBER})\s*[–-]\s*({NUMBER})\s+({NUMBER})\s*[–-]\s*({NUMBER})\s*$",
+            line.strip(),
+        )
+        if not match:
+            continue
+        name = wanted.get(norm(match.group(1).strip()))
+        if not name:
+            continue
+        rows.append(
+            observation(
+                name,
+                "hpa-catalogue",
+                "alpha",
+                f"{match.group(2)} - {match.group(3)}",
+                "percent",
+                PERCENT_MASS[1],
+                "ALPHA ACID (%) column",
+            )
+        )
+        rows.append(
+            observation(
+                name,
+                "hpa-catalogue",
+                "total_oil",
+                f"{match.group(4)} - {match.group(5)}",
+                "ml_per_100g",
+                PERCENT_MASS[1],
+                "TOTAL OILS (ML/100G) column",
+            )
+        )
+    source = {
+        "id": "hpa-catalogue",
+        "url": url,
+        "retrieved_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "sha256": digest,
+    }
+    return source, [r for r in rows if r]
+
+
+def probe_nzhops(varieties):
+    url = "https://nzhops.co.nz/collections/new-zealand-hops/products.json?limit=250"
+    body, digest = fetch(url, "nzhops_products.json", ua="Mozilla/5.0 (research)")
+    catalogue = json_sha(body)
+    wanted = {norm(v) for v in varieties}
+    rows = []
+    for product in catalogue.get("products", []):
+        name = re.sub(r"[®™]", "", product.get("title", "")).strip()
+        if norm(name) not in wanted:
+            continue
+        prose = strip_tags(product.get("body_html") or "")
+        match = re.search(rf"\(({NUMBER})\s*[-–]\s*({NUMBER})\s*%\s*AA\)", prose, re.I)
+        if not match:
+            continue
+        rows.append(
+            observation(
+                name,
+                "nzhops-products",
+                "alpha",
+                f"{match.group(1)} - {match.group(2)}",
+                "percent",
+                PERCENT_MASS[1],
+                "(X - Y % AA) in the product description",
+                crop_years=sorted(
+                    {
+                        v.get("title", "").split(" / ")[0]
+                        for v in product.get("variants", [])
+                        if v.get("title")
+                    }
+                ),
+            )
+        )
+    source = {
+        "id": "nzhops-products",
+        "url": url,
+        "retrieved_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "sha256": digest,
+        "varieties": len(catalogue.get("products", [])),
+    }
+    return source, [r for r in rows if r]
+
+
+HOPSLIST_ALIASES = {
+    "cascade": "cascade us",
+    "amarillo": "amarillo vgxp01",
+}
+
+HOPSLIST_ROWS = {
+    "alpha acid composition": ("alpha", "percent", PERCENT_MASS[1]),
+    "beta acid composition": ("beta", "percent", PERCENT_MASS[1]),
+    "co-humulone composition": ("cohumulone", "percent", PERCENT_ALPHA[1]),
+    "total oil composition": ("total_oil", "ml_per_100g", PERCENT_MASS[1]),
+    "myrcene oil composition": ("myrcene", "percent", PERCENT_OIL[1]),
+    "humulene oil composition": ("humulene", "percent", PERCENT_OIL[1]),
+    "caryophyllene oil": ("caryophyllene", "percent", PERCENT_OIL[1]),
+    "farnesene oil": ("farnesene", "percent", PERCENT_OIL[1]),
+}
+
+
+def hopslist_index():
+    body, digest = fetch("https://www.hopslist.com/hops/", "hopslist_index.html")
+    html = body.decode("utf-8", "replace")
+    pairs = re.findall(
+        r'<a[^>]+href="(https://www\.hopslist\.com/hops/[a-z-]+/[a-z0-9-]+/)"[^>]*>(.*?)</a>',
+        html,
+        re.S,
+    )
+    index = {}
+    for url, text in pairs:
+        name = re.sub(r"<[^>]+>", "", text).strip()
+        if name:
+            index.setdefault(norm(name), url)
+    return index, digest
+
+
+def probe_hopslist(varieties):
+    index, digest = hopslist_index()
+    rows = []
+    for name in varieties:
+        url = index.get(norm(name)) or index.get(HOPSLIST_ALIASES.get(norm(name), ""))
+        if not url:
+            continue
+        slug = url.rstrip("/").split("/")[-1]
+        body, _ = fetch(url, f"hopslist_{slug}.html")
+        html = body.decode("utf-8", "replace")
+        for label, value in re.findall(r"<td>([^<]+)</td>\s*<td>([^<]*)</td>", html, re.I):
+            field = HOPSLIST_ROWS.get(label.strip().lower())
+            if not field:
+                continue
+            attribute, unit, basis = field
+            rows.append(
+                observation(
+                    name,
+                    "hopslist",
+                    attribute,
+                    value.strip(),
+                    unit,
+                    basis,
+                    label.strip(),
+                    page_url=url,
+                    basis_tier="aggregator",
+                )
+            )
+    source = {
+        "id": "hopslist",
+        "url": "https://www.hopslist.com/hops/",
+        "retrieved_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "sha256": digest,
+        "varieties": len(index),
+    }
+    return source, [r for r in rows if r]
+
+
+def probe_usda(varieties):
+    url = "https://www.ars.usda.gov/pacific-west-area/corvallis-or/forage-seed-and-cereal-research-unit/people/john-henning/cultindex/"
+    body, digest = fetch(url, "usda_cultindex.html")
+    html = body.decode("utf-8", "replace")
+    pairs = re.findall(
+        r'href="([^"]*hopcultivars/(\d+)\.html)"[^>]*>(.*?)</a>', html, re.S | re.I
+    )
+    index = {}
+    for _href, accession, text in pairs:
+        name = re.sub(r"<br\s*/?>.*", "", text, flags=re.I | re.S)
+        name = re.sub(r"<[^>]+>", "", name).strip()
+        if name:
+            index.setdefault(norm(name), {"accession": accession, "name": name})
+    resolved = {v: index[norm(v)] for v in varieties if norm(v) in index}
+    source = {
+        "id": "usda-cultivars",
+        "url": url,
+        "retrieved_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "sha256": digest,
+        "varieties": len(index),
+        "identity": resolved,
+    }
+    return source, []
+
+
 SOURCES = {
     "hopsteiner": lambda v: probe_hopsteiner(v),
     "crosby": lambda v: probe_crosby(v),
@@ -635,6 +942,12 @@ SOURCES = {
         "hga-2017",
         v,
     ),
+    "haas": lambda v: probe_sheets("haas-sheet", "america", v),
+    "barthhaas-sheet": lambda v: probe_sheets("barthhaas-sheet", "europe", v),
+    "hpa": lambda v: probe_hpa_catalogue(v),
+    "nzhops": lambda v: probe_nzhops(v),
+    "hopslist": lambda v: probe_hopslist(v),
+    "usda": lambda v: probe_usda(v),
 }
 
 

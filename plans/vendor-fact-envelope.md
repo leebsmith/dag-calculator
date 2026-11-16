@@ -369,14 +369,15 @@ before the sweep, and to fix each vendor's unit conventions in writing.
 (source, variety, field) carrying `stated_value`, `stated_unit`, `stated_basis`,
 `value_kind`, `page` or field label, and the source's own vintage claim.
 
-**Second pass over the added sources.** The first pilot ran the five original
-sources over ten northern-hemisphere varieties and is committed. Before the
-sweep, run the same ten against `haas-sheet`, `barthhaas-sheet`, `hpa-catalogue`,
-`nzhops-products` and `hopslist`, plus a southern set — Galaxy, Vic Secret,
-Enigma, Eclipse, Superdelic, Nelson Sauvin, Motueka, Riwaka, Nectaron, Pacific
-Jade — because those are the varieties the first pass could not see. Expect the
-HPA sheets to parse as label/value rather than table, and the NZ catalogue to
-supply alpha only.
+**Second pass over the added sources — done.** The pilot ten plus the southern
+ten (Galaxy, Vic Secret, Enigma, Eclipse, Superdelic, Nelson Sauvin, Motueka,
+Riwaka, Nectaron, Pacific Jade) against all eleven sources: 432 observations.
+The HPA sheets parse as label/value, the Haas template returns seven attributes
+and the BarthHaas template four, and the NZ catalogue supplies alpha only. Two
+identity bugs surfaced and are fixed in the probe: `™` decomposes to `TM` under
+NFKD and broke every trademarked name, and `hopslist` disambiguates origin in the
+title (`Cascade (US)`, `Cascade (Australia)`), so a plain lookup silently dropped
+the variety.
 
 **Identity.** Match by name and the existing `synonym` field (`ADHA-1940`,
 `HBC 394`, …). Target ≥95 % resolve against the vendor-covered core; publish the
@@ -400,7 +401,8 @@ what make the 300-plus end plausible. The remainder is identity-only.
 | Output | Contents | Committed |
 |---|---|---|
 | `docs/hops/vendor-fact-envelope.md` | coverage matrix, per-field verdicts, per-vendor parser notes, disagreement ledger, excluded-attributes appendix, measured ceiling | yes — this is the living artefact |
-| `tests/conformance/fixtures/hop-facts/pilot-sample.json` | the ten pilot varieties, every field, both ends of each range, each observation carrying the value **as printed** and the **normalised** result | yes, as a fixture |
+| `tests/conformance/fixtures/hop-facts/pilot-sample.json` | the ten pilot varieties against the original five sources, each observation carrying the value **as printed** and the **normalised** result | yes, as a fixture |
+| `tests/conformance/fixtures/hop-facts/expanded-sample.json` | the pilot ten plus the southern ten against all eleven sources — the second pass | yes, as a fixture |
 | `tests/guards/hop-facts-pilot.test.js` | shape and validity of the fixture only | yes |
 | `scripts/scrape/probe_vendor_facts.py` | the probe | yes, deleted on completion |
 | extracted rows for the full sweep | the measurement | no — ephemeral |
@@ -536,13 +538,13 @@ numbers in the doc; the fixture is green.
 - [x] Add the pilot fixture and the `hop-facts-pilot` guard.
 - [x] Write the living doc and add the index row to `docs/hops/README.md`.
 - [ ] Add a `TODO.md` line pointing here.
-- [ ] Add the `haas-sheet` and `barthhaas-sheet` parsers; record field presence
-      per sheet so the two templates cannot be confused.
-- [ ] Add the `hpa-catalogue` summary-table parser for the Australian portfolio.
-- [ ] Add the `nzhops-products` parser over the JSON endpoint.
-- [ ] Add the `hopslist` parser, marked aggregator in every observation.
-- [ ] Add `usda-cultivars` identity resolution for the tail; no measurements.
-- [ ] Run the second pass: the pilot ten against the added sources, plus the
+- [x] Add the `haas-sheet` and `barthhaas-sheet` parsers; the template difference
+      shows up as field presence per sheet.
+- [x] Add the `hpa-catalogue` summary-table parser for the Australian portfolio.
+- [x] Add the `nzhops-products` parser over the JSON endpoint, including crop year.
+- [x] Add the `hopslist` parser, marked aggregator in every observation.
+- [x] Add `usda-cultivars` identity resolution for the tail; no measurements.
+- [x] Run the second pass: the pilot ten against the added sources, plus the
       southern ten.
 - [ ] Resolve the two unstated oil units against the vendors' own legends.
 - [ ] Run the sweep; record observations as printed.

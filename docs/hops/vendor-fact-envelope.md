@@ -1,6 +1,6 @@
 # Vendor fact envelope
 
-Status: **pilot complete, sweep pending.** This is the living measurement record
+Status: **two pilots complete, sweep pending.** This is the living measurement record
 for `plans/vendor-fact-envelope.md`. It says what the vendors actually publish,
 in what unit, for how many varieties. It does not change the artifact, the seeds
 or the frontend, and nothing here is a value the app consumes yet.
@@ -239,15 +239,82 @@ aroma descriptors and narrative descriptions. Most are published and cheap to
 take; none is consumed, so none is in scope. The list is here so a later reader
 knows the set was chosen rather than exhausted.
 
-## 8. What the sweep still owes
+## 8. Second pilot: the added sources
 
-- The remaining ~45 Crosby pages, the whole Hopsteiner payload, and every HGA
-  row, not just the pilot ten.
-- The 41 HPA sheets, the Australian summary table, the NZ catalogue and the
-  aggregator, added after the pilot.
-- Identity resolution against the USDA cultivar index, so the unmatched list
-  separates *unknown variety* from *known variety with no published figure*.
+Twenty varieties — the pilot ten plus Galaxy, Vic Secret, Enigma, Eclipse,
+Superdelic, Nelson Sauvin, Motueka, Riwaka, Nectaron, Pacific Jade — against
+eleven sources. **432 observations** in `expanded-sample.json`.
+
+Varieties reached per source, out of twenty:
+
+| Source | Varieties | Notes |
+|---|---|---|
+| `hopsteiner-vf` | 10 | the three NZ varieties, no Australian ones |
+| `crosby-variety` | 10 | the pilot ten only |
+| `barthhaas-variety` | 6 | European portfolio |
+| `hga-2020` / `hga-2017` | 9 | US only |
+| `haas-sheet` | 7 | US/HBC only |
+| `barthhaas-sheet` | 3 | European only |
+| `hpa-catalogue` | 10 | Australian plus the US varieties HPA distributes |
+| `nzhops-products` | 5 | NZ only, alpha only |
+| `hopslist` | 15 | broadest, aggregator tier |
+| `usda-cultivars` | 3 identity | Cascade, Centennial, Chinook |
+
+Attribute totals across the twenty: alpha 85, beta 69, total oil 80, co-humulone
+50, myrcene 38, humulene 41, caryophyllene 32, farnesene 37.
+
+### 8.1 Southern coverage is real, and thin
+
+| Variety | Sources |
+|---|---|
+| Nelson Sauvin, Motueka, Riwaka | 3 — Hopsteiner, NZ Hops, hopslist |
+| Galaxy, Vic Secret | 2 — HPA catalogue, hopslist |
+| Enigma, Eclipse | 1 — HPA catalogue |
+| Superdelic, Nectaron | 1 — NZ Hops |
+| Pacific Jade | 1 — hopslist |
+
+So the gap is closed in the sense that nothing is invisible any more, but only
+three southern varieties reach the n ≥ 3 rule, and only for alpha. The rest are
+`precedence` records or single-source. That is the honest shape of it: the
+southern hemisphere is covered, not saturated.
+
+### 8.2 Two identity bugs the second pilot found
+
+**`™` normalises to `TM`.** NFKD decomposes U+2122 into "TM" before the
+non-alphanumeric strip, so `Vic Secret™` became `vic secret tm` and never
+matched `Vic Secret`. `®` has no compatibility decomposition, so `Galaxy®` did
+match — which is why the failure looked random. The fix is to strip `® ™ ©`
+before normalising. Same trap will hit `Hüll Melon™` and any other trademarked
+name.
+
+**hopslist disambiguates origin in the title.** Its index holds `Cascade (US)`,
+`Cascade (Australia)`, `Cascade (Argentina)` and `Cascade (New Zealand)`, and
+packs sub-names into the title (`Amarillo™ VGXP01`). A plain `Cascade` lookup
+returns nothing and the variety is silently dropped rather than reported
+unmatched. The probe now prefers the `(US)` entry and records the alias, but the
+general lesson is that a miss must be visible: the unmatched list is part of the
+output, not a silent skip.
+
+### 8.3 HPA and NZ Hops are the breeder tier, confirmed
+
+`hpa-catalogue` parsed all six Australian rows with alpha and total oils, and the
+sheets parsed cleanly as label/value — the Haas template returns seven attributes
+per variety, the BarthHaas template four. `nzhops-products` returned five
+varieties with alpha ranges and `crop_years` (2018–2021), which is the only
+vintage structure in the whole set.
+
+`usda-cultivars` resolved three of twenty by exact name. The index is a 157-entry
+snapshot from 2007, so the miss rate is expected; it is identity debt, not a
+parser bug, and it belongs with the alias table rather than the sweep.
+
+## 9. What the sweep still owes
+
+- Every row from every source, not the twenty pilot varieties: the remaining
+  Crosby pages, the whole Hopsteiner payload, all 41 HPA sheets, every HGA row,
+  all 268 hopslist pages.
 - The Hopsteiner total-oil legend, so 4.5 resolves one way or the other.
+- The full alias table, seeded from the USDA index and the `hopslist` titles, so
+  an unmatched variety is reported rather than skipped.
 - Per-field verdicts: in, in (aggregator), document only, or blocked.
 - The measured coverage ceiling across the 401 current hop ids.
 - The disagreement ledger at variety scale, with the union envelope beside each
