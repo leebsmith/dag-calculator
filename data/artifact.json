@@ -848,6 +848,9 @@
         "dimension": "percentage",
         "domain": "$value >= 0 && $value <= 1"
       },
+      "total_oil_ml_per_100g": {},
+      "total_oil_min_ml_per_100g": {},
+      "total_oil_max_ml_per_100g": {},
       "notes": {},
       "url": {}
     },

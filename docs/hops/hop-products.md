@@ -141,7 +141,32 @@ disagree, 2025 wins.
 | El Dorado | 20–25 | HBC 630 | 20–26 |
 | Idaho 7 | 20–26 | HBC 682 | 20–28 |
 
-The sheet also carries oil ranges per variety, not transcribed here.
+#### 4.1a Cryo Hops — oils, YCH 2022
+
+| Variety | Oil (mL/100 g) | Variety | Oil (mL/100 g) |
+|---|---|---|---|
+| Ahtanum | 1.0–3.0 | Loral | 2.5–5.5 |
+| Amarillo | 1.0–3.0 | Mosaic | 2.0–5.0 |
+| Cascade | 1.7–4.0 | Palisade | 1.5–4.0 |
+| Cascade Organic | 2.0–4.0 | Sabro | 2.0–4.0 |
+| Cashmere | 2.0–4.0 | Simcoe | 2.2–5.2 |
+| Centennial | 2.2–4.2 | Talus | 1.5–3.0 |
+| Chinook | 1.5–4.4 | Warrior | 3.0–6.0 |
+| Citra | 3.0–6.0 | Comet | 1.0–3.0 |
+| Citra Organic | 1.5–4.5 | Crystal | 2.0–4.0 |
+| Columbus | 3.0–6.0 | HBC 472 | 1.0–4.0 |
+| Ekuanot | 3.4–6.4 | HBC 586 | 2.5–4.5 |
+| El Dorado | 2.0–4.0 | HBC 630 | 2.0–4.0 |
+| Idaho 7 | 2.0–5.0 | HBC 682 | 2.0–4.0 |
+
+The seed carries the published range and an authored midpoint, the same rule as
+alpha: the lot certificate overrides both. Oil is determined by distillation and
+alpha by UV spectroscopy on this sheet, and the sheet warns that both move with
+lot and crop year.
+
+The oil figure is why the form matters. Cascade is 1.7–4.0 mL/100 g as Cryo
+against 0.7–1.4 as T-90 — a midpoint multiplier of about 2.7 per gram, which no
+variety-level figure can imply.
 
 ### 4.2 Lupomax — BarthHaas 2025 sell sheet
 

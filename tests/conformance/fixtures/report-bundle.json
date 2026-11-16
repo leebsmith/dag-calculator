@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:049efe49e57f2aa35d8a24f0ea8e94aec522f31ec554370b6abff5da3f47d512",
+    "hash": "sha256:796056c0f7c4502377c9c625f6f27c3237ba36e85a979a105e1b03001dc9b17e",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -853,6 +853,9 @@
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
+          "total_oil_ml_per_100g": {},
+          "total_oil_min_ml_per_100g": {},
+          "total_oil_max_ml_per_100g": {},
           "notes": {},
           "url": {}
         },
@@ -8141,5 +8144,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:a8d9936ea3dc8054ef4506e80a3417e464c256bd42905f173f50986419b470bd"
+  "content_hash": "sha256:25570e56288c28efd5bcdf18d82cfbb870f5c3cedbb8421d8b264ae53f515c56"
 }

@@ -20,6 +20,9 @@
     "alpha_acid_pct": 0.09,
     "alpha_acid_min_pct": 0.06,
     "alpha_acid_max_pct": 0.12,
+    "total_oil_ml_per_100g": 2,
+    "total_oil_min_ml_per_100g": 1,
+    "total_oil_max_ml_per_100g": 3,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -32,6 +35,9 @@
     "alpha_acid_pct": 0.14,
     "alpha_acid_min_pct": 0.11,
     "alpha_acid_max_pct": 0.17,
+    "total_oil_ml_per_100g": 2,
+    "total_oil_min_ml_per_100g": 1,
+    "total_oil_max_ml_per_100g": 3,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -44,6 +50,9 @@
     "alpha_acid_pct": 0.16,
     "alpha_acid_min_pct": 0.13,
     "alpha_acid_max_pct": 0.19,
+    "total_oil_ml_per_100g": 2.85,
+    "total_oil_min_ml_per_100g": 1.7,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -56,6 +65,9 @@
     "alpha_acid_pct": 0.135,
     "alpha_acid_min_pct": 0.11,
     "alpha_acid_max_pct": 0.16,
+    "total_oil_ml_per_100g": 3,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -68,6 +80,9 @@
     "alpha_acid_pct": 0.155,
     "alpha_acid_min_pct": 0.14,
     "alpha_acid_max_pct": 0.17,
+    "total_oil_ml_per_100g": 3,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -80,6 +95,9 @@
     "alpha_acid_pct": 0.17,
     "alpha_acid_min_pct": 0.14,
     "alpha_acid_max_pct": 0.2,
+    "total_oil_ml_per_100g": 3.2,
+    "total_oil_min_ml_per_100g": 2.2,
+    "total_oil_max_ml_per_100g": 4.2,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -92,6 +110,9 @@
     "alpha_acid_pct": 0.23,
     "alpha_acid_min_pct": 0.2,
     "alpha_acid_max_pct": 0.26,
+    "total_oil_ml_per_100g": 2.95,
+    "total_oil_min_ml_per_100g": 1.5,
+    "total_oil_max_ml_per_100g": 4.4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -104,6 +125,9 @@
     "alpha_acid_pct": 0.25,
     "alpha_acid_min_pct": 0.22,
     "alpha_acid_max_pct": 0.28,
+    "total_oil_ml_per_100g": 4.5,
+    "total_oil_min_ml_per_100g": 3,
+    "total_oil_max_ml_per_100g": 6,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -116,6 +140,9 @@
     "alpha_acid_pct": 0.22,
     "alpha_acid_min_pct": 0.19,
     "alpha_acid_max_pct": 0.25,
+    "total_oil_ml_per_100g": 3,
+    "total_oil_min_ml_per_100g": 1.5,
+    "total_oil_max_ml_per_100g": 4.5,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -128,6 +155,9 @@
     "alpha_acid_pct": 0.25,
     "alpha_acid_min_pct": 0.22,
     "alpha_acid_max_pct": 0.28,
+    "total_oil_ml_per_100g": 4.5,
+    "total_oil_min_ml_per_100g": 3,
+    "total_oil_max_ml_per_100g": 6,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -140,6 +170,9 @@
     "alpha_acid_pct": 0.16,
     "alpha_acid_min_pct": 0.15,
     "alpha_acid_max_pct": 0.17,
+    "total_oil_ml_per_100g": 2,
+    "total_oil_min_ml_per_100g": 1,
+    "total_oil_max_ml_per_100g": 3,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -152,6 +185,9 @@
     "alpha_acid_pct": 0.08,
     "alpha_acid_min_pct": 0.06,
     "alpha_acid_max_pct": 0.1,
+    "total_oil_ml_per_100g": 3,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -164,6 +200,9 @@
     "alpha_acid_pct": 0.23,
     "alpha_acid_min_pct": 0.2,
     "alpha_acid_max_pct": 0.26,
+    "total_oil_ml_per_100g": 4.9,
+    "total_oil_min_ml_per_100g": 3.4,
+    "total_oil_max_ml_per_100g": 6.4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -176,6 +215,9 @@
     "alpha_acid_pct": 0.225,
     "alpha_acid_min_pct": 0.2,
     "alpha_acid_max_pct": 0.25,
+    "total_oil_ml_per_100g": 3,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -188,6 +230,9 @@
     "alpha_acid_pct": 0.16,
     "alpha_acid_min_pct": 0.14,
     "alpha_acid_max_pct": 0.18,
+    "total_oil_ml_per_100g": 2.5,
+    "total_oil_min_ml_per_100g": 1,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -200,6 +245,9 @@
     "alpha_acid_pct": 0.2,
     "alpha_acid_min_pct": 0.18,
     "alpha_acid_max_pct": 0.22,
+    "total_oil_ml_per_100g": 3.5,
+    "total_oil_min_ml_per_100g": 2.5,
+    "total_oil_max_ml_per_100g": 4.5,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -212,6 +260,9 @@
     "alpha_acid_pct": 0.23,
     "alpha_acid_min_pct": 0.2,
     "alpha_acid_max_pct": 0.26,
+    "total_oil_ml_per_100g": 3,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -224,6 +275,9 @@
     "alpha_acid_pct": 0.24,
     "alpha_acid_min_pct": 0.2,
     "alpha_acid_max_pct": 0.28,
+    "total_oil_ml_per_100g": 3,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -236,6 +290,9 @@
     "alpha_acid_pct": 0.23,
     "alpha_acid_min_pct": 0.2,
     "alpha_acid_max_pct": 0.26,
+    "total_oil_ml_per_100g": 3.5,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 5,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -248,6 +305,9 @@
     "alpha_acid_pct": 0.21,
     "alpha_acid_min_pct": 0.18,
     "alpha_acid_max_pct": 0.24,
+    "total_oil_ml_per_100g": 4,
+    "total_oil_min_ml_per_100g": 2.5,
+    "total_oil_max_ml_per_100g": 5.5,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -260,6 +320,9 @@
     "alpha_acid_pct": 0.24,
     "alpha_acid_min_pct": 0.21,
     "alpha_acid_max_pct": 0.27,
+    "total_oil_ml_per_100g": 3.5,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 5,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -272,6 +335,9 @@
     "alpha_acid_pct": 0.14,
     "alpha_acid_min_pct": 0.11,
     "alpha_acid_max_pct": 0.17,
+    "total_oil_ml_per_100g": 2.75,
+    "total_oil_min_ml_per_100g": 1.5,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -284,6 +350,9 @@
     "alpha_acid_pct": 0.26,
     "alpha_acid_min_pct": 0.23,
     "alpha_acid_max_pct": 0.29,
+    "total_oil_ml_per_100g": 3,
+    "total_oil_min_ml_per_100g": 2,
+    "total_oil_max_ml_per_100g": 4,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -296,6 +365,9 @@
     "alpha_acid_pct": 0.24,
     "alpha_acid_min_pct": 0.21,
     "alpha_acid_max_pct": 0.27,
+    "total_oil_ml_per_100g": 3.7,
+    "total_oil_min_ml_per_100g": 2.2,
+    "total_oil_max_ml_per_100g": 5.2,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -308,6 +380,9 @@
     "alpha_acid_pct": 0.12,
     "alpha_acid_min_pct": 0.1,
     "alpha_acid_max_pct": 0.14,
+    "total_oil_ml_per_100g": 2.25,
+    "total_oil_min_ml_per_100g": 1.5,
+    "total_oil_max_ml_per_100g": 3,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },
@@ -320,6 +395,9 @@
     "alpha_acid_pct": 0.25,
     "alpha_acid_min_pct": 0.23,
     "alpha_acid_max_pct": 0.27,
+    "total_oil_ml_per_100g": 4.5,
+    "total_oil_min_ml_per_100g": 3,
+    "total_oil_max_ml_per_100g": 6,
     "notes": "Lupulin concentrate. Yakima Chief 2022 crop. Alpha is the midpoint of the published range; the lot CoA overrides it. Substitute at 40-50 % of T-90 by weight. Late kettle, knockout, whirlpool or dry hop.",
     "url": "https://www.yakimachief.com/cryo-hops"
   },

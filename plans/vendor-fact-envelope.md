@@ -697,11 +697,11 @@ numbers in the doc; the fixture is green.
       southern ten.
 - [x] Capture linalool in the probe: the Haas and BarthHaas sheet labels, the
       Hopsteiner `linalool_oil`, and the HPA full blocks; re-run the second pass.
-- [ ] Transcribe the 26 Cryo oil ranges into `data/sources/hop-products.json` and
+- [x] Transcribe the 26 Cryo oil ranges into `data/sources/hop-products.json` and
       declare the three `hop_product` fields (§7.1).
-- [ ] Add §4.1a to `docs/hops/hop-products.md` and extend `hop-product-tables` to
+- [x] Add §4.1a to `docs/hops/hop-products.md` and extend `hop-product-tables` to
       parse it.
-- [ ] Prove the form split with the Cascade ratio (Cryo ÷ T-90 ≈ 2.7).
+- [x] Prove the form split with the Cascade ratio (Cryo ÷ T-90 ≈ 2.7).
 - [ ] Declare `alpha_provenance`, `beta_provenance`, `oil_provenance` and
       `alpha_acid_basis` on `hop`, and the same on `boil_hop_row` and
       `whirlpool_hop_row` (§6.2).

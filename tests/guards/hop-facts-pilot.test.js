@@ -6,9 +6,10 @@
 
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync } from "node:fs";
+import { join } from "node:path";
 
-import { read } from "./util.js";
+import { ROOT, read } from "./util.js";
 
 const FIXTURES = [
   "tests/conformance/fixtures/hop-facts/pilot-sample.json",
@@ -146,10 +147,25 @@ test("identity-only sources contribute no measurement", () => {
   assert.deepEqual(offenders, [], "a pedigree source may name a variety but must not measure it");
 });
 
+test("the form split holds: Cryo Cascade carries roughly twice the oil of T-90", () => {
+  const sources = fixture(FIXTURES[1]).sources;
+  assert.ok(sources["hga-2020"], "the expanded sample should carry the HGA survey");
+  const t90 = fixture(FIXTURES[1]).observations.find(
+    (row) => row.variety_id === "Cascade" && row.source_id === "hga-2020" && row.attribute === "total_oil"
+  );
+  assert.ok(t90 && Array.isArray(t90.normalised), "Cascade T-90 oil should be a range");
+  const t90Mid = (t90.normalised[0] + t90.normalised[1]) / 2;
+
+  const cryo = JSON.parse(read("data/seeds/hop-products.json"))["cryo-cascade"];
+  assert.ok(cryo, "the seed should carry Cryo Cascade");
+  const ratio = cryo.total_oil_ml_per_100g / t90Mid;
+  assert.ok(ratio > 2 && ratio < 3.5, `Cryo ÷ T-90 oil ratio is ${ratio.toFixed(2)}, expected near 2.7`);
+});
+
 test("no seed builder reads the fixtures", () => {
-  const scripts = readdirSync("scripts").filter((file) => file.startsWith("build-"));
+  const scripts = readdirSync(join(ROOT, "scripts")).filter((file) => file.startsWith("build-"));
   const offenders = scripts.filter((file) => {
-    const body = readFileSync(`scripts/${file}`, "utf8");
+    const body = read(`scripts/${file}`);
     return body.includes("pilot-sample") || body.includes("expanded-sample");
   });
   assert.deepEqual(offenders, [], "the pilot samples are fixtures; a builder that reads one makes it a source");

@@ -13,9 +13,10 @@ const SEED = "data/seeds/hop-products.json";
 function section(doc, heading) {
   const start = doc.indexOf(heading);
   assert.notEqual(start, -1, `${heading} is missing from ${DOC}`);
-  const rest = doc.slice(start);
-  const next = rest.slice(heading.length).search(/^### /m);
-  return next === -1 ? rest : rest.slice(0, heading.length + next);
+  const level = heading.match(/^#+/)[0].length;
+  const rest = doc.slice(start + heading.length);
+  const next = rest.search(new RegExp(`^#{1,${level}} `, "m"));
+  return next === -1 ? rest : rest.slice(0, next);
 }
 
 function rows(text) {
@@ -41,13 +42,29 @@ const slug = (name) =>
 
 function cryoTable(doc) {
   const table = new Map();
-  for (const cells of rows(section(doc, "### 4.1"))) {
+  const alphaOnly = doc.split("#### 4.1a")[0];
+  for (const cells of rows(section(alphaOnly, "### 4.1"))) {
     for (let i = 0; i + 1 < cells.length; i += 2) {
       const name = cells[i];
       const alpha = cells[i + 1];
       if (!name) continue;
       const match = alpha.match(/^(\d+(?:\.\d+)?)\s*[–-]\s*(\d+(?:\.\d+)?)$/u);
       assert.ok(match, `unparsed Cryo range for ${name}: "${alpha}"`);
+      table.set(name, { min: Number(match[1]), max: Number(match[2]) });
+    }
+  }
+  return table;
+}
+
+function cryoOilTable(doc) {
+  const table = new Map();
+  for (const cells of rows(section(doc, "#### 4.1a"))) {
+    for (let i = 0; i + 1 < cells.length; i += 2) {
+      const name = cells[i];
+      const oil = cells[i + 1];
+      if (!name) continue;
+      const match = oil.match(/^(\d+(?:\.\d+)?)\s*[–-]\s*(\d+(?:\.\d+)?)$/u);
+      assert.ok(match, `unparsed Cryo oil range for ${name}: "${oil}"`);
       table.set(name, { min: Number(match[1]), max: Number(match[2]) });
     }
   }
@@ -73,10 +90,12 @@ test("the lupulin seed matches the product record's per-variety tables", () => {
   const byId = new Map(lupulin.map((row) => [row.id, row]));
 
   const cryo = cryoTable(doc);
+  const oil = cryoOilTable(doc);
   const lupomax2025 = alphaTable(doc, "### 4.2");
   const lupomax2023 = alphaTable(doc, "### 4.3");
 
   assert.equal(cryo.size, 26, "§4.1 should list 26 Cryo varieties");
+  assert.equal(oil.size, 26, "§4.1a should list 26 Cryo oil ranges");
   assert.equal(lupomax2025.size, 12, "§4.2 should list 12 Lupomax figures");
   assert.equal(lupomax2023.size, 16, "§4.3 should list 16 Lupomax figures");
 
@@ -87,6 +106,15 @@ test("the lupulin seed matches the product record's per-variety tables", () => {
     assert.equal(row.manufacturer, "Yakima Chief Hops");
     assert.ok(close(row.alpha_acid_min_pct, range.min / 100), `Cryo ${name} min`);
     assert.ok(close(row.alpha_acid_max_pct, range.max / 100), `Cryo ${name} max`);
+
+    const oilRange = oil.get(name);
+    assert.ok(oilRange, `missing oil range for Cryo ${name}`);
+    assert.ok(close(row.total_oil_min_ml_per_100g, oilRange.min), `Cryo ${name} oil min`);
+    assert.ok(close(row.total_oil_max_ml_per_100g, oilRange.max), `Cryo ${name} oil max`);
+    assert.ok(
+      close(row.total_oil_ml_per_100g, (oilRange.min + oilRange.max) / 2),
+      `Cryo ${name} oil midpoint`
+    );
     assert.ok(
       close(row.alpha_acid_pct, (range.min + range.max) / 200),
       `Cryo ${name} preset is not the range midpoint`
