@@ -1,6 +1,6 @@
 # Vendor fact envelope
 
-Status: **two pilots complete, sweep pending.** This is the living measurement record
+Status: **sweep complete; verdicts recorded.** This is the living measurement record
 for `plans/vendor-fact-envelope.md`. It says what the vendors actually publish,
 in what unit, for how many varieties. It does not change the artifact, the seeds
 or the frontend, and nothing here is a value the app consumes yet.
@@ -335,20 +335,97 @@ vintage structure in the whole set.
 snapshot from 2007, so the miss rate is expected; it is identity debt, not a
 parser bug, and it belongs with the alias table rather than the sweep.
 
-## 9. What the sweep still owes
+## 9. The sweep
 
-- Every row from every source, not the twenty pilot varieties: the remaining
-  Crosby pages, the whole Hopsteiner payload, all 41 HPA sheets, every HGA row,
-  all 268 hopslist pages.
-- The Hopsteiner total-oil legend, so 4.5 resolves one way or the other.
-- The full alias table, seeded from the USDA index and the `hopslist` titles, so
-  an unmatched variety is reported rather than skipped.
-- Per-field verdicts: in, in (aggregator), document only, or blocked.
-- The measured coverage ceiling across the 401 current hop ids.
-- The disagreement ledger at variety scale, with the union envelope beside each
-  synthesised value.
+All 401 seed ids against the ten measuring sources plus the identity index:
+**3,427 observations.**
 
-Not a sweep item, and first: the lupulin oil capture. The YCH Cryo 2022 sheet
-publishes oil in mL/100 g for all 26 varieties and the product record does not
-carry it, which is why a dose is only correct for T-90 today. See
-`plans/vendor-fact-envelope.md` §7.1.
+| Source | Varieties |
+|---|---|
+| `hopslist` | 195 |
+| `hopsteiner-vf` | 83 |
+| `barthhaas-variety` | 78 |
+| `hga-2020` | 51 |
+| `hga-2017` | 48 |
+| `crosby-variety` | 44 |
+| `hpa-catalogue` | 27 |
+| `haas-sheet` | 24 |
+| `nzhops-products` | 16 |
+| `barthhaas-sheet` | 9 |
+| `usda-cultivars` | 76 identity, no measurement |
+
+**250 of 401 varieties carry at least one measurement (62 %)**, 231 carry alpha
+and total oil, and **74 carry all nine**. The vendor union was expected to reach
+290–300; it reached 250. The shortfall is the alias ceiling — Crosby serves 55
+pages, Hopsteiner 100, and the seed's 401 include 140 names no measuring source
+lists.
+
+### 9.1 Per-field verdicts
+
+Threshold from the plan: at least two sources and twenty varieties on one
+normalisable basis.
+
+| Field | Observations | Varieties | ≥2 sources | ≥3 sources | Verdict |
+|---|---|---|---|---|---|
+| alpha | 571 | 248 | 122 | 88 | **in** |
+| beta | 521 | 240 | 108 | 82 | **in** |
+| total oil | 545 | 233 | 113 | 87 | **in** |
+| co-humulone | 388 | 210 | 89 | 47 | **in** |
+| humulene | 373 | 213 | 94 | 48 | **in** |
+| farnesene | 337 | 196 | 87 | 42 | **in** |
+| myrcene | 308 | 201 | 74 | 22 | **in** |
+| caryophyllene | 282 | 194 | 64 | 16 | **in** |
+| linalool | 102 | 94 | 8 | 0 | **document only** |
+
+Eight of the eleven clear the threshold. Linalool does not, and its shape is
+what predicted it: published widely enough to exist for 94 varieties, but by a
+single source for 86 of them, because the Haas sheets print an em dash where
+BarthHaas prints a value.
+
+### 9.2 A printed zero is not a measurement
+
+61 observations state a hard zero, 60 of them from Hopsteiner. **18 of those
+contradict a non-zero value from another source** for the same variety and
+field:
+
+```
+Amarillo   humulene    hopsteiner 0.00        vs  haas-sheet 9–11 %
+Chinook    farnesene   hopsteiner 0.00–1.00   vs  barthhaas  up to 6.2 %
+Aramis     humulene    hopsteiner 0.00        vs  hopslist   21 %
+```
+
+A single source reporting `0.00` where another reports a substantial fraction is
+a placeholder, not a measurement — the payload has a field and no value. The rule
+that follows: **a hard zero contradicted by a non-zero is excluded from
+synthesis and recorded in the ledger**; a hard zero that no one contradicts is
+kept as a point. This is the same principle as "absence is not zero", applied to
+a source that spells absence as a number.
+
+### 9.3 The ledger
+
+The union envelope and the source values for every field are computed; the
+standing disagreements worth naming:
+
+- **Cascade myrcene** — BarthHaas 19.4–55 %, Crosby 40–60 %: a 2.7× span
+  difference on the same variety.
+- **Amarillo humulene** — 0.00 at Hopsteiner against 9–11 % at the Haas sheet.
+- **Cascade farnesene** — 4.00–8.00, 3–7, 3.6–7.2 depending on source, which is
+  agreement in shape and disagreement in level.
+
+Where the spread is this wide and the sources are at n = 2, §6 puts the value on
+`precedence` and the disagreement in the ledger. That is the designed outcome,
+not a failure: a range neither source published is worse than one of them.
+
+## 10. What remains
+
+- The Hopsteiner total-oil legend, so its `oils` unit stops being `unstated` —
+  the last unresolved unit in the set.
+- An alias table for the ~140 unmatched names, so the ceiling can be raised
+  without another sweep. The misses are structural rather than mysterious:
+  Crosby and BarthHaas serve fewer varieties than the seed carries.
+- The hard-zero rule implemented in the synthesis, not only recorded here: a
+  zero contradicted by another source is excluded, a zero nobody contradicts is
+  a point.
+- The verdicts turned into the artifact and seed change — a separate plan, since
+  it moves `alpha_acid_pct` semantics and every IBU in the app.
+- The probe deleted when this plan archives.

@@ -186,6 +186,23 @@ def observation(variety_id, source_id, attribute, stated, unit, basis, label, **
     return row
 
 
+def match_variety(label, wanted):
+    key = norm(label)
+    if key in wanted:
+        return wanted[key]
+    best = None
+    for candidate, name in wanted.items():
+        if key == candidate or key.startswith(candidate + " "):
+            if best is None or len(candidate) > len(norm(best)):
+                best = name
+    return best
+
+
+def page_name(html):
+    match = re.search(r"<h1[^>]*>\s*([^<]+?)\s*</h1>", html, re.I | re.S)
+    return re.sub(r"\s+", " ", match.group(1)).strip() if match else None
+
+
 def strip_tags(html):
     text = re.sub(r"<script[^>]*>.*?</script>", " ", html, flags=re.S | re.I)
     text = re.sub(r"<style[^>]*>.*?</style>", " ", text, flags=re.S | re.I)
@@ -327,14 +344,16 @@ def probe_crosby(varieties):
         "sha256": digest,
         "varieties": len(slugs),
     }
+    wanted = {norm(v): v for v in varieties}
     rows = []
-    for name in varieties:
-        slug = CROSBY_SLUGS.get(name)
-        if not slug or slug not in slugs:
-            continue
+    for slug in slugs:
         url = f"https://www.crosbyhops.com/hops/varieties/{slug}"
         page, _ = fetch(url, f"crosby_{slug}.html")
-        text = strip_tags(page.decode("utf-8", "replace"))
+        html = page.decode("utf-8", "replace")
+        name = match_variety(page_name(html) or slug.replace("-", " "), wanted)
+        if not name:
+            continue
+        text = strip_tags(html)
         blocks = len(re.findall(r"Brewing Values", text))
         pairs = [
             (
@@ -412,6 +431,18 @@ def probe_barthhaas(varieties):
         "sha256": None,
     }
     value = r"(up to\s*[\d.]+|[\d.]+\s*-\s*[\d.]+)"
+    variants = {norm(v): v for v in varieties}
+    listing, _ = fetch(
+        "https://www.barthhaas.com/sitemap.xml?sitemap=pages&cHash=0189c51351eac515d1eff474f507427c",
+        "barthhaas_sitemap.xml",
+    )
+    urls = sorted(
+        {
+            u
+            for u in re.findall(r"<loc>([^<]+)</loc>", listing.decode("utf-8", "replace"))
+            if "/hops-and-products/hops/" in u
+        }
+    )
     labels = [
         ("alpha", rf"ALPHA-ACIDS\*?\s*{value}\s*%", "percent", PERCENT_MASS[1], "ALPHA-ACIDS"),
         ("beta", rf"BETA-ACIDS\s*{value}\s*%", "percent", PERCENT_MASS[1], "BETA-ACIDS"),
@@ -428,17 +459,18 @@ def probe_barthhaas(varieties):
     ]
     rows = []
     digests = []
-    for name in varieties:
-        slug = BARTH_SLUGS.get(name)
-        if not slug:
-            continue
-        url = base + slug
+    for url in urls:
+        slug = url.rstrip("/").split("/")[-1]
         try:
             page, digest = fetch(url, f"barth_{slug}.html")
         except requests.HTTPError:
             continue
+        html = page.decode("utf-8", "replace")
+        name = match_variety(page_name(html) or slug.replace("-", " "), variants)
+        if not name:
+            continue
         digests.append(digest)
-        text = strip_tags(page.decode("utf-8", "replace"))
+        text = strip_tags(html)
         for attribute, pattern, unit, basis, label in labels:
             match = re.search(pattern, text)
             if match:
@@ -961,8 +993,14 @@ def main():
     parser = argparse.ArgumentParser(description="Probe the vendor fact envelope.")
     parser.add_argument("--sources", nargs="+", default=["all"])
     parser.add_argument("--varieties", nargs="+", default=PILOT)
+    parser.add_argument("--all", action="store_true", help="every variety in the hop seed")
     parser.add_argument("--out", default=str(OUT_DEFAULT))
     args = parser.parse_args()
+
+    if args.all:
+        seed_path = Path(__file__).resolve().parents[2] / "data" / "seeds" / "hops.json"
+        seed = json.loads(seed_path.read_text())
+        args.varieties = sorted(row["name"] for row in seed.values())
 
     wanted = list(SOURCES) if "all" in args.sources else args.sources
     unknown = [s for s in wanted if s not in SOURCES]

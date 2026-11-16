@@ -709,12 +709,12 @@ numbers in the doc; the fixture is green.
       copies `yield_provenance`; regenerate the catalog and glossary.
 - [ ] Give the display a mark for anything not vendor-sourced.
 - [ ] Resolve the two unstated oil units against the vendors' own legends.
-- [ ] Run the sweep; record observations as printed.
-- [ ] Write the coverage matrix and the per-field verdicts, including
+- [x] Run the sweep; record observations as printed.
+- [x] Write the coverage matrix and the per-field verdicts, including
       `in (aggregator)`.
-- [ ] Write the disagreement ledger, with the union envelope beside each
+- [x] Write the disagreement ledger, with the union envelope beside each
       synthesised value.
-- [ ] Write the excluded-attributes appendix and the measured ceiling.
+- [x] Write the excluded-attributes appendix and the measured ceiling.
 - [ ] Run `make check` and `make test`.
 - [ ] Delete the probe; record the deletion in the plan.
 - [ ] Archive this plan when the matrix lands.
