@@ -18,11 +18,12 @@ const FIGURE_COLUMNS = {
     apparent: (row) => row.fermentability_basis === "apparent",
   },
   yield_fraction: { provenance: "yield_provenance", apparent: () => false },
+  alpha_acid_pct: { provenance: "alpha_provenance", apparent: () => false },
 };
 
 export function figureMarker(provenance, { apparent = false } = {}) {
   const marks = [];
-  if (provenance?.kind === "prior") marks.push("~");
+  if (provenance?.kind === "prior" || provenance?.kind === "aggregator") marks.push("~");
   if (provenance?.bound === "min") marks.push("≥");
   if (apparent) marks.push("≈");
   return marks.join("");

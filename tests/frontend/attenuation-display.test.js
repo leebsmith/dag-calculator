@@ -54,6 +54,10 @@ test("captured real figure is rendered as data", () => {
 });
 
 test("captured apparent figure is marked as converted", () => {
+  assert.equal(figureMarkFor("alpha_acid_pct", { alpha_provenance: { kind: "aggregator" } }), "~");
+  assert.equal(figureMarkFor("alpha_acid_pct", { alpha_provenance: { kind: "vendor" } }), "");
+  assert.equal(figureMarkFor("alpha_acid_pct", { alpha_provenance: { kind: "survey" } }), "");
+
   const marker = figureMarkFor("fermentability_fraction", {
     fermentability_basis: "apparent",
     fermentability_provenance: CITATION,

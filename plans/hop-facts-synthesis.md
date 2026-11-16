@@ -120,11 +120,16 @@ the ~55 additions move to a follow-up and are recorded here rather than assumed.
   alpha-sensitive conformance expectation to regenerate, and say so in the
   message rather than treating it as noise.
 
-### P3 — surfacing
+### P3 — surfacing (landed)
 
-- Display mark for anything not vendor-sourced (`~`), source in the tooltip, the
-  way priors are already marked.
-- Hop detail shows the profile and, where present, oil; absent stays a dash.
+- The alpha cell carries `~` when the figure is an aggregator estimate, using the
+  existing `figureMarker` convention; vendor and survey figures are unmarked.
+- The catalogue row appends the source to the alpha band — `stock 4.9–7.4% ·
+  USA Hops 2020`, or `· estimated` for the tail — and adds `oil 1.4 mL/100 g`
+  where the oil figure exists. Absent stays absent: no dash is invented for a
+  hop without oil.
+- The boil and whirlpool rows copy `alpha_provenance` at selection, the way
+  `traceMaltRows` copies `yield_provenance`, so a frozen batch keeps its basis.
 - No report change; the oil line arrives with `plans/hop-oil-model.md`.
 
 ### P4 — retire
@@ -181,6 +186,6 @@ the ~55 additions move to a follow-up and are recorded here rather than assumed.
 - [x] P2: builder rules; drop `notes`; re-point `url`. Vendor-only additions are **not** possible from this sweep — see §3 below.
 - [x] P2: regenerate the bundle fixture; record the IBU-moving change in the commit message.
 - [x] P2: `hop-facts` guard green, including the contradicted-zero case.
-- [ ] P3: display marks and hop detail; no report change.
+- [x] P3: display marks and hop detail; no report change.
 - [ ] P4: archive the envelope plan; delete the probe.
 - [ ] `make check`, `make test`, `make verify`.

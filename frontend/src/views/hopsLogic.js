@@ -226,13 +226,19 @@ export function hopCatalogEntries(cache, form) {
  * @param {Readonly<{ readonly product_form?: string, readonly brand?: string, readonly purpose?: string, readonly alpha_acid_pct?: number, readonly manufacturer?: string, readonly origin?: string }>} item
  */
 export function hopCatalogItemMeta(item) {
-  return [
+  const estimated = item.alpha_provenance?.kind === "aggregator" ? "~" : "";
+  const alpha = isFiniteNumber(item.alpha_acid_pct)
+    ? `${estimated}${formatPercent(item.alpha_acid_pct)} alpha`
+    : "alpha n/a";
+  const meta = [
     item.product_form ? item.brand ?? "Product" : item.purpose || "Hop",
-    isFiniteNumber(item.alpha_acid_pct)
-      ? `${formatPercent(item.alpha_acid_pct)} alpha`
-      : "alpha n/a",
+    alpha,
     item.product_form ? item.manufacturer : item.origin,
   ];
+  if (isFiniteNumber(item.total_oil_ml_per_100g)) {
+    meta.push(`oil ${formatWithDecimals(item.total_oil_ml_per_100g, 1)} mL/100 g`);
+  }
+  return meta.filter((entry) => entry);
 }
 
 /**

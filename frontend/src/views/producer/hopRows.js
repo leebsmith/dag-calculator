@@ -72,11 +72,20 @@ export function hopStockRecord(cache, id) {
 
 // The batch row owns the measured value; the catalogue's alpha band is
 // context (a descriptive range, never a gate).
+export function hopAlphaSourceLabel(record) {
+  const provenance = record?.alpha_provenance;
+  if (!provenance) return "";
+  if (provenance.kind === "aggregator") return "estimated";
+  return provenance.vendor ?? "";
+}
+
 export function hopAlphaStockLabel(record) {
   const lo = record?.alpha_acid_min_pct;
   const hi = record?.alpha_acid_max_pct;
-  if (!isFiniteNumber(lo) || !isFiniteNumber(hi)) return "";
-  return `stock ${formatPercentRange(lo, hi, { decimals: 1 })}`;
+  const source = hopAlphaSourceLabel(record);
+  if (!isFiniteNumber(lo) || !isFiniteNumber(hi)) return source ? `alpha ${source}` : "";
+  const band = `stock ${formatPercentRange(lo, hi, { decimals: 1 })}`;
+  return source ? `${band} · ${source}` : band;
 }
 
 export function hopAlphaIsOutsideStock(row, record) {

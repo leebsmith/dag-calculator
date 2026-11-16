@@ -14,6 +14,7 @@ export function makeWhirlpoolRow(hop, defaults, catalogForm = null) {
     name: hop.name,
     product_form: form,
     alpha_acid_pct: hop.alpha_acid_pct,
+    alpha_provenance: hop.alpha_provenance,
     addition_at_min: lupulin ? defaults.lupulinAdditionAtMin : defaults.additionAtMin,
     initial_temp_c: lupulin ? defaults.lupulinInitialTempC : defaults.initialTempC,
     parts: 10,

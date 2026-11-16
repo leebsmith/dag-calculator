@@ -462,7 +462,11 @@ test("hops: the alpha band is context and out-of-band values are flagged", withF
   const record = cache.references.hop.cascade;
   const row = app.hopRows[0];
 
-  assert.equal(app.hopAlphaRange(row), `stock ${(record.alpha_acid_min_pct * 100).toFixed(1)}–${(record.alpha_acid_max_pct * 100).toFixed(1)}%`);
+  const source = record.alpha_provenance?.kind === "aggregator"
+    ? "estimated"
+    : (record.alpha_provenance?.vendor ?? "");
+  const band = `stock ${(record.alpha_acid_min_pct * 100).toFixed(1)}–${(record.alpha_acid_max_pct * 100).toFixed(1)}%`;
+  assert.equal(app.hopAlphaRange(row), source ? `${band} · ${source}` : band);
   assert.equal(app.hopAlphaOutsideStock(row), false);
 
   assert.equal(app.hopAlphaOutsideStock({ ...row, alpha_acid_pct: record.alpha_acid_max_pct + 0.5 }), true);

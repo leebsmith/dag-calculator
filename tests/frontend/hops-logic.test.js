@@ -189,6 +189,25 @@ test("hopCatalogEntries and hopCatalogItemMeta map plain catalogue records", () 
     "alpha n/a",
     "US",
   ]);
+  assert.deepEqual(
+    hopCatalogItemMeta({
+      purpose: "Aroma",
+      alpha_acid_pct: 0.055,
+      origin: "US",
+      total_oil_ml_per_100g: 1.4,
+      alpha_provenance: { kind: "vendor", vendor: "BarthHaas" },
+    }),
+    ["Aroma", "5.5% alpha", "US", "oil 1.4 mL/100 g"]
+  );
+  assert.deepEqual(
+    hopCatalogItemMeta({
+      purpose: "Aroma",
+      alpha_acid_pct: 0.055,
+      origin: "US",
+      alpha_provenance: { kind: "aggregator" },
+    }),
+    ["Aroma", "~5.5% alpha", "US"]
+  );
 });
 
 test("boilPolicyDescriptors compute the warning and demand line", () => {

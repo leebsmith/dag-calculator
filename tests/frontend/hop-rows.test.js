@@ -79,3 +79,21 @@ test("hopRows: the alpha band is context, never a gate", () => {
   assert.equal(hopAlphaIsOutsideStock(ROW, undefined), false);
   assert.equal(hopAlphaIsOutsideStock({ hop_id: "nope" }, STOCK), false);
 });
+
+test("a non-vendor alpha is marked and names its source", async () => {
+  const { hopAlphaSourceLabel } = await import("../../frontend/src/views/producer/hopRows.js");
+  const bounds = { alpha_acid_min_pct: 0.045, alpha_acid_max_pct: 0.07 };
+  assert.equal(
+    hopAlphaStockLabel({
+      ...bounds,
+      alpha_provenance: { kind: "vendor", vendor: "BarthHaas" },
+    }),
+    "stock 4.5–7.0% · BarthHaas"
+  );
+  assert.equal(
+    hopAlphaStockLabel({ ...bounds, alpha_provenance: { kind: "aggregator" } }),
+    "stock 4.5–7.0% · estimated"
+  );
+  assert.equal(hopAlphaStockLabel({ alpha_provenance: { kind: "survey", vendor: "USA Hops 2020" } }), "alpha USA Hops 2020");
+  assert.equal(hopAlphaSourceLabel({}), "");
+});
