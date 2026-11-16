@@ -543,7 +543,7 @@ what make the 300-plus end plausible. The remainder is identity-only.
 | `tests/conformance/fixtures/hop-facts/pilot-sample.json` | the ten pilot varieties against the original five sources, each observation carrying the value **as printed** and the **normalised** result | yes, as a fixture |
 | `tests/conformance/fixtures/hop-facts/expanded-sample.json` | the pilot ten plus the southern ten against all eleven sources — the second pass | yes, as a fixture |
 | `tests/guards/hop-facts-pilot.test.js` | shape and validity of the fixture only | yes |
-| `scripts/scrape/probe_vendor_facts.py` | the acquisition tool | yes — kept and maintained |
+| `scripts/scrape/hop_facts_scraper.py` | the acquisition tool | yes — kept and maintained |
 | extracted rows for the full sweep | the measurement | yes — committed as `data/sources/hop-facts.json` |
 
 ### 9.1 The fixture is a fixture, not a source
@@ -702,7 +702,7 @@ numbers in the doc; the fixture is green.
 
 ## 14. Execution checklist
 
-- [x] Write the probe: `scripts/scrape/probe_vendor_facts.py`, one parser per
+- [x] Write the probe: `scripts/scrape/hop_facts_scraper.py`, one parser per
       source, `OUT=` path override.
 - [x] Run the pilot over the ten varieties against the original five sources.
 - [x] Add the pilot fixture and the `hop-facts-pilot` guard.

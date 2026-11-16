@@ -1,14 +1,18 @@
-"""Probe the vendor fact envelope: ten hop attributes, four web sources and two PDFs.
+"""Acquire the hop fact envelope: eleven attributes from ten sources.
 
-A measurement spike, not a production scraper. It fetches each source once,
+The maintained acquisition tool, not a one-off probe. It fetches each source,
 records every value as printed together with its stated unit and basis, and
-emits observations in the shape the pilot fixture wants. Responses are cached so
-a rerun does not re-fetch, and each document's sha256 is recorded beside it.
+emits `data/sources/hop-facts.json`, which `scripts/build-hops-seed.mjs`
+consumes. Responses are cached so a rerun does not re-fetch, and each
+document's sha256 is recorded beside it.
+
+Sources change: a crop year, a redesigned page, a new sheet in the HPA library.
+Refresh by re-running this, never by editing the JSON by hand.
 
 Usage:
-  python probe_vendor_facts.py --sources all
-  python probe_vendor_facts.py --sources hopsteiner crosby
-  python probe_vendor_facts.py --out /tmp/opencode/hop-facts/pilot.json
+  python hop_facts_scraper.py --all --out data/sources/hop-facts.json
+  python hop_facts_scraper.py --sources hopsteiner crosby
+  python hop_facts_scraper.py --varieties Cascade Citra --out /tmp/x.json
 """
 
 import argparse

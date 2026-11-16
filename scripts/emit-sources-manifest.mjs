@@ -43,7 +43,7 @@ const META = {
     mechanism: "scrape",
     upstream:
       "hopsteiner.us, barthhaas.com, crosbyhops.com, hops.com.au (data sheets and product catalogue), usahops.org, nzhops.co.nz, hopslist.com, ars.usda.gov",
-    scraper: "scripts/scrape/probe_vendor_facts.py",
+    scraper: "scripts/scrape/hop_facts_scraper.py",
   },
   "hop-products.json": {
     mechanism: "curated",

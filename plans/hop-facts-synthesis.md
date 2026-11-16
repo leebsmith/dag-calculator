@@ -136,7 +136,7 @@ the ~55 additions move to a follow-up and are recorded here rather than assumed.
 
 - Archive `plans/vendor-fact-envelope.md`; the matrix and verdicts live on in
   `docs/hops/vendor-fact-envelope.md`.
-- **Keep** `scripts/scrape/probe_vendor_facts.py`. It is the acquisition tool,
+- **Keep** `scripts/scrape/hop_facts_scraper.py`. It is the acquisition tool,
   not a probe: every source changes with a crop year or a redesign, the committed
   hashes are only checkable if the fetch can be repeated, and the deferred
   source-driven pass needs it. The draft's "delete the probe" borrowed the yvh
