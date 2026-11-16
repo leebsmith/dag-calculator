@@ -5,10 +5,12 @@ tracks only what is outstanding.
 
 ## Next (in order)
 
-1. **Vendor fact envelope** — the ten hop attributes measured against the sources
-   that publish them: the first pilot, the southern-hemisphere sources and the
-   living coverage record landed; the second pilot pass and the sweep remain
-   (`plans/vendor-fact-envelope.md`, `docs/hops/vendor-fact-envelope.md`).
+1. **Hop facts synthesis** — the sweep is done: 3,427 observations, 250 of 401
+   varieties reachable, verdicts for eleven attributes. What remains is turning
+   that into the catalog: the artifact contract, the committed facts source, and
+   the builder that replaces the crowd alpha and drops the generated notes
+   (`plans/hop-facts-synthesis.md`; the measurement record is
+   `docs/hops/vendor-fact-envelope.md`).
 
 2. **Footer bar** — the shell landed: save state and conflict recovery, step
    position, boundary status, violation count, SAI, and the enumerated findings
