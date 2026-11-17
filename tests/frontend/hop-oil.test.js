@@ -61,7 +61,8 @@ test("the form supplies the multiplier, and the basis says why", () => {
   assert.equal(oilFormMultiplier("whole_cone", constants), 1);
   assert.equal(oilFormMultiplier("flowable_extract", constants), null);
   assert.equal(oilFormBasis("lupulin_pellet"), "measured");
-  assert.equal(oilFormBasis("whole_cone"), "reference");
+  assert.equal(oilFormBasis("whole_cone"), "assumed");
+  assert.equal(oilFormBasis("t90_pellet"), "reference");
   assert.equal(oilFormBasis("flowable_extract"), "unpublished");
 });
 
@@ -75,4 +76,17 @@ test("a summary prices what it can and counts the rest", () => {
   assert.equal(summary.rows, 3);
   assert.equal(summary.priced, 2);
   assert.ok(summary.total > 0);
+  assert.equal(summary.assumed, 0);
+});
+
+test("a whole cone charge says its multiplier is assumed", async () => {
+  const { hopOilLineText } = await import("../../frontend/src/views/producer/hopOil.js");
+  const rows = [
+    { product_form: "whole_cone", mass_kg: 0.1, total_oil_ml_per_100g: 2 },
+    { product_form: "t90_pellet", mass_kg: 0.1, total_oil_ml_per_100g: 2 },
+  ];
+  const line = hopOilLineText({ rows, volumeL: 20, constants, formatNumber: (v, d) => v.toFixed(d) });
+  assert.match(line, /whole cone assumed/);
+  const summary = oilChargeSummary({ rows, volumeL: 20, constants });
+  assert.equal(summary.assumed, 1);
 });

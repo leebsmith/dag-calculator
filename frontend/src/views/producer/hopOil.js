@@ -26,6 +26,7 @@ export function oilFormMultiplier(productForm, constants) {
 export function oilFormBasis(productForm) {
   if (productForm === "lupulin_pellet") return "measured";
   if (productForm === "flowable_extract") return "unpublished";
+  if (productForm === "whole_cone") return "assumed";
   return "reference";
 }
 
@@ -63,7 +64,13 @@ export function oilChargeSummary({ rows, volumeL, constants }) {
   }
   const priced = charges.filter((value) => value !== null);
   const total = priced.reduce((sum, value) => sum + value, 0);
-  return { total, priced: priced.length, rows: charges.length };
+  const assumed = (rows ?? []).filter(
+    (row) =>
+      row?.total_oil_ml_per_100g != null &&
+      oilFormBasis(row?.product_form) === "assumed" &&
+      Number.isFinite(row?.mass_kg)
+  ).length;
+  return { total, priced: priced.length, rows: charges.length, assumed };
 }
 
 /**
@@ -77,6 +84,7 @@ export function hopOilLineText({ rows, volumeL, constants, formatNumber }) {
   if (!(summary.priced > 0)) return "";
   const parts = [`oil added ${formatNumber(summary.total, 1)} mg/L`];
   if (summary.priced < summary.rows) parts.push(`${summary.priced} of ${summary.rows} charges priced`);
+  if (summary.assumed > 0) parts.push("whole cone assumed");
   return parts.join(" · ");
 }
 

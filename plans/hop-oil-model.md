@@ -111,10 +111,11 @@ Resolved:
    IBU table. Pending (§4).
 4. **Multiplier** — a point per form with a basis, not a range.
 
-Still open:
+Resolved too:
 
-5. Whether whole cone's assumed 1.0 should be marked `~` in the card the way
-   assumed priors are.
+5. **Whole cone's assumed 1.0 is named, not marked `~`.** The card line appends
+   `whole cone assumed` rather than a tilde: the charge is computed, only the
+   multiplier is a guess, and a mark on the number would say the wrong thing.
 
 ## 7. Checklist
 
@@ -123,5 +124,5 @@ Still open:
 - [x] Copy oil at selection; the hop card line.
 - [x] Rewrite this plan around the charge rather than retention.
 - [x] The report line: summary per table, template note, fixture regeneration.
-- [ ] Surface the assumed-basis mark for whole cone.
+- [x] Surface the assumed-basis mark for whole cone: the line says `whole cone assumed`.
 - [ ] `make check`, `make test`, `make verify`.
