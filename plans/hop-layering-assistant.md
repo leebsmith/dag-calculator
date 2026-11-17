@@ -1,6 +1,6 @@
 ---
 title: Hop layering assistant — composition and substitution
-status: needs discussion (UI design)
+status: exploratory (direction unspecified)
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: []
@@ -10,10 +10,16 @@ gate: make check + make test; identical inputs produce an identical ranked list,
 
 # Hop layering assistant — composition and substitution
 
-**Tabled: needs a UI discussion before any build.** The architecture is settled —
-ranked suggestions, declared scoring, shared-field similarity, never authors —
-and the data it needs now exists. What is not settled is what a suggestion looks
-like to a brewer and where it lives.
+**Exploratory: the direction is not yet chosen.** This file was written after the
+oil data landed, from the question "now that we have oils, what can we do with
+them?" — which is not an answer. The constraints in §1 survive whichever direction
+is picked; §2–§5 are hypotheses about one possible direction (a paired assistant
+for composition and substitution) and should not be built from until a direction
+is chosen.
+
+What the data does settle, regardless: about 75 of 401 varieties carry all nine
+attributes and about 226 carry oil, so any ranking by oil profile will favour the
+well-documented set. Completeness has to travel with a score.
 
 ## Open UI questions
 
@@ -46,7 +52,7 @@ Both consume the oil facts the synthesis plan lands and the oil model in
 `plans/hop-oil-model.md`. Neither may run before both exist: an objective
 defined on absent data recommends well-documented hops, not good partners.
 
-## 1. Architecture
+## 1. Constraints that survive any direction
 
 - **A recommendation, never an authored value.** The output is a ranked list with
   a stated objective. The user's pick becomes state; the assistant writes
@@ -59,7 +65,7 @@ defined on absent data recommends well-documented hops, not good partners.
   moves into the artifact only if it starts to *write* a batch value; a
   suggestion that changes a selection is domain, not presentation.
 
-## 2. Composition scoring
+## 2. Composition scoring — hypothesis
 
 The honest part is the input, not the arithmetic.
 
@@ -78,7 +84,7 @@ The honest part is the input, not the arithmetic.
   cannot enter an oil allocation; an aggregator-only row is allowed but labelled,
   the way the seed labels it.
 
-## 3. Substitution is two-dimensional
+## 3. Substitution is two-dimensional — hypothesis
 
 Preserving IBU and preserving oil dose are different equations. A 1:1
 substitution holds both only when the alpha/oil ratios match, which is rare.
@@ -98,7 +104,7 @@ and, where no single hop works, says so:
 Form substitution is a separate axis: T-90 ↔ Cryo is 0.4–0.5 by mass with a
 ≈2.7× oil multiplier, so the candidate is (variety, form) pairs, not varieties.
 
-## 4. Output shape
+## 4. Output shape — hypothesis
 
 | Field | Why |
 |---|---|
@@ -109,7 +115,7 @@ Form substitution is a separate axis: T-90 ↔ Cryo is 0.4–0.5 by mass with a
 | completeness | matched attributes out of the available nine |
 | basis | vendor / survey / aggregator, inherited from the seed rows used |
 
-## 5. Tests
+## 5. Tests — hypotheses
 
 - **Determinism:** same inputs → byte-identical ranking.
 - **No absent-as-zero:** removing an attribute from a candidate changes
@@ -140,7 +146,7 @@ Form substitution is a separate axis: T-90 ↔ Cryo is 0.4–0.5 by mass with a
    Recommendation: no; it ranks what the user can already see.
 4. Where the score is declared: UI module first, artifact once it writes.
 
-## 8. Checklist
+## 8. Checklist (none of it before a direction is chosen)
 
 - [ ] Define the similarity function and its weights in one place, with tests.
 - [ ] Implement the composition ranking over pairs and triplets.

@@ -38,13 +38,16 @@ tracks only what is outstanding.
   It lands as a *batch source* (a draft batch straight into the editor), not as an
   import document, so it never enters the ledger. See `plans/recipe-language.md`.
 
-* **Hop layering (tabled on UI design)** — the model and the data are ready: the
-  facts carry oil, the charge is priced per table in the card and the report, and
-  the layering is an authored hot/cool split plus a cool-side mass ratio. What is
-  missing is how any of it reaches a brewer — where the split is authored, whether
-  a layering is a pair or a set, and what happens to `parts`, which currently
-  means IBU share. Tabled until those are discussed:
-  `plans/hop-layering-strategy.md` and `plans/hop-layering-assistant.md`.
+* **Whirlpool oil allocation (next, needs its own discussion)** — author oil
+  shares rather than IBU shares, which is the layering model with a smaller
+  surface: one control in the hops card, not a new composer. May not need to
+  touch `parts` at all. `plans/hop-layering-strategy.md`.
+
+* **What oils enable (direction unspecified)** — pairing, substitution, profile
+  matching are hypotheses, not a design. The data constrains any answer: ~75 of
+  401 varieties carry all nine attributes and ~226 carry oil, so a ranking by
+  profile favours the well-documented set and must carry completeness.
+  `plans/hop-layering-assistant.md`.
 
 * **Hop oil model (shipped, one item open)** — the charge, per form, in the card
   and the report. The Python mirror waits until the solver prices oil, which is
