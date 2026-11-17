@@ -1,6 +1,6 @@
 ---
 title: Vendor fact envelope — availability, basis and precedence for hop attributes
-status: proposed
+status: done
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: []
@@ -742,4 +742,4 @@ numbers in the doc; the fixture is green.
 - [ ] Run `make check` and `make test`.
 - [x] Keep the probe as the maintained acquisition tool; the deletion in the
       draft plan was wrong (see §9.1).
-- [ ] Archive this plan when the matrix lands.
+- [x] Archive this plan when the matrix lands.

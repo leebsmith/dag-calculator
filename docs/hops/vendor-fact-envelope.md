@@ -1,7 +1,7 @@
 # Vendor fact envelope
 
 Status: **sweep complete; verdicts recorded.** This is the living measurement record
-for `plans/vendor-fact-envelope.md`. It says what the vendors actually publish,
+for `plans/archive/2026-11/vendor-fact-envelope.md`. It says what the vendors actually publish,
 in what unit, for how many varieties. It does not change the artifact, the seeds
 or the frontend, and nothing here is a value the app consumes yet.
 

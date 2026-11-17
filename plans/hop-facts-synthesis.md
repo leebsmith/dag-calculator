@@ -10,7 +10,7 @@ gate: make check + make test; the hop seed is reproducible from the committed so
 
 # Hop facts synthesis — from the sweep to the seed
 
-`plans/vendor-fact-envelope.md` measured what the sources publish: 3,427
+`plans/archive/2026-11/vendor-fact-envelope.md` measured what the sources publish:
 observations over 401 ids, 250 varieties reachable, verdicts for eleven
 attributes. This plan turns that into the catalog.
 
@@ -134,8 +134,8 @@ the ~55 additions move to a follow-up and are recorded here rather than assumed.
 
 ### P4 — retire the plan, not the tool
 
-- Archive `plans/vendor-fact-envelope.md`; the matrix and verdicts live on in
-  `docs/hops/vendor-fact-envelope.md`.
+- Archived as `plans/archive/2026-11/vendor-fact-envelope.md`; the matrix and
+  verdicts live on in `docs/hops/vendor-fact-envelope.md`.
 - **Keep** `scripts/scrape/hop_facts_scraper.py`. It is the acquisition tool,
   not a probe: every source changes with a crop year or a redesign, the committed
   hashes are only checkable if the fetch can be repeated, and the deferred
@@ -190,5 +190,5 @@ the ~55 additions move to a follow-up and are recorded here rather than assumed.
 - [x] P2: regenerate the bundle fixture; record the IBU-moving change in the commit message.
 - [x] P2: `hop-facts` guard green, including the contradicted-zero case.
 - [x] P3: display marks and hop detail; no report change.
-- [ ] P4: archive the envelope plan; keep the probe.
+- [x] P4: archive the envelope plan; keep the probe.
 - [ ] `make check`, `make test`, `make verify`.
