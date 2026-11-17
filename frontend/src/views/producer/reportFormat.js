@@ -8,6 +8,8 @@ import { displayValue, nonlinearFns } from "../producer.js";
 import { hamiltonPct } from "../hamilton.js";
 import { FERMENTABLE_NODES as N } from "../registry/fermentables.js";
 import { HOP_NODES as H } from "../registry/hops.js";
+import { hopOilSummaries } from "./hopOil.js";
+import { ignoreError } from "../../observability.js";
 import { sortWhirlpoolRows } from "./hopRows.js";
 import { hopPurchaseRows } from "./hopPurchaseRows.js";
 import { grainPurchaseRows } from "./grainPurchaseRows.js";
@@ -356,7 +358,7 @@ function dryHopRows(artifact, catalog, engine) {
 // Mass-weighted colour and extract yield per table, plus the overall aggregate.
 // Colour weighs every fermentable; extract yield covers the grain bill and the
 // sugars because trace malts are colour- and mash-pH-only (A9).
-export function buildReportSummaries(artifact, catalog, engine) {
+export function buildReportSummaries(artifact, catalog, engine, reportError = ignoreError) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
   const { major, trace, sugar } = readFermentables(engine);
@@ -411,5 +413,7 @@ export function buildReportSummaries(artifact, catalog, engine) {
       N.weightedYield
     );
   }
+  Object.assign(summaries, hopOilSummaries({ artifact, engine, nodes: H, resolvedList, reportError }));
   return summaries;
 }
+

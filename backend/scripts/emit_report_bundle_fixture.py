@@ -1706,6 +1706,12 @@ PAYLOAD = FreezePayload(
             color=FormattedValue(text="500.0 °L", number="500.0", unit="°L"),
             extract_yield=FormattedValue(text="60.0%", number="60.0", unit="%"),
         ),
+        "batch.boil_hops": FormattedSummary(
+            oil=FormattedValue(text="1.8 mg/L", number="1.8", unit="mg/L"),
+        ),
+        "batch.whirlpool_hops": FormattedSummary(
+            oil=FormattedValue(text="2.4 mg/L \u00b7 2 of 3 priced", number="2.4", unit="mg/L"),
+        ),
         "batch.sugars": FormattedSummary(
             color=FormattedValue(text="180.0 °L", number="180.0", unit="°L"),
             extract_yield=FormattedValue(text="80.0%", number="80.0", unit="%"),

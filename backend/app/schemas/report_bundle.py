@@ -49,11 +49,13 @@ class FormattedSummary(BundleModel):
     """A table's mass-weighted colour and extract yield, pre-formatted.
 
     ``color`` and ``extract_yield`` are the same frozen display records a row
-    cell uses. Absent when the table has no rows to weigh.
+    cell uses. Absent when the table has no rows to weigh. ``oil`` is the hop
+    bill's oil charge in mg/L — a charge, never a retained figure.
     """
 
     color: FormattedValue | None = None
     extract_yield: FormattedValue | None = None
+    oil: FormattedValue | None = None
 
 
 class ArtifactBundle(BundleModel):

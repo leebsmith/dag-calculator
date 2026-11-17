@@ -8060,7 +8060,8 @@
         "unit": "%",
         "base": null,
         "dimension": null
-      }
+      },
+      "oil": null
     },
     "grist.trace_malts": {
       "color": {
@@ -8074,6 +8075,29 @@
         "text": "60.0%",
         "number": "60.0",
         "unit": "%",
+        "base": null,
+        "dimension": null
+      },
+      "oil": null
+    },
+    "batch.boil_hops": {
+      "color": null,
+      "extract_yield": null,
+      "oil": {
+        "text": "1.8 mg/L",
+        "number": "1.8",
+        "unit": "mg/L",
+        "base": null,
+        "dimension": null
+      }
+    },
+    "batch.whirlpool_hops": {
+      "color": null,
+      "extract_yield": null,
+      "oil": {
+        "text": "2.4 mg/L \u00b7 2 of 3 priced",
+        "number": "2.4",
+        "unit": "mg/L",
         "base": null,
         "dimension": null
       }
@@ -8092,7 +8116,8 @@
         "unit": "%",
         "base": null,
         "dimension": null
-      }
+      },
+      "oil": null
     },
     "overall": {
       "color": {
@@ -8108,7 +8133,8 @@
         "unit": "%",
         "base": null,
         "dimension": null
-      }
+      },
+      "oil": null
     }
   },
   "conformance": {
@@ -8193,5 +8219,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:6b1a0acb1c48394074d4b83c040fb06158022930fea9a1e72a0320188049a4c5"
+  "content_hash": "sha256:90daacc27dc0d1b8dd56aec798223365012580342225e2aa7f2cf4ddd1368d75"
 }

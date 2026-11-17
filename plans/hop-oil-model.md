@@ -1,6 +1,6 @@
 ---
 title: Hop oil model — per-form oil charge
-status: in progress (card line landed; report line pending)
+status: implemented (card and report lines landed)
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: []
@@ -79,12 +79,11 @@ Form multipliers as a table:
 
 ## 4. What remains
 
-**The report line.** The bundle needs a formatted path for the charge and the
-hops section template needs one `note[...]` beside the existing IBU notes. The
-value is computable in `reportFormat.js` from the solved `mass_kg` and the row's
-oil. This is deliberately separate from the card line: the template change
-regenerates the bundle fixture, and it should land as its own commit so the
-diff is one thing.
+**The report line — landed.** The charge rides in `formatted_summaries`, one per
+hop table (`batch.boil_hops`, `batch.whirlpool_hops`), because the bundle
+integrity check accepts only a collection node or `overall` as a summary key.
+The hops section prints `Oil added: …` beside the IBU notes, and a table with no
+priced charge prints nothing rather than a zero.
 
 **Python, when there is a consumer.** The solver does not price oil yet, so
 mirroring the model in `backend/app/core/` now would be dead code. It becomes
@@ -123,6 +122,6 @@ Still open:
 - [x] The pure model and its tests.
 - [x] Copy oil at selection; the hop card line.
 - [x] Rewrite this plan around the charge rather than retention.
-- [ ] The report line: bundle path, template note, fixture regeneration.
+- [x] The report line: summary per table, template note, fixture regeneration.
 - [ ] Surface the assumed-basis mark for whole cone.
 - [ ] `make check`, `make test`, `make verify`.

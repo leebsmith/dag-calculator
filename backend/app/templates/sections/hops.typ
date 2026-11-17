@@ -2,7 +2,7 @@
 // roll-up. Every figure is the bundle's frozen display string; this section only
 // arranges them.
 
-#import "../lib/format.typ": cell-text, formatted-table, formatted-text, present-formatted, present-formatted-table
+#import "../lib/format.typ": cell-text, formatted-summary, formatted-table, formatted-text, present-formatted, present-formatted-table
 #import "../lib/prose.typ": prose-cell
 
 #let BOIL = "batch.boil_hops"
@@ -23,6 +23,16 @@
 #let text-or(path) = if present-formatted(path) { formatted-text(path) } else { "—" }
 
 #let note(body) = text(size: 8pt, fill: rgb("#6b6b6b"), body)
+
+// The oil a bill adds, never the oil that survives the whirlpool. Absent when no
+// charge could be priced, which is different from a charge of zero.
+#let oil-note(collection) = {
+  let summary = formatted-summary(collection)
+  if summary == none { return }
+  let oil = summary.at("oil", default: none)
+  if oil == none { return }
+  note[Oil added: #cell-text(oil)]
+}
 
 // One hop table: a frozen display string per cell, and only the column layout
 // lives here. Each column is (header, row key, alignment).
@@ -95,6 +105,8 @@
         Boil IBU: #text-or("batch.boil_target_ibu") · Boil hop mass: #text-or("solver.hops.boil_mass_kg")
       ]
       v(2pt)
+      oil-note(BOIL)
+      v(2pt)
       note[
         Masses are the product to weigh, solved from each charge's alpha and form.
         The catalog alpha is a stock preset: replace it with the lot certificate.
@@ -114,6 +126,7 @@
       note[
         Alpha demanded: #text-or("solver.hops.whirlpool_alpha_mass_kg")
       ]
+      oil-note(WHIRLPOOL)
       v(2pt)
       note[
         Additions count from flameout; knockout closes the window from

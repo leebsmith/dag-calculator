@@ -9,7 +9,7 @@
 // A hop without an oil figure contributes nothing and is counted, so the caller
 // can say how many charges it could see rather than implying a complete sum.
 
-import { isFiniteNumber } from "../../utils.js";
+import { formatWithDecimals, isFiniteNumber } from "../../utils.js";
 
 const DENSITY = "oil_density_g_per_ml";
 const LUPULIN = "oil_form_multiplier_lupulin";
@@ -99,4 +99,46 @@ export function hopOilDescriptor({ rows, postBoilVolume, constants, formatNumber
       },
     },
   };
+}
+
+/**
+ * Per-table oil charges, keyed by the collection the report summarises. The
+ * integrity check only accepts a collection path or "overall", and a charge per
+ * table is a better number than a combined one anyway.
+ * @pure
+ * @param {{ readonly artifact: object, readonly engine: object, readonly nodes: object, readonly resolvedList: Function, readonly reportError: Function }} args
+ */
+export function hopOilSummaries({ artifact, engine, nodes, resolvedList, reportError }) {
+  const volumeL = readNumber(engine, nodes.postBoilVolume, reportError);
+  if (!(volumeL > 0)) return {};
+  const tables = [
+    [nodes.collection, nodes.boilRows],
+    [nodes.whirlpoolCollection, nodes.whirlpoolRows],
+  ];
+  const summaries = {};
+  for (const [collection, rowsPath] of tables) {
+    const authored = engine.get(collection) ?? [];
+    if (authored.length === 0) continue;
+    const solved = resolvedList(engine, rowsPath, reportError);
+    const rows = authored.map((row, index) => ({ ...row, mass_kg: solved[index]?.mass_kg }));
+    const summary = oilChargeSummary({ rows, volumeL, constants: artifact.constants });
+    if (!(summary.priced > 0)) continue;
+    const amount = formatWithDecimals(summary.total, 1);
+    const text =
+      summary.priced < summary.rows
+        ? `${amount} mg/L \u00b7 ${summary.priced} of ${summary.rows} priced`
+        : `${amount} mg/L`;
+    summaries[collection] = { oil: { text, number: amount, unit: "mg/L" } };
+  }
+  return summaries;
+}
+
+function readNumber(engine, path, reportError) {
+  try {
+    const value = engine.resolve(path);
+    return typeof value === "number" ? value : null;
+  } catch (err) {
+    reportError("report.oil.volume", err);
+    return null;
+  }
 }
