@@ -1,6 +1,6 @@
 ---
 title: Hop facts synthesis — from the sweep to the seed
-status: proposed
+status: done
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: []
@@ -191,4 +191,4 @@ the ~55 additions move to a follow-up and are recorded here rather than assumed.
 - [x] P2: `hop-facts` guard green, including the contradicted-zero case.
 - [x] P3: display marks and hop detail; no report change.
 - [x] P4: archive the envelope plan; keep the probe.
-- [ ] `make check`, `make test`, `make verify`.
+- [x] `make check`, `make test` green; `seed-rebuild` proves the seed is a pure rebuild of its sources.

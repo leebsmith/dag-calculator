@@ -5,23 +5,16 @@ tracks only what is outstanding.
 
 ## Next (in order)
 
-1. **Hop facts synthesis** — the sweep is done: 3,427 observations, 250 of 401
-   varieties reachable, verdicts for eleven attributes. What remains is turning
-   that into the catalog: the artifact contract, the committed facts source, and
-   the builder that replaces the crowd alpha and drops the generated notes
-   (`plans/hop-facts-synthesis.md`; the measurement record is
-   `docs/hops/vendor-fact-envelope.md`).
-
-2. **Footer bar** — the shell landed: save state and conflict recovery, step
+1. **Footer bar** — the shell landed: save state and conflict recovery, step
    position, boundary status, violation count, SAI, and the enumerated findings
    list. What remains is the gravity/ABV/SRM/IBU readouts and the LIFO ordering
    of soft warnings (`plans/warnings.md` W.1–W.5, still proposed).
 
-3. **Verify the mapping flow by hand** — phases A–B are shipped and covered;
+2. **Verify the mapping flow by hand** — phases A–B are shipped and covered;
    the manual pass against the vendored PDF and a real blend record is what
    remains (`plans/mapping-plans.md`).
 
-4. **Import refinements** — the H.1 prompt/schema review, L0 prior hits, and
+3. **Import refinements** — the H.1 prompt/schema review, L0 prior hits, and
    keyboard traversal with batch actions; the editor's "Imported from…" panel
    landed (`plans/recipe-import.md` J.1/J.3).
 

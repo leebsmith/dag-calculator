@@ -1,7 +1,7 @@
 # Hop facts
 
 Status: **populated.** The fields below are in the artifact and the seed; the
-synthesis that fills them is `plans/hop-facts-synthesis.md` and the builder is
+synthesis that filled them is `plans/archive/2026-11/hop-facts-synthesis.md` and the builder is
 `scripts/build-hops-seed.mjs`. This page explains what each field means and what
 a reader is entitled to assume about it.
 

@@ -582,7 +582,7 @@ assumption, borrowed from the yvh scraper, and it does not survive contact:
   enumeration it fed was deleted, not because scrapers are disposable.
 
 What is ephemeral is nothing: the sweep's observations are committed as
-`data/sources/hop-facts.json` by `plans/hop-facts-synthesis.md` P1, where the
+`data/sources/hop-facts.json` by `plans/archive/2026-11/hop-facts-synthesis.md` P1, where the
 builder consumes them. The probe is the thing that regenerates that file.
 
 The living doc will need a `<!-- claims: proposed … -->` declaration for the
