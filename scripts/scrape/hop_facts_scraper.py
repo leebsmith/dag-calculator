@@ -152,20 +152,23 @@ NUMBER = r"\d+(?:\.\d+)?"
 
 
 def parse_stated(value, unit):
-    text = (value or "").strip()
-    if not text:
+    original = (value or "").strip()
+    if not original:
         return None
+    # A cell may embed its unit ("1.1 mL/100g"), and the 100 in the denominator
+    # is not a measurement. Strip the unit phrase before reading numbers.
+    text = re.sub(r"m\s*l\s*s?\s*/\s*100\s*(?:g|grams?)\b", " ", original, flags=re.I).strip()
     low = text.lower()
     numbers = [float(n) for n in re.findall(NUMBER, low)]
     if not numbers:
         return None
     if low.startswith(("<", "up to")):
-        return {"kind": "max", "raw": text, "lo": None, "hi": numbers[0]}
+        return {"kind": "max", "raw": original, "lo": None, "hi": numbers[0]}
     if low.startswith("~") and len(numbers) == 1:
-        return {"kind": "point", "raw": text, "lo": numbers[0], "hi": numbers[0]}
+        return {"kind": "point", "raw": original, "lo": numbers[0], "hi": numbers[0]}
     kind = "point" if len(numbers) == 1 else "range"
     lo, hi = (numbers[0], numbers[0]) if kind == "point" else (min(numbers), max(numbers))
-    return {"kind": kind, "raw": text, "lo": lo, "hi": hi}
+    return {"kind": kind, "raw": original, "lo": lo, "hi": hi}
 
 
 def normalise(parsed, unit):
@@ -1012,11 +1015,75 @@ SOURCES = {
 }
 
 
+FIELD_ORDER = [
+    "total_oil",
+    "myrcene",
+    "humulene",
+    "caryophyllene",
+    "farnesene",
+    "linalool",
+    "alpha",
+    "beta",
+    "cohumulone",
+]
+
+OBSERVATION_KEYS = [
+    "variety_id",
+    "source_id",
+    "attribute",
+    "stated_value",
+    "stated_unit",
+    "stated_basis",
+    "value_kind",
+    "normalised",
+    "source_label",
+    "page",
+    "page_url",
+    "unit_inferred",
+    "crop_years",
+    "basis_tier",
+]
+
+
+def source_payload(payload):
+    """The committed shape: stable keys, sorted rows, no retrieval timestamps."""
+    sources = {}
+    for value in payload["sources"].values():
+        entry = {"id": value["id"], "url": value.get("url"), "sha256": value.get("sha256")}
+        if value.get("varieties"):
+            entry["varieties"] = value["varieties"]
+        if value.get("identity"):
+            entry["identity"] = value["identity"]
+        sources[value["id"]] = entry
+    observations = [
+        {key: row[key] for key in OBSERVATION_KEYS if key in row}
+        for row in sorted(
+            payload["observations"],
+            key=lambda row: (
+                row["variety_id"],
+                row["source_id"],
+                FIELD_ORDER.index(row["attribute"]) if row["attribute"] in FIELD_ORDER else 99,
+            ),
+        )
+    ]
+    return {
+        "kind": "hop_fact_observations",
+        "varieties": sorted({row["variety_id"] for row in observations}),
+        "sources": dict(sorted(sources.items())),
+        "observations": observations,
+    }
+
+
 def main():
     parser = argparse.ArgumentParser(description="Probe the vendor fact envelope.")
     parser.add_argument("--sources", nargs="+", default=["all"])
     parser.add_argument("--varieties", nargs="+", default=PILOT)
     parser.add_argument("--all", action="store_true", help="every variety in the hop seed")
+    parser.add_argument(
+        "--source",
+        action="store_true",
+        help="write the committed source shape: no timestamps, sorted, one entry per source id",
+    )
     parser.add_argument("--out", default=str(OUT_DEFAULT))
     args = parser.parse_args()
 
@@ -1049,6 +1116,9 @@ def main():
         "sources": sources,
         "observations": observations,
     }
+    if args.source:
+        payload = source_payload(payload)
+
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")

@@ -101,6 +101,21 @@ test("normalised values agree with their stated kind", () => {
   assert.deepEqual(offenders, [], "a normalised value that contradicts its kind would poison a mean");
 });
 
+test("total oil stays inside a plausible range", () => {
+  // A cell that embeds its unit ("1.1 mL/100g") once leaked the 100 into the
+  // measurement, pricing hops at 50 mL/100 g. Anything above 20 is a unit bug,
+  // not a variety.
+  const offenders = [];
+  for (const row of facts().observations) {
+    if (row.attribute !== "total_oil" || row.normalised === null) continue;
+    const values = Array.isArray(row.normalised) ? row.normalised : [row.normalised];
+    for (const value of values) {
+      if (value !== null && (value < 0 || value > 20)) offenders.push(`${row.variety_id}/${row.source_id}: ${value}`);
+    }
+  }
+  assert.deepEqual(offenders, [], "total oil is mL per 100 g; a unit phrase must never become the number");
+});
+
 test("only the aggregator is marked as one", () => {
   const offenders = facts().observations.filter(
     (row) => (row.basis_tier === "aggregator") !== (row.source_id === "hopslist")

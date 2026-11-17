@@ -1,6 +1,6 @@
 {
   "kind": "hop_fact_observations",
-  "pilot": [
+  "varieties": [
     "Amarillo",
     "Cascade",
     "Centennial",
@@ -16,23 +16,26 @@
     "hopsteiner-vf": {
       "id": "hopsteiner-vf",
       "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
-      "sha256": "e79fa170fc0a460e205596da95269ab6a22514d330363f1696908b7d1ba5d25f"
+      "sha256": "e79fa170fc0a460e205596da95269ab6a22514d330363f1696908b7d1ba5d25f",
+      "varieties": 100
     },
     "crosby-variety": {
       "id": "crosby-variety",
       "url": "https://www.crosbyhops.com/hops/varieties/",
-      "sha256": "242b1a824ca980923a8dcf3c730d7b76bfc212eea7c34b79215f38c7f201f48e"
+      "sha256": "242b1a824ca980923a8dcf3c730d7b76bfc212eea7c34b79215f38c7f201f48e",
+      "varieties": 55
     },
     "barthhaas-variety": {
       "id": "barthhaas-variety",
       "url": "https://www.barthhaas.com/hops-and-products/hops/",
       "sha256": [
+        "8df3cb13e585f1e92a97862eca17cce3c0adb5b36df9d0a3eca140c13255ceb3",
         "dc51147b31f49b6b80af67c683a70cd4079f457d641e16d50b40d315248c9a68",
         "f323eb90afbc37faf089f096aa04c48e511a2618e07baecb93d5843bbd3417e0",
         "3018798c6e914c676c9aebd60d56fb3b6a3279c1cfefb5d2753e5e0a82a06234",
-        "68cb911a5a5acee4baa65b28de34f84b6da43edaa280b66d3c48d7208b325da2",
-        "b441cd6a46f594b9a6e22c85083dd0a7d8baec543c324a8b9187de2f5d72b21f",
-        "a66cf507e391868f5b4c4b8be7be102f69431ae23cf13ece4a5c69e3a6e5a653"
+        "1ec4ca9a641212191b130414553f1085075cd933026f7297eade2ee576ed9d6e",
+        "56ce505d08cf46f24d0f85edd92b237d2f2f738a9a6256730945e8aa4aa087eb",
+        "68cb911a5a5acee4baa65b28de34f84b6da43edaa280b66d3c48d7208b325da2"
       ]
     },
     "hga-2020": {
@@ -49,7 +52,82 @@
   "observations": [
     {
       "variety_id": "Amarillo",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
+      "attribute": "total_oil",
+      "stated_value": "up to 1.9",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        1.9
+      ],
+      "source_label": "TOTAL OIL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "barthhaas-variety",
+      "attribute": "myrcene",
+      "stated_value": "16.7 - 70",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.167,
+        0.7
+      ],
+      "source_label": "MYRCENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "barthhaas-variety",
+      "attribute": "humulene",
+      "stated_value": "up to 23.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.237
+      ],
+      "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "barthhaas-variety",
+      "attribute": "caryophyllene",
+      "stated_value": "up to 8.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.083
+      ],
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "barthhaas-variety",
+      "attribute": "farnesene",
+      "stated_value": "up to 6.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.068
+      ],
+      "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "6.7 - 11",
       "stated_unit": "percent",
@@ -59,11 +137,12 @@
         0.067,
         0.11
       ],
-      "source_label": "Alpha"
+      "source_label": "ALPHA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
     },
     {
       "variety_id": "Amarillo",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
       "attribute": "beta",
       "stated_value": "5 - 7.1",
       "stated_unit": "percent",
@@ -73,7 +152,8 @@
         0.05,
         0.071
       ],
-      "source_label": "Beta"
+      "source_label": "BETA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
     },
     {
       "variety_id": "Amarillo",
@@ -87,7 +167,8 @@
         null,
         1.9
       ],
-      "source_label": "Total Oils"
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/amarillo"
     },
     {
       "variety_id": "Amarillo",
@@ -101,7 +182,53 @@
         0.167,
         0.7
       ],
-      "source_label": "Myrcene"
+      "source_label": "Myrcene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/amarillo"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "crosby-variety",
+      "attribute": "alpha",
+      "stated_value": "6.7 - 11",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.067,
+        0.11
+      ],
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/amarillo"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "crosby-variety",
+      "attribute": "beta",
+      "stated_value": "5 - 7.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.05,
+        0.071
+      ],
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/amarillo"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "hga-2017",
+      "attribute": "total_oil",
+      "stated_value": "1.5 - 1.9",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.5,
+        1.9
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
     },
     {
       "variety_id": "Amarillo",
@@ -136,21 +263,6 @@
     {
       "variety_id": "Amarillo",
       "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "1.5 - 1.9",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        1.9
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Amarillo",
-      "source_id": "hga-2017",
       "attribute": "cohumulone",
       "stated_value": "21 - 24",
       "stated_unit": "percent",
@@ -162,6 +274,21 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 10
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "1.5 - 1.9",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.5,
+        1.9
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
     },
     {
       "variety_id": "Amarillo",
@@ -196,21 +323,6 @@
     {
       "variety_id": "Amarillo",
       "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "1.5 - 1.9",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        1.9
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Amarillo",
-      "source_id": "hga-2020",
       "attribute": "cohumulone",
       "stated_value": "21 - 24",
       "stated_unit": "percent",
@@ -222,6 +334,57 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "hopsteiner-vf",
+      "attribute": "total_oil",
+      "stated_value": "1.0 - 2.0",
+      "stated_unit": "unstated",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": null,
+      "source_label": "oils",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "hopsteiner-vf",
+      "attribute": "humulene",
+      "stated_value": "0.00",
+      "stated_unit": "fraction",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0,
+      "source_label": "humulen",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "hopsteiner-vf",
+      "attribute": "farnesene",
+      "stated_value": "5.00 - 8.00",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.05,
+        0.08
+      ],
+      "source_label": "farnesen",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "hopsteiner-vf",
+      "attribute": "linalool",
+      "stated_value": "0.0",
+      "stated_unit": "fraction",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0,
+      "source_label": "linalool_oil",
+      "unit_inferred": true
     },
     {
       "variety_id": "Amarillo",
@@ -254,18 +417,6 @@
     {
       "variety_id": "Amarillo",
       "source_id": "hopsteiner-vf",
-      "attribute": "total_oil",
-      "stated_value": "1.0 - 2.0",
-      "stated_unit": "unstated",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": null,
-      "source_label": "oils",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "Amarillo",
-      "source_id": "hopsteiner-vf",
       "attribute": "cohumulone",
       "stated_value": "21 - 27",
       "stated_unit": "percent",
@@ -276,61 +427,6 @@
         0.27
       ],
       "source_label": "cohumulone"
-    },
-    {
-      "variety_id": "Amarillo",
-      "source_id": "hopsteiner-vf",
-      "attribute": "humulene",
-      "stated_value": "0.00",
-      "stated_unit": "fraction",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0,
-      "source_label": "humulen",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "Amarillo",
-      "source_id": "hopsteiner-vf",
-      "attribute": "farnesene",
-      "stated_value": "5.00 - 8.00",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.05,
-        0.08
-      ],
-      "source_label": "farnesen",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "barthhaas-variety",
-      "attribute": "alpha",
-      "stated_value": "4.5 - 7.9",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.045,
-        0.079
-      ],
-      "source_label": "ALPHA-ACIDS"
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "barthhaas-variety",
-      "attribute": "beta",
-      "stated_value": "4.8 - 7.2",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.048,
-        0.072
-      ],
-      "source_label": "BETA-ACIDS"
     },
     {
       "variety_id": "Cascade",
@@ -344,7 +440,8 @@
         null,
         1.4
       ],
-      "source_label": "TOTAL OIL"
+      "source_label": "TOTAL OIL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
     },
     {
       "variety_id": "Cascade",
@@ -358,7 +455,8 @@
         0.194,
         0.55
       ],
-      "source_label": "MYRCENE"
+      "source_label": "MYRCENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
     },
     {
       "variety_id": "Cascade",
@@ -372,7 +470,8 @@
         0.109,
         0.221
       ],
-      "source_label": "HUMULENE"
+      "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
     },
     {
       "variety_id": "Cascade",
@@ -386,7 +485,8 @@
         0.045,
         0.09
       ],
-      "source_label": "CARYOPHYLLENE"
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
     },
     {
       "variety_id": "Cascade",
@@ -400,35 +500,38 @@
         0.036,
         0.072
       ],
-      "source_label": "FARNESEN"
+      "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
     },
     {
       "variety_id": "Cascade",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
-      "stated_value": "4.5 - 7",
+      "stated_value": "4.5 - 7.9",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
         0.045,
-        0.07
+        0.079
       ],
-      "source_label": "Alpha"
+      "source_label": "ALPHA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
     },
     {
       "variety_id": "Cascade",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
       "attribute": "beta",
-      "stated_value": "4.8 - 7",
+      "stated_value": "4.8 - 7.2",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
         0.048,
-        0.07
+        0.072
       ],
-      "source_label": "Beta"
+      "source_label": "BETA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
     },
     {
       "variety_id": "Cascade",
@@ -442,21 +545,8 @@
         0.7,
         1.4
       ],
-      "source_label": "Total Oils"
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "crosby-variety",
-      "attribute": "cohumulone",
-      "stated_value": "33 - 40",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.33,
-        0.4
-      ],
-      "source_label": "Cohumulone"
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/cascade"
     },
     {
       "variety_id": "Cascade",
@@ -470,7 +560,8 @@
         0.4,
         0.6
       ],
-      "source_label": "Myrcene"
+      "source_label": "Myrcene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/cascade"
     },
     {
       "variety_id": "Cascade",
@@ -484,7 +575,8 @@
         0.03,
         0.06
       ],
-      "source_label": "Caryophyllene"
+      "source_label": "Caryophyllene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/cascade"
     },
     {
       "variety_id": "Cascade",
@@ -498,131 +590,12 @@
         0.03,
         0.07
       ],
-      "source_label": "Farnesene"
+      "source_label": "Farnesene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/cascade"
     },
     {
       "variety_id": "Cascade",
-      "source_id": "hga-2017",
-      "attribute": "alpha",
-      "stated_value": "4.5 - 7.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.045,
-        0.07
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hga-2017",
-      "attribute": "beta",
-      "stated_value": "4.8 - 7.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.048,
-        0.07
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "0.7 - 1.4",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.7,
-        1.4
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hga-2017",
-      "attribute": "cohumulone",
-      "stated_value": "33 - 40",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.33,
-        0.4
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hga-2020",
-      "attribute": "alpha",
-      "stated_value": "4.5 - 7.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.045,
-        0.07
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hga-2020",
-      "attribute": "beta",
-      "stated_value": "4.8 - 7.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.048,
-        0.07
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "0.7 - 1.4",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.7,
-        1.4
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hga-2020",
-      "attribute": "cohumulone",
-      "stated_value": "33 - 40",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.33,
-        0.4
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hopsteiner-vf",
+      "source_id": "crosby-variety",
       "attribute": "alpha",
       "stated_value": "4.5 - 7",
       "stated_unit": "percent",
@@ -632,12 +605,58 @@
         0.045,
         0.07
       ],
-      "source_label": "acid_alpha_low/high"
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/cascade"
     },
     {
       "variety_id": "Cascade",
-      "source_id": "hopsteiner-vf",
+      "source_id": "crosby-variety",
       "attribute": "beta",
+      "stated_value": "4.8 - 7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.048,
+        0.07
+      ],
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/cascade"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "crosby-variety",
+      "attribute": "cohumulone",
+      "stated_value": "33 - 40",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.33,
+        0.4
+      ],
+      "source_label": "Cohumulone",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/cascade"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hga-2017",
+      "attribute": "total_oil",
+      "stated_value": "0.7 - 1.4",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.7,
+        1.4
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hga-2017",
+      "attribute": "alpha",
       "stated_value": "4.5 - 7.0",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
@@ -646,7 +665,98 @@
         0.045,
         0.07
       ],
-      "source_label": "acid_beta"
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hga-2017",
+      "attribute": "beta",
+      "stated_value": "4.8 - 7.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.048,
+        0.07
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hga-2017",
+      "attribute": "cohumulone",
+      "stated_value": "33 - 40",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.33,
+        0.4
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "0.7 - 1.4",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.7,
+        1.4
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hga-2020",
+      "attribute": "alpha",
+      "stated_value": "4.5 - 7.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.045,
+        0.07
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hga-2020",
+      "attribute": "beta",
+      "stated_value": "4.8 - 7.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.048,
+        0.07
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hga-2020",
+      "attribute": "cohumulone",
+      "stated_value": "33 - 40",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.33,
+        0.4
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
     },
     {
       "variety_id": "Cascade",
@@ -659,20 +769,6 @@
       "normalised": null,
       "source_label": "oils",
       "unit_inferred": true
-    },
-    {
-      "variety_id": "Cascade",
-      "source_id": "hopsteiner-vf",
-      "attribute": "cohumulone",
-      "stated_value": "33 - 40",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.33,
-        0.4
-      ],
-      "source_label": "cohumulone"
     },
     {
       "variety_id": "Cascade",
@@ -702,32 +798,61 @@
       "unit_inferred": true
     },
     {
-      "variety_id": "Centennial",
-      "source_id": "barthhaas-variety",
-      "attribute": "alpha",
-      "stated_value": "7.8 - 11.5",
+      "variety_id": "Cascade",
+      "source_id": "hopsteiner-vf",
+      "attribute": "linalool",
+      "stated_value": "0.4 - 0.6",
       "stated_unit": "percent",
-      "stated_basis": "of hop mass",
+      "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0.078,
-        0.115
+        0.004,
+        0.006
       ],
-      "source_label": "ALPHA-ACIDS"
+      "source_label": "linalool_oil",
+      "unit_inferred": true
     },
     {
-      "variety_id": "Centennial",
-      "source_id": "barthhaas-variety",
-      "attribute": "beta",
-      "stated_value": "3.3 - 4.5",
+      "variety_id": "Cascade",
+      "source_id": "hopsteiner-vf",
+      "attribute": "alpha",
+      "stated_value": "4.5 - 7",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0.033,
-        0.045
+        0.045,
+        0.07
       ],
-      "source_label": "BETA-ACIDS"
+      "source_label": "acid_alpha_low/high"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hopsteiner-vf",
+      "attribute": "beta",
+      "stated_value": "4.5 - 7.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.045,
+        0.07
+      ],
+      "source_label": "acid_beta"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "hopsteiner-vf",
+      "attribute": "cohumulone",
+      "stated_value": "33 - 40",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.33,
+        0.4
+      ],
+      "source_label": "cohumulone"
     },
     {
       "variety_id": "Centennial",
@@ -741,7 +866,8 @@
         1.6,
         2.5
       ],
-      "source_label": "TOTAL OIL"
+      "source_label": "TOTAL OIL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
     },
     {
       "variety_id": "Centennial",
@@ -755,7 +881,8 @@
         0.307,
         0.657
       ],
-      "source_label": "MYRCENE"
+      "source_label": "MYRCENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
     },
     {
       "variety_id": "Centennial",
@@ -769,7 +896,8 @@
         0.075,
         0.164
       ],
-      "source_label": "HUMULENE"
+      "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
     },
     {
       "variety_id": "Centennial",
@@ -783,7 +911,8 @@
         null,
         0.066
       ],
-      "source_label": "CARYOPHYLLENE"
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
     },
     {
       "variety_id": "Centennial",
@@ -797,11 +926,12 @@
         null,
         0.011
       ],
-      "source_label": "FARNESEN"
+      "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
     },
     {
       "variety_id": "Centennial",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "7.8 - 11.5",
       "stated_unit": "percent",
@@ -811,11 +941,12 @@
         0.078,
         0.115
       ],
-      "source_label": "Alpha"
+      "source_label": "ALPHA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
     },
     {
       "variety_id": "Centennial",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
       "attribute": "beta",
       "stated_value": "3.3 - 4.5",
       "stated_unit": "percent",
@@ -825,7 +956,8 @@
         0.033,
         0.045
       ],
-      "source_label": "Beta"
+      "source_label": "BETA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
     },
     {
       "variety_id": "Centennial",
@@ -839,7 +971,8 @@
         1.6,
         2.5
       ],
-      "source_label": "Total Oils"
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/centennial"
     },
     {
       "variety_id": "Centennial",
@@ -853,7 +986,8 @@
         0.3,
         0.65
       ],
-      "source_label": "Myrcene"
+      "source_label": "Myrcene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/centennial"
     },
     {
       "variety_id": "Centennial",
@@ -867,7 +1001,53 @@
         0.075,
         0.164
       ],
-      "source_label": "Humulene"
+      "source_label": "Humulene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/centennial"
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "crosby-variety",
+      "attribute": "alpha",
+      "stated_value": "7.8 - 11.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.078,
+        0.115
+      ],
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/centennial"
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "crosby-variety",
+      "attribute": "beta",
+      "stated_value": "3.3 - 4.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.033,
+        0.045
+      ],
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/centennial"
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "hga-2017",
+      "attribute": "total_oil",
+      "stated_value": "1.5 - 2.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.5,
+        2.5
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
     },
     {
       "variety_id": "Centennial",
@@ -902,21 +1082,6 @@
     {
       "variety_id": "Centennial",
       "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "1.5 - 2.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        2.5
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Centennial",
-      "source_id": "hga-2017",
       "attribute": "cohumulone",
       "stated_value": "29 - 30",
       "stated_unit": "percent",
@@ -928,6 +1093,21 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 10
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "1.5 - 2.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.5,
+        2.5
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
     },
     {
       "variety_id": "Centennial",
@@ -962,21 +1142,6 @@
     {
       "variety_id": "Centennial",
       "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "1.5 - 2.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        2.5
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Centennial",
-      "source_id": "hga-2020",
       "attribute": "cohumulone",
       "stated_value": "29 - 30",
       "stated_unit": "percent",
@@ -988,6 +1153,60 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "hopsteiner-vf",
+      "attribute": "total_oil",
+      "stated_value": "0.8 - 2.3",
+      "stated_unit": "unstated",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": null,
+      "source_label": "oils",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "hopsteiner-vf",
+      "attribute": "humulene",
+      "stated_value": "0.46",
+      "stated_unit": "fraction",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.46,
+      "source_label": "humulen",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "hopsteiner-vf",
+      "attribute": "farnesene",
+      "stated_value": "0.00 - 1.00",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0,
+        0.01
+      ],
+      "source_label": "farnesen",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "hopsteiner-vf",
+      "attribute": "linalool",
+      "stated_value": "1.0 - 1.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.01,
+        0.013
+      ],
+      "source_label": "linalool_oil",
+      "unit_inferred": true
     },
     {
       "variety_id": "Centennial",
@@ -1020,18 +1239,6 @@
     {
       "variety_id": "Centennial",
       "source_id": "hopsteiner-vf",
-      "attribute": "total_oil",
-      "stated_value": "0.8 - 2.3",
-      "stated_unit": "unstated",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": null,
-      "source_label": "oils",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "Centennial",
-      "source_id": "hopsteiner-vf",
       "attribute": "cohumulone",
       "stated_value": "29 - 30",
       "stated_unit": "percent",
@@ -1044,19 +1251,331 @@
       "source_label": "cohumulone"
     },
     {
-      "variety_id": "Centennial",
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
+      "attribute": "total_oil",
+      "stated_value": "up to 2.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        2.5
+      ],
+      "source_label": "TOTAL OIL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
+      "attribute": "myrcene",
+      "stated_value": "12 - 30",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.12,
+        0.3
+      ],
+      "source_label": "MYRCENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
+      "attribute": "humulene",
+      "stated_value": "14.3 - 26.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.143,
+        0.264
+      ],
+      "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
+      "attribute": "caryophyllene",
+      "stated_value": "6.7 - 11",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.067,
+        0.11
+      ],
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
+      "attribute": "farnesene",
+      "stated_value": "up to 6.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.062
+      ],
+      "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
+      "attribute": "alpha",
+      "stated_value": "10.7 - 15",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.107,
+        0.15
+      ],
+      "source_label": "ALPHA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
+      "attribute": "beta",
+      "stated_value": "up to 3.7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.037
+      ],
+      "source_label": "BETA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "crosby-variety",
+      "attribute": "total_oil",
+      "stated_value": "1.5 - 2.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.5,
+        2.5
+      ],
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "crosby-variety",
+      "attribute": "myrcene",
+      "stated_value": "12 - 30",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.12,
+        0.3
+      ],
+      "source_label": "Myrcene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "crosby-variety",
+      "attribute": "caryophyllene",
+      "stated_value": "6.7 - 11",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.067,
+        0.11
+      ],
+      "source_label": "Caryophyllene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "crosby-variety",
+      "attribute": "alpha",
+      "stated_value": "10.7 - 15",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.107,
+        0.15
+      ],
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "crosby-variety",
+      "attribute": "beta",
+      "stated_value": "4 - 6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.04,
+        0.06
+      ],
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hga-2017",
+      "attribute": "total_oil",
+      "stated_value": "1.7 - 2.7",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.7,
+        2.7
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hga-2017",
+      "attribute": "alpha",
+      "stated_value": "12.0 - 14.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.12,
+        0.14
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hga-2017",
+      "attribute": "beta",
+      "stated_value": "3.0 - 4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.04
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hga-2017",
+      "attribute": "cohumulone",
+      "stated_value": "29 - 35",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.29,
+        0.35
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "1.7 - 2.7",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.7,
+        2.7
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hga-2020",
+      "attribute": "alpha",
+      "stated_value": "12.0 - 14.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.12,
+        0.14
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hga-2020",
+      "attribute": "beta",
+      "stated_value": "3.0 - 4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.04
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hga-2020",
+      "attribute": "cohumulone",
+      "stated_value": "29 - 35",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.29,
+        0.35
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "hopsteiner-vf",
+      "attribute": "total_oil",
+      "stated_value": "1.5 - 2.5",
+      "stated_unit": "unstated",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": null,
+      "source_label": "oils",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Chinook",
       "source_id": "hopsteiner-vf",
       "attribute": "humulene",
-      "stated_value": "0.46",
+      "stated_value": "0.44",
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0.46,
+      "normalised": 0.44,
       "source_label": "humulen",
       "unit_inferred": true
     },
     {
-      "variety_id": "Centennial",
+      "variety_id": "Chinook",
       "source_id": "hopsteiner-vf",
       "attribute": "farnesene",
       "stated_value": "0.00 - 1.00",
@@ -1072,291 +1591,18 @@
     },
     {
       "variety_id": "Chinook",
-      "source_id": "barthhaas-variety",
-      "attribute": "alpha",
-      "stated_value": "10.7 - 15",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.107,
-        0.15
-      ],
-      "source_label": "ALPHA-ACIDS"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "barthhaas-variety",
-      "attribute": "beta",
-      "stated_value": "up to 3.7",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.037
-      ],
-      "source_label": "BETA-ACIDS"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "barthhaas-variety",
-      "attribute": "total_oil",
-      "stated_value": "up to 2.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        2.5
-      ],
-      "source_label": "TOTAL OIL"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "barthhaas-variety",
-      "attribute": "myrcene",
-      "stated_value": "12 - 30",
+      "source_id": "hopsteiner-vf",
+      "attribute": "linalool",
+      "stated_value": "0.2 - 0.4",
       "stated_unit": "percent",
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0.12,
-        0.3
+        0.002,
+        0.004
       ],
-      "source_label": "MYRCENE"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "barthhaas-variety",
-      "attribute": "humulene",
-      "stated_value": "14.3 - 26.4",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.143,
-        0.264
-      ],
-      "source_label": "HUMULENE"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "barthhaas-variety",
-      "attribute": "caryophyllene",
-      "stated_value": "6.7 - 11",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.067,
-        0.11
-      ],
-      "source_label": "CARYOPHYLLENE"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "barthhaas-variety",
-      "attribute": "farnesene",
-      "stated_value": "up to 6.2",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.062
-      ],
-      "source_label": "FARNESEN"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "crosby-variety",
-      "attribute": "alpha",
-      "stated_value": "10.7 - 15",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.107,
-        0.15
-      ],
-      "source_label": "Alpha"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "crosby-variety",
-      "attribute": "beta",
-      "stated_value": "4 - 6",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.04,
-        0.06
-      ],
-      "source_label": "Beta"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "crosby-variety",
-      "attribute": "total_oil",
-      "stated_value": "1.5 - 2.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        2.5
-      ],
-      "source_label": "Total Oils"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "crosby-variety",
-      "attribute": "myrcene",
-      "stated_value": "12 - 30",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.12,
-        0.3
-      ],
-      "source_label": "Myrcene"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "crosby-variety",
-      "attribute": "caryophyllene",
-      "stated_value": "6.7 - 11",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.067,
-        0.11
-      ],
-      "source_label": "Caryophyllene"
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hga-2017",
-      "attribute": "alpha",
-      "stated_value": "12.0 - 14.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.12,
-        0.14
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hga-2017",
-      "attribute": "beta",
-      "stated_value": "3.0 - 4.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.03,
-        0.04
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "1.7 - 2.7",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.7,
-        2.7
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hga-2017",
-      "attribute": "cohumulone",
-      "stated_value": "29 - 35",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.29,
-        0.35
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hga-2020",
-      "attribute": "alpha",
-      "stated_value": "12.0 - 14.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.12,
-        0.14
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hga-2020",
-      "attribute": "beta",
-      "stated_value": "3.0 - 4.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.03,
-        0.04
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "1.7 - 2.7",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.7,
-        2.7
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hga-2020",
-      "attribute": "cohumulone",
-      "stated_value": "29 - 35",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.29,
-        0.35
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
+      "source_label": "linalool_oil",
+      "unit_inferred": true
     },
     {
       "variety_id": "Chinook",
@@ -1389,18 +1635,6 @@
     {
       "variety_id": "Chinook",
       "source_id": "hopsteiner-vf",
-      "attribute": "total_oil",
-      "stated_value": "1.5 - 2.5",
-      "stated_unit": "unstated",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": null,
-      "source_label": "oils",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "Chinook",
-      "source_id": "hopsteiner-vf",
       "attribute": "cohumulone",
       "stated_value": "29 - 34",
       "stated_unit": "percent",
@@ -1413,35 +1647,83 @@
       "source_label": "cohumulone"
     },
     {
-      "variety_id": "Chinook",
-      "source_id": "hopsteiner-vf",
-      "attribute": "humulene",
-      "stated_value": "0.44",
-      "stated_unit": "fraction",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.44,
-      "source_label": "humulen",
-      "unit_inferred": true
+      "variety_id": "Citra",
+      "source_id": "barthhaas-variety",
+      "attribute": "total_oil",
+      "stated_value": "up to 2.8",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        2.8
+      ],
+      "source_label": "TOTAL OIL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
     },
     {
-      "variety_id": "Chinook",
-      "source_id": "hopsteiner-vf",
-      "attribute": "farnesene",
-      "stated_value": "0.00 - 1.00",
+      "variety_id": "Citra",
+      "source_id": "barthhaas-variety",
+      "attribute": "myrcene",
+      "stated_value": "28.6 - 66",
       "stated_unit": "percent",
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
-        0.01
+        0.286,
+        0.66
       ],
-      "source_label": "farnesen",
-      "unit_inferred": true
+      "source_label": "MYRCENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
     },
     {
       "variety_id": "Citra",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
+      "attribute": "humulene",
+      "stated_value": "7.9 - 13.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.079,
+        0.132
+      ],
+      "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "barthhaas-variety",
+      "attribute": "caryophyllene",
+      "stated_value": "3.7 - 9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.037,
+        0.09
+      ],
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "barthhaas-variety",
+      "attribute": "farnesene",
+      "stated_value": "up to 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.006
+      ],
+      "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "11 - 14.3",
       "stated_unit": "percent",
@@ -1451,11 +1733,12 @@
         0.11,
         0.143
       ],
-      "source_label": "Alpha"
+      "source_label": "ALPHA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
     },
     {
       "variety_id": "Citra",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
       "attribute": "beta",
       "stated_value": "2.7 - 4.5",
       "stated_unit": "percent",
@@ -1465,7 +1748,8 @@
         0.027,
         0.045
       ],
-      "source_label": "Beta"
+      "source_label": "BETA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
     },
     {
       "variety_id": "Citra",
@@ -1479,7 +1763,8 @@
         null,
         2.8
       ],
-      "source_label": "Total Oils"
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/citra"
     },
     {
       "variety_id": "Citra",
@@ -1493,7 +1778,8 @@
         0.29,
         0.66
       ],
-      "source_label": "Myrcene"
+      "source_label": "Myrcene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/citra"
     },
     {
       "variety_id": "Citra",
@@ -1507,7 +1793,8 @@
         0.079,
         0.132
       ],
-      "source_label": "Humulene"
+      "source_label": "Humulene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/citra"
     },
     {
       "variety_id": "Citra",
@@ -1521,7 +1808,53 @@
         0.037,
         0.09
       ],
-      "source_label": "Caryophyllene"
+      "source_label": "Caryophyllene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/citra"
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "crosby-variety",
+      "attribute": "alpha",
+      "stated_value": "11 - 14.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.11,
+        0.143
+      ],
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/citra"
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "crosby-variety",
+      "attribute": "beta",
+      "stated_value": "2.7 - 4.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.027,
+        0.045
+      ],
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/citra"
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "hga-2017",
+      "attribute": "total_oil",
+      "stated_value": "2.2 - 2.8",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        2.2,
+        2.8
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 10
     },
     {
       "variety_id": "Citra",
@@ -1556,21 +1889,6 @@
     {
       "variety_id": "Citra",
       "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "2.2 - 2.8",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2.2,
-        2.8
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 10
-    },
-    {
-      "variety_id": "Citra",
-      "source_id": "hga-2017",
       "attribute": "cohumulone",
       "stated_value": "22 - 24",
       "stated_unit": "percent",
@@ -1582,6 +1900,21 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 10
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "2.2 - 2.8",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        2.2,
+        2.8
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
     },
     {
       "variety_id": "Citra",
@@ -1616,21 +1949,6 @@
     {
       "variety_id": "Citra",
       "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "2.2 - 2.8",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2.2,
-        2.8
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Citra",
-      "source_id": "hga-2020",
       "attribute": "cohumulone",
       "stated_value": "22 - 24",
       "stated_unit": "percent",
@@ -1645,35 +1963,7 @@
     },
     {
       "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "barthhaas-variety",
-      "attribute": "alpha",
-      "stated_value": "2.3 - 6.6",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.023,
-        0.066
-      ],
-      "source_label": "ALPHA-ACIDS"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "barthhaas-variety",
-      "attribute": "beta",
-      "stated_value": "3.3 - 6.5",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.033,
-        0.065
-      ],
-      "source_label": "BETA-ACIDS"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "barthhaas-variety",
+      "source_id": "crosby-variety",
       "attribute": "total_oil",
       "stated_value": "up to 1.5",
       "stated_unit": "ml_per_100g",
@@ -1683,63 +1973,8 @@
         null,
         1.5
       ],
-      "source_label": "TOTAL OIL"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "barthhaas-variety",
-      "attribute": "myrcene",
-      "stated_value": "up to 50.1",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.501
-      ],
-      "source_label": "MYRCENE"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "barthhaas-variety",
-      "attribute": "humulene",
-      "stated_value": "up to 22.7",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.227
-      ],
-      "source_label": "HUMULENE"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "barthhaas-variety",
-      "attribute": "caryophyllene",
-      "stated_value": "up to 6.1",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.061
-      ],
-      "source_label": "CARYOPHYLLENE"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "barthhaas-variety",
-      "attribute": "farnesene",
-      "stated_value": "up to 3.1",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.031
-      ],
-      "source_label": "FARNESEN"
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/hallertaumittelfruh"
     },
     {
       "variety_id": "Hallertau Mittelfrüh",
@@ -1753,7 +1988,8 @@
         0.023,
         0.066
       ],
-      "source_label": "Alpha"
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/hallertaumittelfruh"
     },
     {
       "variety_id": "Hallertau Mittelfrüh",
@@ -1767,49 +2003,8 @@
         0.033,
         0.065
       ],
-      "source_label": "Beta"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "crosby-variety",
-      "attribute": "total_oil",
-      "stated_value": "up to 1.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        1.5
-      ],
-      "source_label": "Total Oils"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "hopsteiner-vf",
-      "attribute": "alpha",
-      "stated_value": "3 - 5.5",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.03,
-        0.055
-      ],
-      "source_label": "acid_alpha_low/high"
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "hopsteiner-vf",
-      "attribute": "beta",
-      "stated_value": "3.0 - 5.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.03,
-        0.05
-      ],
-      "source_label": "acid_beta"
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/hallertaumittelfruh"
     },
     {
       "variety_id": "Hallertau Mittelfrüh",
@@ -1822,20 +2017,6 @@
       "normalised": null,
       "source_label": "oils",
       "unit_inferred": true
-    },
-    {
-      "variety_id": "Hallertau Mittelfrüh",
-      "source_id": "hopsteiner-vf",
-      "attribute": "cohumulone",
-      "stated_value": "18 - 28",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.18,
-        0.28
-      ],
-      "source_label": "cohumulone"
     },
     {
       "variety_id": "Hallertau Mittelfrüh",
@@ -1868,36 +2049,65 @@
       "unit_inferred": true
     },
     {
-      "variety_id": "Magnum",
-      "source_id": "barthhaas-variety",
+      "variety_id": "Hallertau Mittelfrüh",
+      "source_id": "hopsteiner-vf",
+      "attribute": "linalool",
+      "stated_value": "0.7 - 1.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.007,
+        0.011
+      ],
+      "source_label": "linalool_oil",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Hallertau Mittelfrüh",
+      "source_id": "hopsteiner-vf",
       "attribute": "alpha",
-      "stated_value": "9 - 18.2",
+      "stated_value": "3 - 5.5",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0.09,
-        0.182
+        0.03,
+        0.055
       ],
-      "source_label": "ALPHA-ACIDS"
+      "source_label": "acid_alpha_low/high"
     },
     {
-      "variety_id": "Magnum",
-      "source_id": "barthhaas-variety",
+      "variety_id": "Hallertau Mittelfrüh",
+      "source_id": "hopsteiner-vf",
       "attribute": "beta",
-      "stated_value": "4.1 - 7.1",
+      "stated_value": "3.0 - 5.0",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0.041,
-        0.071
+        0.03,
+        0.05
       ],
-      "source_label": "BETA-ACIDS"
+      "source_label": "acid_beta"
+    },
+    {
+      "variety_id": "Hallertau Mittelfrüh",
+      "source_id": "hopsteiner-vf",
+      "attribute": "cohumulone",
+      "stated_value": "18 - 28",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.18,
+        0.28
+      ],
+      "source_label": "cohumulone"
     },
     {
       "variety_id": "Magnum",
-      "source_id": "barthhaas-variety",
+      "source_id": "crosby-variety",
       "attribute": "total_oil",
       "stated_value": "1.5 - 3.9",
       "stated_unit": "ml_per_100g",
@@ -1907,49 +2117,8 @@
         1.5,
         3.9
       ],
-      "source_label": "TOTAL OIL"
-    },
-    {
-      "variety_id": "Magnum",
-      "source_id": "barthhaas-variety",
-      "attribute": "myrcene",
-      "stated_value": "up to 45.9",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.459
-      ],
-      "source_label": "MYRCENE"
-    },
-    {
-      "variety_id": "Magnum",
-      "source_id": "barthhaas-variety",
-      "attribute": "humulene",
-      "stated_value": "up to 27.4",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.274
-      ],
-      "source_label": "HUMULENE"
-    },
-    {
-      "variety_id": "Magnum",
-      "source_id": "barthhaas-variety",
-      "attribute": "caryophyllene",
-      "stated_value": "up to 7.6",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "max",
-      "normalised": [
-        null,
-        0.076
-      ],
-      "source_label": "CARYOPHYLLENE"
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/magnum"
     },
     {
       "variety_id": "Magnum",
@@ -1963,7 +2132,8 @@
         0.09,
         0.18
       ],
-      "source_label": "Alpha"
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/magnum"
     },
     {
       "variety_id": "Magnum",
@@ -1977,21 +2147,23 @@
         0.04,
         0.07
       ],
-      "source_label": "Beta"
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/magnum"
     },
     {
       "variety_id": "Magnum",
-      "source_id": "crosby-variety",
+      "source_id": "hga-2017",
       "attribute": "total_oil",
-      "stated_value": "1.5 - 3.9",
+      "stated_value": "1.9 - 2.3",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1.5,
-        3.9
+        1.9,
+        2.3
       ],
-      "source_label": "Total Oils"
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 11
     },
     {
       "variety_id": "Magnum",
@@ -2026,21 +2198,6 @@
     {
       "variety_id": "Magnum",
       "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "1.9 - 2.3",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.9,
-        2.3
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 11
-    },
-    {
-      "variety_id": "Magnum",
-      "source_id": "hga-2017",
       "attribute": "cohumulone",
       "stated_value": "24 - 28",
       "stated_unit": "percent",
@@ -2052,6 +2209,21 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
+    },
+    {
+      "variety_id": "Magnum",
+      "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "2.0 - 3.0",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        2,
+        3
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
     },
     {
       "variety_id": "Magnum",
@@ -2086,21 +2258,6 @@
     {
       "variety_id": "Magnum",
       "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "2.0 - 3.0",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2,
-        3
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Magnum",
-      "source_id": "hga-2020",
       "attribute": "cohumulone",
       "stated_value": "23 - 28",
       "stated_unit": "percent",
@@ -2116,34 +2273,6 @@
     {
       "variety_id": "Magnum",
       "source_id": "hopsteiner-vf",
-      "attribute": "alpha",
-      "stated_value": "11 - 16",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.11,
-        0.16
-      ],
-      "source_label": "acid_alpha_low/high"
-    },
-    {
-      "variety_id": "Magnum",
-      "source_id": "hopsteiner-vf",
-      "attribute": "beta",
-      "stated_value": "5.0 - 7.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.05,
-        0.07
-      ],
-      "source_label": "acid_beta"
-    },
-    {
-      "variety_id": "Magnum",
-      "source_id": "hopsteiner-vf",
       "attribute": "total_oil",
       "stated_value": "1.9 - 2.8",
       "stated_unit": "unstated",
@@ -2152,20 +2281,6 @@
       "normalised": null,
       "source_label": "oils",
       "unit_inferred": true
-    },
-    {
-      "variety_id": "Magnum",
-      "source_id": "hopsteiner-vf",
-      "attribute": "cohumulone",
-      "stated_value": "21 - 29",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.21,
-        0.29
-      ],
-      "source_label": "cohumulone"
     },
     {
       "variety_id": "Magnum",
@@ -2198,32 +2313,166 @@
       "unit_inferred": true
     },
     {
-      "variety_id": "Mosaic",
-      "source_id": "crosby-variety",
+      "variety_id": "Magnum",
+      "source_id": "hopsteiner-vf",
+      "attribute": "linalool",
+      "stated_value": "0.2 - 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.003
+      ],
+      "source_label": "linalool_oil",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "Magnum",
+      "source_id": "hopsteiner-vf",
       "attribute": "alpha",
-      "stated_value": "10 - 15",
+      "stated_value": "11 - 16",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0.1,
-        0.15
+        0.11,
+        0.16
       ],
-      "source_label": "Alpha"
+      "source_label": "acid_alpha_low/high"
+    },
+    {
+      "variety_id": "Magnum",
+      "source_id": "hopsteiner-vf",
+      "attribute": "beta",
+      "stated_value": "5.0 - 7.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.05,
+        0.07
+      ],
+      "source_label": "acid_beta"
+    },
+    {
+      "variety_id": "Magnum",
+      "source_id": "hopsteiner-vf",
+      "attribute": "cohumulone",
+      "stated_value": "21 - 29",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.21,
+        0.29
+      ],
+      "source_label": "cohumulone"
     },
     {
       "variety_id": "Mosaic",
-      "source_id": "crosby-variety",
-      "attribute": "beta",
-      "stated_value": "3 - 4.5",
+      "source_id": "barthhaas-variety",
+      "attribute": "total_oil",
+      "stated_value": "up to 3",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        3
+      ],
+      "source_label": "TOTAL OIL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "barthhaas-variety",
+      "attribute": "myrcene",
+      "stated_value": "24.5 - 56.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.245,
+        0.567
+      ],
+      "source_label": "MYRCENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "barthhaas-variety",
+      "attribute": "humulene",
+      "stated_value": "8.8 - 16",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.088,
+        0.16
+      ],
+      "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "barthhaas-variety",
+      "attribute": "caryophyllene",
+      "stated_value": "3.8 - 8.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.038,
+        0.088
+      ],
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "barthhaas-variety",
+      "attribute": "farnesene",
+      "stated_value": "up to 0.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.005
+      ],
+      "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "barthhaas-variety",
+      "attribute": "alpha",
+      "stated_value": "10.4 - 14",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0.03,
-        0.045
+        0.104,
+        0.14
       ],
-      "source_label": "Beta"
+      "source_label": "ALPHA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "barthhaas-variety",
+      "attribute": "beta",
+      "stated_value": "2.8 - 4",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.028,
+        0.04
+      ],
+      "source_label": "BETA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
     },
     {
       "variety_id": "Mosaic",
@@ -2237,7 +2486,8 @@
         0.5,
         3
       ],
-      "source_label": "Total Oils"
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/mosaic"
     },
     {
       "variety_id": "Mosaic",
@@ -2251,7 +2501,8 @@
         0.45,
         0.65
       ],
-      "source_label": "Myrcene"
+      "source_label": "Myrcene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/mosaic"
     },
     {
       "variety_id": "Mosaic",
@@ -2265,7 +2516,8 @@
         0.09,
         0.16
       ],
-      "source_label": "Humulene"
+      "source_label": "Humulene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/mosaic"
     },
     {
       "variety_id": "Mosaic",
@@ -2279,7 +2531,53 @@
         0.03,
         0.08
       ],
-      "source_label": "Caryophyllene"
+      "source_label": "Caryophyllene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/mosaic"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "crosby-variety",
+      "attribute": "alpha",
+      "stated_value": "10 - 15",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.1,
+        0.15
+      ],
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/mosaic"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "crosby-variety",
+      "attribute": "beta",
+      "stated_value": "3 - 4.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.045
+      ],
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/mosaic"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "hga-2017",
+      "attribute": "total_oil",
+      "stated_value": "1.0 - 1.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1,
+        1.5
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 11
     },
     {
       "variety_id": "Mosaic",
@@ -2314,21 +2612,6 @@
     {
       "variety_id": "Mosaic",
       "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "1.0 - 1.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1,
-        1.5
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 11
-    },
-    {
-      "variety_id": "Mosaic",
-      "source_id": "hga-2017",
       "attribute": "cohumulone",
       "stated_value": "24 - 26",
       "stated_unit": "percent",
@@ -2340,6 +2623,21 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "1.0 - 1.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1,
+        1.5
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
     },
     {
       "variety_id": "Mosaic",
@@ -2374,21 +2672,6 @@
     {
       "variety_id": "Mosaic",
       "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "1.0 - 1.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1,
-        1.5
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Mosaic",
-      "source_id": "hga-2020",
       "attribute": "cohumulone",
       "stated_value": "24 - 26",
       "stated_unit": "percent",
@@ -2400,34 +2683,6 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
-    },
-    {
-      "variety_id": "Saaz",
-      "source_id": "barthhaas-variety",
-      "attribute": "alpha",
-      "stated_value": "1.4 - 7.5",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.014,
-        0.075
-      ],
-      "source_label": "ALPHA-ACIDS"
-    },
-    {
-      "variety_id": "Saaz",
-      "source_id": "barthhaas-variety",
-      "attribute": "beta",
-      "stated_value": "2.7 - 5.5",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.027,
-        0.055
-      ],
-      "source_label": "BETA-ACIDS"
     },
     {
       "variety_id": "Saaz",
@@ -2441,7 +2696,8 @@
         0.2,
         1
       ],
-      "source_label": "TOTAL OIL"
+      "source_label": "TOTAL OIL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
     },
     {
       "variety_id": "Saaz",
@@ -2455,7 +2711,8 @@
         null,
         0.337
       ],
-      "source_label": "MYRCENE"
+      "source_label": "MYRCENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
     },
     {
       "variety_id": "Saaz",
@@ -2469,7 +2726,8 @@
         null,
         0.316
       ],
-      "source_label": "HUMULENE"
+      "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
     },
     {
       "variety_id": "Saaz",
@@ -2483,7 +2741,8 @@
         null,
         0.087
       ],
-      "source_label": "CARYOPHYLLENE"
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
     },
     {
       "variety_id": "Saaz",
@@ -2497,11 +2756,12 @@
         null,
         0.132
       ],
-      "source_label": "FARNESEN"
+      "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
     },
     {
       "variety_id": "Saaz",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "1.4 - 7.5",
       "stated_unit": "percent",
@@ -2511,35 +2771,38 @@
         0.014,
         0.075
       ],
-      "source_label": "Alpha"
+      "source_label": "ALPHA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
     },
     {
       "variety_id": "Saaz",
-      "source_id": "crosby-variety",
+      "source_id": "barthhaas-variety",
       "attribute": "beta",
-      "stated_value": "2.5 - 5.5",
+      "stated_value": "2.7 - 5.5",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0.025,
+        0.027,
         0.055
       ],
-      "source_label": "Beta"
+      "source_label": "BETA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
     },
     {
       "variety_id": "Saaz",
-      "source_id": "crosby-variety",
+      "source_id": "hga-2017",
       "attribute": "total_oil",
-      "stated_value": "0.2 - 1",
+      "stated_value": "0.5 - 1.0",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0.2,
+        0.5,
         1
       ],
-      "source_label": "Total Oils"
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 11
     },
     {
       "variety_id": "Saaz",
@@ -2567,21 +2830,6 @@
       "normalised": [
         0.03,
         0.045
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 11
-    },
-    {
-      "variety_id": "Saaz",
-      "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "0.5 - 1.0",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.5,
-        1
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -2604,6 +2852,21 @@
     {
       "variety_id": "Saaz",
       "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "0.5 - 1.0",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.5,
+        1
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Saaz",
+      "source_id": "hga-2020",
       "attribute": "alpha",
       "stated_value": "3.0 - 4.5",
       "stated_unit": "percent",
@@ -2627,21 +2890,6 @@
       "normalised": [
         0.03,
         0.045
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Saaz",
-      "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "0.5 - 1.0",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.5,
-        1
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -2660,34 +2908,6 @@
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
-    },
-    {
-      "variety_id": "Saaz",
-      "source_id": "hopsteiner-vf",
-      "attribute": "alpha",
-      "stated_value": "2.8 - 3.5",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.028,
-        0.035
-      ],
-      "source_label": "acid_alpha_low/high"
-    },
-    {
-      "variety_id": "Saaz",
-      "source_id": "hopsteiner-vf",
-      "attribute": "beta",
-      "stated_value": "3.0 - 5.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.03,
-        0.05
-      ],
-      "source_label": "acid_beta"
     },
     {
       "variety_id": "Saaz",
@@ -2700,20 +2920,6 @@
       "normalised": null,
       "source_label": "oils",
       "unit_inferred": true
-    },
-    {
-      "variety_id": "Saaz",
-      "source_id": "hopsteiner-vf",
-      "attribute": "cohumulone",
-      "stated_value": "24 - 26",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.24,
-        0.26
-      ],
-      "source_label": "cohumulone"
     },
     {
       "variety_id": "Saaz",
@@ -2746,32 +2952,61 @@
       "unit_inferred": true
     },
     {
-      "variety_id": "Simcoe",
-      "source_id": "crosby-variety",
-      "attribute": "alpha",
-      "stated_value": "10 - 16",
+      "variety_id": "Saaz",
+      "source_id": "hopsteiner-vf",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 0.5",
       "stated_unit": "percent",
-      "stated_basis": "of hop mass",
+      "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0.1,
-        0.16
+        0.003,
+        0.005
       ],
-      "source_label": "Alpha"
+      "source_label": "linalool_oil",
+      "unit_inferred": true
     },
     {
-      "variety_id": "Simcoe",
-      "source_id": "crosby-variety",
-      "attribute": "beta",
-      "stated_value": "3.5 - 5.5",
+      "variety_id": "Saaz",
+      "source_id": "hopsteiner-vf",
+      "attribute": "alpha",
+      "stated_value": "2.8 - 3.5",
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0.035,
-        0.055
+        0.028,
+        0.035
       ],
-      "source_label": "Beta"
+      "source_label": "acid_alpha_low/high"
+    },
+    {
+      "variety_id": "Saaz",
+      "source_id": "hopsteiner-vf",
+      "attribute": "beta",
+      "stated_value": "3.0 - 5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.05
+      ],
+      "source_label": "acid_beta"
+    },
+    {
+      "variety_id": "Saaz",
+      "source_id": "hopsteiner-vf",
+      "attribute": "cohumulone",
+      "stated_value": "24 - 26",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.24,
+        0.26
+      ],
+      "source_label": "cohumulone"
     },
     {
       "variety_id": "Simcoe",
@@ -2785,7 +3020,8 @@
         0.5,
         3
       ],
-      "source_label": "Total Oils"
+      "source_label": "Total Oils",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/simcoe"
     },
     {
       "variety_id": "Simcoe",
@@ -2799,7 +3035,8 @@
         0.4,
         0.6
       ],
-      "source_label": "Myrcene"
+      "source_label": "Myrcene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/simcoe"
     },
     {
       "variety_id": "Simcoe",
@@ -2813,7 +3050,8 @@
         0.12,
         0.22
       ],
-      "source_label": "Humulene"
+      "source_label": "Humulene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/simcoe"
     },
     {
       "variety_id": "Simcoe",
@@ -2827,7 +3065,8 @@
         0.06,
         0.12
       ],
-      "source_label": "Caryophyllene"
+      "source_label": "Caryophyllene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/simcoe"
     },
     {
       "variety_id": "Simcoe",
@@ -2841,7 +3080,53 @@
         0.001,
         0.01
       ],
-      "source_label": "Farnesene"
+      "source_label": "Farnesene",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/simcoe"
+    },
+    {
+      "variety_id": "Simcoe",
+      "source_id": "crosby-variety",
+      "attribute": "alpha",
+      "stated_value": "10 - 16",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.1,
+        0.16
+      ],
+      "source_label": "Alpha",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/simcoe"
+    },
+    {
+      "variety_id": "Simcoe",
+      "source_id": "crosby-variety",
+      "attribute": "beta",
+      "stated_value": "3.5 - 5.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.035,
+        0.055
+      ],
+      "source_label": "Beta",
+      "page_url": "https://www.crosbyhops.com/hops/varieties/simcoe"
+    },
+    {
+      "variety_id": "Simcoe",
+      "source_id": "hga-2017",
+      "attribute": "total_oil",
+      "stated_value": "2.0 - 2.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        2,
+        2.5
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 11
     },
     {
       "variety_id": "Simcoe",
@@ -2869,21 +3154,6 @@
       "normalised": [
         0.04,
         0.05
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 11
-    },
-    {
-      "variety_id": "Simcoe",
-      "source_id": "hga-2017",
-      "attribute": "total_oil",
-      "stated_value": "2.0 - 2.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2,
-        2.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -2906,6 +3176,21 @@
     {
       "variety_id": "Simcoe",
       "source_id": "hga-2020",
+      "attribute": "total_oil",
+      "stated_value": "2.0 - 2.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        2,
+        2.5
+      ],
+      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
+      "page": 6
+    },
+    {
+      "variety_id": "Simcoe",
+      "source_id": "hga-2020",
       "attribute": "alpha",
       "stated_value": "12.0 - 14.0",
       "stated_unit": "percent",
@@ -2929,21 +3214,6 @@
       "normalised": [
         0.04,
         0.05
-      ],
-      "source_label": "ALPHA/BETA, COHUM, OILS* columns",
-      "page": 6
-    },
-    {
-      "variety_id": "Simcoe",
-      "source_id": "hga-2020",
-      "attribute": "total_oil",
-      "stated_value": "2.0 - 2.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2,
-        2.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6

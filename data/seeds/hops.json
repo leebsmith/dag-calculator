@@ -265,7 +265,7 @@
         0.056
       ]
     },
-    "total_oil_ml_per_100g": 50.65,
+    "total_oil_ml_per_100g": 1.3,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -423,7 +423,7 @@
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 50.9,
+    "total_oil_ml_per_100g": 2,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -604,7 +604,7 @@
         0.051
       ]
     },
-    "total_oil_ml_per_100g": 50.235,
+    "total_oil_ml_per_100g": 0.91,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -989,7 +989,7 @@
         0.08
       ]
     },
-    "total_oil_ml_per_100g": 50.2,
+    "total_oil_ml_per_100g": 0.7,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -1183,7 +1183,7 @@
         0.04
       ]
     },
-    "total_oil_ml_per_100g": 50.65,
+    "total_oil_ml_per_100g": 1.45,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -1251,7 +1251,7 @@
         0.049
       ]
     },
-    "total_oil_ml_per_100g": 50.725,
+    "total_oil_ml_per_100g": 1.45,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -1541,7 +1541,7 @@
         0.04
       ]
     },
-    "total_oil_ml_per_100g": 50.65,
+    "total_oil_ml_per_100g": 1.45,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -1784,7 +1784,7 @@
         0.074
       ]
     },
-    "total_oil_ml_per_100g": 50.3,
+    "total_oil_ml_per_100g": 0.6,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -1848,7 +1848,7 @@
         0.08
       ]
     },
-    "total_oil_ml_per_100g": 51.085,
+    "total_oil_ml_per_100g": 2.17,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -2093,7 +2093,7 @@
         0.034
       ]
     },
-    "total_oil_ml_per_100g": 50.3,
+    "total_oil_ml_per_100g": 0.8,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -2162,7 +2162,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 50.405,
+    "total_oil_ml_per_100g": 2.365,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -2231,7 +2231,7 @@
         0.035
       ]
     },
-    "total_oil_ml_per_100g": 50.325,
+    "total_oil_ml_per_100g": 0.65,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -2298,7 +2298,7 @@
         0.048
       ]
     },
-    "total_oil_ml_per_100g": 51.005,
+    "total_oil_ml_per_100g": 2.01,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -2565,7 +2565,7 @@
         0.07
       ]
     },
-    "total_oil_ml_per_100g": 50.325,
+    "total_oil_ml_per_100g": 0.65,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -2635,7 +2635,7 @@
         0.033
       ]
     },
-    "total_oil_ml_per_100g": 50.55,
+    "total_oil_ml_per_100g": 1.35,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -2703,7 +2703,7 @@
         0.03
       ]
     },
-    "total_oil_ml_per_100g": 50.45,
+    "total_oil_ml_per_100g": 0.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -3052,7 +3052,7 @@
         0.049
       ]
     },
-    "total_oil_ml_per_100g": 51.075,
+    "total_oil_ml_per_100g": 2.15,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -3121,7 +3121,7 @@
         0.091
       ]
     },
-    "total_oil_ml_per_100g": 50.57,
+    "total_oil_ml_per_100g": 1.92,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -3218,7 +3218,7 @@
         0.078
       ]
     },
-    "total_oil_ml_per_100g": 50.21,
+    "total_oil_ml_per_100g": 0.905,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -3287,7 +3287,7 @@
         0.043
       ]
     },
-    "total_oil_ml_per_100g": 50.95,
+    "total_oil_ml_per_100g": 1.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -3560,7 +3560,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 55.6,
+    "total_oil_ml_per_100g": 11.2,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -4223,7 +4223,7 @@
         0.024
       ]
     },
-    "total_oil_ml_per_100g": 50.525,
+    "total_oil_ml_per_100g": 1.05,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -4533,7 +4533,7 @@
         0.028
       ]
     },
-    "total_oil_ml_per_100g": 50.4,
+    "total_oil_ml_per_100g": 0.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -4979,7 +4979,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 51.2,
+    "total_oil_ml_per_100g": 3.15,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -5046,7 +5046,7 @@
         0.025
       ]
     },
-    "total_oil_ml_per_100g": 50.25,
+    "total_oil_ml_per_100g": 0.5,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -5264,7 +5264,7 @@
         0.085
       ]
     },
-    "total_oil_ml_per_100g": 50.65,
+    "total_oil_ml_per_100g": 1.45,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -5331,7 +5331,7 @@
         0.028
       ]
     },
-    "total_oil_ml_per_100g": 50.4,
+    "total_oil_ml_per_100g": 0.8,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -5397,7 +5397,7 @@
         0.03
       ]
     },
-    "total_oil_ml_per_100g": 50.425,
+    "total_oil_ml_per_100g": 0.85,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -5464,7 +5464,7 @@
         0.03
       ]
     },
-    "total_oil_ml_per_100g": 50.75,
+    "total_oil_ml_per_100g": 1.5,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -6172,7 +6172,7 @@
         0.053
       ]
     },
-    "total_oil_ml_per_100g": 50.4,
+    "total_oil_ml_per_100g": 1.05,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -6409,10 +6409,10 @@
         0.043
       ]
     },
-    "total_oil_ml_per_100g": 50.45,
+    "total_oil_ml_per_100g": 0.9,
     "oil_provenance": {
       "kind": "aggregator",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
         "hopslist"
@@ -6422,7 +6422,7 @@
       "url": "https://www.hopslist.com/hops/dual-purpose-hops/fantasia/",
       "range": [
         0.9,
-        100
+        0.9
       ]
     }
   },
@@ -7117,7 +7117,7 @@
         0.046
       ]
     },
-    "total_oil_ml_per_100g": 50.315,
+    "total_oil_ml_per_100g": 0.63,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -7284,7 +7284,7 @@
         0.07
       ]
     },
-    "total_oil_ml_per_100g": 50.23,
+    "total_oil_ml_per_100g": 0.795,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -7397,7 +7397,7 @@
         0.035
       ]
     },
-    "total_oil_ml_per_100g": 50.49,
+    "total_oil_ml_per_100g": 0.98,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -7466,7 +7466,7 @@
         0.085
       ]
     },
-    "total_oil_ml_per_100g": 50.45,
+    "total_oil_ml_per_100g": 1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -7535,7 +7535,7 @@
         0.055
       ]
     },
-    "total_oil_ml_per_100g": 50.3,
+    "total_oil_ml_per_100g": 0.8,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -7765,7 +7765,7 @@
         0.07
       ]
     },
-    "total_oil_ml_per_100g": 50.89,
+    "total_oil_ml_per_100g": 1.78,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -8480,7 +8480,7 @@
         0.07
       ]
     },
-    "total_oil_ml_per_100g": 50.3,
+    "total_oil_ml_per_100g": 0.8,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -8615,7 +8615,7 @@
         0.055
       ]
     },
-    "total_oil_ml_per_100g": 50.5,
+    "total_oil_ml_per_100g": 1.45,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -8832,7 +8832,7 @@
         0.03
       ]
     },
-    "total_oil_ml_per_100g": 50.3,
+    "total_oil_ml_per_100g": 0.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -9658,7 +9658,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 50.3,
+    "total_oil_ml_per_100g": 0.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -9822,7 +9822,7 @@
         0.033
       ]
     },
-    "total_oil_ml_per_100g": 50.695,
+    "total_oil_ml_per_100g": 1.39,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -9889,7 +9889,7 @@
         0.064
       ]
     },
-    "total_oil_ml_per_100g": 50.59,
+    "total_oil_ml_per_100g": 1.18,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -9956,7 +9956,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 50.675,
+    "total_oil_ml_per_100g": 1.35,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -10056,7 +10056,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 50.06,
+    "total_oil_ml_per_100g": 0.56,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -10762,7 +10762,7 @@
         0.04
       ]
     },
-    "total_oil_ml_per_100g": 50.25,
+    "total_oil_ml_per_100g": 0.85,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -11343,7 +11343,7 @@
         0.028
       ]
     },
-    "total_oil_ml_per_100g": 50.4,
+    "total_oil_ml_per_100g": 0.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -11465,7 +11465,7 @@
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 51,
+    "total_oil_ml_per_100g": 3,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -11600,7 +11600,7 @@
         0.073
       ]
     },
-    "total_oil_ml_per_100g": 51.3,
+    "total_oil_ml_per_100g": 2.8,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -12103,7 +12103,7 @@
         0.075
       ]
     },
-    "total_oil_ml_per_100g": 50.5,
+    "total_oil_ml_per_100g": 1.35,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -12641,7 +12641,7 @@
         0.065
       ]
     },
-    "total_oil_ml_per_100g": 50.6,
+    "total_oil_ml_per_100g": 1.85,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -13066,7 +13066,7 @@
         0.04
       ]
     },
-    "total_oil_ml_per_100g": 50.86,
+    "total_oil_ml_per_100g": 1.72,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -13232,7 +13232,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 50.75,
+    "total_oil_ml_per_100g": 1.5,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -13299,7 +13299,7 @@
         0.0573
       ]
     },
-    "total_oil_ml_per_100g": 50.9,
+    "total_oil_ml_per_100g": 1.95,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -13428,7 +13428,7 @@
         0.09
       ]
     },
-    "total_oil_ml_per_100g": 50.6,
+    "total_oil_ml_per_100g": 1.3,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -13497,7 +13497,7 @@
         0.08
       ]
     },
-    "total_oil_ml_per_100g": 50.7,
+    "total_oil_ml_per_100g": 1.4,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -13641,7 +13641,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 50.5,
+    "total_oil_ml_per_100g": 1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -14061,7 +14061,7 @@
         0.055
       ]
     },
-    "total_oil_ml_per_100g": 50.6,
+    "total_oil_ml_per_100g": 2.1,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -14200,7 +14200,7 @@
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 50.4,
+    "total_oil_ml_per_100g": 1.1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -14324,7 +14324,7 @@
         0.04
       ]
     },
-    "total_oil_ml_per_100g": 50.5,
+    "total_oil_ml_per_100g": 1.4,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -14463,7 +14463,7 @@
         0.031
       ]
     },
-    "total_oil_ml_per_100g": 50.17,
+    "total_oil_ml_per_100g": 0.34,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -14604,7 +14604,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 50.605,
+    "total_oil_ml_per_100g": 1.21,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -14869,7 +14869,7 @@
         0.08
       ]
     },
-    "total_oil_ml_per_100g": 50.91,
+    "total_oil_ml_per_100g": 1.82,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -15513,7 +15513,7 @@
         0.09
       ]
     },
-    "total_oil_ml_per_100g": 50.75,
+    "total_oil_ml_per_100g": 2.15,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -15580,7 +15580,7 @@
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 50.475,
+    "total_oil_ml_per_100g": 0.95,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -15677,7 +15677,7 @@
         0.03
       ]
     },
-    "total_oil_ml_per_100g": 50.205,
+    "total_oil_ml_per_100g": 0.41,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -15744,7 +15744,7 @@
         0.061
       ]
     },
-    "total_oil_ml_per_100g": 50.21,
+    "total_oil_ml_per_100g": 0.7,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -16057,7 +16057,7 @@
         0.052
       ]
     },
-    "total_oil_ml_per_100g": 50.19,
+    "total_oil_ml_per_100g": 0.76,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -16304,7 +16304,7 @@
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 50.2,
+    "total_oil_ml_per_100g": 0.95,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -16373,7 +16373,7 @@
         0.07
       ]
     },
-    "total_oil_ml_per_100g": 50.795,
+    "total_oil_ml_per_100g": 1.59,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -16499,7 +16499,7 @@
         0.054
       ]
     },
-    "total_oil_ml_per_100g": 50.35,
+    "total_oil_ml_per_100g": 0.7,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -16568,7 +16568,7 @@
         0.052
       ]
     },
-    "total_oil_ml_per_100g": 50.8,
+    "total_oil_ml_per_100g": 1.6,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -16987,7 +16987,7 @@
         0.085
       ]
     },
-    "total_oil_ml_per_100g": 50.38,
+    "total_oil_ml_per_100g": 1.24,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -17284,7 +17284,7 @@
         0.03
       ]
     },
-    "total_oil_ml_per_100g": 50.25,
+    "total_oil_ml_per_100g": 0.75,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -17381,7 +17381,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 51.1,
+    "total_oil_ml_per_100g": 2.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -17518,7 +17518,7 @@
         0.061
       ]
     },
-    "total_oil_ml_per_100g": 50.7,
+    "total_oil_ml_per_100g": 1.7,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -17731,7 +17731,7 @@
         0.025
       ]
     },
-    "total_oil_ml_per_100g": 50.4,
+    "total_oil_ml_per_100g": 1.05,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -17798,7 +17798,7 @@
         0.031
       ]
     },
-    "total_oil_ml_per_100g": 50.675,
+    "total_oil_ml_per_100g": 1.35,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -17932,7 +17932,7 @@
         0.069
       ]
     },
-    "total_oil_ml_per_100g": 51.05,
+    "total_oil_ml_per_100g": 2.35,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -18036,7 +18036,7 @@
         0.032
       ]
     },
-    "total_oil_ml_per_100g": 50.2,
+    "total_oil_ml_per_100g": 0.5,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -18198,7 +18198,7 @@
         0.046
       ]
     },
-    "total_oil_ml_per_100g": 50.5,
+    "total_oil_ml_per_100g": 1.2,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -18376,7 +18376,7 @@
         0.036
       ]
     },
-    "total_oil_ml_per_100g": 50.36,
+    "total_oil_ml_per_100g": 0.72,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -18610,7 +18610,7 @@
         0.055
       ]
     },
-    "total_oil_ml_per_100g": 50.245,
+    "total_oil_ml_per_100g": 0.61,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -18892,7 +18892,7 @@
         0.115
       ]
     },
-    "total_oil_ml_per_100g": 50.75,
+    "total_oil_ml_per_100g": 1.5,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -19057,7 +19057,7 @@
         0.029
       ]
     },
-    "total_oil_ml_per_100g": 50.325,
+    "total_oil_ml_per_100g": 0.65,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -19222,7 +19222,7 @@
         0.06
       ]
     },
-    "total_oil_ml_per_100g": 50.53,
+    "total_oil_ml_per_100g": 1.06,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -20002,7 +20002,7 @@
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 50.58,
+    "total_oil_ml_per_100g": 1.16,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -20230,7 +20230,7 @@
         0.047
       ]
     },
-    "total_oil_ml_per_100g": 50.3,
+    "total_oil_ml_per_100g": 1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -20445,7 +20445,7 @@
         0.085
       ]
     },
-    "total_oil_ml_per_100g": 50.5,
+    "total_oil_ml_per_100g": 1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -20592,7 +20592,7 @@
         0.025
       ]
     },
-    "total_oil_ml_per_100g": 50.4,
+    "total_oil_ml_per_100g": 1.01,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -20797,7 +20797,7 @@
         0.061
       ]
     },
-    "total_oil_ml_per_100g": 50.12,
+    "total_oil_ml_per_100g": 0.57,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -20866,7 +20866,7 @@
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 50.95,
+    "total_oil_ml_per_100g": 2.1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -20963,7 +20963,7 @@
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 50.85,
+    "total_oil_ml_per_100g": 2.05,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -21176,7 +21176,7 @@
         0.03
       ]
     },
-    "total_oil_ml_per_100g": 50.88,
+    "total_oil_ml_per_100g": 1.76,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -21413,7 +21413,7 @@
         0.062
       ]
     },
-    "total_oil_ml_per_100g": 50.35,
+    "total_oil_ml_per_100g": 0.95,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",

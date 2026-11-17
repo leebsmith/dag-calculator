@@ -382,7 +382,19 @@ what predicted it: published widely enough to exist for 95 varieties, but by a
 single source for 87 of them, because the Haas sheets print an em dash where
 BarthHaas prints a value.
 
-### 9.2 A printed zero is not a measurement
+### 9.2 A cell that prints its unit leaked the unit into the number
+
+`hopslist` writes the unit inside the value cell — `1.1 mL/100g` — and the number
+scanner read the `100` from the denominator as a measurement. Total oil came out
+as `[1.1, 100]`, the midpoint of which is **50.6 mL/100 g**: 95 of 224 oil figures
+were inflated by roughly 50, and a hop that carries 1.1 looked like it carried 50.
+
+The parser now strips `ml/100g` and `mls/100 grams` before reading numbers, and
+the source guard fails on any total-oil observation above 20 mL/100 g. The
+running fix is the reason the shapes above are stated as "printed value" — the
+unit belongs to the cell's metadata, never to its number.
+
+### 9.3 A printed zero is not a measurement
 
 61 observations state a hard zero, 60 of them from Hopsteiner. **18 of those
 contradict a non-zero value from another source** for the same variety and
@@ -401,7 +413,7 @@ synthesis and recorded in the ledger**; a hard zero that no one contradicts is
 kept as a point. This is the same principle as "absence is not zero", applied to
 a source that spells absence as a number.
 
-### 9.3 The ledger
+### 9.4 The ledger
 
 The union envelope and the source values for every field are computed; the
 standing disagreements worth naming:

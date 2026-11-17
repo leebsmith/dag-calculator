@@ -259,17 +259,48 @@
     "Zythos"
   ],
   "sources": {
-    "hopsteiner-vf": {
-      "id": "hopsteiner-vf",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
-      "sha256": "e79fa170fc0a460e205596da95269ab6a22514d330363f1696908b7d1ba5d25f",
-      "varieties": 100
-    },
-    "crosby-variety": {
-      "id": "crosby-variety",
-      "url": "https://www.crosbyhops.com/hops/varieties/",
-      "sha256": "242b1a824ca980923a8dcf3c730d7b76bfc212eea7c34b79215f38c7f201f48e",
-      "varieties": 55
+    "barthhaas-sheet": {
+      "id": "barthhaas-sheet",
+      "url": "https://hops.com.au/hops/",
+      "sha256": [
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Hallertauer-Magnum-Data-Sheet.pdf",
+          "sha256": "57ddcba2931590ce6b3e1fcc24f84fe40355fba61d6a9499a6a79ff3e2971180"
+        },
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Hallertauer-Tradition-Data-Sheet.pdf",
+          "sha256": "593880e2459c76a67c2f582ed4fe58088e024b7129d3fa9df6e0d4ef63e8951a"
+        },
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Hersbrucker-Data-Sheet.pdf",
+          "sha256": "ec7be8405745e7c60c2c09c1b3076f02ac028b34c3c0f41f334277d0710ce73f"
+        },
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Huell-Melon-Data-Sheet.pdf",
+          "sha256": "2a7c42243004f5fe7308279e84c8c139ff5f5ae3c4ecab619c577a7404359d8d"
+        },
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Mandarina-Bavaria-Data-Sheet.pdf",
+          "sha256": "20acb88a2c1c77a0fc71e5eeee23d70549245654fb63757450a56577ad0d6641"
+        },
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Perle-Data-Sheet.pdf",
+          "sha256": "16abf0f920eda597af5a1e65127524764dd7d0bdb44923e282346c47ab5dc484"
+        },
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Saazer-Data-Sheet.pdf",
+          "sha256": "7b60d173bfef00868e7a29966be1a59fa0da4ff39e0fc999896a3df6fd9c5892"
+        },
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Saphir-Data-Sheet.pdf",
+          "sha256": "e13c4fb29a732e00d47288bc4339942fe5160532b6e2c64d6e36179e67231dbb"
+        },
+        {
+          "url": "https://hops.com.au/downloads/data-sheet/europe/Spalter-Select-Data-Sheet.pdf",
+          "sha256": "094b51171b9702e4def7ff491eeb8a2ab610ada4703951592c835b4bbf262e59"
+        }
+      ],
+      "varieties": 9
     },
     "barthhaas-variety": {
       "id": "barthhaas-variety",
@@ -358,15 +389,11 @@
         "4dea6014c1b91a9c5d36f8643094f60889f29cfa4248b51426ca36a75cafa1cb"
       ]
     },
-    "hga-2020": {
-      "id": "hga-2020",
-      "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
-      "sha256": "d6007cd0b90b9d3a8baf9f9e94ab061c76e141c82494d2c4016757f077253365"
-    },
-    "hga-2017": {
-      "id": "hga-2017",
-      "url": "https://www.usahops.org/cabinet/data/USAHops_VarietySnapshot_2017_SinglePage.pdf",
-      "sha256": "88e1523a549b42821b3643b4e209c4dbfadae574e36a2667f1069c05a95fc1fc"
+    "crosby-variety": {
+      "id": "crosby-variety",
+      "url": "https://www.crosbyhops.com/hops/varieties/",
+      "sha256": "242b1a824ca980923a8dcf3c730d7b76bfc212eea7c34b79215f38c7f201f48e",
+      "varieties": 55
     },
     "haas-sheet": {
       "id": "haas-sheet",
@@ -471,48 +498,27 @@
       ],
       "varieties": 24
     },
-    "barthhaas-sheet": {
-      "id": "barthhaas-sheet",
-      "url": "https://hops.com.au/hops/",
-      "sha256": [
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Hallertauer-Magnum-Data-Sheet.pdf",
-          "sha256": "57ddcba2931590ce6b3e1fcc24f84fe40355fba61d6a9499a6a79ff3e2971180"
-        },
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Hallertauer-Tradition-Data-Sheet.pdf",
-          "sha256": "593880e2459c76a67c2f582ed4fe58088e024b7129d3fa9df6e0d4ef63e8951a"
-        },
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Hersbrucker-Data-Sheet.pdf",
-          "sha256": "ec7be8405745e7c60c2c09c1b3076f02ac028b34c3c0f41f334277d0710ce73f"
-        },
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Huell-Melon-Data-Sheet.pdf",
-          "sha256": "2a7c42243004f5fe7308279e84c8c139ff5f5ae3c4ecab619c577a7404359d8d"
-        },
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Mandarina-Bavaria-Data-Sheet.pdf",
-          "sha256": "20acb88a2c1c77a0fc71e5eeee23d70549245654fb63757450a56577ad0d6641"
-        },
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Perle-Data-Sheet.pdf",
-          "sha256": "16abf0f920eda597af5a1e65127524764dd7d0bdb44923e282346c47ab5dc484"
-        },
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Saazer-Data-Sheet.pdf",
-          "sha256": "7b60d173bfef00868e7a29966be1a59fa0da4ff39e0fc999896a3df6fd9c5892"
-        },
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Saphir-Data-Sheet.pdf",
-          "sha256": "e13c4fb29a732e00d47288bc4339942fe5160532b6e2c64d6e36179e67231dbb"
-        },
-        {
-          "url": "https://hops.com.au/downloads/data-sheet/europe/Spalter-Select-Data-Sheet.pdf",
-          "sha256": "094b51171b9702e4def7ff491eeb8a2ab610ada4703951592c835b4bbf262e59"
-        }
-      ],
-      "varieties": 9
+    "hga-2017": {
+      "id": "hga-2017",
+      "url": "https://www.usahops.org/cabinet/data/USAHops_VarietySnapshot_2017_SinglePage.pdf",
+      "sha256": "88e1523a549b42821b3643b4e209c4dbfadae574e36a2667f1069c05a95fc1fc"
+    },
+    "hga-2020": {
+      "id": "hga-2020",
+      "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
+      "sha256": "d6007cd0b90b9d3a8baf9f9e94ab061c76e141c82494d2c4016757f077253365"
+    },
+    "hopslist": {
+      "id": "hopslist",
+      "url": "https://www.hopslist.com/hops/",
+      "sha256": "5b4bc1e86b1846a4b4b5afc497d9576b5c9847bb465044cd52162f04b6fbfa8c",
+      "varieties": 268
+    },
+    "hopsteiner-vf": {
+      "id": "hopsteiner-vf",
+      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "sha256": "e79fa170fc0a460e205596da95269ab6a22514d330363f1696908b7d1ba5d25f",
+      "varieties": 100
     },
     "hpa-catalogue": {
       "id": "hpa-catalogue",
@@ -524,12 +530,6 @@
       "url": "https://nzhops.co.nz/collections/new-zealand-hops/products.json?limit=250",
       "sha256": "e40f3c4072967de618a8a52f89848477742567e344b4746be5685484c514e98b",
       "varieties": 20
-    },
-    "hopslist": {
-      "id": "hopslist",
-      "url": "https://www.hopslist.com/hops/",
-      "sha256": "5b4bc1e86b1846a4b4b5afc497d9576b5c9847bb465044cd52162f04b6fbfa8c",
-      "varieties": 268
     },
     "usda-cultivars": {
       "id": "usda-cultivars",
@@ -899,7 +899,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.7
       ],
       "source_label": "TOTAL OIL",
@@ -989,8 +989,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        1.7
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/admiral/",
@@ -1091,7 +1091,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -1144,11 +1144,8 @@
       "stated_value": "1.3 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.3,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.3,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/african-queen/",
       "basis_tier": "aggregator"
@@ -1211,7 +1208,7 @@
       "value_kind": "max",
       "normalised": [
         null,
-        3
+        3.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/agnus"
@@ -1300,8 +1297,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
-        100
+        2.0,
+        3.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/agnus/",
@@ -1397,7 +1394,7 @@
       "value_kind": "range",
       "normalised": [
         1.8,
-        100
+        2.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/ahil/",
@@ -1630,7 +1627,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/ahtanum/",
@@ -1693,7 +1690,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -1769,7 +1766,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.0037
       ],
       "source_label": "humulen",
@@ -1783,7 +1780,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -1811,8 +1808,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0,
-        0
+        0.0,
+        0.0
       ],
       "source_label": "acid_alpha_low/high"
     },
@@ -1824,7 +1821,7 @@
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "acid_beta"
     },
     {
@@ -1851,7 +1848,7 @@
       "value_kind": "range",
       "normalised": [
         0.47,
-        100
+        1.35
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/alliance/",
@@ -1974,7 +1971,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -2017,8 +2014,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0,
-        0
+        0.0,
+        0.0
       ],
       "source_label": "acid_alpha_low/high"
     },
@@ -2031,7 +2028,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.035
       ],
       "source_label": "acid_beta"
@@ -2596,7 +2593,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        1.9
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/amarillo/",
@@ -2734,7 +2731,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -2761,7 +2758,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -2817,7 +2814,7 @@
       "value_kind": "range",
       "normalised": [
         0.4,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/amethyst/",
@@ -3040,7 +3037,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        2.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/apollo/",
@@ -3191,7 +3188,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -3264,7 +3261,7 @@
       "value_kind": "range",
       "normalised": [
         1.3,
-        100
+        1.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/apolon/",
@@ -3371,11 +3368,8 @@
       "stated_value": "1.45 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.45,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.45,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/aquila/",
       "basis_tier": "aggregator"
@@ -3562,7 +3556,7 @@
       "value_kind": "range",
       "normalised": [
         1.2,
-        100
+        1.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/aramis/",
@@ -3688,7 +3682,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -3700,7 +3694,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -3712,7 +3706,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -3883,7 +3877,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -3895,7 +3889,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -3907,7 +3901,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -3963,7 +3957,7 @@
       "value_kind": "range",
       "normalised": [
         1.3,
-        100
+        1.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/atlas/",
@@ -4178,7 +4172,7 @@
       "value_kind": "range",
       "normalised": [
         0.9,
-        100
+        1.8
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/aurora/",
@@ -4822,7 +4816,7 @@
       "value_kind": "range",
       "normalised": [
         1.6,
-        100
+        2.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/azacca/",
@@ -4966,17 +4960,405 @@
       "source_label": "ALPHA ACID (%) column"
     },
     {
+      "variety_id": "BOR",
+      "source_id": "hopslist",
+      "attribute": "total_oil",
+      "stated_value": "0.65 mL/100g",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.65,
+      "source_label": "Total Oil Composition",
+      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
+      "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopslist",
+      "attribute": "myrcene",
+      "stated_value": "21%",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.21,
+      "source_label": "Myrcene Oil Composition",
+      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
+      "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopslist",
+      "attribute": "humulene",
+      "stated_value": "46%",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.46,
+      "source_label": "Humulene Oil Composition",
+      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
+      "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopslist",
+      "attribute": "caryophyllene",
+      "stated_value": "13%",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.13,
+      "source_label": "Caryophyllene Oil",
+      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
+      "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopslist",
+      "attribute": "alpha",
+      "stated_value": "2%-3%",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.02,
+        0.03
+      ],
+      "source_label": "Alpha Acid Composition",
+      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
+      "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopslist",
+      "attribute": "beta",
+      "stated_value": "3%-4%",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.04
+      ],
+      "source_label": "Beta Acid Composition",
+      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
+      "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopslist",
+      "attribute": "cohumulone",
+      "stated_value": "14%-20%",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.14,
+        0.2
+      ],
+      "source_label": "Co-Humulone Composition",
+      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
+      "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopsteiner-vf",
+      "attribute": "total_oil",
+      "stated_value": "0.7 - 1.5",
+      "stated_unit": "unstated",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": null,
+      "source_label": "oils",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopsteiner-vf",
+      "attribute": "humulene",
+      "stated_value": "0.30",
+      "stated_unit": "fraction",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.3,
+      "source_label": "humulen",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopsteiner-vf",
+      "attribute": "farnesene",
+      "stated_value": "0.00 - 1.00",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.0,
+        0.01
+      ],
+      "source_label": "farnesen",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopsteiner-vf",
+      "attribute": "linalool",
+      "stated_value": "0.2 - 0.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.004
+      ],
+      "source_label": "linalool_oil",
+      "unit_inferred": true
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopsteiner-vf",
+      "attribute": "alpha",
+      "stated_value": "7 - 11",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.07,
+        0.11
+      ],
+      "source_label": "acid_alpha_low/high"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopsteiner-vf",
+      "attribute": "beta",
+      "stated_value": "4.0 - 7.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.04,
+        0.07
+      ],
+      "source_label": "acid_beta"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "hopsteiner-vf",
+      "attribute": "cohumulone",
+      "stated_value": "22 - 26",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.22,
+        0.26
+      ],
+      "source_label": "cohumulone"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "barthhaas-variety",
+      "attribute": "total_oil",
+      "stated_value": "1 - 2",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.0,
+        2.0
+      ],
+      "source_label": "TOTAL OIL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "barthhaas-variety",
+      "attribute": "myrcene",
+      "stated_value": "23.5 - 43",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.235,
+        0.43
+      ],
+      "source_label": "MYRCENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "barthhaas-variety",
+      "attribute": "humulene",
+      "stated_value": "7.8 - 14.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.078,
+        0.148
+      ],
+      "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "barthhaas-variety",
+      "attribute": "caryophyllene",
+      "stated_value": "7 - 13.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.07,
+        0.133
+      ],
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "barthhaas-variety",
+      "attribute": "farnesene",
+      "stated_value": "0.1 - 0.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.004
+      ],
+      "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "barthhaas-variety",
+      "attribute": "alpha",
+      "stated_value": "12.7 - 15.7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.127,
+        0.157
+      ],
+      "source_label": "ALPHA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "barthhaas-variety",
+      "attribute": "beta",
+      "stated_value": "8.3 - 10.4",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.083,
+        0.104
+      ],
+      "source_label": "BETA-ACIDS",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "haas-sheet",
+      "attribute": "total_oil",
+      "stated_value": "1.5 – 2.0",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.5,
+        2.0
+      ],
+      "source_label": "TOTAL OIL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "haas-sheet",
+      "attribute": "myrcene",
+      "stated_value": "50 – 55",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.5,
+        0.55
+      ],
+      "source_label": "MYRCENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "haas-sheet",
+      "attribute": "humulene",
+      "stated_value": "7 – 8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.07,
+        0.08
+      ],
+      "source_label": "HUMULENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "haas-sheet",
+      "attribute": "caryophyllene",
+      "stated_value": "9 – 11",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.09,
+        0.11
+      ],
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "haas-sheet",
+      "attribute": "farnesene",
+      "stated_value": "0 – 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.0,
+        0.01
+      ],
+      "source_label": "FARNESENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "haas-sheet",
+      "attribute": "linalool",
+      "stated_value": "0 – 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.0,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
+    },
+    {
       "variety_id": "Backa",
       "source_id": "hopslist",
       "attribute": "total_oil",
       "stated_value": "0.60 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.6,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.6,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/backa/",
       "basis_tier": "aggregator"
@@ -5033,11 +5415,8 @@
       "stated_value": "2.17 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2.17,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 2.17,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/banner/",
       "basis_tier": "aggregator"
@@ -5135,7 +5514,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         2.5
       ],
       "source_label": "Total Oils",
@@ -5257,7 +5636,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/bianca/",
@@ -5370,7 +5749,7 @@
       "value_kind": "range",
       "normalised": [
         0.81,
-        100
+        3.92
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/bitter-gold/",
@@ -5582,11 +5961,8 @@
       "stated_value": "0.65 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.65,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.65,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/blato/",
       "basis_tier": "aggregator"
@@ -5689,11 +6065,8 @@
       "stated_value": "2.01 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2.01,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 2.01,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/blisk/",
       "basis_tier": "aggregator"
@@ -5805,7 +6178,7 @@
       "value_kind": "range",
       "normalised": [
         1.4,
-        2
+        2.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/boadicea"
@@ -5880,7 +6253,7 @@
       "value_kind": "range",
       "normalised": [
         1.4,
-        100
+        2.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/boadicea/",
@@ -6092,7 +6465,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        4
+        4.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/bobek"
@@ -6197,7 +6570,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        100
+        4.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/bobek/",
@@ -6412,205 +6785,6 @@
       "source_label": "cohumulone"
     },
     {
-      "variety_id": "BOR",
-      "source_id": "hopslist",
-      "attribute": "total_oil",
-      "stated_value": "0.65 mL/100g",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.65,
-        100
-      ],
-      "source_label": "Total Oil Composition",
-      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
-      "basis_tier": "aggregator"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopslist",
-      "attribute": "myrcene",
-      "stated_value": "21%",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.21,
-      "source_label": "Myrcene Oil Composition",
-      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
-      "basis_tier": "aggregator"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopslist",
-      "attribute": "humulene",
-      "stated_value": "46%",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.46,
-      "source_label": "Humulene Oil Composition",
-      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
-      "basis_tier": "aggregator"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopslist",
-      "attribute": "caryophyllene",
-      "stated_value": "13%",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.13,
-      "source_label": "Caryophyllene Oil",
-      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
-      "basis_tier": "aggregator"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopslist",
-      "attribute": "alpha",
-      "stated_value": "2%-3%",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.02,
-        0.03
-      ],
-      "source_label": "Alpha Acid Composition",
-      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
-      "basis_tier": "aggregator"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopslist",
-      "attribute": "beta",
-      "stated_value": "3%-4%",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.03,
-        0.04
-      ],
-      "source_label": "Beta Acid Composition",
-      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
-      "basis_tier": "aggregator"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopslist",
-      "attribute": "cohumulone",
-      "stated_value": "14%-20%",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.14,
-        0.2
-      ],
-      "source_label": "Co-Humulone Composition",
-      "page_url": "https://www.hopslist.com/hops/aroma-hops/bor/",
-      "basis_tier": "aggregator"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopsteiner-vf",
-      "attribute": "total_oil",
-      "stated_value": "0.7 - 1.5",
-      "stated_unit": "unstated",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": null,
-      "source_label": "oils",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopsteiner-vf",
-      "attribute": "humulene",
-      "stated_value": "0.30",
-      "stated_unit": "fraction",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.3,
-      "source_label": "humulen",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopsteiner-vf",
-      "attribute": "farnesene",
-      "stated_value": "0.00 - 1.00",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0,
-        0.01
-      ],
-      "source_label": "farnesen",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopsteiner-vf",
-      "attribute": "linalool",
-      "stated_value": "0.2 - 0.4",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.002,
-        0.004
-      ],
-      "source_label": "linalool_oil",
-      "unit_inferred": true
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopsteiner-vf",
-      "attribute": "alpha",
-      "stated_value": "7 - 11",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.07,
-        0.11
-      ],
-      "source_label": "acid_alpha_low/high"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopsteiner-vf",
-      "attribute": "beta",
-      "stated_value": "4.0 - 7.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.04,
-        0.07
-      ],
-      "source_label": "acid_beta"
-    },
-    {
-      "variety_id": "BOR",
-      "source_id": "hopsteiner-vf",
-      "attribute": "cohumulone",
-      "stated_value": "22 - 26",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.22,
-        0.26
-      ],
-      "source_label": "cohumulone"
-    },
-    {
       "variety_id": "Bouclier",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -6620,7 +6794,7 @@
       "value_kind": "range",
       "normalised": [
         1.1,
-        100
+        1.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/bouclier/",
@@ -6720,11 +6894,8 @@
       "stated_value": "0.90 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.9,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.9,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/bramling/",
       "basis_tier": "aggregator"
@@ -6883,7 +7054,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/bramling-cross/",
@@ -6946,7 +7117,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -7034,7 +7205,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -7048,7 +7219,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -7224,7 +7395,7 @@
       "value_kind": "range",
       "normalised": [
         1.6,
-        100
+        2.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/bravo/",
@@ -7287,7 +7458,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -7375,7 +7546,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -7535,11 +7706,8 @@
       "stated_value": "1.96 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.96,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.96,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/brewers-gold/",
       "basis_tier": "aggregator"
@@ -7664,7 +7832,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -7678,7 +7846,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -7725,212 +7893,14 @@
       "source_label": "cohumulone"
     },
     {
-      "variety_id": "BRU-1",
-      "source_id": "barthhaas-variety",
-      "attribute": "total_oil",
-      "stated_value": "1 - 2",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1,
-        2
-      ],
-      "source_label": "TOTAL OIL",
-      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "barthhaas-variety",
-      "attribute": "myrcene",
-      "stated_value": "23.5 - 43",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.235,
-        0.43
-      ],
-      "source_label": "MYRCENE",
-      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "barthhaas-variety",
-      "attribute": "humulene",
-      "stated_value": "7.8 - 14.8",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.078,
-        0.148
-      ],
-      "source_label": "HUMULENE",
-      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "barthhaas-variety",
-      "attribute": "caryophyllene",
-      "stated_value": "7 - 13.3",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.07,
-        0.133
-      ],
-      "source_label": "CARYOPHYLLENE",
-      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "barthhaas-variety",
-      "attribute": "farnesene",
-      "stated_value": "0.1 - 0.4",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.001,
-        0.004
-      ],
-      "source_label": "FARNESEN",
-      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "barthhaas-variety",
-      "attribute": "alpha",
-      "stated_value": "12.7 - 15.7",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.127,
-        0.157
-      ],
-      "source_label": "ALPHA-ACIDS",
-      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "barthhaas-variety",
-      "attribute": "beta",
-      "stated_value": "8.3 - 10.4",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.083,
-        0.104
-      ],
-      "source_label": "BETA-ACIDS",
-      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "haas-sheet",
-      "attribute": "total_oil",
-      "stated_value": "1.5 – 2.0",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        2
-      ],
-      "source_label": "TOTAL OIL",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "haas-sheet",
-      "attribute": "myrcene",
-      "stated_value": "50 – 55",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.5,
-        0.55
-      ],
-      "source_label": "MYRCENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "haas-sheet",
-      "attribute": "humulene",
-      "stated_value": "7 – 8",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.07,
-        0.08
-      ],
-      "source_label": "HUMULENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "haas-sheet",
-      "attribute": "caryophyllene",
-      "stated_value": "9 – 11",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.09,
-        0.11
-      ],
-      "source_label": "CARYOPHYLLENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "haas-sheet",
-      "attribute": "farnesene",
-      "stated_value": "0 – 1",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0,
-        0.01
-      ],
-      "source_label": "FARNESENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "BRU-1",
-      "source_id": "haas-sheet",
-      "attribute": "linalool",
-      "stated_value": "0 – 1",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0,
-        0.01
-      ],
-      "source_label": "LINALOOL",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
-    },
-    {
       "variety_id": "Buket",
       "source_id": "hopslist",
       "attribute": "total_oil",
       "stated_value": "2.15 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2.15,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 2.15,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/buket/",
       "basis_tier": "aggregator"
@@ -8036,7 +8006,7 @@
       "value_kind": "range",
       "normalised": [
         1.14,
-        100
+        2.7
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/bullion/",
@@ -8161,7 +8131,7 @@
       "value_kind": "range",
       "normalised": [
         0.42,
-        100
+        1.39
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/calicross/",
@@ -8224,7 +8194,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -8286,11 +8256,8 @@
       "stated_value": "1.9 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.9,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.9,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/caliente/",
       "basis_tier": "aggregator"
@@ -8507,7 +8474,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -8519,7 +8486,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -8531,7 +8498,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -8855,7 +8822,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -8925,11 +8892,8 @@
       "stated_value": "11.20 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        11.2,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 11.2,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/canadian-redvine/",
       "basis_tier": "aggregator"
@@ -9491,7 +9455,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/cascade-us/",
@@ -10116,7 +10080,7 @@
       "value_kind": "range",
       "normalised": [
         1.2,
-        100
+        1.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/cashmere/",
@@ -10266,7 +10230,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -10278,7 +10242,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -10464,11 +10428,8 @@
       "stated_value": "1.31 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.31,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.31,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/celeia/",
       "basis_tier": "aggregator"
@@ -11000,7 +10961,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        2.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/centennial/",
@@ -11063,7 +11024,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -11151,7 +11112,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -11251,7 +11212,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "TOTAL OIL",
@@ -11341,8 +11302,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        1.7
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/challenger/",
@@ -11507,7 +11468,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -11788,7 +11749,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        1.9
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/chelan/",
@@ -12333,7 +12294,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        2.7
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/chinook/",
@@ -12396,7 +12357,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -12484,7 +12445,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -12582,11 +12543,8 @@
       "stated_value": "1.05 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.05,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.05,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/cicero/",
       "basis_tier": "aggregator"
@@ -13145,7 +13103,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        3.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/citra/",
@@ -13298,7 +13256,7 @@
       "value_kind": "max",
       "normalised": [
         null,
-        1
+        1.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/cluster"
@@ -13463,7 +13421,7 @@
       "value_kind": "range",
       "normalised": [
         0.4,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -13546,7 +13504,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -13619,7 +13577,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/cobb/",
@@ -13739,8 +13697,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        2
+        1.0,
+        2.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -13794,11 +13752,8 @@
       "stated_value": "1.21 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.21,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.21,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/columbia/",
       "basis_tier": "aggregator"
@@ -14218,8 +14173,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
-        3
+        2.0,
+        3.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 10
@@ -14279,7 +14234,7 @@
       "value_kind": "range",
       "normalised": [
         2.5,
-        4
+        4.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -14339,7 +14294,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        4.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/columbus/",
@@ -14402,7 +14357,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -14659,7 +14614,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -14720,7 +14675,7 @@
       "value_kind": "range",
       "normalised": [
         1.2,
-        3
+        3.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -14777,11 +14732,8 @@
       "stated_value": "1.98 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.98,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.98,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/comet/",
       "basis_tier": "aggregator"
@@ -14903,7 +14855,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -15252,7 +15204,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -15312,7 +15264,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -15370,11 +15322,8 @@
       "stated_value": "0.82 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.82,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.82,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/crystal/",
       "basis_tier": "aggregator"
@@ -15499,7 +15448,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -15572,7 +15521,7 @@
       "value_kind": "range",
       "normalised": [
         2.4,
-        100
+        3.9
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/dana/",
@@ -15697,11 +15646,8 @@
       "stated_value": "0.5 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.5,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.5,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/defender/",
       "basis_tier": "aggregator"
@@ -15933,7 +15879,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        100
+        1.1
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/delta/",
@@ -15996,7 +15942,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -16083,7 +16029,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -16388,7 +16334,7 @@
       "value_kind": "range",
       "normalised": [
         1.3,
-        100
+        1.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/super-alpha/",
@@ -16451,7 +16397,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -16531,11 +16477,8 @@
       "stated_value": "0.8 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.8,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.8,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/amos-early-bird/",
       "basis_tier": "aggregator"
@@ -16595,11 +16538,8 @@
       "stated_value": "0.85 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.85,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.85,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/east-kent-golding/",
       "basis_tier": "aggregator"
@@ -16652,7 +16592,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -16711,11 +16651,8 @@
       "stated_value": "1.50 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.5,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/eastwell-golding/",
       "basis_tier": "aggregator"
@@ -16821,7 +16758,7 @@
       "value_kind": "max",
       "normalised": [
         null,
-        3
+        3.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/eclipse"
@@ -16926,7 +16863,7 @@
       "value_kind": "range",
       "normalised": [
         2.4,
-        3
+        3.0
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
     },
@@ -17179,7 +17116,7 @@
       "value_kind": "range",
       "normalised": [
         2.5,
-        4
+        4.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 10
@@ -17432,7 +17369,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        3
+        3.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/eldorado"
@@ -17596,7 +17533,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "FARNESENE (% OF TOTAL OIL)",
@@ -17657,7 +17594,7 @@
       "value_kind": "range",
       "normalised": [
         2.5,
-        100
+        3.3
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/el-dorado/",
@@ -17792,7 +17729,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -17816,7 +17753,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -18050,7 +17987,7 @@
       "value_kind": "range",
       "normalised": [
         2.4,
-        100
+        3.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/ella/",
@@ -18113,7 +18050,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -18513,7 +18450,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.3
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/eroica/",
@@ -18544,7 +18481,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Humulene Oil Composition",
@@ -18576,7 +18513,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -18749,11 +18686,8 @@
       "stated_value": "3.10 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        3.1,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 3.1,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/eureka/",
       "basis_tier": "aggregator"
@@ -18877,7 +18811,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -18945,11 +18879,8 @@
       "stated_value": "0.9 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.9,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.9,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/fantasia/",
       "basis_tier": "aggregator"
@@ -19099,7 +19030,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        100
+        1.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/first-gold/",
@@ -19250,7 +19181,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -19264,7 +19195,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -19470,7 +19401,7 @@
       "value_kind": "range",
       "normalised": [
         0.44,
-        100
+        0.83
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/fuggle/",
@@ -19623,7 +19554,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -19888,8 +19819,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        3,
-        100
+        3.0,
+        5.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/galaxy/",
@@ -20390,7 +20321,7 @@
       "value_kind": "range",
       "normalised": [
         0.9,
-        100
+        1.3
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/galena/",
@@ -20453,7 +20384,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -20532,7 +20463,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -20723,7 +20654,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -20783,7 +20714,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -20843,7 +20774,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        100
+        1.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/glacier/",
@@ -20906,7 +20837,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -20994,7 +20925,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -21008,7 +20939,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -21061,11 +20992,8 @@
       "stated_value": "0.63 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.63,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.63,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/golden-star/",
       "basis_tier": "aggregator"
@@ -21158,7 +21086,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -21218,7 +21146,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -21278,7 +21206,7 @@
       "value_kind": "range",
       "normalised": [
         0.46,
-        100
+        1.13
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/green-bullet/",
@@ -21448,11 +21376,8 @@
       "stated_value": "0.98 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.98,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.98,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/groene-bel/",
       "basis_tier": "aggregator"
@@ -21549,6 +21474,226 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "HBC 472",
+      "source_id": "haas-sheet",
+      "attribute": "total_oil",
+      "stated_value": "1.5 – 2.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.5,
+        2.5
+      ],
+      "source_label": "TOTAL OIL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 472",
+      "source_id": "haas-sheet",
+      "attribute": "myrcene",
+      "stated_value": "30 – 32",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.3,
+        0.32
+      ],
+      "source_label": "MYRCENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 472",
+      "source_id": "haas-sheet",
+      "attribute": "humulene",
+      "stated_value": "1 – 2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.01,
+        0.02
+      ],
+      "source_label": "HUMULENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 472",
+      "source_id": "haas-sheet",
+      "attribute": "caryophyllene",
+      "stated_value": "30 – 32",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.3,
+        0.32
+      ],
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 472",
+      "source_id": "haas-sheet",
+      "attribute": "linalool",
+      "stated_value": "0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.001,
+      "source_label": "LINALOOL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "total_oil",
+      "stated_value": "1.4-2.3",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.4,
+        2.3
+      ],
+      "source_label": "TOTAL OIL (ML/100G)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "myrcene",
+      "stated_value": "36.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.369,
+      "source_label": "MYRCENE (% OF TOTAL OIL)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "humulene",
+      "stated_value": "13.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.132,
+      "source_label": "HUMULENE (% OF TOTAL OIL)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "caryophyllene",
+      "stated_value": "8.44",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.0844,
+      "source_label": "CARYOPHYLLENE (% OF TOTAL OIL)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "farnesene",
+      "stated_value": "0.52",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.0052,
+      "source_label": "FARNESENE (% OF TOTAL OIL)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "linalool",
+      "stated_value": "0.64",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.0064,
+      "source_label": "LINALOOL (% OF TOTAL OIL)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "alpha",
+      "stated_value": "9.5-12",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.095,
+        0.12
+      ],
+      "source_label": "ALPHA (%)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "beta",
+      "stated_value": "4.5-5.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.045,
+        0.055
+      ],
+      "source_label": "BETA (%)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "haas-sheet",
+      "attribute": "cohumulone",
+      "stated_value": "22-26",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.22,
+        0.26
+      ],
+      "source_label": "COHUMULONE (% OF ALPHA ACIDS)",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "hpa-catalogue",
+      "attribute": "total_oil",
+      "stated_value": "1.4 - 2.3",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.4,
+        2.3
+      ],
+      "source_label": "TOTAL OILS (ML/100G) column"
+    },
+    {
+      "variety_id": "HBC 522",
+      "source_id": "hpa-catalogue",
+      "attribute": "alpha",
+      "stated_value": "9.5 - 12.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.095,
+        0.12
+      ],
+      "source_label": "ALPHA ACID (%) column"
+    },
+    {
       "variety_id": "Hallertau (NZ)",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -21558,7 +21703,7 @@
       "value_kind": "range",
       "normalised": [
         0.9,
-        100
+        1.1
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/hallertauer-new-zealand/",
@@ -21686,7 +21831,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/hallertau-us/",
@@ -22048,11 +22193,8 @@
       "stated_value": "1.78 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.78,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.78,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/hallertauer-gold/",
       "basis_tier": "aggregator"
@@ -22329,7 +22471,7 @@
       "value_kind": "range",
       "normalised": [
         0.9,
-        100
+        1.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/hallertauer-taurus/",
@@ -22386,7 +22528,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -22477,7 +22619,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -22550,7 +22692,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://hops.com.au/downloads/data-sheet/europe/Hallertauer-Tradition-Data-Sheet.pdf"
@@ -22730,7 +22872,7 @@
       "value_kind": "range",
       "normalised": [
         0.9,
-        100
+        1.9
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/hallertauer-tradition/",
@@ -22793,7 +22935,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -22884,7 +23026,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -22957,7 +23099,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
     },
@@ -22984,8 +23126,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        2
+        1.0,
+        2.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/harmonie"
@@ -23081,226 +23223,6 @@
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/harmonie"
     },
     {
-      "variety_id": "HBC 472",
-      "source_id": "haas-sheet",
-      "attribute": "total_oil",
-      "stated_value": "1.5 – 2.5",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        2.5
-      ],
-      "source_label": "TOTAL OIL",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 472",
-      "source_id": "haas-sheet",
-      "attribute": "myrcene",
-      "stated_value": "30 – 32",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.3,
-        0.32
-      ],
-      "source_label": "MYRCENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 472",
-      "source_id": "haas-sheet",
-      "attribute": "humulene",
-      "stated_value": "1 – 2",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.01,
-        0.02
-      ],
-      "source_label": "HUMULENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 472",
-      "source_id": "haas-sheet",
-      "attribute": "caryophyllene",
-      "stated_value": "30 – 32",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.3,
-        0.32
-      ],
-      "source_label": "CARYOPHYLLENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 472",
-      "source_id": "haas-sheet",
-      "attribute": "linalool",
-      "stated_value": "0.1",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.001,
-      "source_label": "LINALOOL",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "total_oil",
-      "stated_value": "1.4-2.3",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.4,
-        2.3
-      ],
-      "source_label": "TOTAL OIL (ML/100G)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "myrcene",
-      "stated_value": "36.9",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.369,
-      "source_label": "MYRCENE (% OF TOTAL OIL)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "humulene",
-      "stated_value": "13.2",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.132,
-      "source_label": "HUMULENE (% OF TOTAL OIL)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "caryophyllene",
-      "stated_value": "8.44",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.0844,
-      "source_label": "CARYOPHYLLENE (% OF TOTAL OIL)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "farnesene",
-      "stated_value": "0.52",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.0052,
-      "source_label": "FARNESENE (% OF TOTAL OIL)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "linalool",
-      "stated_value": "0.64",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "point",
-      "normalised": 0.0064,
-      "source_label": "LINALOOL (% OF TOTAL OIL)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "alpha",
-      "stated_value": "9.5-12",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.095,
-        0.12
-      ],
-      "source_label": "ALPHA (%)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "beta",
-      "stated_value": "4.5-5.5",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.045,
-        0.055
-      ],
-      "source_label": "BETA (%)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "haas-sheet",
-      "attribute": "cohumulone",
-      "stated_value": "22-26",
-      "stated_unit": "percent",
-      "stated_basis": "of alpha acids",
-      "value_kind": "range",
-      "normalised": [
-        0.22,
-        0.26
-      ],
-      "source_label": "COHUMULONE (% OF ALPHA ACIDS)",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-522-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "hpa-catalogue",
-      "attribute": "total_oil",
-      "stated_value": "1.4 - 2.3",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.4,
-        2.3
-      ],
-      "source_label": "TOTAL OILS (ML/100G) column"
-    },
-    {
-      "variety_id": "HBC 522",
-      "source_id": "hpa-catalogue",
-      "attribute": "alpha",
-      "stated_value": "9.5 - 12.0",
-      "stated_unit": "percent",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.095,
-        0.12
-      ],
-      "source_label": "ALPHA ACID (%) column"
-    },
-    {
       "variety_id": "Helga",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -23310,7 +23232,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/helga/",
@@ -23447,7 +23369,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -23517,8 +23439,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        1.9
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/herald/",
@@ -23578,7 +23500,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -23748,7 +23670,7 @@
       "value_kind": "range",
       "normalised": [
         1.4,
-        100
+        2.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/herkules/",
@@ -23899,7 +23821,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -23972,7 +23894,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://hops.com.au/downloads/data-sheet/europe/Hersbrucker-Data-Sheet.pdf"
@@ -24092,7 +24014,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        100
+        1.3
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/hersbrucker/",
@@ -24155,7 +24077,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -24246,7 +24168,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -24319,7 +24241,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/hersbrucker-pure/",
@@ -24382,7 +24304,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -24552,7 +24474,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        2
+        2.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -24672,7 +24594,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        100
+        2.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/horizon/",
@@ -25013,11 +24935,8 @@
       "stated_value": "0.8 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.8,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.8,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/hull-melon/",
       "basis_tier": "aggregator"
@@ -25137,8 +25056,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        3
+        1.0,
+        3.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/idaho7"
@@ -25242,7 +25161,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.6
       ],
       "source_label": "TOTAL OIL (ML/100G)",
@@ -25362,7 +25281,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.6
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
@@ -25540,7 +25459,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/jester/",
@@ -25649,7 +25568,7 @@
       "value_kind": "range",
       "normalised": [
         0.9,
-        2
+        2.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/kazbek"
@@ -25751,11 +25670,8 @@
       "stated_value": "1.39 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.39,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.39,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/keyworth-s-early/",
       "basis_tier": "aggregator"
@@ -25845,11 +25761,8 @@
       "stated_value": "1.18mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.18,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.18,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/kirin-ii/",
       "basis_tier": "aggregator"
@@ -25955,11 +25868,8 @@
       "stated_value": "1.35 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.35,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.35,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/kitamidori/",
       "basis_tier": "aggregator"
@@ -26077,7 +25987,7 @@
       "value_kind": "range",
       "normalised": [
         0.12,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/kohatu/",
@@ -26206,7 +26116,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        3
+        3.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/krush"
@@ -26311,7 +26221,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        3
+        3.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/krush"
@@ -26401,7 +26311,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        3
+        3.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://hops.com.au/downloads/data-sheet/america/Krush-Data-Sheet.pdf"
@@ -26430,7 +26340,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.002
       ],
       "source_label": "FARNESENE",
@@ -26445,7 +26355,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.012
       ],
       "source_label": "LINALOOL",
@@ -26477,7 +26387,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        2
+        2.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -26537,7 +26447,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        2
+        2.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -26813,11 +26723,8 @@
       "stated_value": "1.3 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.3,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.3,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/liberty/",
       "basis_tier": "aggregator"
@@ -26955,7 +26862,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -26969,7 +26876,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -27275,7 +27182,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -27346,7 +27253,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/lublin-lubelski/",
@@ -27513,7 +27420,7 @@
       "value_kind": "range",
       "normalised": [
         1.4,
-        2
+        2.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/magnat"
@@ -27767,8 +27674,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
-        3
+        2.0,
+        3.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -27828,7 +27735,7 @@
       "value_kind": "range",
       "normalised": [
         1.9,
-        100
+        2.3
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/magnum/",
@@ -27891,7 +27798,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -27982,7 +27889,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -28217,11 +28124,8 @@
       "stated_value": "2.0 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 2.0,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/mandarina-bavaria/",
       "basis_tier": "aggregator"
@@ -28507,7 +28411,7 @@
       "value_kind": "range",
       "normalised": [
         1.8,
-        100
+        2.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/marynka/",
@@ -28734,7 +28638,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/mathon/",
@@ -28797,8 +28701,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
-        100
+        2.0,
+        4.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/melba/",
@@ -28872,7 +28776,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -28884,7 +28788,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -28896,7 +28800,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -28951,7 +28855,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.4
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -29066,7 +28970,7 @@
       "value_kind": "range",
       "normalised": [
         2.6,
-        100
+        3.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/merkur/",
@@ -29129,7 +29033,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -29194,7 +29098,7 @@
       "value_kind": "max",
       "normalised": [
         null,
-        3
+        3.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/millennium"
@@ -29419,7 +29323,7 @@
       "value_kind": "range",
       "normalised": [
         1.8,
-        100
+        2.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/millennium/",
@@ -29649,7 +29553,7 @@
       "value_kind": "max",
       "normalised": [
         null,
-        3
+        3.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
@@ -29754,7 +29658,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        3
+        3.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/mosaic"
@@ -29843,7 +29747,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "TOTAL OIL (ML/100G)",
@@ -29902,7 +29806,7 @@
       "stated_unit": "percent",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "FARNESENE (% OF TOTAL OIL)",
       "page_url": "https://hops.com.au/downloads/data-sheet/america/Mosaic-Data-Sheet.pdf"
     },
@@ -29960,7 +29864,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -30020,7 +29924,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -30080,8 +29984,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        1.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/mosaic/",
@@ -30192,7 +30096,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
@@ -30323,11 +30227,8 @@
       "stated_value": "0.8 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.8,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.8,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/motueka/",
       "basis_tier": "aggregator"
@@ -30556,8 +30457,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        1.7
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/mount-hood/",
@@ -30620,7 +30521,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -30708,7 +30609,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -30828,7 +30729,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         2.3
       ],
       "source_label": "Total Oils",
@@ -30911,7 +30812,7 @@
       "value_kind": "range",
       "normalised": [
         1.2,
-        2
+        2.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/nelsonsauvin"
@@ -31013,11 +30914,8 @@
       "stated_value": "1.1 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.1,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.1,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/nelson-sauvin/",
       "basis_tier": "aggregator"
@@ -31139,7 +31037,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -31395,7 +31293,7 @@
       "value_kind": "range",
       "normalised": [
         1.6,
-        100
+        3.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/newport/",
@@ -31458,7 +31356,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -31523,7 +31421,7 @@
       "value_kind": "range",
       "normalised": [
         1.2,
-        100
+        2.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/northdown/",
@@ -31586,7 +31484,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -31688,7 +31586,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -31770,7 +31668,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -32308,7 +32206,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        3.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/nugget/",
@@ -32371,7 +32269,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -32459,7 +32357,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -32588,8 +32486,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        2
+        1.0,
+        2.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -32646,7 +32544,7 @@
       "value_kind": "range",
       "normalised": [
         0.86,
-        100
+        2.55
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/olympic/",
@@ -32756,11 +32654,8 @@
       "stated_value": "1.72 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.72,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.72,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/omega/",
       "basis_tier": "aggregator"
@@ -32964,7 +32859,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.3
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/opal/",
@@ -33027,7 +32922,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -33118,7 +33013,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -33188,11 +33083,8 @@
       "stated_value": "1.5 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.5,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/orbit/",
       "basis_tier": "aggregator"
@@ -33304,7 +33196,7 @@
       "value_kind": "range",
       "normalised": [
         1.8,
-        100
+        2.1
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/orion/",
@@ -33367,7 +33259,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -33432,7 +33324,7 @@
       "value_kind": "range",
       "normalised": [
         1.2,
-        100
+        1.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/pacific-gem/",
@@ -33495,7 +33387,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -33576,11 +33468,8 @@
       "stated_value": "1.4 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.4,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.4,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/pacific-jade/",
       "basis_tier": "aggregator"
@@ -33797,7 +33686,7 @@
       "value_kind": "range",
       "normalised": [
         1.7,
-        100
+        2.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/pacific-sunrise/",
@@ -33860,7 +33749,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -33922,11 +33811,8 @@
       "stated_value": "1.0 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.0,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/pacific-hallertau/",
       "basis_tier": "aggregator"
@@ -34054,7 +33940,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         2.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -34235,7 +34121,7 @@
       "value_kind": "range",
       "normalised": [
         1.4,
-        100
+        1.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/palisade/",
@@ -34298,7 +34184,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -34438,7 +34324,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        2
+        2.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/perle"
@@ -34543,7 +34429,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        2
+        2.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/perle"
@@ -34708,7 +34594,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        2
+        2.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -34768,7 +34654,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/perle/",
@@ -34904,7 +34790,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -34977,7 +34863,7 @@
       "value_kind": "range",
       "normalised": [
         1.2,
-        100
+        3.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/phoenix/",
@@ -35142,7 +35028,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -35197,7 +35083,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         2.4
       ],
       "source_label": "TOTAL OIL",
@@ -35303,7 +35189,7 @@
       "value_kind": "range",
       "normalised": [
         1.8,
-        100
+        1.8
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/pilgrim/",
@@ -35445,7 +35331,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -35518,7 +35404,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/pilot/",
@@ -35610,8 +35496,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        1.8
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/pioneer/",
@@ -35674,7 +35560,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -35843,8 +35729,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        4,
-        100
+        4.0,
+        5.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/polaris/",
@@ -35989,7 +35875,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -36059,11 +35945,8 @@
       "stated_value": "0.34 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.34,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.34,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/precoce-d-bourgogne/",
       "basis_tier": "aggregator"
@@ -36274,7 +36157,7 @@
       "value_kind": "range",
       "normalised": [
         1.1,
-        100
+        1.8
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/czech-premiant/",
@@ -36498,11 +36381,8 @@
       "stated_value": "1.21 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.21,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.21,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/pride-of-ringwood/",
       "basis_tier": "aggregator"
@@ -36649,7 +36529,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -36663,7 +36543,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -36719,7 +36599,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        1
+        1.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/progress"
@@ -36824,7 +36704,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/progress/",
@@ -36972,7 +36852,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -36986,7 +36866,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -37042,7 +36922,7 @@
       "value_kind": "range",
       "normalised": [
         1.7,
-        2
+        2.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/rakau"
@@ -37144,11 +37024,8 @@
       "stated_value": "1.21 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.21,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.21,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/alpharoma/",
       "basis_tier": "aggregator"
@@ -37281,11 +37158,8 @@
       "stated_value": "1.82 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.82,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.82,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/record/",
       "basis_tier": "aggregator"
@@ -37547,11 +37421,8 @@
       "stated_value": "0.8 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.8,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.8,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/riwaka/",
       "basis_tier": "aggregator"
@@ -37676,7 +37547,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -37688,7 +37559,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -37701,7 +37572,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "linalool_oil",
@@ -37777,7 +37648,7 @@
       "value_kind": "range",
       "normalised": [
         0.4,
-        1
+        1.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://hops.com.au/downloads/data-sheet/europe/Saazer-Data-Sheet.pdf"
@@ -37852,7 +37723,7 @@
       "value_kind": "range",
       "normalised": [
         0.2,
-        1
+        1.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
@@ -37957,7 +37828,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -38017,7 +37888,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -38077,7 +37948,7 @@
       "value_kind": "range",
       "normalised": [
         0.4,
-        100
+        0.8
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/czech-saaz/",
@@ -38483,7 +38354,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "LINALOOL (% OF TOTAL OIL)",
@@ -38676,7 +38547,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         2.2
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -38737,7 +38608,7 @@
       "value_kind": "range",
       "normalised": [
         1.3,
-        100
+        1.7
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/santiam/",
@@ -39150,7 +39021,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/saphir/",
@@ -39301,7 +39172,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -39374,7 +39245,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
     },
@@ -39402,7 +39273,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        2.8
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/satus/",
@@ -39465,7 +39336,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -39527,11 +39398,8 @@
       "stated_value": "0.95 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.95,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.95,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/saxon/",
       "basis_tier": "aggregator"
@@ -39640,11 +39508,8 @@
       "stated_value": "0.41 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.41,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.41,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/serebrianka/",
       "basis_tier": "aggregator"
@@ -39753,7 +39618,7 @@
       "value_kind": "range",
       "normalised": [
         0.42,
-        100
+        0.98
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/shinshuwase/",
@@ -39866,7 +39731,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        3
+        3.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/simcoe"
@@ -39970,7 +39835,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
+        2.0,
         2.5
       ],
       "source_label": "TOTAL OIL",
@@ -40030,7 +39895,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
+        2.0,
         2.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -40090,7 +39955,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
+        2.0,
         2.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -40150,8 +40015,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
-        100
+        2.0,
+        2.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/simcoe/",
@@ -40214,7 +40079,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -40278,7 +40143,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
+        2.0,
         2.5
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
@@ -40307,7 +40172,7 @@
       "value_kind": "range",
       "normalised": [
         0.9,
-        2
+        2.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/sladek"
@@ -40411,8 +40276,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        2.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/czech-sladek/",
@@ -40560,7 +40425,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -40574,7 +40439,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -40735,7 +40600,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        100
+        1.7
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/smaragd/",
@@ -40886,7 +40751,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -40959,7 +40824,7 @@
       "value_kind": "range",
       "normalised": [
         0.38,
-        100
+        1.14
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/smooth-cone/",
@@ -41013,7 +40878,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -41088,7 +40953,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -41100,7 +40965,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -41128,8 +40993,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        0,
-        0
+        0.0,
+        0.0
       ],
       "source_label": "acid_alpha_low/high"
     },
@@ -41141,7 +41006,7 @@
       "stated_unit": "percent",
       "stated_basis": "of hop mass",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "acid_beta"
     },
     {
@@ -41184,7 +41049,7 @@
       "value_kind": "max",
       "normalised": [
         null,
-        4
+        4.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/sorachi-ace"
@@ -41289,7 +41154,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        3.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/sorachi-ace/",
@@ -41516,7 +41381,7 @@
       "value_kind": "range",
       "normalised": [
         0.4,
-        100
+        1.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/southern-brewer/",
@@ -41641,11 +41506,8 @@
       "stated_value": "1.59mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.59,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.59,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/southern-cross/",
       "basis_tier": "aggregator"
@@ -41757,7 +41619,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        100
+        0.7
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/southern-promise/",
@@ -41814,7 +41676,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -41879,7 +41741,7 @@
       "value_kind": "range",
       "normalised": [
         1.6,
-        100
+        1.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/southern-star/",
@@ -41998,7 +41860,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        1
+        1.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/sovereign"
@@ -42103,7 +41965,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/sovereign/",
@@ -42603,7 +42465,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/spalter-select/",
@@ -42857,8 +42719,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        2
+        1.0,
+        2.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/sterling"
@@ -43083,7 +42945,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.9
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/sterling/",
@@ -43307,7 +43169,7 @@
       "value_kind": "range",
       "normalised": [
         0.76,
-        100
+        1.72
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/sticklebract/",
@@ -43724,7 +43586,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        0.9
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/strisselspalter/",
@@ -43849,7 +43711,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        100
+        1.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/styrian-golding/",
@@ -43977,7 +43839,7 @@
       "value_kind": "range",
       "normalised": [
         2.2,
-        100
+        3.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/styrian-wolf/",
@@ -44130,7 +43992,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -44201,7 +44063,7 @@
       "value_kind": "range",
       "normalised": [
         1.4,
-        100
+        2.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/summer/",
@@ -44326,7 +44188,7 @@
       "value_kind": "max",
       "normalised": [
         null,
-        3
+        3.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/summitr"
@@ -44551,7 +44413,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        3.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/summit/",
@@ -44614,7 +44476,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -44702,7 +44564,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -44884,7 +44746,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.3
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/sunbeam/",
@@ -44991,11 +44853,8 @@
       "stated_value": "1.35 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.35,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.35,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/sunshine/",
       "basis_tier": "aggregator"
@@ -45107,7 +44966,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -45180,7 +45039,7 @@
       "value_kind": "range",
       "normalised": [
         2.1,
-        100
+        2.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/super-pride/",
@@ -45243,7 +45102,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -45327,7 +45186,7 @@
       "value_kind": "range",
       "normalised": [
         0.4,
-        100
+        0.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/sussex/",
@@ -45519,8 +45378,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        1.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/sylva/",
@@ -45639,6 +45498,81 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "TALUS",
+      "source_id": "haas-sheet",
+      "attribute": "total_oil",
+      "stated_value": "2.0 – 2.7",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        2.0,
+        2.7
+      ],
+      "source_label": "TOTAL OIL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "TALUS",
+      "source_id": "haas-sheet",
+      "attribute": "myrcene",
+      "stated_value": "40 – 50",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.4,
+        0.5
+      ],
+      "source_label": "MYRCENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "TALUS",
+      "source_id": "haas-sheet",
+      "attribute": "humulene",
+      "stated_value": "16 – 21",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.16,
+        0.21
+      ],
+      "source_label": "HUMULENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "TALUS",
+      "source_id": "haas-sheet",
+      "attribute": "caryophyllene",
+      "stated_value": "9 – 13",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.09,
+        0.13
+      ],
+      "source_label": "CARYOPHYLLENE",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "TALUS",
+      "source_id": "haas-sheet",
+      "attribute": "linalool",
+      "stated_value": "0 – 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.0,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
+    },
+    {
       "variety_id": "Tahoma",
       "source_id": "hga-2017",
       "attribute": "total_oil",
@@ -45647,8 +45581,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        2
+        1.0,
+        2.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -45707,8 +45641,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        2
+        1.0,
+        2.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -45767,8 +45701,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        2.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/tahoma/",
@@ -45919,7 +45853,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -45933,7 +45867,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -46005,11 +45939,8 @@
       "stated_value": "0.72 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.72,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.72,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/talisman/",
       "basis_tier": "aggregator"
@@ -46120,7 +46051,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         2.7
       ],
       "source_label": "TOTAL OIL",
@@ -46225,7 +46156,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        2,
+        2.0,
         2.7
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
@@ -46245,81 +46176,6 @@
       "source_label": "ALPHA ACID (%) column"
     },
     {
-      "variety_id": "TALUS",
-      "source_id": "haas-sheet",
-      "attribute": "total_oil",
-      "stated_value": "2.0 – 2.7",
-      "stated_unit": "ml_per_100g",
-      "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2,
-        2.7
-      ],
-      "source_label": "TOTAL OIL",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "TALUS",
-      "source_id": "haas-sheet",
-      "attribute": "myrcene",
-      "stated_value": "40 – 50",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.4,
-        0.5
-      ],
-      "source_label": "MYRCENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "TALUS",
-      "source_id": "haas-sheet",
-      "attribute": "humulene",
-      "stated_value": "16 – 21",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.16,
-        0.21
-      ],
-      "source_label": "HUMULENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "TALUS",
-      "source_id": "haas-sheet",
-      "attribute": "caryophyllene",
-      "stated_value": "9 – 13",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0.09,
-        0.13
-      ],
-      "source_label": "CARYOPHYLLENE",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
-    },
-    {
-      "variety_id": "TALUS",
-      "source_id": "haas-sheet",
-      "attribute": "linalool",
-      "stated_value": "0 – 1",
-      "stated_unit": "percent",
-      "stated_basis": "of total oil",
-      "value_kind": "range",
-      "normalised": [
-        0,
-        0.01
-      ],
-      "source_label": "LINALOOL",
-      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
-    },
-    {
       "variety_id": "Tango",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -46329,7 +46185,7 @@
       "value_kind": "max",
       "normalised": [
         null,
-        4
+        4.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/tango"
@@ -46434,7 +46290,7 @@
       "value_kind": "range",
       "normalised": [
         0.49,
-        100
+        0.73
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/tardif-de-burgogne/",
@@ -46622,7 +46478,7 @@
       "value_kind": "range",
       "normalised": [
         1.6,
-        100
+        2.6
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/target/",
@@ -46669,7 +46525,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Caryophyllene Oil",
@@ -46685,7 +46541,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -46773,7 +46629,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -46787,7 +46643,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -46920,7 +46776,7 @@
       "value_kind": "range",
       "normalised": [
         0.36,
-        100
+        1.07
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/tettnang-tettnanger/",
@@ -47129,11 +46985,8 @@
       "stated_value": "1.5 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.5,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.5,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/tillicum/",
       "basis_tier": "aggregator"
@@ -47232,7 +47085,7 @@
       "value_kind": "range",
       "normalised": [
         2.5,
-        4
+        4.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/titan"
@@ -47332,7 +47185,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -47344,7 +47197,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -47412,11 +47265,8 @@
       "stated_value": "0.65 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        0.65,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 0.65,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/tolhurst/",
       "basis_tier": "aggregator"
@@ -47627,7 +47477,7 @@
       "value_kind": "range",
       "normalised": [
         1.7,
-        100
+        2.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/topaz/",
@@ -47752,7 +47602,7 @@
       "value_kind": "range",
       "normalised": [
         1.6,
-        2
+        2.0
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
     },
@@ -47777,11 +47627,8 @@
       "stated_value": "1.06 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.06,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.06,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/toyomidori/",
       "basis_tier": "aggregator"
@@ -47896,7 +47743,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -47908,7 +47755,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -47920,7 +47767,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -47976,7 +47823,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        2
+        2.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/triskel"
@@ -48081,7 +47928,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        100
+        2.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/triskel/",
@@ -48207,7 +48054,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "humulen",
       "unit_inferred": true
     },
@@ -48219,7 +48066,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "farnesen",
       "unit_inferred": true
     },
@@ -48231,7 +48078,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -48286,8 +48133,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        3
+        1.0,
+        3.0
       ],
       "source_label": "Total Oils",
       "page_url": "https://www.crosbyhops.com/hops/varieties/triumph"
@@ -48392,7 +48239,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 11
@@ -48452,7 +48299,7 @@
       "value_kind": "range",
       "normalised": [
         0.5,
-        1
+        1.0
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
       "page": 6
@@ -48512,7 +48359,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/ultra/",
@@ -48575,7 +48422,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -48799,7 +48646,7 @@
       "value_kind": "range",
       "normalised": [
         0.9,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/vanguard/",
@@ -48862,7 +48709,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -48950,7 +48797,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "farnesen",
@@ -48964,7 +48811,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -49245,7 +49092,7 @@
       "value_kind": "range",
       "normalised": [
         2.2,
-        100
+        2.8
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/vic-secret/",
@@ -49308,7 +49155,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -49398,11 +49245,8 @@
       "stated_value": "1.16 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.16,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.16,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/viking/",
       "basis_tier": "aggregator"
@@ -49622,7 +49466,7 @@
       "value_kind": "range",
       "normalised": [
         1.5,
-        3
+        3.0
       ],
       "source_label": "TOTAL OIL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/vital"
@@ -49744,7 +49588,7 @@
       "value_kind": "range",
       "normalised": [
         0.6,
-        100
+        1.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/vojvodina/",
@@ -49944,11 +49788,8 @@
       "stated_value": "1.6 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.6,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.6,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/wai-iti/",
       "basis_tier": "aggregator"
@@ -50151,11 +49992,8 @@
       "stated_value": "2.1 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        2.1,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 2.1,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/waimea/",
       "basis_tier": "aggregator"
@@ -50269,11 +50107,8 @@
       "stated_value": "1.0 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.0,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/wakatu/",
       "basis_tier": "aggregator"
@@ -50402,7 +50237,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         2.5
       ],
       "source_label": "TOTAL OIL (ML/100G)",
@@ -50657,8 +50492,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        2.0
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/warrior/",
@@ -50721,7 +50556,7 @@
       "stated_basis": "of total oil",
       "value_kind": "range",
       "normalised": [
-        0,
+        0.0,
         0.01
       ],
       "source_label": "Farnesene Oil",
@@ -50814,7 +50649,7 @@
       "value_kind": "range",
       "normalised": [
         0.8,
-        100
+        1.22
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/whitbread-golding/",
@@ -50976,7 +50811,7 @@
       "stated_unit": "fraction",
       "stated_basis": "of total oil",
       "value_kind": "point",
-      "normalised": 0,
+      "normalised": 0.0,
       "source_label": "linalool_oil",
       "unit_inferred": true
     },
@@ -51226,7 +51061,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "TOTAL OIL (ML/100G)",
@@ -51346,7 +51181,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -51406,7 +51241,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "ALPHA/BETA, COHUM, OILS* columns",
@@ -51466,8 +51301,8 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
-        100
+        1.0,
+        1.5
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/willamette/",
@@ -51690,7 +51525,7 @@
       "stated_basis": "of hop mass",
       "value_kind": "range",
       "normalised": [
-        1,
+        1.0,
         1.5
       ],
       "source_label": "TOTAL OILS (ML/100G) column"
@@ -51719,7 +51554,7 @@
       "value_kind": "range",
       "normalised": [
         0.24,
-        100
+        0.9
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/yakima-cluster/",
@@ -51838,7 +51673,7 @@
       "value_kind": "range",
       "normalised": [
         1.9,
-        100
+        2.3
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/yakima-gold/",
@@ -51966,7 +51801,7 @@
       "value_kind": "range",
       "normalised": [
         1.7,
-        100
+        2.4
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/yeoman/",
@@ -52108,11 +51943,8 @@
       "stated_value": "1.76 mL/100g",
       "stated_unit": "ml_per_100g",
       "stated_basis": "of hop mass",
-      "value_kind": "range",
-      "normalised": [
-        1.76,
-        100
-      ],
+      "value_kind": "point",
+      "normalised": 1.76,
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/zenith/",
       "basis_tier": "aggregator"
@@ -52247,7 +52079,7 @@
       "value_kind": "range",
       "normalised": [
         0.7,
-        100
+        1.2
       ],
       "source_label": "Total Oil Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/zythos/",
