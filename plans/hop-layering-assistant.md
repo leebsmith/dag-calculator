@@ -1,6 +1,6 @@
 ---
 title: Hop layering assistant — composition and substitution
-status: proposed
+status: needs discussion (UI design)
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: []
@@ -9,6 +9,31 @@ gate: make check + make test; identical inputs produce an identical ranked list,
 ---
 
 # Hop layering assistant — composition and substitution
+
+**Tabled: needs a UI discussion before any build.** The architecture is settled —
+ranked suggestions, declared scoring, shared-field similarity, never authors —
+and the data it needs now exists. What is not settled is what a suggestion looks
+like to a brewer and where it lives.
+
+## Open UI questions
+
+1. **Card, drawer, or report?** A suggestion list inside the hop card competes
+   with the picker it is meant to inform; a drawer hides it; the report is too
+   late.
+2. **Ranked list or inline hint?** "Use Citra with Mosaic at 60/40" as one line
+   under the picker is very different from a scorable table.
+3. **How much provenance fits?** Every candidate wants completeness (`4 of 9`),
+   basis (`aggregator`), and the trade it accepts. Three qualifiers per row will
+   swamp the list; which one wins when space is tight?
+4. **What does accepting a suggestion do?** Fill rows, open a draft, or copy a
+   ratio into the split? The answer decides whether the assistant is presentation
+   or domain.
+5. **How is the substitution trade shown?** "Citra at 0.82× mass holds the IBU;
+   oil falls 18 %" is two numbers and a caveat, and the two-hop fallback is a
+   different shape again.
+6. **What happens with unpriced hops?** An aggregator-only or oil-less hop can be
+   a candidate for bitterness and not for oil, so the list may need two sections
+   rather than one ranking.
 
 Level 3 of the hop roadmap. Two assistants that look similar and are not.
 

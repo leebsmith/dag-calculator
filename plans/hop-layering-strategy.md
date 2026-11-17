@@ -1,6 +1,6 @@
 ---
 title: Hop layering strategy
-status: draft
+status: needs discussion (UI design)
 program: deterministic-dag-calculator
 depends_on: []
 blocks: []
@@ -10,6 +10,35 @@ gate: make verify
 <!-- claims: proposed batch.whirlpool_authoring batch.whirlpool_hot_ibu_fraction batch.whirlpool_hot_target_ibu batch.whirlpool_cool_target_ibu -->
 
 # Layered whirlpool: authored hot/cool IBU split and cool-side weight ratios
+
+**Tabled: needs a UI discussion before any build.** The model is settled — an
+authored hot/cool IBU split plus a cool-side mass ratio, masses solved from both —
+and the data underneath it now exists (the hop facts carry oil, and the oil charge
+is priced per table in the card and the report). What is not settled is how any of
+that reaches a brewer.
+
+## Open UI questions
+
+1. **Where is the split authored?** The hops card already has two tables and a
+   summary strip; a third control needs a home, and the alternative is a separate
+   composer step.
+2. **What does a "layering" consist of?** Two hops with one ratio, or N hops with
+   shares? The cool-side 6:4 example reads as a pair; 70/20/10 reads as a set.
+   The answer decides whether the ratio is a row field or a group.
+3. **`parts` already means IBU share.** Changing its meaning breaks every stored
+   batch; adding a second authored field means two share columns that must be
+   explained side by side. Neither is free, and the choice is a product one.
+4. **How is the split presented?** One control with two ends, or two independent
+   numbers that must sum? The existing `whirlpool_cool_ibu_share` is a single
+   authored fraction, so consistency argues one.
+5. **Oil per table or per group?** The card and report now price oil per table;
+   a layering wants it per hop group, which is a third aggregation.
+6. **Does the UI say "oil mass", not flavour?** The ratio is a mass statement. If
+   the copy leans on sensory language the feature promises something it cannot
+   measure, and retention is deferred.
+7. **What happens to an unpriced hop?** Some hops have no oil figure. A ratio that
+   includes one is partly unknown, and the UI has to show that rather than
+   silently dropping the row.
 
 ## 1. Motivation
 

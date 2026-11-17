@@ -38,21 +38,18 @@ tracks only what is outstanding.
   It lands as a *batch source* (a draft batch straight into the editor), not as an
   import document, so it never enters the ledger. See `plans/recipe-language.md`.
 
-* **Layered whirlpool** — author the hot/cool IBU split and the cool-side weight
-  ratio, solve the masses, and report the emergent cool-side IBU split. The
-  current `parts` are normalized IBU shares and cannot mean both an IBU budget
-  and a mass ratio, so this is a new composer plus a boundary change. Draft and
-  open decisions: `plans/hop-layering-strategy.md`.
+* **Hop layering (tabled on UI design)** — the model and the data are ready: the
+  facts carry oil, the charge is priced per table in the card and the report, and
+  the layering is an authored hot/cool split plus a cool-side mass ratio. What is
+  missing is how any of it reaches a brewer — where the split is authored, whether
+  a layering is a pair or a set, and what happens to `parts`, which currently
+  means IBU share. Tabled until those are discussed:
+  `plans/hop-layering-strategy.md` and `plans/hop-layering-assistant.md`.
 
-* **Hop oil model** — per-form oil yield and a retention function, so the
-  whirlpool can allocate by oil mass instead of IBU share. Measured multiplier
-  for lupulin only; extracts stay out until a per-variety oil figure exists.
-  `plans/hop-oil-model.md`.
-
-* **Hop layering assistant** — composition (pairs and triplets with mass ratios)
-  and substitution (mass factor plus the trade it accepts). Depends on the oil
-  model and on the synthesized oil facts; ranks, never authors.
-  `plans/hop-layering-assistant.md`.
+* **Hop oil model (shipped, one item open)** — the charge, per form, in the card
+  and the report. The Python mirror waits until the solver prices oil, which is
+  the layering work above; a retention curve waits on a measurement
+  (`plans/hop-oil-model.md`).
 
 * **Multi-strain yeast (deferred, narrowed)** — blends are now ordinary Library
   records: a yeast record with a `blend_of` composition, authored and deleted there
