@@ -842,6 +842,12 @@
           "name": "Zlatan"
         }
       }
+    },
+    "usda-varieties": {
+      "id": "usda-varieties",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
+      "sha256": "0cbb9b4a84dbc6700559456686381f21f88057c4609c830093e07bcb6a6a0ed2",
+      "varieties": 162
     }
   },
   "observations": [
@@ -1498,6 +1504,66 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Ahil",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.8",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.8,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Ahil",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "1.90",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.019,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Ahil",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "10.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.1,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Ahil",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Ahil",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "25.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Ahtanum",
       "source_id": "hga-2017",
       "attribute": "total_oil",
@@ -1950,6 +2016,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/alliance/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Alliance",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.0",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.0,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Alliance",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.063,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Alliance",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.025,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Alliance",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "29.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.29,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Alora",
@@ -3362,6 +3476,54 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Apolon",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.3",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.3,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Apolon",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "10.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.1,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Apolon",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Apolon",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "26.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.26,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Aquila",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -3470,6 +3632,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/aquila/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Aquila",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.45",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.45,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Aquila",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "7.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.071,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Aquila",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.043,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Aquila",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "46.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.46,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Aramis",
@@ -4058,6 +4268,69 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Atlas",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.3",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.3,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Atlas",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "1.8 - 2.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.018,
+        0.021
+      ],
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Atlas",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Atlas",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Atlas",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "36.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.36,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Aurora",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -4385,6 +4658,66 @@
         0.26
       ],
       "source_label": "cohumulone"
+    },
+    {
+      "variety_id": "Aurora",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.1",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.1,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Aurora",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "3.27",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.0327,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Aurora",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "10.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.1,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Aurora",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Aurora",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "22.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.22,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Azacca",
@@ -5156,6 +5489,90 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "BOR",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.65",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.65,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "usda-varieties",
+      "attribute": "myrcene",
+      "stated_value": "21",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.21,
+      "source_label": "OIL: myrcene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "46",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.46,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "13",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.13,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "2.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.02,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "BOR",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "16.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.16,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "BRU-1",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -5409,6 +5826,66 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Backa",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.6",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.6,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Backa",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "33",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.33,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Backa",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.048,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Backa",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "6.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.06,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Backa",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "25.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Banner",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -5504,6 +5981,90 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/banner/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Banner",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "2.17",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 2.17,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Banner",
+      "source_id": "usda-varieties",
+      "attribute": "myrcene",
+      "stated_value": "66.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.664,
+      "source_label": "OIL: myrcene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Banner",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "11.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.118,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Banner",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "7.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.077,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Banner",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "11.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.111,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Banner",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "6.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.065,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Banner",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "34.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.34,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Belma",
@@ -6059,6 +6620,42 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Blato",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.045,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Blato",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.035,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Blato",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "21.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.21,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Blisk",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -6167,6 +6764,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/blisk/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Blisk",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "2.01",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 2.01,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Blisk",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "11.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.115,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Blisk",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Blisk",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "33.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.33,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Boadicea",
@@ -6785,6 +7430,54 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Bobek",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.4",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.4,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bobek",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.081,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bobek",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bobek",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "26.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.26,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Bouclier",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -6938,6 +7631,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/bramling/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Bramling",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.9",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.9,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bramling",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.058,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bramling",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bramling",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "27.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.27,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Bramling Cross",
@@ -7264,6 +8005,78 @@
         0.35
       ],
       "source_label": "cohumulone"
+    },
+    {
+      "variety_id": "Bramling Cross",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.83",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.83,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bramling Cross",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "12.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.128,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bramling Cross",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "7.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.073,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bramling Cross",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bramling Cross",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bramling Cross",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "25.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Bravo",
@@ -7893,6 +8706,90 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Brewer's Gold",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.38 - 3.42",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.38,
+        3.42
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Brewer's Gold",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "11.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.113,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Brewer's Gold",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "6.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.065,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Brewer's Gold",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "7.1 - 11.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.071,
+        0.113
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Brewer's Gold",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.3 - 6.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.033,
+        0.061
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Brewer's Gold",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "36 - 45",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.36,
+        0.45
+      ],
+      "source_label": "COHUMULONE (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Buket",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -7995,6 +8892,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/buket/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Buket",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "2.15",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 2.15,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Buket",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "11.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.11,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Buket",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.049,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Buket",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "24.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.24,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Bullion",
@@ -8104,6 +9049,63 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/bullion/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Bullion",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.58 - 2.50",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.58,
+        2.5
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bullion",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.0 - 13.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.08,
+        0.138
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bullion",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.8 - 6.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.028,
+        0.069
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Bullion",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "42.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.42,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Buzz Bullets",
@@ -8248,6 +9250,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/calicross/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Calicross",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.81",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.81,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Calicross",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "7.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.07,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Calicross",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.056,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Calicross",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "38.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.38,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Caliente",
@@ -8996,6 +10046,93 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Canadian Redvine",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "11.2",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 11.2,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Canadian Redvine",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.02,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Canadian Redvine",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.02,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Canadian Redvine",
+      "source_id": "usda-varieties",
+      "attribute": "farnesene",
+      "stated_value": "4 - 7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.04,
+        0.07
+      ],
+      "source_label": "OIL: farnesene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Canadian Redvine",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Canadian Redvine",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Canadian Redvine",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "47.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.47,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Cascade",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -9724,6 +10861,54 @@
         0.07
       ],
       "source_label": "ALPHA ACID (%) column"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.24",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.24,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.063,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.056,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "36.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.36,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Cashmere",
@@ -10532,6 +11717,78 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Celeia",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.31",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.31,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Celeia",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "17.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.176,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Celeia",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "7.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.072,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Celeia",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Celeia",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Celeia",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "25.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Centennial",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -11204,6 +12461,54 @@
       "source_label": "ALPHA ACID (%) column"
     },
     {
+      "variety_id": "Centennial",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "2.83",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 2.83,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "28.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.28,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Challenger",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -11513,6 +12818,66 @@
         0.3
       ],
       "source_label": "cohumulone"
+    },
+    {
+      "variety_id": "Challenger",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.35",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.35,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Challenger",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "16.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.164,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Challenger",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "7.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.079,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Challenger",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.046,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Challenger",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "23.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.23,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Chelan",
@@ -12537,6 +13902,54 @@
       "source_label": "ALPHA ACID (%) column"
     },
     {
+      "variety_id": "Chinook",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.83",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.83,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "13.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.136,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.039,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "33.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.33,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Cicero",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -12642,6 +14055,78 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/cicero/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Cicero",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.05",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.05,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Cicero",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "17.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.177,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Cicero",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "6.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.067,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Cicero",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.06,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Cicero",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.025,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Cicero",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "29.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.29,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Citra",
@@ -13850,6 +15335,75 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Columbia",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.46 - 1.61",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.46,
+        1.61
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Columbia",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "16.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.167,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Columbia",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.8 - 11.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.068,
+        0.115
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Columbia",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.9 - 5.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.029,
+        0.056
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Columbia",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "40.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.4,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Columbus",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -14932,6 +16486,63 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Comet",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.40 - 3.31",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.4,
+        3.31
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Comet",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.4 - 12.4",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.094,
+        0.124
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Comet",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0 - 6.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.061
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Comet",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "41.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.41,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Contessa",
       "source_id": "hopsteiner-vf",
       "attribute": "total_oil",
@@ -15512,6 +17123,78 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Crystal",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.82",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.82,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Crystal",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "26",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.26,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Crystal",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.07,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Crystal",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "2.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.028,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Crystal",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.058,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Crystal",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "21.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.21,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Dana",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -15748,6 +17431,63 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/defender/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Defender",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.15 - 0.98",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.15,
+        0.98
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Defender",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "3.3 - 6.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.033,
+        0.06
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Defender",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "1.1 - 2.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.011,
+        0.025
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Defender",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "27.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.27,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Delta",
@@ -16645,6 +18385,78 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "East Kent Golding",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.85",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.85,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "East Kent Golding",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "27",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.27,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "East Kent Golding",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "East Kent Golding",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "East Kent Golding",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.02,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "East Kent Golding",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "29.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.29,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Eastwell Golding",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -16747,6 +18559,78 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/eastwell-golding/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Eastwell Golding",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.5",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.5,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Eastwell Golding",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "25",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Eastwell Golding",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.08,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Eastwell Golding",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.06,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Eastwell Golding",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Eastwell Golding",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "30.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.3,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Eclipse",
@@ -18560,6 +20444,54 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Eroica",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.1",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.1,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Eroica",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "12.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.123,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Eroica",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.045,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Eroica",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "40.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.4,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Eureka",
       "source_id": "hga-2017",
       "attribute": "total_oil",
@@ -19601,6 +21533,69 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Fuggle",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.44 - 0.83",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.44,
+        0.83
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Fuggle",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "26.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.266,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Fuggle",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.051,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Fuggle",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.4",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.024,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Fuggle",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "27.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.27,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Galaxy",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -20527,6 +22522,63 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Galena",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.55 - 2.03",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.55,
+        2.03
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Galena",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.02 - 14.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.0802,
+        0.149
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Galena",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.6 - 9.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.046,
+        0.09
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Galena",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "39.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.39,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Gargoyle",
       "source_id": "hopslist",
       "attribute": "alpha",
@@ -21077,6 +23129,66 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Golden Star",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.63",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.63,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Golden Star",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "12.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.125,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Golden Star",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.4",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.054,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Golden Star",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.046,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Golden Star",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "50.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.5,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Golding",
       "source_id": "hga-2017",
       "attribute": "total_oil",
@@ -21344,6 +23456,66 @@
       ]
     },
     {
+      "variety_id": "Green Bullet",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.79",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.79,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Green Bullet",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "15.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.154,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Green Bullet",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.092,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Green Bullet",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.043,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Green Bullet",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "42.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.42,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Greensburg",
       "source_id": "hopslist",
       "attribute": "alpha",
@@ -21472,6 +23644,78 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/groene-bel/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Groene Bel",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.98",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.98,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Groene Bel",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "31.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.315,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Groene Bel",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "17.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.179,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Groene Bel",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.049,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Groene Bel",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.035,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Groene Bel",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "27.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.27,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "HBC 472",
@@ -22297,6 +24541,57 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Hallertauer Gold",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.1 - 2.7",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        1.1,
+        2.7
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hallertauer Gold",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "7.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.07,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hallertauer Gold",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hallertauer Gold",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "20.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.2,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Hallertauer Mittelfrüh",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -23116,6 +25411,57 @@
         0.07
       ],
       "source_label": "ALPHA ACID (%) column"
+    },
+    {
+      "variety_id": "Hallertauer Tradition",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.9 - 1.9",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.9,
+        1.9
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hallertauer Tradition",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.06,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hallertauer Tradition",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hallertauer Tradition",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "23.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.23,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Harmonie",
@@ -24232,6 +26578,90 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Hersbrucker",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.63",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.63,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker",
+      "source_id": "usda-varieties",
+      "attribute": "myrcene",
+      "stated_value": "55",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.55,
+      "source_label": "OIL: myrcene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "29",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.29,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "22.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.22,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Hersbrucker Pure",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -24358,6 +26788,57 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/hersbrucker-pure/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Hersbrucker Pure",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.6 - 1.2",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.6,
+        1.2
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker Pure",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker Pure",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.02,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Hersbrucker Pure",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "20.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.2,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Hersbrucker Spät",
@@ -24807,6 +27288,36 @@
         0.2
       ],
       "source_label": "cohumulone"
+    },
+    {
+      "variety_id": "Horizon",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.6 - 9.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.046,
+        0.09
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Horizon",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "17 - 22",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.17,
+        0.22
+      ],
+      "source_label": "COHUMULONE (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Hüll Melon",
@@ -25755,6 +28266,78 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Keyworth's Early",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.39",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.39,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Keyworth's Early",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "22",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.22,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Keyworth's Early",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "7.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.072,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Keyworth's Early",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.086,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Keyworth's Early",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.033,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Keyworth's Early",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "33.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.33,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Kirin II",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -25860,6 +28443,60 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/kirin-ii/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Kirin II",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.15",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.15,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Kirin II",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.8 - 10.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.068,
+        0.103
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Kirin II",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.2 - 8.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.052,
+        0.08
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Kirin II",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "43.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.43,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Kitamidori",
@@ -25976,6 +28613,81 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/kitamidori/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Kitamidori",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.35",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.35,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Kitamidori",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "31",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.31,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Kitamidori",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "8 - 10",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.08,
+        0.1
+      ],
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Kitamidori",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Kitamidori",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Kitamidori",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "22.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.22,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Kohatu",
@@ -26923,6 +29635,54 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Liberty",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.3",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.3,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Liberty",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Liberty",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.035,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Liberty",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "24.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.24,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Loral",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -27372,6 +30132,90 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Lubelska",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.82 - 2.32",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.82,
+        2.32
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Lubelska",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "14",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.14,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Lubelska",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "4 - 6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.04,
+        0.06
+      ],
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Lubelska",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.9 - 15.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.089,
+        0.152
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Lubelska",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.9 - 6.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.039,
+        0.069
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Lubelska",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "33.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.33,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Lucan",
       "source_id": "hopslist",
       "attribute": "alpha",
@@ -27409,6 +30253,42 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/lucan/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Lucan",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Lucan",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.033,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Lucan",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "21.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.21,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Magnat",
@@ -31633,6 +34513,54 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Northdown",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.35",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.35,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Northdown",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.083,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Northdown",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.046,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Northdown",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "23.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.23,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Northern Brewer",
       "source_id": "hopsteiner-vf",
       "attribute": "total_oil",
@@ -31730,6 +34658,54 @@
         0.32
       ],
       "source_label": "cohumulone"
+    },
+    {
+      "variety_id": "Northern Brewer",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.6",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.6,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Northern Brewer",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "10.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.106,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Northern Brewer",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.042,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Northern Brewer",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "24.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.24,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Nugget",
@@ -32421,6 +35397,60 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Nugget",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.56",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.56,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Nugget",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.4 - 17.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.094,
+        0.173
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Nugget",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.5 - 5.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.025,
+        0.059
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Nugget",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "26.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.26,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Olympic",
       "source_id": "hga-2017",
       "attribute": "total_oil",
@@ -32648,6 +35678,48 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Olympic",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "10.6 - 13.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.106,
+        0.138
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Olympic",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.8 - 6.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.038,
+        0.061
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Olympic",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "31.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.31,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Omega",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -32743,6 +35815,78 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/omega/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Omega",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.72",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.72,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Omega",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "17",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.17,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Omega",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Omega",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Omega",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Omega",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "29.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.29,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Opal",
@@ -33315,6 +36459,78 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Orion",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.8",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.8,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Orion",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "23",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.23,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Orion",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Orion",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.08,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Orion",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Orion",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "25.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Pacific Gem",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -33460,6 +36676,78 @@
         "2019",
         "2020"
       ]
+    },
+    {
+      "variety_id": "Pacific Gem",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.77",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.77,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Pacific Gem",
+      "source_id": "usda-varieties",
+      "attribute": "myrcene",
+      "stated_value": "60",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.6,
+      "source_label": "OIL: myrcene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Pacific Gem",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "15",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.15,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Pacific Gem",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "11.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.115,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Pacific Gem",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Pacific Gem",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "30.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.3,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Pacific Jade",
@@ -34854,6 +38142,60 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Perle",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.6",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.6,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Perle",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "7.9 - 12.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.079,
+        0.129
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Perle",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.9 - 5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.029,
+        0.05
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Perle",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "28.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.28,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Phoenix",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -36043,6 +39385,63 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Precoce de Bourgogne",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.39 - 0.53",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.39,
+        0.53
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Precoce de Bourgogne",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "3.1 - 3.7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.031,
+        0.037
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Precoce de Bourgogne",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.6 - 3.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.026,
+        0.035
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Precoce de Bourgogne",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "23.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.23,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Premiant",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -36590,6 +39989,57 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Pride of Ringwood",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.70 - 1.78",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.7,
+        1.78
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Pride of Ringwood",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Pride of Ringwood",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Pride of Ringwood",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "30.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.3,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Progress",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -36911,6 +40361,78 @@
         0.29
       ],
       "source_label": "cohumulone"
+    },
+    {
+      "variety_id": "Progress",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.73",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.73,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Progress",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "37",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.37,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Progress",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "10.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.106,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Progress",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.067,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Progress",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.026,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Progress",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "28.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.28,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Rakau",
@@ -37263,6 +40785,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/record/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Record",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.82",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.82,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Record",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.089,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Record",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "6.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.066,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Record",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "27.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.27,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Relax",
@@ -38166,6 +41736,63 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Saaz",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.30 - 1.07",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.3,
+        1.07
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Saaz",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "2.8 - 6.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.028,
+        0.066
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Saaz",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.7 - 4.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.027,
+        0.046
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Saaz",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "24.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.24,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Sabro",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -38725,6 +42352,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/santiam/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Santiam",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.0",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.0,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Santiam",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Santiam",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "6.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.06,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Santiam",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "22.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.22,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Saphir",
@@ -39609,6 +43284,90 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Serebrianka",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.41",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.41,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Serebrianka",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "27",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.27,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Serebrianka",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.08,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Serebrianka",
+      "source_id": "usda-varieties",
+      "attribute": "farnesene",
+      "stated_value": "12",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.12,
+      "source_label": "OIL: farnesene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Serebrianka",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Serebrianka",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Serebrianka",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "23.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.23,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Shinshuwase",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -39720,6 +43479,54 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/shinshuwase/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Shinshuwase",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.71",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.71,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Shinshuwase",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.058,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Shinshuwase",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.047,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Shinshuwase",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "51.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.51,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Simcoe",
@@ -40934,6 +44741,54 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Smooth Cone",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.0",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.0,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Smooth Cone",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.082,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Smooth Cone",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.042,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Smooth Cone",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "31.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.31,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Solero",
       "source_id": "hopsteiner-vf",
       "attribute": "total_oil",
@@ -41372,6 +45227,18 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Sorachi Ace",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "23.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.23,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Southern Brewer",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -41500,6 +45367,66 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Southern Brewer",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.43 - 1.03",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.43,
+        1.03
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Brewer",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.6 - 12.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.056,
+        0.12
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Brewer",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.8 - 5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.028,
+        0.05
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Brewer",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "33 - 42",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.33,
+        0.42
+      ],
+      "source_label": "COHUMULONE (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Southern Cross",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -41608,6 +45535,90 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/southern-cross/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Southern Cross",
+      "source_id": "usda-varieties",
+      "attribute": "myrcene",
+      "stated_value": "58",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.58,
+      "source_label": "OIL: myrcene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Cross",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "14",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.14,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Cross",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Cross",
+      "source_id": "usda-varieties",
+      "attribute": "farnesene",
+      "stated_value": "5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "OIL: farnesene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Cross",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "13.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.13,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Cross",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "6.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.06,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Southern Cross",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "28.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.28,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Southern Promise",
@@ -42276,6 +46287,63 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Spalter",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.62",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.62,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Spalter",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "3.6 - 7.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.036,
+        0.075
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Spalter",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0 - 6.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.062
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Spalter",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "20 - 25",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "range",
+      "normalised": [
+        0.2,
+        0.25
+      ],
+      "source_label": "COHUMULONE (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Spalter Select",
       "source_id": "barthhaas-sheet",
       "attribute": "total_oil",
@@ -42709,6 +46777,54 @@
         0.065
       ],
       "source_label": "ALPHA ACID (%) column"
+    },
+    {
+      "variety_id": "Spalter Select",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.8",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.8,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Spalter Select",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Spalter Select",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Spalter Select",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "22.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.22,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Sterling",
@@ -43160,6 +47276,54 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Sterling",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.3",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.3,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sterling",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "6.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.06,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sterling",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sterling",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "24.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.24,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Sticklebract",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -43286,6 +47450,66 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/sticklebract/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Sticklebract",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.2",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.2,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sticklebract",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "7.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.077,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sticklebract",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "10.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.103,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sticklebract",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.049,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sticklebract",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "40.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.4,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Strata",
@@ -44847,6 +49071,90 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Sunbeam",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.8",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.8,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunbeam",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "14",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.14,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunbeam",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunbeam",
+      "source_id": "usda-varieties",
+      "attribute": "farnesene",
+      "stated_value": "6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.06,
+      "source_label": "OIL: farnesene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunbeam",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunbeam",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.025,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunbeam",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "36.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.36,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Sunshine",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -44929,6 +49237,66 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/sunshine/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Sunshine",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.35",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.35,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunshine",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "0.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.009,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunshine",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "7.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.075,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunshine",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.027,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Sunshine",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "34.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.34,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Super Galena",
@@ -46043,6 +50411,63 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Talisman",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.47 - 0.98",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.47,
+        0.98
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Talisman",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.7 - 6.7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.057,
+        0.067
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Talisman",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.8 - 3.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.028,
+        0.036
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Talisman",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "53.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.53,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Talus",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -46394,6 +50819,60 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Tardif de Bourgogne",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.65",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.65,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tardif de Bourgogne",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "3.1 - 5.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.031,
+        0.055
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tardif de Bourgogne",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.1 - 5.5",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.031,
+        0.055
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tardif de Bourgogne",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "20.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.2,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Target",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -46690,6 +51169,63 @@
       "source_label": "cohumulone"
     },
     {
+      "variety_id": "Target",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.82 - 2.32",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.82,
+        2.32
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Target",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.9 - 15.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.089,
+        0.152
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Target",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.9 - 6.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.039,
+        0.069
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Target",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "33.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.33,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Teamaker",
       "source_id": "hopslist",
       "attribute": "alpha",
@@ -46977,6 +51513,87 @@
         0.28
       ],
       "source_label": "cohumulone"
+    },
+    {
+      "variety_id": "Tettnanger",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.36 - 1.07",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.36,
+        1.07
+      ],
+      "source_label": "OIL (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tettnanger",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "20.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.204,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tettnanger",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "5.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.051,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tettnanger",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "3.0 - 5.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.058
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tettnanger",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.8 - 5.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.028,
+        0.053
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tettnanger",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "24.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.24,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Tillicum",
@@ -47363,6 +51980,78 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Tolhurst",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.65",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.65,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tolhurst",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "19.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.194,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tolhurst",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "7.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.077,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tolhurst",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "2.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.022,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tolhurst",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.9",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.029,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Tolhurst",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "31.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.31,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Topaz",
       "source_id": "barthhaas-variety",
       "attribute": "total_oil",
@@ -47722,6 +52411,84 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/toyomidori/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Toyomidori",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.06",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.06,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Toyomidori",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "9 - 12",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.09,
+        0.12
+      ],
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Toyomidori",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "4 - 5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.04,
+        0.05
+      ],
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Toyomidori",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "11.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.11,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Toyomidori",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.05,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Toyomidori",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "40.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.4,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Trident",
@@ -48478,6 +53245,54 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Ultra",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.3",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.3,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Ultra",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Ultra",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Ultra",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "25.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Universal",
       "source_id": "hopslist",
       "attribute": "alpha",
@@ -48515,6 +53330,42 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/dual-purpose-hops/universal/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Universal",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.052,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Universal",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.7",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.037,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Universal",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "23.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.23,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Vanguard",
@@ -49690,6 +54541,66 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/vojvodina/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Vojvodina",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.9",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.9,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Vojvodina",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "13",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.13,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Vojvodina",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "8.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.086,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Vojvodina",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.6",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.036,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Vojvodina",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "30.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.3,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Wai-iti",
@@ -51545,6 +56456,96 @@
       "source_label": "ALPHA ACID (%) column"
     },
     {
+      "variety_id": "Willamette",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "0.8",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.8,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Willamette",
+      "source_id": "usda-varieties",
+      "attribute": "myrcene",
+      "stated_value": "51.0",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.51,
+      "source_label": "OIL: myrcene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Willamette",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "21.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.212,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Willamette",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "7.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.074,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Willamette",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.2 - 11.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.052,
+        0.111
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Willamette",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "2.9 - 5.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.029,
+        0.05
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Willamette",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "29.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.29,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Yakima Cluster",
       "source_id": "hopslist",
       "attribute": "total_oil",
@@ -51662,6 +56663,48 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/bittering-hops/yakima-cluster/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Yakima Cluster",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "4.4 - 9.8",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.044,
+        0.098
+      ],
+      "source_label": "ALPHA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Yakima Cluster",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0 - 6.1",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "range",
+      "normalised": [
+        0.03,
+        0.061
+      ],
+      "source_label": "BETA ACIDS (10 year range)",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Yakima Cluster",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "42.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.42,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Yakima Gold",
@@ -51892,6 +56935,78 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Yeoman",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.7",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.7,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Yeoman",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "19.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.198,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Yeoman",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "9.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.095,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Yeoman",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "12.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.12,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Yeoman",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.04,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Yeoman",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "25.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Zappa",
       "source_id": "crosby-variety",
       "attribute": "total_oil",
@@ -52031,6 +57146,78 @@
       "basis_tier": "aggregator"
     },
     {
+      "variety_id": "Zenith",
+      "source_id": "usda-varieties",
+      "attribute": "total_oil",
+      "stated_value": "1.76",
+      "stated_unit": "ml_per_100g",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 1.76,
+      "source_label": "OIL",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Zenith",
+      "source_id": "usda-varieties",
+      "attribute": "humulene",
+      "stated_value": "18.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.184,
+      "source_label": "OIL: humulene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Zenith",
+      "source_id": "usda-varieties",
+      "attribute": "caryophyllene",
+      "stated_value": "6.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.069,
+      "source_label": "OIL: caryophyllene",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Zenith",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "9.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.09,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Zenith",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "3.0",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.03,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Zenith",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "25.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.25,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
       "variety_id": "Zlatan",
       "source_id": "hopslist",
       "attribute": "alpha",
@@ -52068,6 +57255,42 @@
       "source_label": "Co-Humulone Composition",
       "page_url": "https://www.hopslist.com/hops/aroma-hops/zlatan/",
       "basis_tier": "aggregator"
+    },
+    {
+      "variety_id": "Zlatan",
+      "source_id": "usda-varieties",
+      "attribute": "alpha",
+      "stated_value": "5.2",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.052,
+      "source_label": "ALPHA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Zlatan",
+      "source_id": "usda-varieties",
+      "attribute": "beta",
+      "stated_value": "4.3",
+      "stated_unit": "percent",
+      "stated_basis": "of hop mass",
+      "value_kind": "point",
+      "normalised": 0.043,
+      "source_label": "BETA ACIDS",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
+    },
+    {
+      "variety_id": "Zlatan",
+      "source_id": "usda-varieties",
+      "attribute": "cohumulone",
+      "stated_value": "21.0",
+      "stated_unit": "percent",
+      "stated_basis": "of alpha acids",
+      "value_kind": "point",
+      "normalised": 0.21,
+      "source_label": "COHUMULONE",
+      "page_url": "https://freshops.com/usda-named-hop-variety-descriptions/"
     },
     {
       "variety_id": "Zythos",

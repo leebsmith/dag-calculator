@@ -94,6 +94,11 @@ HOPSTEINER_ALIASES = {
 
 
 SOURCE_ALIASES = {
+    "saazer": "saaz",
+    "wye challenger": "challenger",
+    "wye northdown": "northdown",
+    "wye target": "target",
+    "herbrucker": "hersbrucker",
     "hallertau blanc": "hallertauer blanc",
     "diamant": "hallertauer diamant",
     "feux coeur": "feux coeur francais",
@@ -993,6 +998,125 @@ def probe_usda(varieties):
     return source, []
 
 
+
+USDA_URL = "https://freshops.com/usda-named-hop-variety-descriptions/"
+
+
+def _usda_sections(html):
+    parts = re.split(r'name="(\d+)"', html)
+    for index in range(1, len(parts), 2):
+        body = parts[index + 1]
+        body = re.sub(r"&#(\d+);", lambda m: chr(int(m.group(1))), body)
+        body = body.replace("&amp;", "&").replace("&nbsp;", " ")
+        body = re.sub(r"<[^>]+>", "\n", body)
+        lines = [re.sub(r"\s+", " ", line).strip() for line in body.splitlines()]
+        fields = {}
+        for line in lines:
+            for key in ("CULTIVAR", "ALPHA ACIDS", "BETA ACIDS", "COHUMULONE", "OIL"):
+                if line.upper().startswith(f"{key}:") and key not in fields:
+                    fields[key] = line.split(":", 1)[1].strip()
+        if "CULTIVAR" in fields:
+            yield fields
+
+
+def _usda_range(text):
+    match = re.search(
+        rf"range:\s*({NUMBER})\s*(?:-|to|\u2013)\s*({NUMBER})", text, re.I
+    )
+    if match:
+        return f"{match.group(1)} - {match.group(2)}", [float(match.group(1)), float(match.group(2))]
+    return None, None
+
+
+def _usda_point(text):
+    match = re.match(rf"\s*({NUMBER})", text)
+    return float(match.group(1)) if match else None
+
+
+def _usda_fractions(oil):
+    out = {}
+    for attribute, pattern in (
+        ("myrcene", r"myrcene\s*[:=]?\s*({N})\s*(?:-|to|\u2013)?\s*({N})?"),
+        ("humulene", r"humulene\s*[:=]?\s*({N})\s*(?:-|to|\u2013)?\s*({N})?"),
+        ("caryophyllene", r"caryophyllene\s*[:=]?\s*({N})\s*(?:-|to|\u2013)?\s*({N})?"),
+        ("farnesene", r"farnesene\s*[:=]?\s*({N})\s*(?:-|to|\u2013)?\s*({N})?"),
+    ):
+        found = re.search(pattern.format(N=NUMBER), oil, re.I)
+        if not found:
+            continue
+        low = found.group(1)
+        high = found.group(2) or low
+        out[attribute] = f"{low} - {high}" if high != low else low
+    return out
+
+
+def probe_usda_varieties(varieties):
+    body, digest = fetch(USDA_URL, "usda_varieties.html")
+    html = body.decode("utf-8", "replace")
+    wanted = {norm(v): v for v in varieties}
+    source = {
+        "id": "usda-varieties",
+        "url": USDA_URL,
+        "retrieved_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "sha256": digest,
+        "varieties": len(list(_usda_sections(html))),
+    }
+    rows = []
+    seen = set()
+    for fields in _usda_sections(html):
+        name = match_variety(fields["CULTIVAR"].split(",")[0], wanted)
+        if not name:
+            continue
+        for attribute, key, unit, basis in (
+            ("alpha", "ALPHA ACIDS", "percent", PERCENT_MASS[1]),
+            ("beta", "BETA ACIDS", "percent", PERCENT_MASS[1]),
+            ("cohumulone", "COHUMULONE", "percent", PERCENT_ALPHA[1]),
+            ("total_oil", "OIL", "ml_per_100g", PERCENT_MASS[1]),
+        ):
+            text = fields.get(key)
+            if not text:
+                continue
+            stated, bounds = _usda_range(text)
+            if stated is None:
+                point = _usda_point(text)
+                if point is None:
+                    continue
+                stated = str(point)
+            if (name, attribute) in seen:
+                continue
+            seen.add((name, attribute))
+            rows.append(
+                observation(
+                    name,
+                    "usda-varieties",
+                    attribute,
+                    stated,
+                    unit,
+                    basis,
+                    f"{key} (10 year range)" if bounds else key,
+                    page_url=USDA_URL,
+                )
+            )
+        oil = fields.get("OIL", "")
+        for attribute, stated in _usda_fractions(oil).items():
+            if (name, attribute) in seen:
+                continue
+            seen.add((name, attribute))
+            rows.append(
+                observation(
+                    name,
+                    "usda-varieties",
+                    attribute,
+                    stated,
+                    "percent",
+                    PERCENT_OIL[1],
+                    f"OIL: {attribute}",
+                    page_url=USDA_URL,
+                )
+            )
+    return source, [r for r in rows if r]
+
+
 SOURCES = {
     "hopsteiner": lambda v: probe_hopsteiner(v),
     "crosby": lambda v: probe_crosby(v),
@@ -1012,6 +1136,7 @@ SOURCES = {
     "nzhops": lambda v: probe_nzhops(v),
     "hopslist": lambda v: probe_hopslist(v),
     "usda": lambda v: probe_usda(v),
+    "usda-varieties": lambda v: probe_usda_varieties(v),
 }
 
 

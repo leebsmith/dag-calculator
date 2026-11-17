@@ -338,11 +338,12 @@ parser bug, and it belongs with the alias table rather than the sweep.
 ## 9. The sweep
 
 All 401 seed ids against the ten measuring sources plus the identity index:
-**3,475 observations** after the alias fixes — the entity-decoding and apostrophe normalisation recovered six varieties, and two more ('Red Earth', 'Willow Creek') exist in the aggregator with every value blank.
+**3,951 observations** after the alias fixes and the USDA variety descriptions — the entity-decoding and apostrophe normalisation recovered six varieties, and two more ('Red Earth', 'Willow Creek') exist in the aggregator with every value blank.
 
 | Source | Varieties |
 |---|---|
 | `hopslist` | 199 |
+| `usda-varieties` | 88 |
 | `hopsteiner-vf` | 84 |
 | `barthhaas-variety` | 81 |
 | `hga-2020` | 51 |
@@ -382,7 +383,21 @@ what predicted it: published widely enough to exist for 95 varieties, but by a
 single source for 87 of them, because the Haas sheets print an em dash where
 BarthHaas prints a value.
 
-### 9.2 A cell that prints its unit leaked the unit into the number
+### 9.2 The USDA breeding record corroborates and upgrades
+
+The Freshops mirror of the USDA-OSU cultivar descriptions publishes, per
+variety, alpha, beta, co-humulone, total oil and the four oil fractions, usually
+as a point with a **10-year range** beside it, plus a prose description and the
+breeder's own trait notes.
+
+It is worth 476 observations over 88 varieties, and the value is provenance, not
+coverage: 65 varieties now cite the breeder record for alpha instead of a merchant
+or the aggregator, and Canadian Redvine's 11.2 mL/100 g — the one figure that
+looked like a typo — is confirmed by the source that produced it. Oil coverage
+moves by two varieties, because the public breeding catalogue and the vendor
+catalogues overlap almost completely.
+
+### 9.3 A cell that prints its unit leaked the unit into the number
 
 `hopslist` writes the unit inside the value cell — `1.1 mL/100g` — and the number
 scanner read the `100` from the denominator as a measurement. Total oil came out
@@ -394,7 +409,7 @@ the source guard fails on any total-oil observation above 20 mL/100 g. The
 running fix is the reason the shapes above are stated as "printed value" — the
 unit belongs to the cell's metadata, never to its number.
 
-### 9.3 A printed zero is not a measurement
+### 9.4 A printed zero is not a measurement
 
 61 observations state a hard zero, 60 of them from Hopsteiner. **18 of those
 contradict a non-zero value from another source** for the same variety and
@@ -413,7 +428,7 @@ synthesis and recorded in the ledger**; a hard zero that no one contradicts is
 kept as a point. This is the same principle as "absence is not zero", applied to
 a source that spells absence as a number.
 
-### 9.4 The ledger
+### 9.5 The ledger
 
 The union envelope and the source values for every field are computed; the
 standing disagreements worth naming:

@@ -80,6 +80,15 @@ an aggregator figure for 246 (150 with no vendor sheet at all, 96 where the
 aggregator was the only source). 224 rows carry total oil, 213 co-humulone, and
 94 linalool. Every row has an alpha.
 
+## 3.2 Prose is open again, on different terms
+
+`notes` was dropped because the Beer Analytics text was generated with no
+upstream. The USDA-OSU cultivar descriptions are the opposite: a public breeding
+record, quotable with attribution, carrying a description and the breeder's trait
+notes per variety. It is not in the seed — reinstating a prose field is a
+decision, not a transcription — but it is the first candidate that would survive
+the standard the old text failed.
+
 ## 4. The catalogue is permanently mixed
 
 Measured varieties carry a vendor or survey figure with a stated bound. The tail

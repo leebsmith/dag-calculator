@@ -386,44 +386,44 @@
     "origin": "Slovenia",
     "alpha_rating": "High",
     "recipes_count": 4,
-    "alpha_acid_pct": 0.11,
+    "alpha_acid_pct": 0.1,
     "alpha_acid_min_pct": 0.1,
-    "alpha_acid_max_pct": 0.12,
-    "url": "https://www.hopslist.com/hops/aroma-hops/ahil/",
+    "alpha_acid_max_pct": 0.1,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/ahil/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.1,
-        0.12
+        0.1
       ]
     },
-    "beta_acid_pct": 0.045,
+    "beta_acid_pct": 0.04,
     "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.05,
+    "beta_acid_max_pct": 0.04,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/ahil/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.04,
-        0.05
+        0.04
       ]
     },
-    "total_oil_ml_per_100g": 2,
+    "total_oil_ml_per_100g": 1.8,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -442,7 +442,7 @@
     "cohumulone_pct_of_alpha": 0.25,
     "myrcene_pct_of_oil": 0.611,
     "humulene_pct_of_oil": 0.076,
-    "caryophyllene_pct_of_oil": 0.043,
+    "caryophyllene_pct_of_oil": 0.019,
     "farnesene_pct_of_oil": 0.104
   },
   "ahtanum": {
@@ -567,44 +567,44 @@
     "origin": "Great Britain",
     "alpha_rating": "High",
     "recipes_count": 8,
-    "alpha_acid_pct": 0.0605,
-    "alpha_acid_min_pct": 0.046,
-    "alpha_acid_max_pct": 0.075,
-    "beta_acid_pct": 0.0335,
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/alliance/",
+    "alpha_acid_pct": 0.063,
+    "alpha_acid_min_pct": 0.063,
+    "alpha_acid_max_pct": 0.063,
+    "beta_acid_pct": 0.025,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/alliance/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.046,
-        0.075
+        0.063,
+        0.063
       ]
     },
-    "beta_acid_min_pct": 0.016,
-    "beta_acid_max_pct": 0.051,
+    "beta_acid_min_pct": 0.025,
+    "beta_acid_max_pct": 0.025,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/alliance/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.016,
-        0.051
+        0.025,
+        0.025
       ]
     },
-    "total_oil_ml_per_100g": 0.91,
+    "total_oil_ml_per_100g": 1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -1146,44 +1146,44 @@
     "origin": "Slovenia",
     "alpha_rating": "High",
     "recipes_count": 3,
-    "alpha_acid_pct": 0.11,
+    "alpha_acid_pct": 0.1,
     "alpha_acid_min_pct": 0.1,
-    "alpha_acid_max_pct": 0.12,
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/apolon/",
+    "alpha_acid_max_pct": 0.1,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/apolon/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.1,
-        0.12
+        0.1
       ]
     },
     "beta_acid_pct": 0.04,
     "beta_acid_min_pct": 0.04,
     "beta_acid_max_pct": 0.04,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/apolon/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.04,
         0.04
       ]
     },
-    "total_oil_ml_per_100g": 1.45,
+    "total_oil_ml_per_100g": 1.3,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -1199,7 +1199,7 @@
         0.113
       ]
     },
-    "cohumulone_pct_of_alpha": 0.0225,
+    "cohumulone_pct_of_alpha": 0.26,
     "myrcene_pct_of_oil": 0.63,
     "humulene_pct_of_oil": 0.26,
     "caryophyllene_pct_of_oil": 0.04,
@@ -1213,42 +1213,42 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 65,
-    "alpha_acid_pct": 0.078,
-    "alpha_acid_min_pct": 0.067,
-    "alpha_acid_max_pct": 0.089,
-    "beta_acid_pct": 0.045,
+    "alpha_acid_pct": 0.071,
+    "alpha_acid_min_pct": 0.071,
+    "alpha_acid_max_pct": 0.071,
+    "beta_acid_pct": 0.043,
     "pairings": "Amarillo",
-    "url": "https://www.hopslist.com/hops/aroma-hops/aquila/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/aquila/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.067,
-        0.089
+        0.071,
+        0.071
       ]
     },
-    "beta_acid_min_pct": 0.041,
-    "beta_acid_max_pct": 0.049,
+    "beta_acid_min_pct": 0.043,
+    "beta_acid_max_pct": 0.043,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/aquila/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.041,
-        0.049
+        0.043,
+        0.043
       ]
     },
     "total_oil_ml_per_100g": 1.45,
@@ -1502,46 +1502,46 @@
     "origin": "Slovenia",
     "alpha_rating": "Moderate",
     "recipes_count": 65,
-    "alpha_acid_pct": 0.1,
+    "alpha_acid_pct": 0.09,
     "alpha_acid_min_pct": 0.09,
-    "alpha_acid_max_pct": 0.11,
+    "alpha_acid_max_pct": 0.09,
     "beta_acid_pct": 0.04,
     "pairings": "East Kent Golding",
     "flavor_profiles": "Floral, Lime, Pine",
-    "url": "https://www.hopslist.com/hops/aroma-hops/atlas/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/atlas/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.09,
-        0.11
+        0.09
       ]
     },
     "beta_acid_min_pct": 0.04,
     "beta_acid_max_pct": 0.04,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/atlas/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.04,
         0.04
       ]
     },
-    "total_oil_ml_per_100g": 1.45,
+    "total_oil_ml_per_100g": 1.3,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -1560,7 +1560,7 @@
     "cohumulone_pct_of_alpha": 0.36,
     "myrcene_pct_of_oil": 0.59,
     "humulene_pct_of_oil": 0.09,
-    "caryophyllene_pct_of_oil": 0.04,
+    "caryophyllene_pct_of_oil": 0.0195,
     "farnesene_pct_of_oil": 0.133
   },
   "aurora": {
@@ -1572,45 +1572,50 @@
     "origin": "Slovenia",
     "alpha_rating": "Moderate",
     "recipes_count": 2988,
-    "alpha_acid_pct": 0.1005,
-    "alpha_acid_min_pct": 0.056,
-    "alpha_acid_max_pct": 0.145,
-    "beta_acid_pct": 0.055,
+    "alpha_acid_pct": 0.094,
+    "alpha_acid_min_pct": 0.077,
+    "alpha_acid_max_pct": 0.111,
+    "beta_acid_pct": 0.04,
     "pairings": "Cascade, Saaz",
     "flavor_profiles": "Aniseed, Citrus, Floral, Herbal, Lemongrass, Noble, Spicy, Tea",
-    "url": "https://www.barthhaas.com/hops-and-products/hops/aurora",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/aurora",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.056,
-        0.145
+        0.077,
+        0.111
       ],
-      "dispersion": 0.104
+      "dispersion": 0.094
     },
+    "beta_acid_min_pct": 0.04,
+    "beta_acid_max_pct": 0.04,
     "beta_provenance": {
       "kind": "vendor",
-      "bound": "max",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "barthhaas-variety"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/aurora",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        null,
-        0.055
-      ]
+        0.04,
+        0.04
+      ],
+      "dispersion": 0.018
     },
-    "total_oil_ml_per_100g": 2.6,
+    "total_oil_ml_per_100g": 1.1,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -1626,10 +1631,10 @@
         0.016
       ]
     },
-    "cohumulone_pct_of_alpha": 0.24,
+    "cohumulone_pct_of_alpha": 0.22,
     "myrcene_pct_of_oil": 0.55,
     "humulene_pct_of_oil": 0.27,
-    "caryophyllene_pct_of_oil": 0.08,
+    "caryophyllene_pct_of_oil": 0.0327,
     "farnesene_pct_of_oil": 0.09,
     "linalool_pct_of_oil": 0.013
   },
@@ -1747,60 +1752,61 @@
     "origin": "Serbia",
     "alpha_rating": "Low",
     "recipes_count": 5,
-    "alpha_acid_pct": 0.05,
-    "alpha_acid_min_pct": 0.031,
-    "alpha_acid_max_pct": 0.069,
-    "beta_acid_pct": 0.057,
-    "url": "https://www.hopslist.com/hops/aroma-hops/backa/",
+    "alpha_acid_pct": 0.048,
+    "alpha_acid_min_pct": 0.048,
+    "alpha_acid_max_pct": 0.048,
+    "beta_acid_pct": 0.06,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/backa/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.031,
-        0.069
+        0.048,
+        0.048
       ]
     },
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.074,
+    "beta_acid_min_pct": 0.06,
+    "beta_acid_max_pct": 0.06,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/backa/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.04,
-        0.074
+        0.06,
+        0.06
       ]
     },
     "total_oil_ml_per_100g": 0.6,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/backa/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.25,
-        0.25
+        0.33,
+        0.33
       ]
     },
-    "cohumulone_pct_of_alpha": 0.25
+    "cohumulone_pct_of_alpha": 0.25,
+    "humulene_pct_of_oil": 0.33
   },
   "banner": {
     "id": "banner",
@@ -1810,55 +1816,55 @@
     "origin": "United States",
     "alpha_rating": "High",
     "recipes_count": 39,
-    "alpha_acid_pct": 0.107,
-    "alpha_acid_min_pct": 0.084,
-    "alpha_acid_max_pct": 0.13,
-    "beta_acid_pct": 0.0665,
+    "alpha_acid_pct": 0.111,
+    "alpha_acid_min_pct": 0.111,
+    "alpha_acid_max_pct": 0.111,
+    "beta_acid_pct": 0.065,
     "pairings": "Amarillo, Cascade, Citra",
-    "url": "https://www.hopslist.com/hops/bittering-hops/banner/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/banner/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.084,
-        0.13
+        0.111,
+        0.111
       ]
     },
-    "beta_acid_min_pct": 0.053,
-    "beta_acid_max_pct": 0.08,
+    "beta_acid_min_pct": 0.065,
+    "beta_acid_max_pct": 0.065,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/banner/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.053,
-        0.08
+        0.065,
+        0.065
       ]
     },
     "total_oil_ml_per_100g": 2.17,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/banner/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.077,
         0.077
@@ -2197,17 +2203,17 @@
     "alpha_acid_min_pct": 0.045,
     "alpha_acid_max_pct": 0.045,
     "flavor_profiles": "Earthy, Floral, Herbal, Mild, Noble",
-    "url": "https://www.hopslist.com/hops/aroma-hops/blato/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/blato/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.045,
         0.045
@@ -2217,15 +2223,15 @@
     "beta_acid_min_pct": 0.035,
     "beta_acid_max_pct": 0.035,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/blato/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.035,
         0.035
@@ -2261,41 +2267,41 @@
     "origin": "Slovenia",
     "alpha_rating": "High",
     "recipes_count": 3,
-    "alpha_acid_pct": 0.119,
-    "alpha_acid_min_pct": 0.097,
-    "alpha_acid_max_pct": 0.141,
-    "url": "https://www.hopslist.com/hops/aroma-hops/blisk/",
+    "alpha_acid_pct": 0.115,
+    "alpha_acid_min_pct": 0.115,
+    "alpha_acid_max_pct": 0.115,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/blisk/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.097,
-        0.141
+        0.115,
+        0.115
       ]
     },
-    "beta_acid_pct": 0.0405,
-    "beta_acid_min_pct": 0.033,
-    "beta_acid_max_pct": 0.048,
+    "beta_acid_pct": 0.04,
+    "beta_acid_min_pct": 0.04,
+    "beta_acid_max_pct": 0.04,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/blisk/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.033,
-        0.048
+        0.04,
+        0.04
       ]
     },
     "total_oil_ml_per_100g": 2.01,
@@ -2400,48 +2406,52 @@
     "origin": "Slovenia",
     "alpha_rating": "Moderate",
     "recipes_count": 1751,
-    "alpha_acid_pct": 0.056,
-    "alpha_acid_min_pct": 0.034,
-    "alpha_acid_max_pct": 0.078,
-    "beta_acid_pct": 0.0505,
+    "alpha_acid_pct": 0.0623,
+    "alpha_acid_min_pct": 0.0483,
+    "alpha_acid_max_pct": 0.0763,
+    "beta_acid_pct": 0.0518,
     "pairings": "Saaz, Cascade",
     "flavor_profiles": "Aniseed, Artichoke, Floral, Grapefruit, Hay, Lemon, Lime, Pine, Sage, Sweet",
-    "url": "https://www.barthhaas.com/hops-and-products/hops/bobek",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/bobek",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.034,
-        0.078
+        0.0483,
+        0.0763
       ],
-      "dispersion": 0.057
+      "dispersion": 0.215
     },
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.061,
+    "beta_acid_min_pct": 0.0433,
+    "beta_acid_max_pct": 0.0603,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/bobek",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.04,
-        0.061
+        0.0433,
+        0.0603
       ],
       "dispersion": 0.043
     },
-    "total_oil_ml_per_100g": 2.35,
+    "total_oil_ml_per_100g": 1.4,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -2457,7 +2467,7 @@
         0.02
       ]
     },
-    "cohumulone_pct_of_alpha": 0.3,
+    "cohumulone_pct_of_alpha": 0.26,
     "myrcene_pct_of_oil": 0.51,
     "humulene_pct_of_oil": 0.16,
     "caryophyllene_pct_of_oil": 0.05,
@@ -2526,44 +2536,46 @@
     "origin": "Czech Republic",
     "alpha_rating": "Moderate",
     "recipes_count": 30,
-    "alpha_acid_pct": 0.09,
-    "alpha_acid_min_pct": 0.07,
-    "alpha_acid_max_pct": 0.11,
+    "alpha_acid_pct": 0.02,
+    "alpha_acid_min_pct": 0.02,
+    "alpha_acid_max_pct": 0.02,
     "pairings": "Cascade, Saaz, Centennial, Fuggle",
     "flavor_profiles": "Pine, Spicy",
-    "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.07,
-        0.11
-      ]
+        0.02,
+        0.02
+      ],
+      "dispersion": 0.636
     },
-    "beta_acid_pct": 0.055,
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.07,
+    "beta_acid_pct": 0.03,
+    "beta_acid_min_pct": 0.03,
+    "beta_acid_max_pct": 0.03,
     "beta_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.04,
-        0.07
-      ]
+        0.03,
+        0.03
+      ],
+      "dispersion": 0.294
     },
     "total_oil_ml_per_100g": 0.65,
     "oil_provenance": {
@@ -2581,9 +2593,9 @@
         0.004
       ]
     },
-    "cohumulone_pct_of_alpha": 0.24,
+    "cohumulone_pct_of_alpha": 0.16,
     "myrcene_pct_of_oil": 0.21,
-    "humulene_pct_of_oil": 0.3,
+    "humulene_pct_of_oil": 0.46,
     "caryophyllene_pct_of_oil": 0.13,
     "farnesene_pct_of_oil": 0.005,
     "linalool_pct_of_oil": 0.003
@@ -2669,17 +2681,17 @@
     "alpha_acid_max_pct": 0.058,
     "pairings": "East Kent Golding, Saaz, Cascade",
     "flavor_profiles": "Black Currant, Blackberry, Lemon, Pleasant, Plum",
-    "url": "https://www.hopslist.com/hops/aroma-hops/bramling/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/bramling/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.058,
         0.058
@@ -2689,15 +2701,15 @@
     "beta_acid_min_pct": 0.03,
     "beta_acid_max_pct": 0.03,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/bramling/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.03,
         0.03
@@ -2705,15 +2717,15 @@
     },
     "total_oil_ml_per_100g": 0.9,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/bramling/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.27,
         0.27
@@ -2729,48 +2741,52 @@
     "origin": "Great Britain",
     "alpha_rating": "Moderate",
     "recipes_count": 4827,
-    "alpha_acid_pct": 0.07,
-    "alpha_acid_min_pct": 0.06,
-    "alpha_acid_max_pct": 0.08,
-    "beta_acid_pct": 0.0285,
+    "alpha_acid_pct": 0.06,
+    "alpha_acid_min_pct": 0.0533,
+    "alpha_acid_max_pct": 0.0667,
+    "beta_acid_pct": 0.0287,
     "pairings": "East Kent Golding, Fuggle",
     "flavor_profiles": "Currant, Gooseberry, Grapefruit, Lemon, Loganberry, Spicy, Vanilla",
-    "url": "https://www.barthhaas.com/hops-and-products/hops/bramling-cross",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/bramling-cross",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.06,
-        0.08
+        0.0533,
+        0.0667
       ],
-      "dispersion": 0.077
+      "dispersion": 0.136
     },
-    "beta_acid_min_pct": 0.022,
-    "beta_acid_max_pct": 0.035,
+    "beta_acid_min_pct": 0.024,
+    "beta_acid_max_pct": 0.0333,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/bramling-cross",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.022,
-        0.035
+        0.024,
+        0.0333
       ],
-      "dispersion": 0.018
+      "dispersion": 0.036
     },
-    "total_oil_ml_per_100g": 1.2,
+    "total_oil_ml_per_100g": 0.83,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -2786,10 +2802,10 @@
         0
       ]
     },
-    "cohumulone_pct_of_alpha": 0.34,
+    "cohumulone_pct_of_alpha": 0.25,
     "myrcene_pct_of_oil": 0.36,
-    "humulene_pct_of_oil": 0.2,
-    "caryophyllene_pct_of_oil": 0.125,
+    "humulene_pct_of_oil": 0.276,
+    "caryophyllene_pct_of_oil": 0.073,
     "farnesene_pct_of_oil": 0.01,
     "linalool_pct_of_oil": 0
   },
@@ -2875,47 +2891,50 @@
     "origin": "Germany, 🇺🇸 United States",
     "alpha_rating": "Moderate",
     "recipes_count": 8457,
-    "alpha_acid_pct": 0.055,
-    "alpha_acid_min_pct": 0.045,
-    "alpha_acid_max_pct": 0.065,
-    "beta_acid_pct": 0.033,
+    "alpha_acid_pct": 0.0715,
+    "alpha_acid_min_pct": 0.0577,
+    "alpha_acid_max_pct": 0.0853,
+    "beta_acid_pct": 0.047,
     "pairings": "Cascade",
     "flavor_profiles": "Black Currant, Fruity, Rose, Spicy",
-    "url": "https://www.barthhaas.com/hops-and-products/hops/brewers-gold",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/brewers-gold",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.045,
-        0.065
+        0.0577,
+        0.0853
       ],
-      "dispersion": 0.102
+      "dispersion": 0.215
     },
-    "beta_acid_min_pct": 0.029,
-    "beta_acid_max_pct": 0.037,
+    "beta_acid_min_pct": 0.033,
+    "beta_acid_max_pct": 0.061,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.029,
-        0.037
-      ]
+        0.033,
+        0.061
+      ],
+      "dispersion": 0.175
     },
-    "total_oil_ml_per_100g": 1.8,
+    "total_oil_ml_per_100g": 2.4,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -2931,10 +2950,10 @@
         0
       ]
     },
-    "cohumulone_pct_of_alpha": 0.44,
+    "cohumulone_pct_of_alpha": 0.405,
     "myrcene_pct_of_oil": 0.45,
-    "humulene_pct_of_oil": 0.3,
-    "caryophyllene_pct_of_oil": 0.075,
+    "humulene_pct_of_oil": 0.2044,
+    "caryophyllene_pct_of_oil": 0.065,
     "farnesene_pct_of_oil": 0.01,
     "linalool_pct_of_oil": 0
   },
@@ -3018,17 +3037,17 @@
     "alpha_acid_pct": 0.11,
     "alpha_acid_min_pct": 0.11,
     "alpha_acid_max_pct": 0.11,
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/buket/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/buket/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.11,
         0.11
@@ -3038,15 +3057,15 @@
     "beta_acid_min_pct": 0.049,
     "beta_acid_max_pct": 0.049,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/buket/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.049,
         0.049
@@ -3082,46 +3101,46 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 989,
-    "alpha_acid_pct": 0.098,
-    "alpha_acid_min_pct": 0.067,
-    "alpha_acid_max_pct": 0.129,
-    "beta_acid_pct": 0.064,
+    "alpha_acid_pct": 0.109,
+    "alpha_acid_min_pct": 0.08,
+    "alpha_acid_max_pct": 0.138,
+    "beta_acid_pct": 0.0485,
     "pairings": "Cascade, Fuggle",
     "flavor_profiles": "Aniseed, Black Currant, Blackberry, Earthy, Herbal, Orange, Red Fruit, Resinous, Spicy, Zesty",
-    "url": "https://www.hopslist.com/hops/bittering-hops/bullion/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/bullion/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.067,
-        0.129
+        0.08,
+        0.138
       ]
     },
-    "beta_acid_min_pct": 0.037,
-    "beta_acid_max_pct": 0.091,
+    "beta_acid_min_pct": 0.028,
+    "beta_acid_max_pct": 0.069,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/bullion/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.037,
-        0.091
+        0.028,
+        0.069
       ]
     },
-    "total_oil_ml_per_100g": 1.92,
+    "total_oil_ml_per_100g": 1.54,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -3137,7 +3156,7 @@
         0.11
       ]
     },
-    "cohumulone_pct_of_alpha": 0.39,
+    "cohumulone_pct_of_alpha": 0.42,
     "myrcene_pct_of_oil": 0.5,
     "humulene_pct_of_oil": 0.265,
     "caryophyllene_pct_of_oil": 0.1
@@ -3181,44 +3200,44 @@
     "origin": "New Zealand",
     "alpha_rating": "Moderate",
     "recipes_count": 9,
-    "alpha_acid_pct": 0.0685,
-    "alpha_acid_min_pct": 0.058,
-    "alpha_acid_max_pct": 0.079,
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/calicross/",
+    "alpha_acid_pct": 0.07,
+    "alpha_acid_min_pct": 0.07,
+    "alpha_acid_max_pct": 0.07,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/calicross/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.058,
-        0.079
+        0.07,
+        0.07
       ]
     },
-    "beta_acid_pct": 0.059,
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.078,
+    "beta_acid_pct": 0.056,
+    "beta_acid_min_pct": 0.056,
+    "beta_acid_max_pct": 0.056,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/calicross/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.04,
-        0.078
+        0.056,
+        0.056
       ]
     },
-    "total_oil_ml_per_100g": 0.905,
+    "total_oil_ml_per_100g": 0.81,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -3234,7 +3253,7 @@
         0.01
       ]
     },
-    "cohumulone_pct_of_alpha": 0.4,
+    "cohumulone_pct_of_alpha": 0.38,
     "myrcene_pct_of_oil": 0.61,
     "humulene_pct_of_oil": 0.155,
     "caryophyllene_pct_of_oil": 0.04,
@@ -3525,52 +3544,52 @@
     "alpha_acid_pct": 0.05,
     "alpha_acid_min_pct": 0.05,
     "alpha_acid_max_pct": 0.05,
-    "beta_acid_pct": 0.055,
+    "beta_acid_pct": 0.05,
     "pairings": "Cascade, Chinook, Centennial, Nugget",
-    "url": "https://www.hopslist.com/hops/aroma-hops/canadian-redvine/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/canadian-redvine/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.05,
         0.05
       ]
     },
     "beta_acid_min_pct": 0.05,
-    "beta_acid_max_pct": 0.06,
+    "beta_acid_max_pct": 0.05,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/canadian-redvine/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.05,
-        0.06
+        0.05
       ]
     },
     "total_oil_ml_per_100g": 11.2,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/canadian-redvine/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.04,
         0.07
@@ -3590,10 +3609,10 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 213103,
-    "alpha_acid_pct": 0.0611,
-    "alpha_acid_min_pct": 0.0486,
-    "alpha_acid_max_pct": 0.0736,
-    "beta_acid_pct": 0.0589,
+    "alpha_acid_pct": 0.0614,
+    "alpha_acid_min_pct": 0.0504,
+    "alpha_acid_max_pct": 0.0723,
+    "beta_acid_pct": 0.0585,
     "pairings": "Centennial, Citra, Amarillo, Chinook, Columbus, Simcoe",
     "flavor_profiles": "Citrus, Floral, Fruity, Grapefruit, Grassy, Herbal, Pine, Spicy",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -3608,19 +3627,20 @@
         "hga-2017",
         "hga-2020",
         "hopsteiner-vf",
-        "hpa-catalogue"
+        "hpa-catalogue",
+        "usda-varieties"
       ],
-      "sources_count": 7,
+      "sources_count": 8,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0486,
-        0.0736
+        0.0504,
+        0.0723
       ],
-      "dispersion": 0.116
+      "dispersion": 0.109
     },
-    "beta_acid_min_pct": 0.0475,
-    "beta_acid_max_pct": 0.0703,
+    "beta_acid_min_pct": 0.0487,
+    "beta_acid_max_pct": 0.0683,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -3631,18 +3651,19 @@
         "haas-sheet",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 6,
+      "sources_count": 7,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0475,
-        0.0703
+        0.0487,
+        0.0683
       ],
-      "dispersion": 0.012
+      "dispersion": 0.021
     },
-    "total_oil_ml_per_100g": 1.1,
+    "total_oil_ml_per_100g": 1.1233,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -3658,7 +3679,7 @@
         0.006
       ]
     },
-    "cohumulone_pct_of_alpha": 0.365,
+    "cohumulone_pct_of_alpha": 0.3641,
     "myrcene_pct_of_oil": 0.4657,
     "humulene_pct_of_oil": 0.1967,
     "caryophyllene_pct_of_oil": 0.0525,
@@ -3755,45 +3776,46 @@
     "origin": "Slovenia",
     "alpha_rating": "Low",
     "recipes_count": 3053,
-    "alpha_acid_pct": 0.042,
-    "alpha_acid_min_pct": 0.019,
-    "alpha_acid_max_pct": 0.065,
+    "alpha_acid_pct": 0.05,
+    "alpha_acid_min_pct": 0.05,
+    "alpha_acid_max_pct": 0.05,
     "beta_acid_pct": 0.03,
     "pairings": "Saaz, East Kent Golding",
-    "url": "https://www.barthhaas.com/hops-and-products/hops/celeia",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "barthhaas-variety"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/celeia",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.019,
-        0.065
-      ]
+        0.05,
+        0.05
+      ],
+      "dispersion": 0.087
     },
-    "beta_acid_min_pct": 0.017,
-    "beta_acid_max_pct": 0.043,
+    "beta_acid_min_pct": 0.03,
+    "beta_acid_max_pct": 0.03,
     "beta_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "barthhaas-variety"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/celeia",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.017,
-        0.043
+        0.03,
+        0.03
       ]
     },
-    "total_oil_ml_per_100g": 2.2,
+    "total_oil_ml_per_100g": 1.31,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "max",
@@ -3811,8 +3833,8 @@
     },
     "cohumulone_pct_of_alpha": 0.25,
     "myrcene_pct_of_oil": 0.43,
-    "humulene_pct_of_oil": 0.328,
-    "caryophyllene_pct_of_oil": 0.103,
+    "humulene_pct_of_oil": 0.176,
+    "caryophyllene_pct_of_oil": 0.072,
     "farnesene_pct_of_oil": 0.07
   },
   "centennial": {
@@ -3823,10 +3845,10 @@
     "origin": "United States",
     "alpha_rating": "High",
     "recipes_count": 117874,
-    "alpha_acid_pct": 0.1026,
+    "alpha_acid_pct": 0.101,
     "alpha_acid_min_pct": 0.0901,
-    "alpha_acid_max_pct": 0.115,
-    "beta_acid_pct": 0.0396,
+    "alpha_acid_max_pct": 0.1119,
+    "beta_acid_pct": 0.0397,
     "pairings": "Cascade, Simcoe, Amarillo, Citra, Columbus, Chinook, Magnum",
     "flavor_profiles": "Citrus, Floral, Grapefruit, Lemon, Orange, Pine, Resinous, Tangerine, Tropical Fruits, Vanilla, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -3841,19 +3863,20 @@
         "hga-2017",
         "hga-2020",
         "hopsteiner-vf",
-        "hpa-catalogue"
+        "hpa-catalogue",
+        "usda-varieties"
       ],
-      "sources_count": 7,
+      "sources_count": 8,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
         0.0901,
-        0.115
+        0.1119
       ],
-      "dispersion": 0.037
+      "dispersion": 0.054
     },
-    "beta_acid_min_pct": 0.0342,
-    "beta_acid_max_pct": 0.045,
+    "beta_acid_min_pct": 0.035,
+    "beta_acid_max_pct": 0.0443,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -3864,18 +3887,19 @@
         "haas-sheet",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 6,
+      "sources_count": 7,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0342,
-        0.045
+        0.035,
+        0.0443
       ],
       "dispersion": 0.011
     },
-    "total_oil_ml_per_100g": 2.0167,
+    "total_oil_ml_per_100g": 2.1329,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -3891,7 +3915,7 @@
         0.013
       ]
     },
-    "cohumulone_pct_of_alpha": 0.295,
+    "cohumulone_pct_of_alpha": 0.292,
     "myrcene_pct_of_oil": 0.4857,
     "humulene_pct_of_oil": 0.2098,
     "caryophyllene_pct_of_oil": 0.065,
@@ -3959,48 +3983,52 @@
     "origin": "Great Britain",
     "alpha_rating": "Moderate",
     "recipes_count": 24606,
-    "alpha_acid_pct": 0.0775,
-    "alpha_acid_min_pct": 0.065,
-    "alpha_acid_max_pct": 0.09,
-    "beta_acid_pct": 0.034,
+    "alpha_acid_pct": 0.0755,
+    "alpha_acid_min_pct": 0.0647,
+    "alpha_acid_max_pct": 0.0863,
+    "beta_acid_pct": 0.0383,
     "pairings": "East Kent Golding, Fuggle",
     "flavor_profiles": "Cedar, Fruity, Green Tea, Spicy",
-    "url": "https://www.barthhaas.com/hops-and-products/hops/wye-challenger",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/wye-challenger",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.065,
-        0.09
+        0.0647,
+        0.0863
       ],
-      "dispersion": 0.051
+      "dispersion": 0.052
     },
-    "beta_acid_min_pct": 0.025,
+    "beta_acid_min_pct": 0.0337,
     "beta_acid_max_pct": 0.043,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/wye-challenger",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.025,
+        0.0337,
         0.043
       ],
-      "dispersion": 0.014
+      "dispersion": 0.142
     },
-    "total_oil_ml_per_100g": 1.25,
+    "total_oil_ml_per_100g": 1.35,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -4016,9 +4044,9 @@
         0
       ]
     },
-    "cohumulone_pct_of_alpha": 0.285,
+    "cohumulone_pct_of_alpha": 0.23,
     "myrcene_pct_of_oil": 0.3,
-    "humulene_pct_of_oil": 0.225,
+    "humulene_pct_of_oil": 0.2297,
     "caryophyllene_pct_of_oil": 0.09,
     "farnesene_pct_of_oil": 0.01,
     "linalool_pct_of_oil": 0
@@ -4104,10 +4132,10 @@
     "origin": "United States",
     "alpha_rating": "High",
     "recipes_count": 84503,
-    "alpha_acid_pct": 0.1296,
-    "alpha_acid_min_pct": 0.1163,
-    "alpha_acid_max_pct": 0.1429,
-    "beta_acid_pct": 0.038,
+    "alpha_acid_pct": 0.1304,
+    "alpha_acid_min_pct": 0.1188,
+    "alpha_acid_max_pct": 0.142,
+    "beta_acid_pct": 0.0382,
     "pairings": "Cascade, Centennial, Simcoe, Citra, Amarillo, Columbus",
     "flavor_profiles": "Apricot, Berries, Grapefruit, Pine, Resinous, Spicy, Stone Fruit, Tropical Fruits",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -4122,19 +4150,20 @@
         "hga-2017",
         "hga-2020",
         "hopsteiner-vf",
-        "hpa-catalogue"
+        "hpa-catalogue",
+        "usda-varieties"
       ],
-      "sources_count": 7,
+      "sources_count": 8,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.1163,
-        0.1429
+        0.1188,
+        0.142
       ],
-      "dispersion": 0.005
+      "dispersion": 0.017
     },
-    "beta_acid_min_pct": 0.032,
-    "beta_acid_max_pct": 0.044,
+    "beta_acid_min_pct": 0.0332,
+    "beta_acid_max_pct": 0.0432,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -4144,18 +4173,19 @@
         "haas-sheet",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 5,
+      "sources_count": 6,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.032,
-        0.044
+        0.0332,
+        0.0432
       ],
-      "dispersion": 0.158
+      "dispersion": 0.144
     },
-    "total_oil_ml_per_100g": 2.16,
+    "total_oil_ml_per_100g": 2.105,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -4171,7 +4201,7 @@
         0.004
       ]
     },
-    "cohumulone_pct_of_alpha": 0.3188,
+    "cohumulone_pct_of_alpha": 0.321,
     "myrcene_pct_of_oil": 0.265,
     "humulene_pct_of_oil": 0.2828,
     "caryophyllene_pct_of_oil": 0.0924,
@@ -4186,41 +4216,41 @@
     "origin": "Slovenia",
     "alpha_rating": "Moderate",
     "recipes_count": 1,
-    "alpha_acid_pct": 0.065,
+    "alpha_acid_pct": 0.06,
     "alpha_acid_min_pct": 0.06,
-    "alpha_acid_max_pct": 0.07,
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/cicero/",
+    "alpha_acid_max_pct": 0.06,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
-      "merge": "precedence",
-      "sources": [
-        "hopslist"
-      ],
-      "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/cicero/",
-      "range": [
-        0.06,
-        0.07
-      ]
-    },
-    "beta_acid_pct": 0.024,
-    "beta_acid_min_pct": 0.024,
-    "beta_acid_max_pct": 0.024,
-    "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/cicero/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.024,
-        0.024
+        0.06,
+        0.06
+      ]
+    },
+    "beta_acid_pct": 0.025,
+    "beta_acid_min_pct": 0.025,
+    "beta_acid_max_pct": 0.025,
+    "beta_provenance": {
+      "kind": "vendor",
+      "bound": "point",
+      "merge": "precedence",
+      "sources": [
+        "usda-varieties"
+      ],
+      "sources_count": 1,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
+      "range": [
+        0.025,
+        0.025
       ]
     },
     "total_oil_ml_per_100g": 1.05,
@@ -4241,8 +4271,8 @@
     },
     "cohumulone_pct_of_alpha": 0.29,
     "myrcene_pct_of_oil": 0.51,
-    "humulene_pct_of_oil": 0.18,
-    "caryophyllene_pct_of_oil": 0.07,
+    "humulene_pct_of_oil": 0.177,
+    "caryophyllene_pct_of_oil": 0.067,
     "farnesene_pct_of_oil": 0.03
   },
   "citiva": {
@@ -4559,48 +4589,52 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 373,
-    "alpha_acid_pct": 0.055,
-    "alpha_acid_min_pct": 0.05,
-    "alpha_acid_max_pct": 0.06,
-    "beta_acid_pct": 0.035,
+    "alpha_acid_pct": 0.0794,
+    "alpha_acid_min_pct": 0.062,
+    "alpha_acid_max_pct": 0.0967,
+    "beta_acid_pct": 0.04,
     "pairings": "Cascade, Centennial, Columbus, Simcoe, Amarillo, Citra, Chinook",
     "flavor_profiles": "Citrus, Earthy, Fruity, Herbal, Lemon, Noble, Pineapple, Pungent, Resinous, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
     "alpha_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.05,
-        0.06
+        0.062,
+        0.0967
       ],
-      "dispersion": 0.249
+      "dispersion": 0.217
     },
-    "beta_acid_min_pct": 0.03,
-    "beta_acid_max_pct": 0.04,
+    "beta_acid_min_pct": 0.0293,
+    "beta_acid_max_pct": 0.0507,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.03,
-        0.04
+        0.0293,
+        0.0507
       ],
-      "dispersion": 0.097
+      "dispersion": 0.088
     },
-    "total_oil_ml_per_100g": 1.5,
+    "total_oil_ml_per_100g": 1.195,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -4618,7 +4652,7 @@
     },
     "cohumulone_pct_of_alpha": 0.4,
     "myrcene_pct_of_oil": 0.55,
-    "humulene_pct_of_oil": 0.17,
+    "humulene_pct_of_oil": 0.167,
     "caryophyllene_pct_of_oil": 0.07,
     "farnesene_pct_of_oil": 0.041
   },
@@ -4711,10 +4745,10 @@
     "origin": "United States",
     "alpha_rating": "High",
     "recipes_count": 3287,
-    "alpha_acid_pct": 0.1013,
-    "alpha_acid_min_pct": 0.0888,
-    "alpha_acid_max_pct": 0.1138,
-    "beta_acid_pct": 0.0461,
+    "alpha_acid_pct": 0.1026,
+    "alpha_acid_min_pct": 0.0897,
+    "alpha_acid_max_pct": 0.1155,
+    "beta_acid_pct": 0.046,
     "pairings": "Citra, Cascade, Centennial, Mosaic, Chinook, Columbus, Amarillo",
     "flavor_profiles": "Apricot, Black Currant, Citrus, Fruity, Grapefruit, Grassy, Herbal, Lemongrass, Mandarin, Pineapple, Resinous, Rose, Stone Fruit, Tangerine, Tropical Fruits",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -4727,19 +4761,20 @@
         "crosby-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 5,
+      "sources_count": 6,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0888,
-        0.1138
+        0.0897,
+        0.1155
       ],
-      "dispersion": 0.055
+      "dispersion": 0.057
     },
-    "beta_acid_min_pct": 0.032,
-    "beta_acid_max_pct": 0.0602,
+    "beta_acid_min_pct": 0.0317,
+    "beta_acid_max_pct": 0.0603,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -4749,18 +4784,19 @@
         "crosby-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 5,
+      "sources_count": 6,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.032,
-        0.0602
+        0.0317,
+        0.0603
       ],
-      "dispersion": 0.043
+      "dispersion": 0.039
     },
-    "total_oil_ml_per_100g": 2.1,
+    "total_oil_ml_per_100g": 1.9017,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -4776,7 +4812,7 @@
         0.01
       ]
     },
-    "cohumulone_pct_of_alpha": 0.37,
+    "cohumulone_pct_of_alpha": 0.38,
     "myrcene_pct_of_oil": 0.445,
     "humulene_pct_of_oil": 0.0055,
     "caryophyllene_pct_of_oil": 0.08,
@@ -4859,10 +4895,10 @@
     "origin": "United States",
     "alpha_rating": "Low",
     "recipes_count": 12703,
-    "alpha_acid_pct": 0.0406,
-    "alpha_acid_min_pct": 0.0272,
-    "alpha_acid_max_pct": 0.054,
-    "beta_acid_pct": 0.0595,
+    "alpha_acid_pct": 0.0385,
+    "alpha_acid_min_pct": 0.0273,
+    "alpha_acid_max_pct": 0.0497,
+    "beta_acid_pct": 0.0593,
     "pairings": "Cascade, Amarillo, Centennial, Magnum, Simcoe",
     "flavor_profiles": "Cinnamon, Citrus, Floral, Fruity, Grassy, Herbal, Nutmeg, Pepper, Pine, Spicy, Stone Fruit, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -4875,19 +4911,20 @@
         "crosby-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 5,
+      "sources_count": 6,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0272,
-        0.054
+        0.0273,
+        0.0497
       ],
-      "dispersion": 0.113
+      "dispersion": 0.163
     },
-    "beta_acid_min_pct": 0.046,
-    "beta_acid_max_pct": 0.073,
+    "beta_acid_min_pct": 0.048,
+    "beta_acid_max_pct": 0.0705,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -4897,18 +4934,19 @@
         "crosby-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 5,
+      "sources_count": 6,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.046,
-        0.073
+        0.048,
+        0.0705
       ],
-      "dispersion": 0.111
+      "dispersion": 0.102
     },
-    "total_oil_ml_per_100g": 1.4333,
+    "total_oil_ml_per_100g": 1.28,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -4924,10 +4962,10 @@
         0.008
       ]
     },
-    "cohumulone_pct_of_alpha": 0.2217,
+    "cohumulone_pct_of_alpha": 0.2188,
     "myrcene_pct_of_oil": 0.36,
-    "humulene_pct_of_oil": 0.256,
-    "caryophyllene_pct_of_oil": 0.085,
+    "humulene_pct_of_oil": 0.2687,
+    "caryophyllene_pct_of_oil": 0.07,
     "farnesene_pct_of_oil": 0.01,
     "linalool_pct_of_oil": 0.007
   },
@@ -5012,17 +5050,17 @@
     "alpha_acid_pct": 0.0465,
     "alpha_acid_min_pct": 0.033,
     "alpha_acid_max_pct": 0.06,
-    "url": "https://www.hopslist.com/hops/aroma-hops/defender/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/defender/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.033,
         0.06
@@ -5032,21 +5070,21 @@
     "beta_acid_min_pct": 0.011,
     "beta_acid_max_pct": 0.025,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/defender/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.011,
         0.025
       ]
     },
-    "total_oil_ml_per_100g": 0.5,
+    "total_oil_ml_per_100g": 0.565,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -5358,43 +5396,43 @@
     "origin": "Great Britain",
     "alpha_rating": "Moderate",
     "recipes_count": 96888,
-    "alpha_acid_pct": 0.055,
+    "alpha_acid_pct": 0.05,
     "alpha_acid_min_pct": 0.05,
-    "alpha_acid_max_pct": 0.06,
-    "beta_acid_pct": 0.025,
+    "alpha_acid_max_pct": 0.05,
+    "beta_acid_pct": 0.02,
     "pairings": "Fuggle",
     "flavor_profiles": "Floral, Grapefruit, Honey, Lavender, Lemon, Orange, Thyme",
-    "url": "https://www.hopslist.com/hops/aroma-hops/east-kent-golding/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/east-kent-golding/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.05,
-        0.06
+        0.05
       ]
     },
     "beta_acid_min_pct": 0.02,
-    "beta_acid_max_pct": 0.03,
+    "beta_acid_max_pct": 0.02,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/east-kent-golding/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.02,
-        0.03
+        0.02
       ]
     },
     "total_oil_ml_per_100g": 0.85,
@@ -5431,17 +5469,17 @@
     "alpha_acid_min_pct": 0.06,
     "alpha_acid_max_pct": 0.06,
     "beta_acid_pct": 0.03,
-    "url": "https://www.hopslist.com/hops/aroma-hops/eastwell-golding/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/eastwell-golding/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.06,
         0.06
@@ -5450,15 +5488,15 @@
     "beta_acid_min_pct": 0.03,
     "beta_acid_max_pct": 0.03,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/eastwell-golding/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.03,
         0.03
@@ -6134,45 +6172,51 @@
     "origin": "United States",
     "alpha_rating": "High",
     "recipes_count": 149,
-    "alpha_acid_pct": 0.111,
-    "alpha_acid_min_pct": 0.073,
-    "alpha_acid_max_pct": 0.149,
-    "beta_acid_pct": 0.0415,
+    "alpha_acid_pct": 0.115,
+    "alpha_acid_min_pct": 0.0897,
+    "alpha_acid_max_pct": 0.1403,
+    "beta_acid_pct": 0.0427,
     "pairings": "Cascade, Chinook, Citra",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
     "alpha_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.073,
-        0.149
-      ]
+        0.0897,
+        0.1403
+      ],
+      "dispersion": 0.049
     },
-    "beta_acid_min_pct": 0.03,
-    "beta_acid_max_pct": 0.053,
+    "beta_acid_min_pct": 0.035,
+    "beta_acid_max_pct": 0.0503,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.03,
-        0.053
-      ]
+        0.035,
+        0.0503
+      ],
+      "dispersion": 0.039
     },
-    "total_oil_ml_per_100g": 1.05,
+    "total_oil_ml_per_100g": 1.1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -6635,10 +6679,10 @@
     "origin": "Great Britain",
     "alpha_rating": "Low",
     "recipes_count": 74783,
-    "alpha_acid_pct": 0.0459,
-    "alpha_acid_min_pct": 0.03,
-    "alpha_acid_max_pct": 0.0617,
-    "beta_acid_pct": 0.0275,
+    "alpha_acid_pct": 0.0471,
+    "alpha_acid_min_pct": 0.0352,
+    "alpha_acid_max_pct": 0.059,
+    "beta_acid_pct": 0.0267,
     "pairings": "East Kent Golding, Cascade",
     "flavor_profiles": "Celeriac, Cognac, Cress, Curry, Earthy, Grassy, Green Tea, Hay, Mild, Mint, Vegetal, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -6649,19 +6693,20 @@
       "sources": [
         "barthhaas-variety",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.03,
-        0.0617
+        0.0352,
+        0.059
       ],
-      "dispersion": 0.026
+      "dispersion": 0.052
     },
-    "beta_acid_min_pct": 0.02,
-    "beta_acid_max_pct": 0.035,
+    "beta_acid_min_pct": 0.021,
+    "beta_acid_max_pct": 0.0323,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -6669,18 +6714,19 @@
       "sources": [
         "barthhaas-variety",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.02,
-        0.035
+        0.021,
+        0.0323
       ],
-      "dispersion": 0.074
+      "dispersion": 0.087
     },
-    "total_oil_ml_per_100g": 0.95,
+    "total_oil_ml_per_100g": 0.8784,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -6696,9 +6742,9 @@
         0
       ]
     },
-    "cohumulone_pct_of_alpha": 0.285,
+    "cohumulone_pct_of_alpha": 0.29,
     "myrcene_pct_of_oil": 0.275,
-    "humulene_pct_of_oil": 0.34,
+    "humulene_pct_of_oil": 0.302,
     "caryophyllene_pct_of_oil": 0.091,
     "farnesene_pct_of_oil": 0.07,
     "linalool_pct_of_oil": 0
@@ -6838,10 +6884,10 @@
     "origin": "United States",
     "alpha_rating": "High",
     "recipes_count": 12812,
-    "alpha_acid_pct": 0.1242,
-    "alpha_acid_min_pct": 0.1113,
-    "alpha_acid_max_pct": 0.137,
-    "beta_acid_pct": 0.0793,
+    "alpha_acid_pct": 0.1222,
+    "alpha_acid_min_pct": 0.105,
+    "alpha_acid_max_pct": 0.1394,
+    "beta_acid_pct": 0.077,
     "pairings": "Cascade, Citra, Centennial",
     "flavor_profiles": "Citrus, Currant, Earthy, Fruity, Gooseberry, Grapefruit, Herbal, Lemon, Lime, Onion, Pear, Pineapple, Spicy, Tropical Fruits, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -6853,19 +6899,20 @@
         "barthhaas-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 4,
+      "sources_count": 5,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.1113,
-        0.137
+        0.105,
+        0.1394
       ],
-      "dispersion": 0.034
+      "dispersion": 0.044
     },
-    "beta_acid_min_pct": 0.0708,
-    "beta_acid_max_pct": 0.0878,
+    "beta_acid_min_pct": 0.0658,
+    "beta_acid_max_pct": 0.0882,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -6874,18 +6921,19 @@
         "barthhaas-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 4,
+      "sources_count": 5,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0708,
-        0.0878
+        0.0658,
+        0.0882
       ],
-      "dispersion": 0.009
+      "dispersion": 0.059
     },
-    "total_oil_ml_per_100g": 1.1,
+    "total_oil_ml_per_100g": 1.1633,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -6901,7 +6949,7 @@
         0.003
       ]
     },
-    "cohumulone_pct_of_alpha": 0.3784,
+    "cohumulone_pct_of_alpha": 0.3813,
     "myrcene_pct_of_oil": 0.492,
     "humulene_pct_of_oil": 0.097,
     "caryophyllene_pct_of_oil": 0.079,
@@ -7083,17 +7131,17 @@
     "alpha_acid_pct": 0.054,
     "alpha_acid_min_pct": 0.054,
     "alpha_acid_max_pct": 0.054,
-    "url": "https://www.hopslist.com/hops/aroma-hops/golden-star/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/golden-star/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.054,
         0.054
@@ -7103,15 +7151,15 @@
     "beta_acid_min_pct": 0.046,
     "beta_acid_max_pct": 0.046,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/golden-star/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.046,
         0.046
@@ -7135,7 +7183,7 @@
     },
     "cohumulone_pct_of_alpha": 0.5,
     "myrcene_pct_of_oil": 0.57,
-    "humulene_pct_of_oil": 0.13,
+    "humulene_pct_of_oil": 0.125,
     "caryophyllene_pct_of_oil": 0.05
   },
   "golding": {
@@ -7240,51 +7288,47 @@
     "origin": "New Zealand",
     "alpha_rating": "High",
     "recipes_count": 2322,
-    "alpha_acid_pct": 0.125,
-    "alpha_acid_min_pct": 0.11,
-    "alpha_acid_max_pct": 0.14,
-    "beta_acid_pct": 0.0495,
+    "alpha_acid_pct": 0.092,
+    "alpha_acid_min_pct": 0.092,
+    "alpha_acid_max_pct": 0.092,
+    "beta_acid_pct": 0.043,
     "pairings": "Cascade, Nelson Sauvin, Citra, Motueka",
     "flavor_profiles": "Floral, Fruity, Pepper, Pine, Plum, Resinous",
-    "url": "https://nzhops.co.nz/collections/new-zealand-hops/products.json?limit=250",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "nzhops-products"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "NZ Hops",
-      "url": "https://nzhops.co.nz/collections/new-zealand-hops/products.json?limit=250",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.11,
-        0.14
+        0.092,
+        0.092
       ],
-      "crop_years": [
-        "2010",
-        "2019",
-        "2020"
-      ]
+      "dispersion": 0.152
     },
-    "beta_acid_min_pct": 0.029,
-    "beta_acid_max_pct": 0.07,
+    "beta_acid_min_pct": 0.043,
+    "beta_acid_max_pct": 0.043,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/green-bullet/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.029,
-        0.07
+        0.043,
+        0.043
       ]
     },
-    "total_oil_ml_per_100g": 0.795,
+    "total_oil_ml_per_100g": 0.79,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -7300,9 +7344,9 @@
         0.2
       ]
     },
-    "cohumulone_pct_of_alpha": 0.405,
+    "cohumulone_pct_of_alpha": 0.42,
     "myrcene_pct_of_oil": 0.4565,
-    "humulene_pct_of_oil": 0.236,
+    "humulene_pct_of_oil": 0.154,
     "caryophyllene_pct_of_oil": 0.195,
     "farnesene_pct_of_oil": 0.146
   },
@@ -7363,17 +7407,17 @@
     "alpha_acid_pct": 0.049,
     "alpha_acid_min_pct": 0.049,
     "alpha_acid_max_pct": 0.049,
-    "url": "https://www.hopslist.com/hops/aroma-hops/groene-bel/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/groene-bel/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.049,
         0.049
@@ -7383,15 +7427,15 @@
     "beta_acid_min_pct": 0.035,
     "beta_acid_max_pct": 0.035,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/groene-bel/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.035,
         0.035
@@ -7415,8 +7459,8 @@
     },
     "cohumulone_pct_of_alpha": 0.27,
     "myrcene_pct_of_oil": 0.39,
-    "humulene_pct_of_oil": 0.32,
-    "caryophyllene_pct_of_oil": 0.18,
+    "humulene_pct_of_oil": 0.315,
+    "caryophyllene_pct_of_oil": 0.179,
     "farnesene_pct_of_oil": 0.0241
   },
   "hallertau-nz": {
@@ -7726,46 +7770,46 @@
     "origin": "Germany",
     "alpha_rating": "Moderate",
     "recipes_count": 568,
-    "alpha_acid_pct": 0.085,
+    "alpha_acid_pct": 0.07,
     "alpha_acid_min_pct": 0.07,
-    "alpha_acid_max_pct": 0.1,
+    "alpha_acid_max_pct": 0.07,
     "pairings": "Saaz",
     "flavor_profiles": "Citrus, Earthy, Floral, Fruity, Grassy, Herbal, Pine, Spicy, Woody",
-    "url": "https://www.hopslist.com/hops/aroma-hops/hallertauer-gold/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/hallertauer-gold/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.07,
-        0.1
-      ]
-    },
-    "beta_acid_pct": 0.06,
-    "beta_acid_min_pct": 0.05,
-    "beta_acid_max_pct": 0.07,
-    "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
-      "merge": "precedence",
-      "sources": [
-        "hopslist"
-      ],
-      "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/hallertauer-gold/",
-      "range": [
-        0.05,
         0.07
       ]
     },
-    "total_oil_ml_per_100g": 1.78,
+    "beta_acid_pct": 0.05,
+    "beta_acid_min_pct": 0.05,
+    "beta_acid_max_pct": 0.05,
+    "beta_provenance": {
+      "kind": "vendor",
+      "bound": "point",
+      "merge": "precedence",
+      "sources": [
+        "usda-varieties"
+      ],
+      "sources_count": 1,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
+      "range": [
+        0.05,
+        0.05
+      ]
+    },
+    "total_oil_ml_per_100g": 1.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -7960,10 +8004,10 @@
     "origin": "Germany",
     "alpha_rating": "Moderate",
     "recipes_count": 12781,
-    "alpha_acid_pct": 0.0572,
-    "alpha_acid_min_pct": 0.039,
-    "alpha_acid_max_pct": 0.0753,
-    "beta_acid_pct": 0.0449,
+    "alpha_acid_pct": 0.0577,
+    "alpha_acid_min_pct": 0.0432,
+    "alpha_acid_max_pct": 0.0722,
+    "beta_acid_pct": 0.0437,
     "pairings": "Saaz",
     "flavor_profiles": "Earthy, Fruity, Grassy, Lavender, Nectar, Noble, Orange, Spicy, Tea",
     "url": "https://hops.com.au/downloads/data-sheet/europe/Hallertauer-Tradition-Data-Sheet.pdf",
@@ -7975,19 +8019,20 @@
         "barthhaas-sheet",
         "barthhaas-variety",
         "hopsteiner-vf",
-        "hpa-catalogue"
+        "hpa-catalogue",
+        "usda-varieties"
       ],
-      "sources_count": 4,
+      "sources_count": 5,
       "vendor": "BarthHaas",
       "url": "https://hops.com.au/downloads/data-sheet/europe/Hallertauer-Tradition-Data-Sheet.pdf",
       "range": [
-        0.039,
-        0.0753
+        0.0432,
+        0.0722
       ],
-      "dispersion": 0.064
+      "dispersion": 0.06
     },
-    "beta_acid_min_pct": 0.0297,
-    "beta_acid_max_pct": 0.06,
+    "beta_acid_min_pct": 0.0323,
+    "beta_acid_max_pct": 0.055,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -7995,18 +8040,19 @@
       "sources": [
         "barthhaas-sheet",
         "barthhaas-variety",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "BarthHaas",
       "url": "https://hops.com.au/downloads/data-sheet/europe/Hallertauer-Tradition-Data-Sheet.pdf",
       "range": [
-        0.0297,
-        0.06
+        0.0323,
+        0.055
       ],
-      "dispersion": 0.005
+      "dispersion": 0.048
     },
-    "total_oil_ml_per_100g": 0.7834,
+    "total_oil_ml_per_100g": 0.9375,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -8023,7 +8069,7 @@
       ],
       "dispersion": 0.026
     },
-    "cohumulone_pct_of_alpha": 0.27,
+    "cohumulone_pct_of_alpha": 0.23,
     "myrcene_pct_of_oil": 0.245,
     "humulene_pct_of_oil": 0.337,
     "caryophyllene_pct_of_oil": 0.093,
@@ -8718,10 +8764,10 @@
     "origin": "Germany",
     "alpha_rating": "Low",
     "recipes_count": 23641,
-    "alpha_acid_pct": 0.0303,
-    "alpha_acid_min_pct": 0.0143,
-    "alpha_acid_max_pct": 0.0463,
-    "beta_acid_pct": 0.0473,
+    "alpha_acid_pct": 0.0328,
+    "alpha_acid_min_pct": 0.0207,
+    "alpha_acid_max_pct": 0.0448,
+    "beta_acid_pct": 0.048,
     "pairings": "Saaz",
     "flavor_profiles": "Hay, Noble, Orange, Spicy, Tobacco",
     "url": "https://hops.com.au/downloads/data-sheet/europe/Hersbrucker-Data-Sheet.pdf",
@@ -8732,19 +8778,20 @@
       "sources": [
         "barthhaas-sheet",
         "crosby-variety",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "BarthHaas",
       "url": "https://hops.com.au/downloads/data-sheet/europe/Hersbrucker-Data-Sheet.pdf",
       "range": [
-        0.0143,
-        0.0463
+        0.0207,
+        0.0448
       ],
-      "dispersion": 0.132
+      "dispersion": 0.166
     },
-    "beta_acid_min_pct": 0.0263,
-    "beta_acid_max_pct": 0.0683,
+    "beta_acid_min_pct": 0.0323,
+    "beta_acid_max_pct": 0.0638,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -8752,18 +8799,19 @@
       "sources": [
         "barthhaas-sheet",
         "crosby-variety",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "BarthHaas",
       "url": "https://hops.com.au/downloads/data-sheet/europe/Hersbrucker-Data-Sheet.pdf",
       "range": [
-        0.0263,
-        0.0683
+        0.0323,
+        0.0638
       ],
-      "dispersion": 0.144
+      "dispersion": 0.126
     },
-    "total_oil_ml_per_100g": 0.75,
+    "total_oil_ml_per_100g": 0.7934,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -8779,10 +8827,10 @@
         0.01
       ]
     },
-    "cohumulone_pct_of_alpha": 0.21,
+    "cohumulone_pct_of_alpha": 0.22,
     "myrcene_pct_of_oil": 0.225,
-    "humulene_pct_of_oil": 0.0042,
-    "caryophyllene_pct_of_oil": 0.11,
+    "humulene_pct_of_oil": 0.29,
+    "caryophyllene_pct_of_oil": 0.09,
     "farnesene_pct_of_oil": 0.005,
     "linalool_pct_of_oil": 0.0075
   },
@@ -8794,42 +8842,42 @@
     "origin": "Germany",
     "alpha_rating": "Moderate",
     "recipes_count": 17,
-    "alpha_acid_pct": 0.0535,
-    "alpha_acid_min_pct": 0.047,
-    "alpha_acid_max_pct": 0.06,
+    "alpha_acid_pct": 0.05,
+    "alpha_acid_min_pct": 0.05,
+    "alpha_acid_max_pct": 0.05,
     "flavor_profiles": "Noble",
-    "url": "https://www.hopslist.com/hops/aroma-hops/hersbrucker-pure/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/hersbrucker-pure/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.047,
-        0.06
+        0.05,
+        0.05
       ]
     },
-    "beta_acid_pct": 0.025,
+    "beta_acid_pct": 0.02,
     "beta_acid_min_pct": 0.02,
-    "beta_acid_max_pct": 0.03,
+    "beta_acid_max_pct": 0.02,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/hersbrucker-pure/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.02,
-        0.03
+        0.02
       ]
     },
     "total_oil_ml_per_100g": 0.9,
@@ -8848,7 +8896,7 @@
         0.01
       ]
     },
-    "cohumulone_pct_of_alpha": 0.24,
+    "cohumulone_pct_of_alpha": 0.2,
     "myrcene_pct_of_oil": 0.37,
     "humulene_pct_of_oil": 0.185,
     "caryophyllene_pct_of_oil": 0.075,
@@ -8959,7 +9007,7 @@
     "alpha_acid_pct": 0.1184,
     "alpha_acid_min_pct": 0.1,
     "alpha_acid_max_pct": 0.1367,
-    "beta_acid_pct": 0.0734,
+    "beta_acid_pct": 0.072,
     "pairings": "Cascade, Centennial, Amarillo, Simcoe, Willamette, Citra",
     "flavor_profiles": "Citrus, Floral, Spicy",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -8981,8 +9029,8 @@
       ],
       "dispersion": 0.02
     },
-    "beta_acid_min_pct": 0.0617,
-    "beta_acid_max_pct": 0.085,
+    "beta_acid_min_pct": 0.0578,
+    "beta_acid_max_pct": 0.0862,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -8990,16 +9038,17 @@
       "sources": [
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0617,
-        0.085
+        0.0578,
+        0.0862
       ],
-      "dispersion": 0.016
+      "dispersion": 0.035
     },
     "total_oil_ml_per_100g": 1.5,
     "oil_provenance": {
@@ -9017,7 +9066,7 @@
         0.013
       ]
     },
-    "cohumulone_pct_of_alpha": 0.1817,
+    "cohumulone_pct_of_alpha": 0.185,
     "myrcene_pct_of_oil": 0.575,
     "humulene_pct_of_oil": 0.72,
     "caryophyllene_pct_of_oil": 0.11,
@@ -9789,17 +9838,17 @@
     "alpha_acid_max_pct": 0.086,
     "beta_acid_pct": 0.033,
     "flavor_profiles": "Aromatic, Bright, Citrus, Fruity, Grapefruit, Lemon, Pungent, Refreshing, Tangy, Zesty",
-    "url": "https://www.hopslist.com/hops/aroma-hops/keyworth-s-early/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/keyworth-s-early/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.086,
         0.086
@@ -9808,15 +9857,15 @@
     "beta_acid_min_pct": 0.033,
     "beta_acid_max_pct": 0.033,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/keyworth-s-early/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.033,
         0.033
@@ -9824,24 +9873,24 @@
     },
     "total_oil_ml_per_100g": 1.39,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/keyworth-s-early/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.07,
-        0.07
+        0.072,
+        0.072
       ]
     },
     "cohumulone_pct_of_alpha": 0.33,
     "myrcene_pct_of_oil": 0.45,
     "humulene_pct_of_oil": 0.22,
-    "caryophyllene_pct_of_oil": 0.07
+    "caryophyllene_pct_of_oil": 0.072
   },
   "kirin-ii": {
     "id": "kirin-ii",
@@ -9851,45 +9900,45 @@
     "origin": "Japan",
     "alpha_rating": "Moderate",
     "recipes_count": 32,
-    "alpha_acid_pct": 0.08,
-    "alpha_acid_min_pct": 0.08,
-    "alpha_acid_max_pct": 0.08,
+    "alpha_acid_pct": 0.0855,
+    "alpha_acid_min_pct": 0.068,
+    "alpha_acid_max_pct": 0.103,
     "pairings": "Nugget, Liberty, Newport, Centennial",
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/kirin-ii/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "point",
+      "kind": "vendor",
+      "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/kirin-ii/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.08,
+        0.068,
+        0.103
+      ]
+    },
+    "beta_acid_pct": 0.066,
+    "beta_acid_min_pct": 0.052,
+    "beta_acid_max_pct": 0.08,
+    "beta_provenance": {
+      "kind": "vendor",
+      "bound": "range",
+      "merge": "precedence",
+      "sources": [
+        "usda-varieties"
+      ],
+      "sources_count": 1,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
+      "range": [
+        0.052,
         0.08
       ]
     },
-    "beta_acid_pct": 0.064,
-    "beta_acid_min_pct": 0.064,
-    "beta_acid_max_pct": 0.064,
-    "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "point",
-      "merge": "precedence",
-      "sources": [
-        "hopslist"
-      ],
-      "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/kirin-ii/",
-      "range": [
-        0.064,
-        0.064
-      ]
-    },
-    "total_oil_ml_per_100g": 1.18,
+    "total_oil_ml_per_100g": 1.15,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -9905,7 +9954,7 @@
         0.002
       ]
     },
-    "cohumulone_pct_of_alpha": 0.44,
+    "cohumulone_pct_of_alpha": 0.43,
     "myrcene_pct_of_oil": 0.5,
     "humulene_pct_of_oil": 0.14,
     "caryophyllene_pct_of_oil": 0.094,
@@ -9919,41 +9968,41 @@
     "origin": "Japan",
     "alpha_rating": "High",
     "recipes_count": 2,
-    "alpha_acid_pct": 0.105,
+    "alpha_acid_pct": 0.09,
     "alpha_acid_min_pct": 0.09,
-    "alpha_acid_max_pct": 0.12,
-    "url": "https://www.hopslist.com/hops/bittering-hops/kitamidori/",
+    "alpha_acid_max_pct": 0.09,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/kitamidori/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.09,
-        0.12
+        0.09
       ]
     },
-    "beta_acid_pct": 0.055,
+    "beta_acid_pct": 0.05,
     "beta_acid_min_pct": 0.05,
-    "beta_acid_max_pct": 0.06,
+    "beta_acid_max_pct": 0.05,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/kitamidori/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.05,
-        0.06
+        0.05
       ]
     },
     "total_oil_ml_per_100g": 1.35,
@@ -10395,10 +10444,10 @@
     "origin": "United States",
     "alpha_rating": "Low",
     "recipes_count": 9783,
-    "alpha_acid_pct": 0.0459,
-    "alpha_acid_min_pct": 0.0317,
-    "alpha_acid_max_pct": 0.06,
-    "beta_acid_pct": 0.035,
+    "alpha_acid_pct": 0.0444,
+    "alpha_acid_min_pct": 0.0338,
+    "alpha_acid_max_pct": 0.055,
+    "beta_acid_pct": 0.0351,
     "pairings": "Willamette, Cascade",
     "flavor_profiles": "Citrus, Floral, Herbal, Lemon, Noble, Rose, Spicy, Tea, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -10409,19 +10458,20 @@
       "sources": [
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0317,
-        0.06
+        0.0338,
+        0.055
       ],
-      "dispersion": 0.093
+      "dispersion": 0.101
     },
-    "beta_acid_min_pct": 0.03,
-    "beta_acid_max_pct": 0.04,
+    "beta_acid_min_pct": 0.0313,
+    "beta_acid_max_pct": 0.0388,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -10429,17 +10479,18 @@
       "sources": [
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.03,
-        0.04
+        0.0313,
+        0.0388
       ]
     },
-    "total_oil_ml_per_100g": 1.25,
+    "total_oil_ml_per_100g": 1.15,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -10455,7 +10506,7 @@
         0
       ]
     },
-    "cohumulone_pct_of_alpha": 0.26,
+    "cohumulone_pct_of_alpha": 0.255,
     "myrcene_pct_of_oil": 0.46,
     "humulene_pct_of_oil": 0.3,
     "caryophyllene_pct_of_oil": 0.105,
@@ -10723,46 +10774,46 @@
     "origin": "Poland",
     "alpha_rating": "Low",
     "recipes_count": 1303,
-    "alpha_acid_pct": 0.04,
-    "alpha_acid_min_pct": 0.03,
-    "alpha_acid_max_pct": 0.05,
-    "beta_acid_pct": 0.0325,
+    "alpha_acid_pct": 0.1205,
+    "alpha_acid_min_pct": 0.089,
+    "alpha_acid_max_pct": 0.152,
+    "beta_acid_pct": 0.054,
     "pairings": "Marynka",
     "flavor_profiles": "Bergamot, Cinnamon, Citrus, Earthy, Floral, Herbal, Lavender, Magnolia, Noble, Spicy",
-    "url": "https://www.hopslist.com/hops/aroma-hops/lublin-lubelski/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/lublin-lubelski/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.03,
-        0.05
+        0.089,
+        0.152
       ]
     },
-    "beta_acid_min_pct": 0.025,
-    "beta_acid_max_pct": 0.04,
+    "beta_acid_min_pct": 0.039,
+    "beta_acid_max_pct": 0.069,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/lublin-lubelski/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.025,
-        0.04
+        0.039,
+        0.069
       ]
     },
-    "total_oil_ml_per_100g": 0.85,
+    "total_oil_ml_per_100g": 1.57,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -10778,10 +10829,10 @@
         0.14
       ]
     },
-    "cohumulone_pct_of_alpha": 0.265,
+    "cohumulone_pct_of_alpha": 0.33,
     "myrcene_pct_of_oil": 0.285,
-    "humulene_pct_of_oil": 0.35,
-    "caryophyllene_pct_of_oil": 0.085,
+    "humulene_pct_of_oil": 0.14,
+    "caryophyllene_pct_of_oil": 0.05,
     "farnesene_pct_of_oil": 0.12
   },
   "lucan": {
@@ -10795,17 +10846,17 @@
     "alpha_acid_pct": 0.04,
     "alpha_acid_min_pct": 0.04,
     "alpha_acid_max_pct": 0.04,
-    "url": "https://www.hopslist.com/hops/aroma-hops/lucan/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/lucan/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.04,
         0.04
@@ -10815,15 +10866,15 @@
     "beta_acid_min_pct": 0.033,
     "beta_acid_max_pct": 0.033,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/lucan/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.033,
         0.033
@@ -10831,15 +10882,15 @@
     },
     "cohumulone_pct_of_alpha": 0.21,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/lucan/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.21,
         0.21
@@ -12602,46 +12653,48 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 4248,
-    "alpha_acid_pct": 0.08,
-    "alpha_acid_min_pct": 0.06,
-    "alpha_acid_max_pct": 0.1,
-    "beta_acid_pct": 0.055,
+    "alpha_acid_pct": 0.083,
+    "alpha_acid_min_pct": 0.083,
+    "alpha_acid_max_pct": 0.083,
+    "beta_acid_pct": 0.046,
     "pairings": "Challenger, East Kent Golding, Target, Fuggle",
     "flavor_profiles": "Berries, Cedar, Floral, Fresh, Pine, Spicy",
-    "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.06,
-        0.1
-      ]
+        0.083,
+        0.083
+      ],
+      "dispersion": 0.018
     },
-    "beta_acid_min_pct": 0.045,
-    "beta_acid_max_pct": 0.065,
+    "beta_acid_min_pct": 0.046,
+    "beta_acid_max_pct": 0.046,
     "beta_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.045,
-        0.065
-      ]
+        0.046,
+        0.046
+      ],
+      "dispersion": 0.089
     },
-    "total_oil_ml_per_100g": 1.85,
+    "total_oil_ml_per_100g": 1.35,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -12657,7 +12710,7 @@
         0
       ]
     },
-    "cohumulone_pct_of_alpha": 0.31,
+    "cohumulone_pct_of_alpha": 0.23,
     "myrcene_pct_of_oil": 0.26,
     "humulene_pct_of_oil": 0.3,
     "caryophyllene_pct_of_oil": 0.15,
@@ -12672,46 +12725,48 @@
     "origin": "Germany, 🇺🇸 United States",
     "alpha_rating": "Moderate",
     "recipes_count": 53824,
-    "alpha_acid_pct": 0.08,
-    "alpha_acid_min_pct": 0.06,
-    "alpha_acid_max_pct": 0.1,
-    "beta_acid_pct": 0.04,
+    "alpha_acid_pct": 0.106,
+    "alpha_acid_min_pct": 0.106,
+    "alpha_acid_max_pct": 0.106,
+    "beta_acid_pct": 0.042,
     "pairings": "Cascade, East Kent Golding",
     "flavor_profiles": "Grassy, Lime, Menthol, Mint, Pepper, Pine, Resinous, Spicy, Woody",
-    "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.06,
-        0.1
-      ]
+        0.106,
+        0.106
+      ],
+      "dispersion": 0.14
     },
-    "beta_acid_min_pct": 0.03,
-    "beta_acid_max_pct": 0.05,
+    "beta_acid_min_pct": 0.042,
+    "beta_acid_max_pct": 0.042,
     "beta_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.03,
-        0.05
-      ]
+        0.042,
+        0.042
+      ],
+      "dispersion": 0.024
     },
-    "cohumulone_pct_of_alpha": 0.295,
+    "total_oil_ml_per_100g": 1.6,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -12727,6 +12782,7 @@
         0.008
       ]
     },
+    "cohumulone_pct_of_alpha": 0.24,
     "humulene_pct_of_oil": 0.0035,
     "farnesene_pct_of_oil": 0.005,
     "linalool_pct_of_oil": 0.0055
@@ -12739,10 +12795,10 @@
     "origin": "United States",
     "alpha_rating": "High",
     "recipes_count": 33353,
-    "alpha_acid_pct": 0.1279,
-    "alpha_acid_min_pct": 0.1058,
-    "alpha_acid_max_pct": 0.15,
-    "beta_acid_pct": 0.0455,
+    "alpha_acid_pct": 0.1287,
+    "alpha_acid_min_pct": 0.1041,
+    "alpha_acid_max_pct": 0.1533,
+    "beta_acid_pct": 0.0449,
     "pairings": "Cascade, Citra, Willamette, Centennial, Amarillo",
     "flavor_profiles": "Citrus, Earthy, Floral, Geranium, Ginger, Herbal, Lychee, Pineapple, Resinous, Stone Fruit, Tropical Fruits, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -12756,19 +12812,20 @@
         "haas-sheet",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 6,
+      "sources_count": 7,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.1058,
-        0.15
+        0.1041,
+        0.1533
       ],
       "dispersion": 0.035
     },
-    "beta_acid_min_pct": 0.0337,
-    "beta_acid_max_pct": 0.0572,
+    "beta_acid_min_pct": 0.0324,
+    "beta_acid_max_pct": 0.0574,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -12779,16 +12836,17 @@
         "haas-sheet",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 6,
+      "sources_count": 7,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0337,
-        0.0572
+        0.0324,
+        0.0574
       ],
-      "dispersion": 0.081
+      "dispersion": 0.08
     },
     "total_oil_ml_per_100g": 1.56,
     "oil_provenance": {
@@ -12807,7 +12865,7 @@
       ],
       "dispersion": 0.091
     },
-    "cohumulone_pct_of_alpha": 0.2525,
+    "cohumulone_pct_of_alpha": 0.254,
     "myrcene_pct_of_oil": 0.3717,
     "humulene_pct_of_oil": 0.3137,
     "caryophyllene_pct_of_oil": 0.125,
@@ -12958,46 +13016,50 @@
     "origin": "United States",
     "alpha_rating": "High",
     "recipes_count": 82,
-    "alpha_acid_pct": 0.125,
-    "alpha_acid_min_pct": 0.115,
-    "alpha_acid_max_pct": 0.135,
-    "beta_acid_pct": 0.0525,
+    "alpha_acid_pct": 0.123,
+    "alpha_acid_min_pct": 0.109,
+    "alpha_acid_max_pct": 0.137,
+    "beta_acid_pct": 0.0505,
     "pairings": "Cascade, Centennial, Amarillo, Citra, Columbus",
     "flavor_profiles": "Citrus, Spicy",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
     "alpha_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.115,
-        0.135
+        0.109,
+        0.137
       ],
-      "dispersion": 0.012
+      "dispersion": 0.011
     },
-    "beta_acid_min_pct": 0.05,
-    "beta_acid_max_pct": 0.055,
+    "beta_acid_min_pct": 0.042,
+    "beta_acid_max_pct": 0.059,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.05,
-        0.055
+        0.042,
+        0.059
       ],
-      "dispersion": 0.029
+      "dispersion": 0.028
     },
     "total_oil_ml_per_100g": 1.5,
     "oil_provenance": {
@@ -13029,54 +13091,54 @@
     "origin": "Great Britain",
     "alpha_rating": "High",
     "recipes_count": 15,
-    "alpha_acid_pct": 0.095,
+    "alpha_acid_pct": 0.09,
     "alpha_acid_min_pct": 0.09,
-    "alpha_acid_max_pct": 0.1,
-    "url": "https://www.hopslist.com/hops/aroma-hops/omega/",
+    "alpha_acid_max_pct": 0.09,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/omega/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.09,
-        0.1
+        0.09
       ]
     },
-    "beta_acid_pct": 0.035,
+    "beta_acid_pct": 0.03,
     "beta_acid_min_pct": 0.03,
-    "beta_acid_max_pct": 0.04,
+    "beta_acid_max_pct": 0.03,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/omega/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.03,
-        0.04
+        0.03
       ]
     },
     "total_oil_ml_per_100g": 1.72,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/omega/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.05,
         0.05
@@ -13262,44 +13324,44 @@
     "origin": "Germany",
     "alpha_rating": "Moderate",
     "recipes_count": 12,
-    "alpha_acid_pct": 0.085,
+    "alpha_acid_pct": 0.08,
     "alpha_acid_min_pct": 0.08,
-    "alpha_acid_max_pct": 0.09,
-    "beta_acid_pct": 0.0534,
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/orion/",
+    "alpha_acid_max_pct": 0.08,
+    "beta_acid_pct": 0.05,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/orion/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.08,
-        0.09
+        0.08
       ]
     },
-    "beta_acid_min_pct": 0.0494,
-    "beta_acid_max_pct": 0.0573,
+    "beta_acid_min_pct": 0.05,
+    "beta_acid_max_pct": 0.05,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/orion/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.0494,
-        0.0573
+        0.05,
+        0.05
       ]
     },
-    "total_oil_ml_per_100g": 1.95,
+    "total_oil_ml_per_100g": 1.8,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -13315,10 +13377,10 @@
         0.01
       ]
     },
-    "cohumulone_pct_of_alpha": 0.27,
+    "cohumulone_pct_of_alpha": 0.25,
     "myrcene_pct_of_oil": 0.485,
-    "humulene_pct_of_oil": 0.215,
-    "caryophyllene_pct_of_oil": 0.1,
+    "humulene_pct_of_oil": 0.23,
+    "caryophyllene_pct_of_oil": 0.09,
     "farnesene_pct_of_oil": 0.005
   },
   "otto-supreme": {
@@ -13384,51 +13446,47 @@
     "origin": "New Zealand",
     "alpha_rating": "High",
     "recipes_count": 4269,
-    "alpha_acid_pct": 0.14,
-    "alpha_acid_min_pct": 0.13,
-    "alpha_acid_max_pct": 0.15,
-    "beta_acid_pct": 0.08,
+    "alpha_acid_pct": 0.115,
+    "alpha_acid_min_pct": 0.115,
+    "alpha_acid_max_pct": 0.115,
+    "beta_acid_pct": 0.05,
     "pairings": "Cascade, Nelson Sauvin, Citra",
     "flavor_profiles": "Berries, Blackberry, Floral, Oak, Pepper, Pine",
-    "url": "https://nzhops.co.nz/collections/new-zealand-hops/products.json?limit=250",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "nzhops-products"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "NZ Hops",
-      "url": "https://nzhops.co.nz/collections/new-zealand-hops/products.json?limit=250",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.13,
-        0.15
+        0.115,
+        0.115
       ],
-      "crop_years": [
-        "2018",
-        "2019",
-        "2020"
-      ]
+      "dispersion": 0.098
     },
-    "beta_acid_min_pct": 0.07,
-    "beta_acid_max_pct": 0.09,
+    "beta_acid_min_pct": 0.05,
+    "beta_acid_max_pct": 0.05,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/pacific-gem/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.07,
-        0.09
+        0.05,
+        0.05
       ]
     },
-    "total_oil_ml_per_100g": 1.3,
+    "total_oil_ml_per_100g": 1.77,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -13444,9 +13502,9 @@
         0.01
       ]
     },
-    "cohumulone_pct_of_alpha": 0.385,
-    "myrcene_pct_of_oil": 0.44,
-    "humulene_pct_of_oil": 0.24,
+    "cohumulone_pct_of_alpha": 0.3,
+    "myrcene_pct_of_oil": 0.6,
+    "humulene_pct_of_oil": 0.15,
     "caryophyllene_pct_of_oil": 0.09,
     "farnesene_pct_of_oil": 0.005
   },
@@ -13915,10 +13973,10 @@
     "origin": "Germany, 🇺🇸 United States",
     "alpha_rating": "Moderate",
     "recipes_count": 41711,
-    "alpha_acid_pct": 0.0713,
-    "alpha_acid_min_pct": 0.045,
-    "alpha_acid_max_pct": 0.0975,
-    "beta_acid_pct": 0.0375,
+    "alpha_acid_pct": 0.0759,
+    "alpha_acid_min_pct": 0.0499,
+    "alpha_acid_max_pct": 0.102,
+    "beta_acid_pct": 0.0378,
     "pairings": "Cascade, Saaz, Magnum, Hallertauer Mittelfrüh",
     "flavor_profiles": "Earthy, Floral, Fruity, Green Fruit, Herbal, Mint, Pepper, Spicy, Stone Fruit, Tea",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -13932,19 +13990,20 @@
         "crosby-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 6,
+      "sources_count": 7,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.045,
-        0.0975
+        0.0499,
+        0.102
       ],
-      "dispersion": 0.085
+      "dispersion": 0.168
     },
-    "beta_acid_min_pct": 0.0272,
-    "beta_acid_max_pct": 0.0478,
+    "beta_acid_min_pct": 0.0274,
+    "beta_acid_max_pct": 0.0481,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -13955,18 +14014,19 @@
         "crosby-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 6,
+      "sources_count": 7,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0272,
-        0.0478
+        0.0274,
+        0.0481
       ],
-      "dispersion": 0.094
+      "dispersion": 0.089
     },
-    "total_oil_ml_per_100g": 1.18,
+    "total_oil_ml_per_100g": 1.0834,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -13982,7 +14042,7 @@
         0.006
       ]
     },
-    "cohumulone_pct_of_alpha": 0.3034,
+    "cohumulone_pct_of_alpha": 0.2975,
     "myrcene_pct_of_oil": 0.275,
     "humulene_pct_of_oil": 0.34,
     "caryophyllene_pct_of_oil": 0.139,
@@ -14427,43 +14487,43 @@
     "alpha_rating": "Low",
     "recipes_count": 1,
     "alpha_acid_pct": 0.034,
-    "alpha_acid_min_pct": 0.034,
-    "alpha_acid_max_pct": 0.034,
-    "url": "https://www.hopslist.com/hops/aroma-hops/precoce-d-bourgogne/",
+    "alpha_acid_min_pct": 0.031,
+    "alpha_acid_max_pct": 0.037,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "point",
+      "kind": "vendor",
+      "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/precoce-d-bourgogne/",
-      "range": [
-        0.034,
-        0.034
-      ]
-    },
-    "beta_acid_pct": 0.031,
-    "beta_acid_min_pct": 0.031,
-    "beta_acid_max_pct": 0.031,
-    "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "point",
-      "merge": "precedence",
-      "sources": [
-        "hopslist"
-      ],
-      "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/precoce-d-bourgogne/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.031,
-        0.031
+        0.037
       ]
     },
-    "total_oil_ml_per_100g": 0.34,
+    "beta_acid_pct": 0.0305,
+    "beta_acid_min_pct": 0.026,
+    "beta_acid_max_pct": 0.035,
+    "beta_provenance": {
+      "kind": "vendor",
+      "bound": "range",
+      "merge": "precedence",
+      "sources": [
+        "usda-varieties"
+      ],
+      "sources_count": 1,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
+      "range": [
+        0.026,
+        0.035
+      ]
+    },
+    "total_oil_ml_per_100g": 0.46,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -14565,46 +14625,47 @@
     "origin": "Australia",
     "alpha_rating": "Moderate",
     "recipes_count": 1664,
-    "alpha_acid_pct": 0.085,
-    "alpha_acid_min_pct": 0.07,
-    "alpha_acid_max_pct": 0.1,
+    "alpha_acid_pct": 0.09,
+    "alpha_acid_min_pct": 0.09,
+    "alpha_acid_max_pct": 0.09,
     "beta_acid_pct": 0.05,
     "pairings": "Galaxy, Cascade",
     "flavor_profiles": "Cedar, Citrus, Earthy, Floral, Fruity, Herbal, Oak, Resinous, Spicy, Woody",
-    "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.07,
-        0.1
-      ]
+        0.09,
+        0.09
+      ],
+      "dispersion": 0.029
     },
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.06,
+    "beta_acid_min_pct": 0.05,
+    "beta_acid_max_pct": 0.05,
     "beta_provenance": {
       "kind": "vendor",
-      "bound": "range",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.04,
-        0.06
+        0.05,
+        0.05
       ]
     },
-    "total_oil_ml_per_100g": 1.21,
+    "total_oil_ml_per_100g": 1.24,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -14620,7 +14681,7 @@
         0
       ]
     },
-    "cohumulone_pct_of_alpha": 0.36,
+    "cohumulone_pct_of_alpha": 0.3,
     "myrcene_pct_of_oil": 0.39,
     "humulene_pct_of_oil": 0.0136,
     "caryophyllene_pct_of_oil": 0.075,
@@ -14635,48 +14696,52 @@
     "origin": "Great Britain",
     "alpha_rating": "Moderate",
     "recipes_count": 1660,
-    "alpha_acid_pct": 0.068,
-    "alpha_acid_min_pct": 0.06,
-    "alpha_acid_max_pct": 0.076,
-    "beta_acid_pct": 0.0265,
+    "alpha_acid_pct": 0.065,
+    "alpha_acid_min_pct": 0.059,
+    "alpha_acid_max_pct": 0.071,
+    "beta_acid_pct": 0.025,
     "pairings": "East Kent Golding, Fuggle, Challenger",
     "flavor_profiles": "Black Currant, Cassis, Currant, Earthy, Floral, Fruity, Grassy, Herbal, Honey, Mint, Spicy",
-    "url": "https://www.barthhaas.com/hops-and-products/hops/progress",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/progress",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.06,
-        0.076
+        0.059,
+        0.071
       ],
-      "dispersion": 0.063
+      "dispersion": 0.055
     },
-    "beta_acid_min_pct": 0.02,
-    "beta_acid_max_pct": 0.033,
+    "beta_acid_min_pct": 0.022,
+    "beta_acid_max_pct": 0.028,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/progress",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.02,
-        0.033
+        0.022,
+        0.028
       ],
-      "dispersion": 0.082
+      "dispersion": 0.071
     },
-    "total_oil_ml_per_100g": 0.9,
+    "total_oil_ml_per_100g": 0.73,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -14694,8 +14759,8 @@
     },
     "cohumulone_pct_of_alpha": 0.28,
     "myrcene_pct_of_oil": 0.265,
-    "humulene_pct_of_oil": 0.415,
-    "caryophyllene_pct_of_oil": 0.135,
+    "humulene_pct_of_oil": 0.3617,
+    "caryophyllene_pct_of_oil": 0.106,
     "farnesene_pct_of_oil": 0.01,
     "linalool_pct_of_oil": 0
   },
@@ -14832,41 +14897,41 @@
     "origin": "Belgium",
     "alpha_rating": "Moderate",
     "recipes_count": 13,
-    "alpha_acid_pct": 0.095,
-    "alpha_acid_min_pct": 0.07,
-    "alpha_acid_max_pct": 0.12,
-    "url": "https://www.hopslist.com/hops/aroma-hops/record/",
+    "alpha_acid_pct": 0.089,
+    "alpha_acid_min_pct": 0.089,
+    "alpha_acid_max_pct": 0.089,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/record/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.07,
-        0.12
+        0.089,
+        0.089
       ]
     },
-    "beta_acid_pct": 0.06,
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.08,
+    "beta_acid_pct": 0.066,
+    "beta_acid_min_pct": 0.066,
+    "beta_acid_max_pct": 0.066,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/record/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.04,
-        0.08
+        0.066,
+        0.066
       ]
     },
     "total_oil_ml_per_100g": 1.82,
@@ -15086,10 +15151,10 @@
     "origin": "Czech Republic, 🇺🇸 United States",
     "alpha_rating": "Low",
     "recipes_count": 105935,
-    "alpha_acid_pct": 0.0392,
-    "alpha_acid_min_pct": 0.0264,
-    "alpha_acid_max_pct": 0.052,
-    "beta_acid_pct": 0.0437,
+    "alpha_acid_pct": 0.0405,
+    "alpha_acid_min_pct": 0.0267,
+    "alpha_acid_max_pct": 0.0543,
+    "beta_acid_pct": 0.0425,
     "pairings": "Hallertauer Mittelfrüh",
     "flavor_profiles": "Earthy, Floral, Herbal, Mild, Noble, Spicy",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -15102,19 +15167,20 @@
         "barthhaas-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 5,
+      "sources_count": 6,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0264,
-        0.052
+        0.0267,
+        0.0543
       ],
-      "dispersion": 0.128
+      "dispersion": 0.134
     },
-    "beta_acid_min_pct": 0.0324,
-    "beta_acid_max_pct": 0.055,
+    "beta_acid_min_pct": 0.0315,
+    "beta_acid_max_pct": 0.0535,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -15124,18 +15190,19 @@
         "barthhaas-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 5,
+      "sources_count": 6,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0324,
-        0.055
+        0.0315,
+        0.0535
       ],
-      "dispersion": 0.217
+      "dispersion": 0.214
     },
-    "total_oil_ml_per_100g": 0.7,
+    "total_oil_ml_per_100g": 0.697,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -15152,7 +15219,7 @@
       ],
       "dispersion": 0.273
     },
-    "cohumulone_pct_of_alpha": 0.2567,
+    "cohumulone_pct_of_alpha": 0.2525,
     "myrcene_pct_of_oil": 0.325,
     "humulene_pct_of_oil": 0.316,
     "caryophyllene_pct_of_oil": 0.087,
@@ -15298,48 +15365,52 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 1341,
-    "alpha_acid_pct": 0.07,
-    "alpha_acid_min_pct": 0.055,
-    "alpha_acid_max_pct": 0.085,
-    "beta_acid_pct": 0.0775,
+    "alpha_acid_pct": 0.06,
+    "alpha_acid_min_pct": 0.0517,
+    "alpha_acid_max_pct": 0.0683,
+    "beta_acid_pct": 0.0691,
     "pairings": "Cascade, Amarillo, Centennial, Chinook, Columbus, Nugget, Willamette",
     "flavor_profiles": "Black Pepper, Citrus, Floral, Fresh, Fruity, Green, Herbal, Resinous, Spicy, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
     "alpha_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.055,
-        0.085
+        0.0517,
+        0.0683
       ],
-      "dispersion": 0.077
+      "dispersion": 0.136
     },
-    "beta_acid_min_pct": 0.07,
-    "beta_acid_max_pct": 0.085,
+    "beta_acid_min_pct": 0.0633,
+    "beta_acid_max_pct": 0.075,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.07,
-        0.085
+        0.0633,
+        0.075
       ],
-      "dispersion": 0.051
+      "dispersion": 0.104
     },
-    "total_oil_ml_per_100g": 1.6,
+    "total_oil_ml_per_100g": 1.3334,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -15355,7 +15426,7 @@
         0.16
       ]
     },
-    "cohumulone_pct_of_alpha": 0.22,
+    "cohumulone_pct_of_alpha": 0.2233,
     "myrcene_pct_of_oil": 0.305,
     "humulene_pct_of_oil": 0.245,
     "caryophyllene_pct_of_oil": 0.068,
@@ -15639,39 +15710,39 @@
     "origin": "Russia",
     "alpha_rating": "Low",
     "recipes_count": 79,
-    "alpha_acid_pct": 0.035,
+    "alpha_acid_pct": 0.03,
     "alpha_acid_min_pct": 0.03,
-    "alpha_acid_max_pct": 0.04,
+    "alpha_acid_max_pct": 0.03,
     "pairings": "Cascade, Galena, Chinook, Calypso, Fuggle",
-    "url": "https://www.hopslist.com/hops/aroma-hops/serebrianka/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/serebrianka/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.03,
-        0.04
+        0.03
       ]
     },
     "beta_acid_pct": 0.03,
     "beta_acid_min_pct": 0.03,
     "beta_acid_max_pct": 0.03,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/serebrianka/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.03,
         0.03
@@ -15679,15 +15750,15 @@
     },
     "total_oil_ml_per_100g": 0.41,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/serebrianka/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.12,
         0.12
@@ -15707,44 +15778,44 @@
     "origin": "Japan",
     "alpha_rating": "Moderate",
     "recipes_count": 2,
-    "alpha_acid_pct": 0.065,
-    "alpha_acid_min_pct": 0.047,
-    "alpha_acid_max_pct": 0.083,
-    "url": "https://www.hopslist.com/hops/aroma-hops/shinshuwase/",
+    "alpha_acid_pct": 0.058,
+    "alpha_acid_min_pct": 0.058,
+    "alpha_acid_max_pct": 0.058,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/shinshuwase/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
+      "range": [
+        0.058,
+        0.058
+      ]
+    },
+    "beta_acid_pct": 0.047,
+    "beta_acid_min_pct": 0.047,
+    "beta_acid_max_pct": 0.047,
+    "beta_provenance": {
+      "kind": "vendor",
+      "bound": "point",
+      "merge": "precedence",
+      "sources": [
+        "usda-varieties"
+      ],
+      "sources_count": 1,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.047,
-        0.083
+        0.047
       ]
     },
-    "beta_acid_pct": 0.0505,
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.061,
-    "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
-      "merge": "precedence",
-      "sources": [
-        "hopslist"
-      ],
-      "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/shinshuwase/",
-      "range": [
-        0.04,
-        0.061
-      ]
-    },
-    "total_oil_ml_per_100g": 0.7,
+    "total_oil_ml_per_100g": 0.71,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -16019,45 +16090,45 @@
     "origin": "New Zealand",
     "alpha_rating": "Moderate",
     "recipes_count": 45,
-    "alpha_acid_pct": 0.0825,
-    "alpha_acid_min_pct": 0.07,
-    "alpha_acid_max_pct": 0.095,
+    "alpha_acid_pct": 0.082,
+    "alpha_acid_min_pct": 0.082,
+    "alpha_acid_max_pct": 0.082,
     "pairings": "Cascade, Pacific Gem, Pacific Jade",
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/smooth-cone/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/smooth-cone/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.07,
-        0.095
+        0.082,
+        0.082
       ]
     },
-    "beta_acid_pct": 0.043,
-    "beta_acid_min_pct": 0.034,
-    "beta_acid_max_pct": 0.052,
+    "beta_acid_pct": 0.042,
+    "beta_acid_min_pct": 0.042,
+    "beta_acid_max_pct": 0.042,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/smooth-cone/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.034,
-        0.052
+        0.042,
+        0.042
       ]
     },
-    "total_oil_ml_per_100g": 0.76,
+    "total_oil_ml_per_100g": 1,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -16222,7 +16293,7 @@
         0.003
       ]
     },
-    "cohumulone_pct_of_alpha": 0.225,
+    "cohumulone_pct_of_alpha": 0.23,
     "myrcene_pct_of_oil": 0.475,
     "humulene_pct_of_oil": 0.23,
     "caryophyllene_pct_of_oil": 0.09,
@@ -16270,17 +16341,17 @@
     "alpha_acid_max_pct": 0.12,
     "pairings": "Saaz, Citra, Magnum",
     "flavor_profiles": "Earthy, Woody",
-    "url": "https://www.hopslist.com/hops/bittering-hops/southern-brewer/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/southern-brewer/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.056,
         0.12
@@ -16290,21 +16361,21 @@
     "beta_acid_min_pct": 0.028,
     "beta_acid_max_pct": 0.05,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/southern-brewer/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.028,
         0.05
       ]
     },
-    "total_oil_ml_per_100g": 0.95,
+    "total_oil_ml_per_100g": 0.73,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -16334,56 +16405,56 @@
     "origin": "New Zealand",
     "alpha_rating": "High",
     "recipes_count": 1626,
-    "alpha_acid_pct": 0.135,
+    "alpha_acid_pct": 0.13,
     "alpha_acid_min_pct": 0.13,
-    "alpha_acid_max_pct": 0.14,
-    "beta_acid_pct": 0.065,
+    "alpha_acid_max_pct": 0.13,
+    "beta_acid_pct": 0.06,
     "pairings": "Nelson Sauvin, Motueka, Cascade, Citra",
     "flavor_profiles": "Citrus, Earthy, Herbal, Lemon, Lime, Pine, Resinous, Spicy, Tropical Fruits",
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/southern-cross/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/southern-cross/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.13,
-        0.14
+        0.13
       ]
     },
     "beta_acid_min_pct": 0.06,
-    "beta_acid_max_pct": 0.07,
+    "beta_acid_max_pct": 0.06,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/southern-cross/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.06,
-        0.07
+        0.06
       ]
     },
     "total_oil_ml_per_100g": 1.59,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/southern-cross/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.05,
         0.05
@@ -16726,46 +16797,48 @@
     "origin": "Germany",
     "alpha_rating": "Low",
     "recipes_count": 5073,
-    "alpha_acid_pct": 0.04,
-    "alpha_acid_min_pct": 0.025,
-    "alpha_acid_max_pct": 0.055,
-    "beta_acid_pct": 0.04,
+    "alpha_acid_pct": 0.0555,
+    "alpha_acid_min_pct": 0.036,
+    "alpha_acid_max_pct": 0.075,
+    "beta_acid_pct": 0.046,
     "pairings": "Tettnanger, Hallertauer Mittelfrüh, Saaz, Perle",
     "flavor_profiles": "Banana, Black Tea, Earthy, Floral, Fruity, Herbal, Noble, Pine, Spicy, Tea, Vanilla, Woody",
-    "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.025,
-        0.055
-      ]
+        0.036,
+        0.075
+      ],
+      "dispersion": 0.162
     },
     "beta_acid_min_pct": 0.03,
-    "beta_acid_max_pct": 0.05,
+    "beta_acid_max_pct": 0.062,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopsteiner-vf"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.03,
-        0.05
-      ]
+        0.062
+      ],
+      "dispersion": 0.07
     },
-    "cohumulone_pct_of_alpha": 0.255,
+    "total_oil_ml_per_100g": 0.62,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -16781,6 +16854,7 @@
         0.008
       ]
     },
+    "cohumulone_pct_of_alpha": 0.225,
     "humulene_pct_of_oil": 0.4,
     "farnesene_pct_of_oil": 0.15,
     "linalool_pct_of_oil": 0.0065
@@ -16793,10 +16867,10 @@
     "origin": "Germany",
     "alpha_rating": "Low",
     "recipes_count": 5627,
-    "alpha_acid_pct": 0.048,
-    "alpha_acid_min_pct": 0.0283,
-    "alpha_acid_max_pct": 0.0678,
-    "beta_acid_pct": 0.0383,
+    "alpha_acid_pct": 0.0464,
+    "alpha_acid_min_pct": 0.0306,
+    "alpha_acid_max_pct": 0.0622,
+    "beta_acid_pct": 0.0388,
     "pairings": "Magnum, Tettnanger, Saaz, Hallertauer Mittelfrüh",
     "flavor_profiles": "Apple, Citrus, Cognac, Floral, Grassy, Herbal, Orange, Peach, Spicy, Thyme, Woody",
     "url": "https://hops.com.au/downloads/data-sheet/europe/Spalter-Select-Data-Sheet.pdf",
@@ -16808,19 +16882,20 @@
         "barthhaas-sheet",
         "barthhaas-variety",
         "hopsteiner-vf",
-        "hpa-catalogue"
+        "hpa-catalogue",
+        "usda-varieties"
       ],
-      "sources_count": 4,
+      "sources_count": 5,
       "vendor": "BarthHaas",
       "url": "https://hops.com.au/downloads/data-sheet/europe/Spalter-Select-Data-Sheet.pdf",
       "range": [
-        0.0283,
-        0.0678
+        0.0306,
+        0.0622
       ],
-      "dispersion": 0.018
+      "dispersion": 0.071
     },
-    "beta_acid_min_pct": 0.0233,
-    "beta_acid_max_pct": 0.0533,
+    "beta_acid_min_pct": 0.0275,
+    "beta_acid_max_pct": 0.05,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -16828,18 +16903,19 @@
       "sources": [
         "barthhaas-sheet",
         "barthhaas-variety",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 3,
+      "sources_count": 4,
       "vendor": "BarthHaas",
       "url": "https://hops.com.au/downloads/data-sheet/europe/Spalter-Select-Data-Sheet.pdf",
       "range": [
-        0.0233,
-        0.0533
+        0.0275,
+        0.05
       ],
-      "dispersion": 0.031
+      "dispersion": 0.032
     },
-    "total_oil_ml_per_100g": 0.75,
+    "total_oil_ml_per_100g": 0.7667,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -16855,7 +16931,7 @@
         0.015
       ]
     },
-    "cohumulone_pct_of_alpha": 0.24,
+    "cohumulone_pct_of_alpha": 0.22,
     "myrcene_pct_of_oil": 0.3,
     "humulene_pct_of_oil": 0.053,
     "caryophyllene_pct_of_oil": 0.021,
@@ -16870,10 +16946,10 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 8040,
-    "alpha_acid_pct": 0.0651,
-    "alpha_acid_min_pct": 0.0488,
-    "alpha_acid_max_pct": 0.0813,
-    "beta_acid_pct": 0.0519,
+    "alpha_acid_pct": 0.064,
+    "alpha_acid_min_pct": 0.051,
+    "alpha_acid_max_pct": 0.077,
+    "beta_acid_pct": 0.0495,
     "pairings": "Magnum, Saaz, Cascade",
     "flavor_profiles": "Citrus, Floral, Grassy, Herbal, Noble, Pepper, Spicy, Tea, Tobacco",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -16885,19 +16961,20 @@
         "crosby-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 4,
+      "sources_count": 5,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0488,
-        0.0813
+        0.051,
+        0.077
       ],
-      "dispersion": 0.144
+      "dispersion": 0.134
     },
-    "beta_acid_min_pct": 0.0438,
-    "beta_acid_max_pct": 0.06,
+    "beta_acid_min_pct": 0.043,
+    "beta_acid_max_pct": 0.056,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -16906,18 +16983,19 @@
         "crosby-variety",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 4,
+      "sources_count": 5,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0438,
-        0.06
+        0.043,
+        0.056
       ],
-      "dispersion": 0.04
+      "dispersion": 0.103
     },
-    "total_oil_ml_per_100g": 1.4833,
+    "total_oil_ml_per_100g": 1.4375,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -16933,7 +17011,7 @@
         0.009
       ]
     },
-    "cohumulone_pct_of_alpha": 0.2367,
+    "cohumulone_pct_of_alpha": 0.2375,
     "myrcene_pct_of_oil": 0.4,
     "humulene_pct_of_oil": 0.33,
     "caryophyllene_pct_of_oil": 0.065,
@@ -16948,46 +17026,46 @@
     "origin": "New Zealand",
     "alpha_rating": "High",
     "recipes_count": 336,
-    "alpha_acid_pct": 0.136,
-    "alpha_acid_min_pct": 0.13,
-    "alpha_acid_max_pct": 0.142,
-    "beta_acid_pct": 0.08,
+    "alpha_acid_pct": 0.103,
+    "alpha_acid_min_pct": 0.103,
+    "alpha_acid_max_pct": 0.103,
+    "beta_acid_pct": 0.049,
     "pairings": "Cascade",
     "flavor_profiles": "Citrus, Fresh, Fruity, Herbal, Noble, Pepper, Pine, Resinous, Spicy, Woody",
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/sticklebract/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/sticklebract/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.13,
-        0.142
+        0.103,
+        0.103
       ]
     },
-    "beta_acid_min_pct": 0.075,
-    "beta_acid_max_pct": 0.085,
+    "beta_acid_min_pct": 0.049,
+    "beta_acid_max_pct": 0.049,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/sticklebract/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.075,
-        0.085
+        0.049,
+        0.049
       ]
     },
-    "total_oil_ml_per_100g": 1.24,
+    "total_oil_ml_per_100g": 1.2,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -17003,9 +17081,9 @@
         0.046
       ]
     },
-    "cohumulone_pct_of_alpha": 0.425,
+    "cohumulone_pct_of_alpha": 0.4,
     "myrcene_pct_of_oil": 0.575,
-    "humulene_pct_of_oil": 0.095,
+    "humulene_pct_of_oil": 0.077,
     "caryophyllene_pct_of_oil": 0.045,
     "farnesene_pct_of_oil": 0.043
   },
@@ -17694,54 +17772,54 @@
     "origin": "United States",
     "alpha_rating": "Low",
     "recipes_count": 8,
-    "alpha_acid_pct": 0.045,
+    "alpha_acid_pct": 0.04,
     "alpha_acid_min_pct": 0.04,
-    "alpha_acid_max_pct": 0.05,
-    "url": "https://www.hopslist.com/hops/aroma-hops/sunbeam/",
+    "alpha_acid_max_pct": 0.04,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/sunbeam/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.04,
-        0.05
+        0.04
       ]
     },
     "beta_acid_pct": 0.025,
     "beta_acid_min_pct": 0.025,
     "beta_acid_max_pct": 0.025,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/sunbeam/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.025,
         0.025
       ]
     },
-    "total_oil_ml_per_100g": 1.05,
+    "total_oil_ml_per_100g": 0.8,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/sunbeam/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.06,
         0.06
@@ -17761,54 +17839,54 @@
     "origin": "Great Britain",
     "alpha_rating": "Moderate",
     "recipes_count": 3,
-    "alpha_acid_pct": 0.0745,
-    "alpha_acid_min_pct": 0.067,
-    "alpha_acid_max_pct": 0.082,
-    "url": "https://www.hopslist.com/hops/aroma-hops/sunshine/",
+    "alpha_acid_pct": 0.075,
+    "alpha_acid_min_pct": 0.075,
+    "alpha_acid_max_pct": 0.075,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/sunshine/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.067,
-        0.082
+        0.075,
+        0.075
       ]
     },
-    "beta_acid_pct": 0.026,
-    "beta_acid_min_pct": 0.021,
-    "beta_acid_max_pct": 0.031,
+    "beta_acid_pct": 0.027,
+    "beta_acid_min_pct": 0.027,
+    "beta_acid_max_pct": 0.027,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/sunshine/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.021,
-        0.031
+        0.027,
+        0.027
       ]
     },
     "total_oil_ml_per_100g": 1.35,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/sunshine/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.009,
         0.009
@@ -18342,17 +18420,17 @@
     "alpha_acid_pct": 0.062,
     "alpha_acid_min_pct": 0.057,
     "alpha_acid_max_pct": 0.067,
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/talisman/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/talisman/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.057,
         0.067
@@ -18362,21 +18440,21 @@
     "beta_acid_min_pct": 0.028,
     "beta_acid_max_pct": 0.036,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/talisman/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.028,
         0.036
       ]
     },
-    "total_oil_ml_per_100g": 0.72,
+    "total_oil_ml_per_100g": 0.725,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -18577,17 +18655,17 @@
     "alpha_acid_min_pct": 0.031,
     "alpha_acid_max_pct": 0.055,
     "beta_acid_pct": 0.043,
-    "url": "https://www.hopslist.com/hops/aroma-hops/tardif-de-burgogne/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/tardif-de-burgogne/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.031,
         0.055
@@ -18596,21 +18674,21 @@
     "beta_acid_min_pct": 0.031,
     "beta_acid_max_pct": 0.055,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/tardif-de-burgogne/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.031,
         0.055
       ]
     },
-    "total_oil_ml_per_100g": 0.61,
+    "total_oil_ml_per_100g": 0.65,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -18640,48 +18718,52 @@
     "origin": "Great Britain",
     "alpha_rating": "High",
     "recipes_count": 13955,
-    "alpha_acid_pct": 0.11,
-    "alpha_acid_min_pct": 0.085,
-    "alpha_acid_max_pct": 0.135,
-    "beta_acid_pct": 0.0485,
+    "alpha_acid_pct": 0.1119,
+    "alpha_acid_min_pct": 0.0847,
+    "alpha_acid_max_pct": 0.139,
+    "beta_acid_pct": 0.0508,
     "pairings": "East Kent Golding, Fuggle, Challenger",
     "flavor_profiles": "Citrus, Floral, Herbal, Marmalade, Pepper, Sage, Spicy, Tangerine",
-    "url": "https://www.barthhaas.com/hops-and-products/hops/wye-target",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/wye-target",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.085,
-        0.135
+        0.0847,
+        0.139
       ],
-      "dispersion": 0.023
+      "dispersion": 0.058
     },
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.057,
+    "beta_acid_min_pct": 0.0413,
+    "beta_acid_max_pct": 0.0603,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "barthhaas-variety"
+        "barthhaas-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "BarthHaas",
-      "url": "https://www.barthhaas.com/hops-and-products/hops/wye-target",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.04,
-        0.057
+        0.0413,
+        0.0603
       ],
-      "dispersion": 0.015
+      "dispersion": 0.046
     },
-    "total_oil_ml_per_100g": 1.5,
+    "total_oil_ml_per_100g": 1.57,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "point",
@@ -18697,7 +18779,7 @@
         0
       ]
     },
-    "cohumulone_pct_of_alpha": 0.36,
+    "cohumulone_pct_of_alpha": 0.33,
     "myrcene_pct_of_oil": 0.45,
     "humulene_pct_of_oil": 0.135,
     "caryophyllene_pct_of_oil": 0.005,
@@ -18758,48 +18840,52 @@
     "origin": "Germany",
     "alpha_rating": "Low",
     "recipes_count": 47136,
-    "alpha_acid_pct": 0.04,
-    "alpha_acid_min_pct": 0.025,
-    "alpha_acid_max_pct": 0.055,
-    "beta_acid_pct": 0.04,
+    "alpha_acid_pct": 0.0403,
+    "alpha_acid_min_pct": 0.0247,
+    "alpha_acid_max_pct": 0.056,
+    "beta_acid_pct": 0.0435,
     "pairings": "Saaz, Hallertauer Mittelfrüh",
     "flavor_profiles": "Black Tea, Floral, Herbal, Pepper, Spicy",
-    "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hopsteiner-vf"
+        "crosby-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.025,
-        0.055
+        0.0247,
+        0.056
       ],
-      "dispersion": 0.039
+      "dispersion": 0.071
     },
-    "beta_acid_min_pct": 0.03,
-    "beta_acid_max_pct": 0.05,
+    "beta_acid_min_pct": 0.031,
+    "beta_acid_max_pct": 0.056,
     "beta_provenance": {
       "kind": "vendor",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hopsteiner-vf"
+        "crosby-variety",
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 1,
-      "vendor": "Hopsteiner",
-      "url": "https://hopsteiner.us/variety-data-sheets/?data=1",
+      "sources_count": 3,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.03,
-        0.05
+        0.031,
+        0.056
       ],
-      "dispersion": 0.111
+      "dispersion": 0.106
     },
-    "total_oil_ml_per_100g": 0.6,
+    "total_oil_ml_per_100g": 0.715,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -18815,10 +18901,10 @@
         0.009
       ]
     },
-    "cohumulone_pct_of_alpha": 0.25,
+    "cohumulone_pct_of_alpha": 0.24,
     "myrcene_pct_of_oil": 0.406,
-    "humulene_pct_of_oil": 0.0029,
-    "caryophyllene_pct_of_oil": 0.062,
+    "humulene_pct_of_oil": 0.204,
+    "caryophyllene_pct_of_oil": 0.051,
     "farnesene_pct_of_oil": 0.19,
     "linalool_pct_of_oil": 0.0065
   },
@@ -19023,17 +19109,17 @@
     "alpha_acid_pct": 0.022,
     "alpha_acid_min_pct": 0.022,
     "alpha_acid_max_pct": 0.022,
-    "url": "https://www.hopslist.com/hops/aroma-hops/tolhurst/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/tolhurst/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.022,
         0.022
@@ -19043,15 +19129,15 @@
     "beta_acid_min_pct": 0.029,
     "beta_acid_max_pct": 0.029,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/tolhurst/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.029,
         0.029
@@ -19185,54 +19271,54 @@
     "origin": "Japan",
     "alpha_rating": "Moderate",
     "recipes_count": 1,
-    "alpha_acid_pct": 0.12,
+    "alpha_acid_pct": 0.11,
     "alpha_acid_min_pct": 0.11,
-    "alpha_acid_max_pct": 0.13,
-    "url": "https://www.hopslist.com/hops/bittering-hops/toyomidori/",
+    "alpha_acid_max_pct": 0.11,
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/toyomidori/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.11,
-        0.13
+        0.11
       ]
     },
-    "beta_acid_pct": 0.055,
+    "beta_acid_pct": 0.05,
     "beta_acid_min_pct": 0.05,
-    "beta_acid_max_pct": 0.06,
+    "beta_acid_max_pct": 0.05,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/toyomidori/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.05,
-        0.06
+        0.05
       ]
     },
     "total_oil_ml_per_100g": 1.06,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/toyomidori/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.04,
         0.05
@@ -19568,45 +19654,51 @@
     "origin": "United States",
     "alpha_rating": "Low",
     "recipes_count": 303,
-    "alpha_acid_pct": 0.0275,
-    "alpha_acid_min_pct": 0.02,
-    "alpha_acid_max_pct": 0.035,
-    "beta_acid_pct": 0.0375,
+    "alpha_acid_pct": 0.0283,
+    "alpha_acid_min_pct": 0.0233,
+    "alpha_acid_max_pct": 0.0333,
+    "beta_acid_pct": 0.0383,
     "flavor_profiles": "Aromatic, Earthy, Floral, Hay, Mild, Noble, Pleasant, Spicy",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
     "alpha_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.02,
-        0.035
-      ]
+        0.0233,
+        0.0333
+      ],
+      "dispersion": 0.042
     },
-    "beta_acid_min_pct": 0.03,
-    "beta_acid_max_pct": 0.045,
+    "beta_acid_min_pct": 0.0333,
+    "beta_acid_max_pct": 0.0433,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
-      "merge": "precedence",
+      "merge": "mean_range",
       "sources": [
-        "hga-2020"
+        "hga-2017",
+        "hga-2020",
+        "usda-varieties"
       ],
-      "sources_count": 1,
+      "sources_count": 3,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.03,
-        0.045
-      ]
+        0.0333,
+        0.0433
+      ],
+      "dispersion": 0.031
     },
-    "total_oil_ml_per_100g": 0.75,
+    "total_oil_ml_per_100g": 0.9334,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "range",
@@ -19622,7 +19714,7 @@
         0.01
       ]
     },
-    "cohumulone_pct_of_alpha": 0.305,
+    "cohumulone_pct_of_alpha": 0.2867,
     "myrcene_pct_of_oil": 0.3,
     "humulene_pct_of_oil": 0.35,
     "caryophyllene_pct_of_oil": 0.125,
@@ -19639,17 +19731,17 @@
     "alpha_acid_pct": 0.052,
     "alpha_acid_min_pct": 0.052,
     "alpha_acid_max_pct": 0.052,
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/universal/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/universal/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.052,
         0.052
@@ -19659,15 +19751,15 @@
     "beta_acid_min_pct": 0.037,
     "beta_acid_max_pct": 0.037,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/universal/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.037,
         0.037
@@ -19675,15 +19767,15 @@
     },
     "cohumulone_pct_of_alpha": 0.23,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/universal/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.23,
         0.23
@@ -20192,45 +20284,45 @@
     "origin": "Unknown",
     "alpha_rating": "Moderate",
     "recipes_count": 20,
-    "alpha_acid_pct": 0.083,
-    "alpha_acid_min_pct": 0.061,
-    "alpha_acid_max_pct": 0.105,
-    "beta_acid_pct": 0.035,
+    "alpha_acid_pct": 0.086,
+    "alpha_acid_min_pct": 0.086,
+    "alpha_acid_max_pct": 0.086,
+    "beta_acid_pct": 0.036,
     "pairings": "Hallertauer Mittelfrüh, Loral, Cascade, Magnum, Nugget",
-    "url": "https://www.hopslist.com/hops/aroma-hops/vojvodina/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/vojvodina/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.061,
-        0.105
+        0.086,
+        0.086
       ]
     },
-    "beta_acid_min_pct": 0.023,
-    "beta_acid_max_pct": 0.047,
+    "beta_acid_min_pct": 0.036,
+    "beta_acid_max_pct": 0.036,
     "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/vojvodina/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.023,
-        0.047
+        0.036,
+        0.036
       ]
     },
-    "total_oil_ml_per_100g": 1,
+    "total_oil_ml_per_100g": 0.9,
     "oil_provenance": {
       "kind": "aggregator",
       "bound": "point",
@@ -20623,10 +20715,10 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 59926,
-    "alpha_acid_pct": 0.0515,
-    "alpha_acid_min_pct": 0.0405,
-    "alpha_acid_max_pct": 0.0625,
-    "beta_acid_pct": 0.0384,
+    "alpha_acid_pct": 0.0558,
+    "alpha_acid_min_pct": 0.0421,
+    "alpha_acid_max_pct": 0.0694,
+    "beta_acid_pct": 0.0385,
     "pairings": "Cascade",
     "flavor_profiles": "Caramel, Citrus, Curry, Earthy, Elderberry, Floral, Ginger, Hay, Incense, Spicy, Tea, Woody",
     "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
@@ -20640,19 +20732,20 @@
         "hga-2017",
         "hga-2020",
         "hopsteiner-vf",
-        "hpa-catalogue"
+        "hpa-catalogue",
+        "usda-varieties"
       ],
-      "sources_count": 6,
+      "sources_count": 7,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0405,
-        0.0625
+        0.0421,
+        0.0694
       ],
-      "dispersion": 0.053
+      "dispersion": 0.194
     },
-    "beta_acid_min_pct": 0.0325,
-    "beta_acid_max_pct": 0.0442,
+    "beta_acid_min_pct": 0.032,
+    "beta_acid_max_pct": 0.045,
     "beta_provenance": {
       "kind": "survey",
       "bound": "range",
@@ -20663,18 +20756,19 @@
         "haas-sheet",
         "hga-2017",
         "hga-2020",
-        "hopsteiner-vf"
+        "hopsteiner-vf",
+        "usda-varieties"
       ],
-      "sources_count": 6,
+      "sources_count": 7,
       "vendor": "USA Hops 2020",
       "url": "https://www.usahops.org/cabinet/data/HGA_VS_2020.pdf",
       "range": [
-        0.0325,
-        0.0442
+        0.032,
+        0.045
       ],
-      "dispersion": 0.049
+      "dispersion": 0.046
     },
-    "total_oil_ml_per_100g": 1.21,
+    "total_oil_ml_per_100g": 1.1416,
     "oil_provenance": {
       "kind": "vendor",
       "bound": "range",
@@ -20690,10 +20784,10 @@
         0.006
       ]
     },
-    "cohumulone_pct_of_alpha": 0.325,
-    "myrcene_pct_of_oil": 0.2982,
-    "humulene_pct_of_oil": 0.2783,
-    "caryophyllene_pct_of_oil": 0.102,
+    "cohumulone_pct_of_alpha": 0.318,
+    "myrcene_pct_of_oil": 0.3512,
+    "humulene_pct_of_oil": 0.265,
+    "caryophyllene_pct_of_oil": 0.095,
     "farnesene_pct_of_oil": 0.0668,
     "linalool_pct_of_oil": 0.005
   },
@@ -20763,17 +20857,17 @@
     "alpha_acid_max_pct": 0.098,
     "pairings": "Cascade",
     "flavor_profiles": "Citrus, Earthy, Floral, Fruity, Noble, Pepper, Resinous, Spicy, Sweet, Woody",
-    "url": "https://www.hopslist.com/hops/bittering-hops/yakima-cluster/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/yakima-cluster/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.044,
         0.098
@@ -20783,15 +20877,15 @@
     "beta_acid_min_pct": 0.03,
     "beta_acid_max_pct": 0.061,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "range",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/yakima-cluster/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.03,
         0.061
@@ -20925,64 +21019,64 @@
     "origin": "Great Britain",
     "alpha_rating": "Moderate",
     "recipes_count": 44,
-    "alpha_acid_pct": 0.14,
+    "alpha_acid_pct": 0.12,
     "alpha_acid_min_pct": 0.12,
-    "alpha_acid_max_pct": 0.16,
-    "beta_acid_pct": 0.045,
+    "alpha_acid_max_pct": 0.12,
+    "beta_acid_pct": 0.04,
     "pairings": "Challenger, Northdown",
-    "url": "https://www.hopslist.com/hops/dual-purpose-hops/yeoman/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
-      "merge": "precedence",
-      "sources": [
-        "hopslist"
-      ],
-      "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/yeoman/",
-      "range": [
-        0.12,
-        0.16
-      ]
-    },
-    "beta_acid_min_pct": 0.04,
-    "beta_acid_max_pct": 0.05,
-    "beta_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
-      "merge": "precedence",
-      "sources": [
-        "hopslist"
-      ],
-      "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/yeoman/",
-      "range": [
-        0.04,
-        0.05
-      ]
-    },
-    "total_oil_ml_per_100g": 2.05,
-    "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/dual-purpose-hops/yeoman/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.1,
-        0.1
+        0.12,
+        0.12
+      ]
+    },
+    "beta_acid_min_pct": 0.04,
+    "beta_acid_max_pct": 0.04,
+    "beta_provenance": {
+      "kind": "vendor",
+      "bound": "point",
+      "merge": "precedence",
+      "sources": [
+        "usda-varieties"
+      ],
+      "sources_count": 1,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
+      "range": [
+        0.04,
+        0.04
+      ]
+    },
+    "total_oil_ml_per_100g": 1.7,
+    "oil_provenance": {
+      "kind": "vendor",
+      "bound": "point",
+      "merge": "precedence",
+      "sources": [
+        "usda-varieties"
+      ],
+      "sources_count": 1,
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
+      "range": [
+        0.095,
+        0.095
       ]
     },
     "cohumulone_pct_of_alpha": 0.25,
     "myrcene_pct_of_oil": 0.48,
-    "humulene_pct_of_oil": 0.2,
-    "caryophyllene_pct_of_oil": 0.1
+    "humulene_pct_of_oil": 0.198,
+    "caryophyllene_pct_of_oil": 0.095
   },
   "zagrava": {
     "id": "zagrava",
@@ -21138,39 +21232,39 @@
     "origin": "United States",
     "alpha_rating": "Moderate",
     "recipes_count": 19,
-    "alpha_acid_pct": 0.1,
+    "alpha_acid_pct": 0.09,
     "alpha_acid_min_pct": 0.09,
-    "alpha_acid_max_pct": 0.11,
+    "alpha_acid_max_pct": 0.09,
     "flavor_profiles": "Citrus, Floral",
-    "url": "https://www.hopslist.com/hops/bittering-hops/zenith/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
-      "bound": "range",
+      "kind": "vendor",
+      "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/zenith/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.09,
-        0.11
+        0.09
       ]
     },
     "beta_acid_pct": 0.03,
     "beta_acid_min_pct": 0.03,
     "beta_acid_max_pct": 0.03,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/zenith/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.03,
         0.03
@@ -21178,24 +21272,24 @@
     },
     "total_oil_ml_per_100g": 1.76,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/bittering-hops/zenith/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
-        0.07,
-        0.07
+        0.069,
+        0.069
       ]
     },
     "cohumulone_pct_of_alpha": 0.25,
     "myrcene_pct_of_oil": 0.52,
-    "humulene_pct_of_oil": 0.18,
-    "caryophyllene_pct_of_oil": 0.07
+    "humulene_pct_of_oil": 0.184,
+    "caryophyllene_pct_of_oil": 0.069
   },
   "zibi": {
     "id": "zibi",
@@ -21234,17 +21328,17 @@
     "alpha_acid_pct": 0.052,
     "alpha_acid_min_pct": 0.052,
     "alpha_acid_max_pct": 0.052,
-    "url": "https://www.hopslist.com/hops/aroma-hops/zlatan/",
+    "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
     "alpha_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/zlatan/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.052,
         0.052
@@ -21254,15 +21348,15 @@
     "beta_acid_min_pct": 0.043,
     "beta_acid_max_pct": 0.043,
     "beta_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/zlatan/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.043,
         0.043
@@ -21270,15 +21364,15 @@
     },
     "cohumulone_pct_of_alpha": 0.21,
     "oil_provenance": {
-      "kind": "aggregator",
+      "kind": "vendor",
       "bound": "point",
       "merge": "precedence",
       "sources": [
-        "hopslist"
+        "usda-varieties"
       ],
       "sources_count": 1,
-      "vendor": "Hopslist",
-      "url": "https://www.hopslist.com/hops/aroma-hops/zlatan/",
+      "vendor": "USDA / OSU",
+      "url": "https://freshops.com/usda-named-hop-variety-descriptions/",
       "range": [
         0.21,
         0.21
