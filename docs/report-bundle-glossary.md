@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_132 paths_
+_134 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -40,6 +40,7 @@ _132 paths_
 | `batch.boil_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.boil_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet, whole_cone |
+| `batch.boil_hops.total_oil_ml_per_100g` | Total Oil Ml Per 100g | field | — | — | — | — |
 | `batch.boil_ibu_share` | Boil IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.boil_off_rate_l_per_hr` | Boil-off rate | root | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `batch.boil_target_ibu` | Boil IBU | derived | ibu | IBU | 1 | — |
@@ -132,6 +133,7 @@ _132 paths_
 | `batch.whirlpool_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.whirlpool_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_hops.product_form` | Form | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet, whole_cone |
+| `batch.whirlpool_hops.total_oil_ml_per_100g` | Total Oil Ml Per 100g | field | — | — | — | — |
 | `batch.whirlpool_hot_ibu_share` | Whirlpool Hot IBU Share | derived | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_ibu_fraction` | Whirlpool IBU share | root | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_ibu_share` | Whirlpool IBU Share | derived | percentage | pct (%) | 1 | — |

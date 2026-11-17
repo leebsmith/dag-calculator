@@ -84,6 +84,7 @@
         </div>
 
         <p class="form-hint" x-show="hopDemandLine" x-text="hopDemandLine"></p>
+        <p class="form-hint" x-show="hopOilLine" x-text="hopOilLine"></p>
 
         <p class="form-hint" x-show="hopRows.length > 0 && hopRows.some((r) => r.mass_kg == null)">
           Hop mass appears once the batch solver has produced the pre-boil gravity and post-boil volume.

@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:5eec5f3cbaa454d35cbab8f84b0c7d2833d84d94d972764d3bf7d91c6be8ba24",
+    "hash": "sha256:ec1ef59159abc73316767d8a0f719158fb4588ba937b76952227f66ae88b84ee",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -201,6 +201,14 @@
         }
       },
       "constants": {
+        "oil_density_g_per_ml": {
+          "value": 0.85,
+          "dimension": "dimensionless"
+        },
+        "oil_form_multiplier_lupulin": {
+          "value": 2.7,
+          "dimension": "dimensionless"
+        },
         "cutaia_a": {
           "value": 0.372,
           "dimension": "dimensionless"
@@ -1176,6 +1184,7 @@
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
+          "total_oil_ml_per_100g": {},
           "alpha_provenance": {},
           "boil_time_fraction": {
             "dimension": "percentage",
@@ -1215,6 +1224,7 @@
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
+          "total_oil_ml_per_100g": {},
           "alpha_provenance": {},
           "addition_at_min": {
             "dimension": "time",
@@ -8183,5 +8193,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:9fb44aacfda24b883b51d6d24b56e3dbc87c69e67ecb6aefb7af462dd7b23607"
+  "content_hash": "sha256:6b1a0acb1c48394074d4b83c040fb06158022930fea9a1e72a0320188049a4c5"
 }

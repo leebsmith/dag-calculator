@@ -1,6 +1,7 @@
 // Hop card getters: mass readouts, draft summaries, start-band edits, the
 // policy/timeline mirrors, and the field-model lookups.
 
+import artifact from "../../engine/artifact.json" with { type: "json" };
 import { HOP_NODES as N } from "../../views/registry/hops.js";
 import { hopSectionMetaDescriptors } from "../../views/producer/hopSections.js";
 import {
@@ -173,6 +174,7 @@ export function policyDescriptors({ cache, engine, formatTemp, formatMass, getVi
       boilIbu: () => Number(resolveOrNull(engine, N.boilIbu, reportError)),
       rows: () => getView().hopRows,
       alphaMassKg: () => getView().boilHopAlphaMassKg,
+      constants: artifact?.constants ?? {},
     }),
     ...whirlpoolTimelineDescriptors({
       formatTemp,

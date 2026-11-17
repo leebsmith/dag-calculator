@@ -28,6 +28,7 @@ export function makeBoilRow(hop, catalogForm = null) {
     product_form: productForm,
     alpha_acid_pct: hop.alpha_acid_pct,
     alpha_provenance: hop.alpha_provenance,
+    total_oil_ml_per_100g: hop.total_oil_ml_per_100g,
     boil_time_fraction: productForm === "flowable_extract" ? 0.25 : 1,
     parts: 10,
     pct: 0,

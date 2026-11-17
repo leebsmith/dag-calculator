@@ -1,116 +1,128 @@
 ---
-title: Hop oil model — per-form oil yield and retention
-status: proposed
+title: Hop oil model — per-form oil charge
+status: in progress (card line landed; report line pending)
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: []
 blocks: []
-gate: make check + make test; the oil dose is reproducible from the seed and the declared constants, and no solver reads a null
+gate: make check + make test; the oil charge reproduces from the seed and the declared constants, and no charge counts a missing figure as zero
 ---
 
-# Hop oil model — per-form oil yield and retention
+# Hop oil model — per-form oil charge
 
-Level 2 of the hop roadmap: the whirlpool allocates by **oil mass** rather than
-by IBU share. `plans/hop-layering-strategy.md` already drafts the authoring — a
-hot/cool IBU split plus a cool-side mass ratio. This plan supplies the two things
-that authoring cannot work without.
+**What this is:** the oil a hop bill adds, per litre. Not the oil that reaches
+the glass — that needs a retention curve, and no source publishes one.
+
+The draft framed this as the prerequisite for oil-based layering. That was
+wrong, and the correction matters:
+
+- the layering *authoring* is a mass ratio — authored, not derived — so it needs
+  no oil numbers;
+- what needs oil numbers is **reporting** what the ratio amounts to.
+
+So this is a legibility layer, and it stands on its own: every batch already
+solves hop masses from IBU, so the oil charge is computable today for any bill.
 
 ## 1. Why
 
-The bitterness model is complete: alpha × load × form utilisation. The oil side
-has facts but no model.
+- The bitterness model is complete: alpha × load × form utilisation.
+- `PRODUCT_FORM_UTILIZATION` is alpha-specific. It answers "how much of this
+  gram's alpha isomerises", not "how much oil this gram carries".
+- A mass ratio is only an oil statement if the per-form concentration is known:
+  a gram of lupulin carries ≈2.7× the oil of a gram of T-90, measured.
 
-- `PRODUCT_FORM_UTILIZATION` is **alpha-specific**. It answers "how much of this
-  gram's alpha isomerises", not "how much of this gram's oil survives". Oils
-  volatilise and adsorb; alpha isomerises. They are different curves over the
-  same temperature and time.
-- A mass ratio is only meaningful in oil terms if the oil concentration per form
-  is known. A gram of Cryo carries roughly 2.7× the oil of a gram of T-90
-  (measured: `docs/hops/hop-products.md` §4.1a), so "60/40 by mass" is a
-  different oil split for every pair of forms.
+## 2. The model
 
-## 2. What exists
+One equation:
 
-| Piece | Where | State |
+```
+oil_mg_per_L = mass_kg × 1000 × oil_ml_per_100g × form_multiplier / 100
+               × density_g_per_ml × 1000 / volume_L
+```
+
+Read as: grams → mL of oil (variety × form) → mg of oil (density) → mg/L of the
+batch.
+
+**No retention term.** Oils volatilise and adsorb, but nothing in the source set
+measures it, so the number is a **charge** and the copy says "oil added". When a
+retention basis appears, it multiplies this value; the charge itself does not
+change.
+
+**Constants live in the artifact**, not in the code, so both languages read one
+copy:
+
+| Constant | Value | Basis |
 |---|---|---|
-| Per-variety total oil | `data/seeds/hops.json` after the synthesis plan | 233 varieties from the sweep |
-| Per-form oil | `data/seeds/hop-products.json` | 26 Cryo varieties, mL/100 g; extracts have none |
-| Alpha form scalars | `PRODUCT_FORM_UTILIZATION`, JS and Python | complete for four leaves |
-| Temperature bands | `data/seeds/whirlpool-notes.json` | three bands, qualitative |
-| Cooling curve, t_eff | `docs/hops/whirlpool-hopping-model.md` | complete for bitterness |
+| `oil_density_g_per_ml` | 0.85 | a unit conversion, not a hop fact |
+| `oil_form_multiplier_lupulin` | 2.7 | measured, YCH 2022, 26 varieties |
 
-## 3. The model
+Form multipliers as a table:
 
-**Oil mass per charge.**
+| Form | Multiplier | Basis |
+|---|---|---|
+| T-90 pellets | 1 | reference by definition |
+| Whole cone | 1 | assumed — no measured ratio |
+| Lupulin concentrate | 2.7 | measured |
+| Extract | none | no per-variety oil figure exists, so it is unpriced |
 
-```
-oil_mL = grams × oil_ml_per_100g / 100 × oil_form_multiplier
-```
+## 3. What landed
 
-`oil_ml_per_100g` is the variety figure; `oil_form_multiplier` is the form's
-ratio against T-90, and the only one we can currently measure is lupulin at
-≈2.7. Extract is absent: no per-variety sheet exists, so the multiplier must be
-declared or the form must be excluded from oil authoring rather than guessed.
+- The two artifact constants, with the JS card as their consumer.
+- `total_oil_ml_per_100g` on `boil_hop_row` and `whirlpool_hop_row`, copied at
+  selection like alpha.
+- `frontend/src/views/producer/hopOil.js` — the pure model: `oilChargeMgPerL`,
+  `oilChargeSummary`, `oilFormMultiplier`, `oilFormBasis`.
+- The hop card's boil line: `oil added 2.4 mg/L`, plus `n of m charges priced`
+  when some hops have no figure. An unpriced hop is not a zero.
+- `tests/frontend/hop-oil.test.js` — the arithmetic, the null cases, the form
+  table and its basis, and the summary count.
 
-**Retention.**
+## 4. What remains
 
-```
-oil_retained = oil_mL × r(T, t)
-```
+**The report line.** The bundle needs a formatted path for the charge and the
+hops section template needs one `note[...]` beside the existing IBU notes. The
+value is computable in `reportFormat.js` from the solved `mass_kg` and the row's
+oil. This is deliberately separate from the card line: the template change
+regenerates the bundle fixture, and it should land as its own commit so the
+diff is one thing.
 
-`r` starts as a scalar per temperature band, using the same three bands the
-whirlpool notes already define, and is promoted to a curve when there is a basis
-for one. It is a **declared function with stated bounds**, not a fitted curve
-invented in a card — the same discipline as the cooling curve.
+**Python, when there is a consumer.** The solver does not price oil yet, so
+mirroring the model in `backend/app/core/` now would be dead code. It becomes
+the solver's when oil starts influencing a solve — which is the layering
+authoring, not this plan.
 
-**Output.** An oil dose, in mL per litre or (with a declared density) mg/L. The
-choice matters: brewers quote oil in mg/L, but the sources publish mL/100 g, so
-the conversion constant is visible either way.
-
-## 4. Shape
-
-- A paired constant table `OIL_FORM_MULTIPLIER` in JS and Python, mirroring
-  `PRODUCT_FORM_UTILIZATION`, with the existing `engine-read-mirrors` guard
-  extended to it.
-- Retention as a declared function; the bands come from the whirlpool notes seed,
-  not from a new table.
-- If the oil dose is report-visible, it is a derived node, not a stored value —
-  nothing derived is persisted.
-- The density constant lives beside the model, not in the seed: it converts a
-  published unit, it is not a fact about a hop.
+**Not in scope:** retention, extract forms, any claim about oil in beer, and any
+change to the IBU path.
 
 ## 5. Guards
 
-- `engine-read-mirrors` covers the new constant table.
-- A unit test per temperature band: monotonic in `t`, monotonic in `T`, and zero
-  only when the charge is zero.
-- No solver reads a null: a hop without oil data cannot enter an oil allocation,
-  and the UI must exclude it rather than substitute a variety average.
+- `artifact-consumers`: both constants have a consumer (the card).
+- `hop-oil` test: arithmetic, null-not-zero, form table, summary count.
+- `hop-row-schema`: the oil field is declared on both row schemas.
+- No solver reads a null: a hop without oil contributes nothing to a summary.
 
-## 6. Out of scope
+## 6. Open decisions
 
-- Sensory prediction. The model allocates oil mass and says so.
-- Extract forms until a per-variety oil figure exists.
-- Any change to the IBU path.
+Resolved:
 
-## 7. Open decisions
+1. **Units** — mL/100 g on the ingredient (the published unit), **mg/L** for the
+   charge (the derived quantity).
+2. **Retention** — deferred until measured; the model stops at the charge.
+3. **Report** — yes, as its own line beside the IBU notes, never a column in the
+   IBU table. Pending (§4).
+4. **Multiplier** — a point per form with a basis, not a range.
 
-1. Oil units: mL/L displayed, mg/L displayed, or both with a density toggle.
-   Recommendation: compute in mL, display mg/L where the density is declared.
-2. Retention basis: literature constant, internal band scalar, or deferred until
-   a measurement exists. Recommendation: band scalars first, labelled as
-   assumptions.
-3. Whether the oil dose appears in the report at all in this plan, or only when
-   the layering assistant lands.
-4. Whether `oil_form_multiplier` is one number per form or a range carried with
-   provenance. Recommendation: a point with a note, since only one form has a
-   measured ratio.
+Still open:
 
-## 8. Checklist
+5. Whether whole cone's assumed 1.0 should be marked `~` in the card the way
+   assumed priors are.
 
-- [ ] Declare the oil multiplier table in JS and Python; extend the mirror guard.
-- [ ] Declare retention as a function over the whirlpool bands.
-- [ ] Add the derived oil dose (if report-visible) and regenerate the catalog.
-- [ ] Tests: monotonicity, null exclusion, unit round-trip.
-- [ ] Document the model in `docs/hops/whirlpool-hopping-model.md`.
-- [ ] Run `make check` and `make test`.
+## 7. Checklist
+
+- [x] Artifact constants and the row oil field.
+- [x] The pure model and its tests.
+- [x] Copy oil at selection; the hop card line.
+- [x] Rewrite this plan around the charge rather than retention.
+- [ ] The report line: bundle path, template note, fixture regeneration.
+- [ ] Surface the assumed-basis mark for whole cone.
+- [ ] `make check`, `make test`, `make verify`.

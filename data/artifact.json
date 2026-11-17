@@ -196,6 +196,14 @@
     }
   },
   "constants": {
+    "oil_density_g_per_ml": {
+      "value": 0.85,
+      "dimension": "dimensionless"
+    },
+    "oil_form_multiplier_lupulin": {
+      "value": 2.7,
+      "dimension": "dimensionless"
+    },
     "cutaia_a": {
       "value": 0.372,
       "dimension": "dimensionless"
@@ -1171,6 +1179,7 @@
         "dimension": "percentage",
         "domain": "$value >= 0 && $value <= 1"
       },
+      "total_oil_ml_per_100g": {},
       "alpha_provenance": {},
       "boil_time_fraction": {
         "dimension": "percentage",
@@ -1210,6 +1219,7 @@
         "dimension": "percentage",
         "domain": "$value >= 0 && $value <= 1"
       },
+      "total_oil_ml_per_100g": {},
       "alpha_provenance": {},
       "addition_at_min": {
         "dimension": "time",

@@ -25,6 +25,9 @@ const HOST_CONSTANTS = new Set([
   "fermentability_prior_sugar",
   "fermentability_prior_default",
   "yield_prior_base",
+  // The oil charge: the hop card prices a bill live, no artifact expression does.
+  "oil_density_g_per_ml",
+  "oil_form_multiplier_lupulin",
   "yield_prior_crystal",
   "yield_prior_roasted",
   "yield_prior_acid",

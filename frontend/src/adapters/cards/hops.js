@@ -325,6 +325,7 @@ export const KEYS = [
   "hopMinutes",
   "hopAddition",
   "hopDemandLine",
+  "hopOilLine",
   "whirlpoolHopDemandLine",
   "hopTemp",
   "hopIbu",

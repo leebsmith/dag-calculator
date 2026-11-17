@@ -23,6 +23,7 @@ import {
   mergeWhirlpoolRows,
 } from "./producer/hopRows.js";
 import { doseWarning } from "./producer/boilPolicy.js";
+import { hopOilDescriptor } from "./producer/hopOil.js";
 import { startBandHint, startBandValue, startBands } from "./producer/whirlpoolPolicy.js";
 
 export const HOP_MASS_UNITS = ["oz", "g", "lb", "kg"];
@@ -253,6 +254,7 @@ export function boilPolicyDescriptors({
   boilIbu,
   rows,
   alphaMassKg,
+  constants,
 }) {
   const doseOf = (row) => {
     const volume = postBoilVolume();
@@ -278,6 +280,7 @@ export function boilPolicyDescriptors({
         });
       },
     },
+    ...hopOilDescriptor({ rows, postBoilVolume, constants, formatNumber }),
   };
 }
 
