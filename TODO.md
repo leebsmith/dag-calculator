@@ -49,9 +49,10 @@ tracks only what is outstanding.
   profile favours the well-documented set and must carry completeness.
   `plans/hop-layering-assistant.md`.
 
-* **Hop oil model (shipped, one item open)** — the charge, per form, in the card
-  and the report. The Python mirror waits until the solver prices oil, which is
-  the layering work above; a retention curve waits on a measurement
+* **Hop oil model (shipped, kettle only)** — the charge, per form, in the card and
+  the report, scoped and labelled as kettle. Dry-hop oil is the known gap: the
+  mechanics are documented and a v1 shape exists, but it is unmodelled. The
+  Python mirror and a retention curve wait for a consumer and a measurement
   (`plans/hop-oil-model.md`).
 
 * **Multi-strain yeast (deferred, narrowed)** — blends are now ordinary Library

@@ -82,7 +82,7 @@ export function oilChargeSummary({ rows, volumeL, constants }) {
 export function hopOilLineText({ rows, volumeL, constants, formatNumber }) {
   const summary = oilChargeSummary({ rows, volumeL, constants });
   if (!(summary.priced > 0)) return "";
-  const parts = [`oil added ${formatNumber(summary.total, 1)} mg/L`];
+  const parts = [`oil added ${formatNumber(summary.total, 1)} mg/L · kettle`];
   if (summary.priced < summary.rows) parts.push(`${summary.priced} of ${summary.rows} charges priced`);
   if (summary.assumed > 0) parts.push("whole cone assumed");
   return parts.join(" · ");

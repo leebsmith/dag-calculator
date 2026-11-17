@@ -333,7 +333,43 @@ contract.
   code. Authored curves calibrate the decay; no equipment-level thermal
   simulation is attempted.
 
-## 8. Limitations
+## 8. Hop oil charge
+
+The bitterness model ends at IBU; oil is priced separately, and deliberately
+narrowly.
+
+```
+oil_mg_per_L = mass_kg × 1000 × oil_ml_per_100g × form_multiplier / 100
+               × density_g_per_ml × 1000 / volume_L
+```
+
+Two constants, both in the artifact: `oil_form_multiplier_lupulin` = 2.7
+(measured, YCH 2022, 26 varieties) and `oil_density_g_per_ml` = 0.85 (a unit
+conversion, not a fact about a hop). T-90 is the reference at 1; whole cone is
+assumed 1, since no source publishes a ratio; extract is unpriced, since no
+per-variety oil figure exists for it.
+
+**Kettle only.** The charge covers the boil and the whirlpool. **Dry hops are not
+priced**, and that is the larger gap in an aromatic beer: a 70 IBU hazy prices at
+about 121 mg/L in the kettle, and 10–20 g/L of dry hops would add roughly
+210–430 mg/L more. A beer that never dry hops — most lagers, and plenty of ales —
+is unaffected by the omission.
+
+**Added, never retained.** Oils volatilise in the boil and adsorb to trub, yeast
+and filter media; nothing in the source set measures the transfer, so the model
+stops at what the charge puts in and says "added". A kettle figure is not a proxy
+for aroma: two beers with the same kettle oil and different dry hops are not
+comparable.
+
+**Dry hop, when it lands.** The mechanics are known and the row already carries
+the inputs: contact time saturates within 24–72 h, the application stage decides
+how much is lost to CO2 stripping and yeast adsorption, and the form changes how
+readily oil is exposed. A first version would be a stage factor over the existing
+application-event taxonomy times `(1 − e^(−t/τ))`, declared as a prior and
+reported as *extracted*. Total oil remains a mass budget; the quantities that are
+actually measured are compounds — linalool, geraniol, myrcene — at µg/L.
+
+## 9. Limitations
 
 - Single lumped wort temperature; no stratification or active chilling.
 - Product forms are the four leaves of `docs/hops/hop-products.md`; the yield
@@ -349,10 +385,11 @@ contract.
   extract, which is solved with the `1.15` scalar at boiling temperature. The
   reference's standardized bittering products (Flex and similar) are not
   modelled; their supplier formulas are in the appendix.
-- No oil or sensory prediction; the output is IBU only.
+- No sensory prediction. Oil is priced as a kettle charge (§8), separately from
+  IBU, and dry hops are outside it.
 - The cooling constant must be calibrated for a vessel and fill volume.
 
-## 9. Provenance
+## 10. Provenance
 
 - Provided whirlpool modeling note (`modeling-whirlpool-hops.md`, 2026-10-23):
   Arrhenius rate, Newton cooling, numerical effective time, Tinseth extension,

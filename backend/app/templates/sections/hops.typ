@@ -31,7 +31,10 @@
   if summary == none { return }
   let oil = summary.at("oil", default: none)
   if oil == none { return }
-  note[Oil added: #cell-text(oil)]
+  note[Oil added (kettle): #cell-text(oil)]
+  if present-formatted-table(DRY) {
+    note[Dry hops are not priced; they add oil this figure does not include.]
+  }
 }
 
 // One hop table: a frozen display string per cell, and only the column layout

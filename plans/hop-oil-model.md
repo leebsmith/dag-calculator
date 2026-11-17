@@ -90,8 +90,14 @@ mirroring the model in `backend/app/core/` now would be dead code. It becomes
 the solver's when oil starts influencing a solve — which is the layering
 authoring, not this plan.
 
-**Not in scope:** retention, extract forms, any claim about oil in beer, and any
-change to the IBU path.
+**Scope: kettle only.** The charge covers the boil and the whirlpool. Dry hops are
+not priced, which is the larger omission in an aromatic beer — a hazy's dry hop
+adds more oil than its entire kettle. The mechanics for pricing it are known
+(contact-time saturation, stage losses, form), and a v1 shape is sketched in
+`docs/hops/whirlpool-hopping-model.md` §8; neither is in this plan.
+
+**Not in scope:** retention, dry-hop extraction, extract forms, any claim about
+oil in beer, and any change to the IBU path.
 
 ## 5. Guards
 
