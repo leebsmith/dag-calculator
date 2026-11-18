@@ -36,8 +36,8 @@
       "mechanism": "scrape",
       "upstream": "hopsteiner.us, barthhaas.com, crosbyhops.com, hops.com.au (data sheets and product catalogue), usahops.org, nzhops.co.nz, hopslist.com, ars.usda.gov",
       "scraper": "scripts/scrape/hop_facts_scraper.py",
-      "rows": 3892,
-      "sha256": "1ba627c4ffb8405630de6754f916839819f2d3f6cc2c60bef5da948bcee3f25c"
+      "rows": 4012,
+      "sha256": "42a413180ba247664ea25aca478e5066f9f3792a0006472113b150fe59435d36"
     },
     "hop-products.json": {
       "mechanism": "curated",

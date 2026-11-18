@@ -74,6 +74,65 @@ export function oilChargeSummary({ rows, volumeL, constants }) {
 }
 
 /**
+ * A terpene alcohol this charge adds, in mg per litre. The fraction is a share
+ * of the same oil the charge prices, so a missing fraction is unpriced and
+ * never zero: a hop nobody publishes linalool for is not linalool-free.
+ * @pure
+ * @param {{ readonly oilMgPerL?: number|null, readonly fractionOfOil?: number|null }} args
+ * @returns {number|null} null when either input is missing
+ */
+export function terpeneAlcoholMgPerL({ oilMgPerL, fractionOfOil }) {
+  if (!isFiniteNumber(oilMgPerL) || !isFiniteNumber(fractionOfOil)) return null;
+  if (!(oilMgPerL >= 0) || !(fractionOfOil >= 0)) return null;
+  return oilMgPerL * fractionOfOil;
+}
+
+/**
+ * Per-addition oil and terpene alcohol charges, in mg per litre.
+ * @pure
+ * @param {{ readonly rows?: ReadonlyArray<object>, readonly volumeL?: number, readonly constants?: object }} args
+ */
+export function oilComponentCharges({ rows, volumeL, constants }) {
+  return (rows ?? []).map((row) => {
+    const oil = oilChargeMgPerL({
+      massKg: row?.mass_kg,
+      oilMlPer100g: row?.total_oil_ml_per_100g,
+      multiplier: oilFormMultiplier(row?.product_form, constants),
+      volumeL,
+      density: constants?.[DENSITY]?.value,
+    });
+    return {
+      oil,
+      linalool: terpeneAlcoholMgPerL({ oilMgPerL: oil, fractionOfOil: row?.linalool_pct_of_oil }),
+      geraniol: terpeneAlcoholMgPerL({ oilMgPerL: oil, fractionOfOil: row?.geraniol_pct_of_oil }),
+    };
+  });
+}
+
+/**
+ * Linalool-to-geraniol ratio across the charges that carry both. Each charge
+ * enters with the oil it adds, which is the mass weighting: a 20 g charge must
+ * not move a blend as far as a 200 g one. A charge missing either figure drops
+ * out and is counted rather than guessed at.
+ * @pure
+ * @param {ReadonlyArray<{ readonly linalool?: number|null, readonly geraniol?: number|null }>} charges
+ */
+export function lintRatio(charges) {
+  const all = charges ?? [];
+  let linalool = 0;
+  let geraniol = 0;
+  let priced = 0;
+  for (const charge of all) {
+    if (!isFiniteNumber(charge?.linalool) || !isFiniteNumber(charge?.geraniol)) continue;
+    linalool += charge.linalool;
+    geraniol += charge.geraniol;
+    priced += 1;
+  }
+  const ratio = geraniol > 0 ? linalool / geraniol : null;
+  return { ratio, linalool, geraniol, priced, total: all.length };
+}
+
+/**
  * The oil a hop bill adds, in mg/L, with how many charges could be priced. An
  * unpriced charge is not a zero: it is a hop whose figure nobody publishes.
  * @pure
@@ -83,6 +142,14 @@ export function hopOilLineText({ rows, volumeL, constants, formatNumber }) {
   const summary = oilChargeSummary({ rows, volumeL, constants });
   if (!(summary.priced > 0)) return "";
   const parts = [`oil added ${formatNumber(summary.total, 1)} mg/L · kettle`];
+  const lint = lintRatio(oilComponentCharges({ rows, volumeL, constants }));
+  if (lint.priced > 0) {
+    const linalool = formatNumber(lint.linalool, 2);
+    const geraniol = formatNumber(lint.geraniol, 2);
+    parts.push(`linalool ${linalool} + geraniol ${geraniol} mg/L`);
+    const partial = lint.priced < lint.total ? ` (${lint.priced} of ${lint.total})` : "";
+    parts.push(lint.ratio === null ? `L/G n/a${partial}` : `L/G ${formatNumber(lint.ratio, 2)}${partial}`);
+  }
   if (summary.priced < summary.rows) parts.push(`${summary.priced} of ${summary.rows} charges priced`);
   if (summary.assumed > 0) parts.push("whole cone assumed");
   return parts.join(" · ");

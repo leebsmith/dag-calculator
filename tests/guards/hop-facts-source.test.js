@@ -18,6 +18,7 @@ const ATTRIBUTES = new Set([
   "caryophyllene",
   "farnesene",
   "linalool",
+  "geraniol",
   "alpha",
   "beta",
   "cohumulone",

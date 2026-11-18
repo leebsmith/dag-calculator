@@ -44,10 +44,11 @@ tracks only what is outstanding.
   touch `parts` at all. `plans/hop-layering-strategy.md`.
 
 * **What oils enable (direction unspecified)** — pairing, substitution, profile
-  matching are hypotheses, not a design. The data constrains any answer: ~75 of
-  401 varieties carry all nine attributes and ~226 carry oil, so a ranking by
-  profile favours the well-documented set and must carry completeness.
-  `plans/hop-layering-assistant.md`.
+  matching are hypotheses, not a design. The data constrains any answer: 86 of
+  401 varieties carry all nine original attributes, 36 carry all ten, and 226
+  carry oil, so a ranking by profile favours the well-documented set and must
+  carry completeness. The two terpene alcohols are the sparse pair: 117 carry
+  linalool and 53 geraniol, and only 53 carry both. `plans/hop-layering-assistant.md`.
 
 * **Hop oil model (shipped, kettle only)** — the charge, per form, in the card and
   the report, scoped and labelled as kettle. Dry-hop oil is the known gap: the

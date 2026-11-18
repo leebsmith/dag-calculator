@@ -864,9 +864,20 @@
         "dimension": "percentage",
         "domain": "$value >= 0 && $value <= 1"
       },
+      "geraniol_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
       "alpha_provenance": {},
       "beta_provenance": {},
       "oil_provenance": {},
+      "cohumulone_provenance": {},
+      "myrcene_provenance": {},
+      "humulene_provenance": {},
+      "caryophyllene_provenance": {},
+      "farnesene_provenance": {},
+      "linalool_provenance": {},
+      "geraniol_provenance": {},
       "alpha_acid_basis": {},
       "pairings": {},
       "flavor_profiles": {},
@@ -1180,6 +1191,14 @@
         "domain": "$value >= 0 && $value <= 1"
       },
       "total_oil_ml_per_100g": {},
+      "linalool_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "geraniol_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
       "alpha_provenance": {},
       "boil_time_fraction": {
         "dimension": "percentage",
@@ -1220,6 +1239,14 @@
         "domain": "$value >= 0 && $value <= 1"
       },
       "total_oil_ml_per_100g": {},
+      "linalool_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
+      "geraniol_pct_of_oil": {
+        "dimension": "percentage",
+        "domain": "$value >= 0 && $value <= 1"
+      },
       "alpha_provenance": {},
       "addition_at_min": {
         "dimension": "time",

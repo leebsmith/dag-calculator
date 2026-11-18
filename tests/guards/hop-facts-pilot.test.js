@@ -25,12 +25,13 @@ const ATTRIBUTES = [
   "caryophyllene",
   "farnesene",
   "linalool",
+  "geraniol",
   "alpha",
   "beta",
   "cohumulone",
 ];
 
-const OIL_FRACTIONS = ["myrcene", "humulene", "caryophyllene", "farnesene", "linalool"];
+const OIL_FRACTIONS = ["myrcene", "humulene", "caryophyllene", "farnesene", "linalool", "geraniol"];
 
 test("every observation names a source, a unit, a basis and both halves", () => {
   const offenders = [];

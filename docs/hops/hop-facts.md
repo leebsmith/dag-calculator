@@ -26,7 +26,7 @@ dimension is a unit and says nothing about what is counted.
 | `beta_acid_pct`, `beta_acid_min_pct`, `beta_acid_max_pct` | of hop mass | fraction |
 | `total_oil_ml_per_100g` | volume per mass | mL/100 g |
 | `cohumulone_pct_of_alpha` | of alpha acids | fraction |
-| `myrcene_pct_of_oil`, `humulene_pct_of_oil`, `caryophyllene_pct_of_oil`, `farnesene_pct_of_oil`, `linalool_pct_of_oil` | of total oil | fraction |
+| `myrcene_pct_of_oil`, `humulene_pct_of_oil`, `caryophyllene_pct_of_oil`, `farnesene_pct_of_oil`, `linalool_pct_of_oil`, `geraniol_pct_of_oil` | of total oil | fraction |
 
 Total oil is the one field whose unit is not a fraction, which is why it carries
 its unit in its name rather than in a dimension. A percentage oil figure from a
@@ -46,7 +46,11 @@ Two fields, deliberately distinct:
   `bound` (`point`, `min`, `max`, `unknown`), the source (`vendor`, `url`,
   `retrieved_at`, `sha256` where a document exists), and the merge facts:
   `merge` (`precedence` or `mean_range`), `sources_count`, `dispersion`,
-  `crop_years`.
+  `crop_years`. Each oil fraction carries its own — `myrcene_provenance`,
+  `humulene_provenance`, `caryophyllene_provenance`, `farnesene_provenance`,
+  `linalool_provenance`, `geraniol_provenance` — because two vendors rarely
+  agree on a fraction and a single shared field would report one fraction's
+  source beside another fraction's value.
 - **`alpha_acid_basis`** — what was measured, where the source states it:
   conductometric (EBC 7.4) or spectrophotometric (ASBC Hops-6). This is the
   method, not the provenance class — the same distinction as `attenuation_basis`
@@ -67,9 +71,13 @@ In order, per field:
    carry almost no farnesene — so a zero stands unless another source contradicts
    it.
 3. **Rank** — survey newest, survey older, first-party sheets, breeder sites,
-   regional merchants, aggregator last.
+   regional merchants, aggregator last. Within one rank a value that states both
+   ends beats one that states only a top (`0.1 - 0.3` over `up to 1.6`), because
+   the centre of an upper bound *is* the bound and the weaker claim would
+   otherwise become the larger number. The tie-break never crosses a rank: an
+   aggregator range does not displace a vendor bound.
 4. **Merge** — three or more usable sources produce the mean of the bounds
-   (`mean_range`); fewer fall back to the top-ranked single source
+   (`mean_range`); fewer fall back to the single winning source
    (`precedence`). Max-only and unit-unresolved observations never enter a mean.
 5. **Record** — `sources`, `sources_count`, `merge`, `dispersion`, `bound`, the
    printed range and the source URL; the row's `url` points at the winning
@@ -77,8 +85,8 @@ In order, per field:
 
 What that yields across 401 rows: alpha is vendor or survey for 155 varieties and
 an aggregator figure for 246 (150 with no vendor sheet at all, 96 where the
-aggregator was the only source). 224 rows carry total oil, 213 co-humulone, and
-94 linalool. Every row has an alpha.
+aggregator was the only source). 226 rows carry total oil, 213 co-humulone, 117
+linalool and 53 geraniol. Every row has an alpha.
 
 ## 3.2 Prose is open again, on different terms
 

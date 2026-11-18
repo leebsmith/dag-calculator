@@ -23,7 +23,7 @@ const OUTPUT = fileURLToPath(new URL("../data/seeds/hops.json", import.meta.url)
 
 const AGGREGATOR = "hopslist";
 
-const RANK = {
+export const RANK = {
   "hga-2020": 0,
   "hga-2017": 1,
   "haas-sheet": 2,
@@ -56,12 +56,13 @@ const GROUPS = [
   { attribute: "alpha", bounds: ["alpha_acid_min_pct", "alpha_acid_max_pct"], centre: "alpha_acid_pct", provenance: "alpha_provenance" },
   { attribute: "beta", bounds: ["beta_acid_min_pct", "beta_acid_max_pct"], centre: "beta_acid_pct", provenance: "beta_provenance" },
   { attribute: "total_oil", centre: "total_oil_ml_per_100g", provenance: "oil_provenance" },
-  { attribute: "cohumulone", centre: "cohumulone_pct_of_alpha", provenance: "oil_provenance" },
-  { attribute: "myrcene", centre: "myrcene_pct_of_oil", provenance: "oil_provenance" },
-  { attribute: "humulene", centre: "humulene_pct_of_oil", provenance: "oil_provenance" },
-  { attribute: "caryophyllene", centre: "caryophyllene_pct_of_oil", provenance: "oil_provenance" },
-  { attribute: "farnesene", centre: "farnesene_pct_of_oil", provenance: "oil_provenance" },
-  { attribute: "linalool", centre: "linalool_pct_of_oil", provenance: "oil_provenance" },
+  { attribute: "cohumulone", centre: "cohumulone_pct_of_alpha", provenance: "cohumulone_provenance" },
+  { attribute: "myrcene", centre: "myrcene_pct_of_oil", provenance: "myrcene_provenance" },
+  { attribute: "humulene", centre: "humulene_pct_of_oil", provenance: "humulene_provenance" },
+  { attribute: "caryophyllene", centre: "caryophyllene_pct_of_oil", provenance: "caryophyllene_provenance" },
+  { attribute: "farnesene", centre: "farnesene_pct_of_oil", provenance: "farnesene_provenance" },
+  { attribute: "linalool", centre: "linalool_pct_of_oil", provenance: "linalool_provenance" },
+  { attribute: "geraniol", centre: "geraniol_pct_of_oil", provenance: "geraniol_provenance" },
 ];
 
 function slugify(value) {
@@ -108,7 +109,14 @@ function dedupe(rows) {
 // bitterness, so a zero there is a placeholder and never a measurement. The oil
 // fractions are different: a variety really can carry almost no farnesene, so a
 // zero stands unless another source contradicts it.
-const ZERO_IS_PLAUSIBLE = new Set(["myrcene", "humulene", "caryophyllene", "farnesene", "linalool"]);
+const ZERO_IS_PLAUSIBLE = new Set([
+  "myrcene",
+  "humulene",
+  "caryophyllene",
+  "farnesene",
+  "linalool",
+  "geraniol",
+]);
 
 function dropContradictedZeros(rows) {
   const peak = new Map();
@@ -149,10 +157,23 @@ function meanOfBounds(entries) {
   return { low: round(low), high: round(high) };
 }
 
+// Within one rank, a value that states both ends beats one that only states a
+// top: "0.1 - 0.3" is more information than "up to 1.6", and taking the bound
+// as the centre turns the weaker claim into the larger number. Across ranks the
+// ladder still decides — an aggregator range never displaces a vendor bound.
+// A row with no readable value ranks last so a neighbour with data can win.
+function completenessOf(row) {
+  const range = asRange(row);
+  if (!range) return 2;
+  return range.low === null ? 1 : 0;
+}
+
 function byPrecedence(rows) {
   return [...rows].sort((a, b) => {
     const rank = (RANK[a.source_id] ?? 9) - (RANK[b.source_id] ?? 9);
-    return rank !== 0 ? rank : a.source_id.localeCompare(b.source_id);
+    if (rank !== 0) return rank;
+    const completeness = completenessOf(a) - completenessOf(b);
+    return completeness !== 0 ? completeness : a.source_id.localeCompare(b.source_id);
   })[0];
 }
 
@@ -315,8 +336,25 @@ function load(path) {
   return JSON.parse(readFileSync(path, "utf8"));
 }
 
+function coverageReport(facts, seed) {
+  const hops = Object.values(seed);
+  const observed = new Map();
+  for (const row of facts?.observations ?? []) {
+    observed.set(row.attribute, (observed.get(row.attribute) ?? 0) + 1);
+  }
+  const lines = [`attribute    observed  hops/${hops.length}`];
+  for (const group of GROUPS) {
+    const present = hops.filter((hop) => typeof hop[group.centre] === "number").length;
+    const count = String(observed.get(group.attribute) ?? 0).padStart(8);
+    lines.push(`${group.attribute.padEnd(13)}${count}${String(present).padStart(9)}`);
+  }
+  return lines.join("\n");
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const seed = buildSeed(load(SCRAPE), load(FACTS));
+  const facts = load(FACTS);
+  const seed = buildSeed(load(SCRAPE), facts);
   writeFileSync(OUTPUT, `${JSON.stringify(seed, null, 2)}\n`);
   console.log(`wrote ${Object.keys(seed).length} hops to data/seeds/hops.json`);
+  if (process.argv.includes("--coverage")) console.log(coverageReport(facts, seed));
 }

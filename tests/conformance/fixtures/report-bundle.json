@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:ec1ef59159abc73316767d8a0f719158fb4588ba937b76952227f66ae88b84ee",
+    "hash": "sha256:fee7d4f5633bf68cad78f451f22b7d27a96fe5127140011ff297e30d215a51a6",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -869,9 +869,20 @@
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
+          "geraniol_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
           "alpha_provenance": {},
           "beta_provenance": {},
           "oil_provenance": {},
+          "cohumulone_provenance": {},
+          "myrcene_provenance": {},
+          "humulene_provenance": {},
+          "caryophyllene_provenance": {},
+          "farnesene_provenance": {},
+          "linalool_provenance": {},
+          "geraniol_provenance": {},
           "alpha_acid_basis": {},
           "pairings": {},
           "flavor_profiles": {},
@@ -1185,6 +1196,14 @@
             "domain": "$value >= 0 && $value <= 1"
           },
           "total_oil_ml_per_100g": {},
+          "linalool_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "geraniol_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
           "alpha_provenance": {},
           "boil_time_fraction": {
             "dimension": "percentage",
@@ -1225,6 +1244,14 @@
             "domain": "$value >= 0 && $value <= 1"
           },
           "total_oil_ml_per_100g": {},
+          "linalool_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "geraniol_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
           "alpha_provenance": {},
           "addition_at_min": {
             "dimension": "time",
@@ -8219,5 +8246,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:90daacc27dc0d1b8dd56aec798223365012580342225e2aa7f2cf4ddd1368d75"
+  "content_hash": "sha256:ab56756efab6164dbb845897a70242a2a94a43adda21d3883a79e1ce4a546460"
 }

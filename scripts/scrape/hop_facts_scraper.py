@@ -483,6 +483,20 @@ def probe_barthhaas(varieties):
         ),
         ("farnesene", rf"FARNESEN[^|]{{0,32}}?{value}\s*%", "percent", PERCENT_OIL[1], "FARNESEN"),
         ("humulene", rf"HUMULENE\s*{value}\s*%", "percent", PERCENT_OIL[1], "HUMULENE"),
+        (
+            "linalool",
+            rf"LINALOOL\s*(?:\(% OF TOTAL OIL\)\s*)?{value}\s*%",
+            "percent",
+            PERCENT_OIL[1],
+            "LINALOOL",
+        ),
+        (
+            "geraniol",
+            rf"GERANIOL\s*(?:\(% OF TOTAL OIL\)\s*)?{value}\s*%",
+            "percent",
+            PERCENT_OIL[1],
+            "GERANIOL",
+        ),
     ]
     rows = []
     digests = []
@@ -730,6 +744,7 @@ SHEET_LABELS = [
     ("CARYOPHYLLENE (% OF TOTAL OIL)", "caryophyllene", "percent", PERCENT_OIL[1]),
     ("FARNESENE (% OF TOTAL OIL)", "farnesene", "percent", PERCENT_OIL[1]),
     ("LINALOOL (% OF TOTAL OIL)", "linalool", "percent", PERCENT_OIL[1]),
+    ("GERANIOL (% OF TOTAL OIL)", "geraniol", "percent", PERCENT_OIL[1]),
     ("ALPHA-ACIDS", "alpha", "percent", PERCENT_MASS[1]),
     ("BETA-ACIDS", "beta", "percent", PERCENT_MASS[1]),
     ("TOTAL OIL", "total_oil", "ml_per_100g", PERCENT_MASS[1]),
@@ -738,6 +753,7 @@ SHEET_LABELS = [
     ("CARYOPHYLLENE", "caryophyllene", "percent", PERCENT_OIL[1]),
     ("FARNESENE", "farnesene", "percent", PERCENT_OIL[1]),
     ("LINALOOL", "linalool", "percent", PERCENT_OIL[1]),
+    ("GERANIOL", "geraniol", "percent", PERCENT_OIL[1]),
 ]
 
 VALUE = r"(?:up to\s*)?[<>]?\s*\d+(?:\.\d+)?(?:\s*[-–]\s*\d+(?:\.\d+)?)?"
@@ -1147,6 +1163,7 @@ FIELD_ORDER = [
     "caryophyllene",
     "farnesene",
     "linalool",
+    "geraniol",
     "alpha",
     "beta",
     "cohumulone",

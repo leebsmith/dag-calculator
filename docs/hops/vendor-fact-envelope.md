@@ -241,17 +241,21 @@ Hopsteiner — which under the n ≥ 3 rule meant no synthesis at all.
 ## 7. Deliberately excluded
 
 
-Hard resins, polyphenols, xanthohumol, ketones, isobutyrates, genetic origin,
-yield, maturity, disease ratings, acreage, aroma descriptors and narrative
-descriptions. Most are published and cheap to take; none is consumed, so none is
-in scope. The list is here so a later reader knows the set was chosen rather than
-exhausted.
+Hard resins, polyphenols, xanthohumol, ketones, isobutyrates, thiols, genetic
+origin, yield, maturity, disease ratings, acreage, aroma descriptors and
+narrative descriptions. Most are published and cheap to take; none is consumed,
+so none is in scope. The list is here so a later reader knows the set was chosen
+rather than exhausted.
 
-Two near-misses stay tracked as document-only candidates: geraniol (BarthHaas
-only) and the humulene/caryophyllene ratio (HPA full blocks only, and derivable
-from two fields already carried). Hop storage index is the one exclusion worth
-naming: no source in this set publishes it, so it is a model constant for the
-retention work rather than a scraped fact.
+One near-miss remains tracked as a document-only candidate: the
+humulene/caryophyllene ratio (HPA full blocks only, and derivable from two fields
+already carried). Hop storage index is the one exclusion worth naming: no source
+in this set publishes it, so it is a model constant for the retention work rather
+than a scraped fact.
+
+Geraniol has since left this list: BarthHaas publishes it per variety, and the
+dosing model consumes it beside linalool. See §9.1 for the verdict it carries and
+the exception it took to get there.
 
 ## 8. Second pilot: the added sources
 
@@ -338,7 +342,10 @@ parser bug, and it belongs with the alias table rather than the sweep.
 ## 9. The sweep
 
 All 401 seed ids against the ten measuring sources plus the identity index:
-**3,951 observations** after the alias fixes and the USDA variety descriptions — the entity-decoding and apostrophe normalisation recovered six varieties, and two more ('Red Earth', 'Willow Creek') exist in the aggregator with every value blank.
+**4,012 observations** after the alias fixes, the USDA variety descriptions and
+the terpene alcohols — the entity-decoding and apostrophe normalisation recovered
+six varieties, and two more ('Red Earth', 'Willow Creek') exist in the aggregator
+with every value blank.
 
 | Source | Varieties |
 |---|---|
@@ -355,11 +362,11 @@ All 401 seed ids against the ten measuring sources plus the identity index:
 | `barthhaas-sheet` | 9 |
 | `usda-cultivars` | 76 identity, no measurement |
 
-**256 of 401 varieties carry at least one measurement (64 %)**, 231 carry alpha
-and total oil, and **74 carry all nine**. The vendor union was expected to reach
-290–300; it reached 256. The shortfall is the alias ceiling — Crosby serves 55
-pages, Hopsteiner 100, and the seed's 401 include 140 names no measuring source
-lists.
+**256 of 401 varieties carry at least one measurement (64 %)**, 235 carry alpha
+and total oil, 86 carry all nine of the original fields, and 36 carry all ten.
+The vendor union was expected to reach 290–300; it reached 256. The shortfall is
+the alias ceiling — Crosby serves 55 pages, Hopsteiner 100, and the seed's 401
+include 140 names no measuring source lists.
 
 ### 9.1 Per-field verdicts
 
@@ -368,20 +375,48 @@ normalisable basis.
 
 | Field | Observations | Varieties | ≥2 sources | ≥3 sources | Verdict |
 |---|---|---|---|---|---|
-| alpha | 580 | 254 | 124 | 89 | **in** |
-| beta | 529 | 246 | 110 | 82 | **in** |
-| total oil | 552 | 237 | 115 | 88 | **in** |
-| co-humulone | 392 | 213 | 90 | 47 | **in** |
-| humulene | 379 | 217 | 95 | 49 | **in** |
-| farnesene | 340 | 198 | 88 | 42 | **in** |
-| myrcene | 313 | 205 | 75 | 22 | **in** |
-| caryophyllene | 287 | 198 | 65 | 16 | **in** |
-| linalool | 103 | 95 | 8 | 0 | **document only** |
+| alpha | 666 | 254 | 175 | 95 | **in** |
+| beta | 616 | 246 | 163 | 87 | **in** |
+| total oil | 631 | 237 | 163 | 92 | **in** |
+| co-humulone | 480 | 213 | 144 | 62 | **in** |
+| humulene | 416 | 218 | 120 | 53 | **in** |
+| farnesene | 344 | 198 | 92 | 42 | **in** |
+| myrcene | 319 | 205 | 79 | 23 | **in** |
+| caryophyllene | 317 | 198 | 88 | 22 | **in** |
+| linalool | 167 | 118 | 43 | 6 | **in** |
+| geraniol | 56 | 54 | 2 | 0 | **in by exception** |
 
-Eight of the nine rows clear the threshold. Linalool does not, and its shape is
-what predicted it: published widely enough to exist for 95 varieties, but by a
-single source for 87 of them, because the Haas sheets print an em dash where
-BarthHaas prints a value.
+Eight of the first nine rows clear the threshold on their own. Linalool now does
+too, but only because BarthHaas variety pages joined Hopsteiner and the Haas
+sheets: 64 of its 167 observations come from BarthHaas, which is where the
+varieties the Haas template leaves blank get a value.
+
+Geraniol is the exception and says so. It reaches 54 varieties — more than
+myrcene's twenty-two, well past the threshold — but from two sources that
+overlap on two varieties (52 from BarthHaas, 4 from Haas sheets), so the
+"at least two sources" half of the test is a technicality rather than
+corroboration. It is in because the dosing model reports a linalool-to-geraniol
+ratio and a ratio with no denominator is not a ratio. The honest reading is that
+geraniol is a single-vendor field wearing a two-source provenance, and its
+`bound` is mostly `max`: BarthHaas prints `up to 0.2%`, never a lower bound.
+
+The practical consequence travels to the model, and its direction depends on
+which fraction is one-sided. A `max` geraniol value sits at the top of its
+declared range, so the denominator is as large as it can be and the reported
+L/G is a **lower** bound on the true ratio — conservative, never a claim the
+data cannot support. A `max` linalool value does the opposite and lifts the
+numerator. Across the 52 varieties with both fractions: 21 are two-sided on
+both, 14 are one-sided on both (where the bias cancels in the ratio), 13 are
+two-sided linalool over a `max` geraniol, and 3 lean the other way. The hop card
+counts the charges it could price rather than implying the bill was complete.
+
+The merge now prefers a two-sided value over a one-sided one *within* a rank,
+which is what stops the weaker claim from winning: Galena read 1.6 % linalool
+from BarthHaas's `up to 1.6` while Hopsteiner published `0.1 - 0.3` at the same
+rank, and now reads 0.2 %. Nine varieties moved, all of them linalool, because
+Hopsteiner is the source that prints both ends where BarthHaas prints only the
+top. No value was discounted: a bound remains a bound, and a midpoint would be
+an estimator nobody measured.
 
 ### 9.2 The USDA breeding record corroborates and upgrades
 

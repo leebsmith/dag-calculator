@@ -959,6 +959,21 @@
     {
       "variety_id": "Admiral",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.8 - 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.008,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/admiral"
+    },
+    {
+      "variety_id": "Admiral",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "13 - 16",
       "stated_unit": "percent",
@@ -1262,6 +1277,36 @@
         0.2
       ],
       "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/agnus"
+    },
+    {
+      "variety_id": "Agnus",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.4 - 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.004,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/agnus"
+    },
+    {
+      "variety_id": "Agnus",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.4 - 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.004,
+        0.007
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/agnus"
     },
     {
@@ -2365,6 +2410,36 @@
         0.068
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
+    },
+    {
+      "variety_id": "Amarillo",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.004
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/amarillor-vgxp01-cv"
     },
     {
@@ -4040,6 +4115,36 @@
     {
       "variety_id": "Ariana",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.004
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/ariana"
+    },
+    {
+      "variety_id": "Ariana",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.002
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/ariana"
+    },
+    {
+      "variety_id": "Ariana",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "8 - 14.5",
       "stated_unit": "percent",
@@ -4403,6 +4508,36 @@
         0.09
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/aurora"
+    },
+    {
+      "variety_id": "Aurora",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/aurora"
+    },
+    {
+      "variety_id": "Aurora",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.001
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/aurora"
     },
     {
@@ -4792,6 +4927,36 @@
         0.006
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/azaccatm"
+    },
+    {
+      "variety_id": "Azacca",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.006
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/azaccatm"
+    },
+    {
+      "variety_id": "Azacca",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.006
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/azaccatm"
     },
     {
@@ -5650,6 +5815,21 @@
     {
       "variety_id": "BRU-1",
       "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.005
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bru-1tm"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "12.7 - 15.7",
       "stated_unit": "percent",
@@ -5765,6 +5945,21 @@
         0.01
       ],
       "source_label": "LINALOOL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "BRU-1",
+      "source_id": "haas-sheet",
+      "attribute": "geraniol",
+      "stated_value": "0 – 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.0,
+        0.01
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://hops.com.au/downloads/data-sheet/america/Bru-Data-Sheet.pdf"
     },
     {
@@ -6861,6 +7056,21 @@
     {
       "variety_id": "Boadicea",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.2 - 0.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.004
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/boadicea"
+    },
+    {
+      "variety_id": "Boadicea",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "7 - 10",
       "stated_unit": "percent",
@@ -7173,6 +7383,21 @@
         0.07
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bobek"
+    },
+    {
+      "variety_id": "Bobek",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.9 - 1.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.009,
+        0.013
+      ],
+      "source_label": "LINALOOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/bobek"
     },
     {
@@ -7753,6 +7978,21 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/bramling-cross"
+    },
+    {
+      "variety_id": "Bramling Cross",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.009
+      ],
+      "source_label": "LINALOOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/bramling-cross"
     },
     {
@@ -9477,6 +9717,21 @@
     {
       "variety_id": "Callista",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.012
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/callista"
+    },
+    {
+      "variety_id": "Callista",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "2.3 - 5",
       "stated_unit": "percent",
@@ -10205,6 +10460,36 @@
         0.072
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.1 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.006
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
+    },
+    {
+      "variety_id": "Cascade",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.008
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/cascade"
     },
     {
@@ -11579,6 +11864,21 @@
     {
       "variety_id": "Celeia",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.012
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/celeia"
+    },
+    {
+      "variety_id": "Celeia",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "1.9 - 6.5",
       "stated_unit": "percent",
@@ -11861,6 +12161,36 @@
         0.011
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.012
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
+    },
+    {
+      "variety_id": "Centennial",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.3 - 1.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.015
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/centennial"
     },
     {
@@ -13307,6 +13637,36 @@
     {
       "variety_id": "Chinook",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 0.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.009
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 1.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.015
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/chinook"
+    },
+    {
+      "variety_id": "Chinook",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "10.7 - 15",
       "stated_unit": "percent",
@@ -14206,6 +14566,36 @@
     {
       "variety_id": "Citra",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.5 - 1.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.011
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.2 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.006
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/citrar"
+    },
+    {
+      "variety_id": "Citra",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "11 - 14.3",
       "stated_unit": "percent",
@@ -14804,6 +15194,36 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cluster"
+    },
+    {
+      "variety_id": "Cluster",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.1 - 0.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.009
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/cluster"
+    },
+    {
+      "variety_id": "Cluster",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.4 - 1.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.004,
+        0.011
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/cluster"
     },
     {
@@ -15481,6 +15901,36 @@
     {
       "variety_id": "Columbus",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.4 - 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.004,
+        0.007
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/columbus"
+    },
+    {
+      "variety_id": "Columbus",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.006
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/columbus"
+    },
+    {
+      "variety_id": "Columbus",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "13.9 - 17.5",
       "stated_unit": "percent",
@@ -16052,6 +16502,36 @@
         0.08
       ],
       "source_label": "CARYOPHYLLENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/comet"
+    },
+    {
+      "variety_id": "Comet",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.002
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/comet"
+    },
+    {
+      "variety_id": "Comet",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.002
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/comet"
     },
     {
@@ -16714,6 +17194,36 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/crystal"
+    },
+    {
+      "variety_id": "Crystal",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.1 - 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/crystal"
+    },
+    {
+      "variety_id": "Crystal",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.009
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/crystal"
     },
     {
@@ -17908,6 +18418,36 @@
     {
       "variety_id": "Dolcita",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.007
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/dolcita-hops"
+    },
+    {
+      "variety_id": "Dolcita",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.007
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/dolcita-hops"
+    },
+    {
+      "variety_id": "Dolcita",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "10 - 12.2",
       "stated_unit": "percent",
@@ -18710,6 +19250,36 @@
     {
       "variety_id": "Eclipse",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.6 - 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.006,
+        0.007
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/eclipse"
+    },
+    {
+      "variety_id": "Eclipse",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.002
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/eclipse"
+    },
+    {
+      "variety_id": "Eclipse",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "15.7 - 19.1",
       "stated_unit": "percent",
@@ -18838,6 +19408,36 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/ekuanotr"
+    },
+    {
+      "variety_id": "Ekuanot",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.006
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/ekuanotr"
+    },
+    {
+      "variety_id": "Ekuanot",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 1.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.012
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/ekuanotr"
     },
     {
@@ -19211,6 +19811,36 @@
         0.004
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/el-dorado"
+    },
+    {
+      "variety_id": "El Dorado",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.1 - 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.007
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/el-dorado"
+    },
+    {
+      "variety_id": "El Dorado",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.003
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/el-dorado"
     },
     {
@@ -19834,6 +20464,36 @@
     {
       "variety_id": "Ella",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.006
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/ella"
+    },
+    {
+      "variety_id": "Ella",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.001
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/ella"
+    },
+    {
+      "variety_id": "Ella",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "13.4 - 19.2",
       "stated_unit": "percent",
@@ -20180,6 +20840,36 @@
         0.114
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/enigma"
+    },
+    {
+      "variety_id": "Enigma",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.1 - 0.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.005
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/enigma"
+    },
+    {
+      "variety_id": "Enigma",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.001
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/enigma"
     },
     {
@@ -20920,6 +21610,21 @@
         0.03
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/first-gold"
+    },
+    {
+      "variety_id": "First Gold",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.4 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.004,
+        0.006
+      ],
+      "source_label": "LINALOOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/first-gold"
     },
     {
@@ -21673,6 +22378,36 @@
     {
       "variety_id": "Galaxy",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.5 - 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/galaxy"
+    },
+    {
+      "variety_id": "Galaxy",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.001
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/galaxy"
+    },
+    {
+      "variety_id": "Galaxy",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "12.3 - 19.8",
       "stated_unit": "percent",
@@ -22034,6 +22769,36 @@
         0.04
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/galena"
+    },
+    {
+      "variety_id": "Galena",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.016
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/galena"
+    },
+    {
+      "variety_id": "Galena",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.005
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/galena"
     },
     {
@@ -22664,6 +23429,36 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/glacier"
+    },
+    {
+      "variety_id": "Glacier",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 1.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.011
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/glacier"
+    },
+    {
+      "variety_id": "Glacier",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.2 - 0.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.004
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/glacier"
     },
     {
@@ -23790,6 +24585,18 @@
       "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
     },
     {
+      "variety_id": "HBC 472",
+      "source_id": "haas-sheet",
+      "attribute": "geraniol",
+      "stated_value": "0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "point",
+      "normalised": 0.002,
+      "source_label": "GERANIOL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/HBC-472-Data-Sheet.pdf"
+    },
+    {
       "variety_id": "HBC 522",
       "source_id": "haas-sheet",
       "attribute": "total_oil",
@@ -24253,6 +25060,36 @@
     {
       "variety_id": "Hallertauer Blanc",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.006
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/hallertau-blanc"
+    },
+    {
+      "variety_id": "Hallertauer Blanc",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.001
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/hallertau-blanc"
+    },
+    {
+      "variety_id": "Hallertauer Blanc",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "8 - 12.9",
       "stated_unit": "percent",
@@ -24398,6 +25235,36 @@
         0.006
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/diamant"
+    },
+    {
+      "variety_id": "Hallertauer Diamant",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/diamant"
+    },
+    {
+      "variety_id": "Hallertauer Diamant",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.02
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/diamant"
     },
     {
@@ -24664,6 +25531,36 @@
         0.031
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/hallertauer-mittelfrueh"
+    },
+    {
+      "variety_id": "Hallertauer Mittelfrüh",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.007
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/hallertauer-mittelfrueh"
+    },
+    {
+      "variety_id": "Hallertauer Mittelfrüh",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.003
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/hallertauer-mittelfrueh"
     },
     {
@@ -25130,6 +26027,21 @@
     {
       "variety_id": "Hallertauer Tradition",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/hallertau-tradition"
+    },
+    {
+      "variety_id": "Hallertauer Tradition",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "3.6 - 9.1",
       "stated_unit": "percent",
@@ -25536,6 +26448,21 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/harmonie"
+    },
+    {
+      "variety_id": "Harmonie",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.003
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/harmonie"
     },
     {
@@ -25974,6 +26901,36 @@
         0.003
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/herkules"
+    },
+    {
+      "variety_id": "Herkules",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.002
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/herkules"
+    },
+    {
+      "variety_id": "Herkules",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.004
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/herkules"
     },
     {
@@ -26913,6 +27870,36 @@
         0.069
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/hersbrucker-spaet"
+    },
+    {
+      "variety_id": "Hersbrucker Spät",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.012
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/hersbrucker-spaet"
+    },
+    {
+      "variety_id": "Hersbrucker Spät",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.01
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/hersbrucker-spaet"
     },
     {
@@ -28147,6 +29134,36 @@
     {
       "variety_id": "Kazbek",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 0.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.008
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/kazbek"
+    },
+    {
+      "variety_id": "Kazbek",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.002
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/kazbek"
+    },
+    {
+      "variety_id": "Kazbek",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "5 - 8",
       "stated_unit": "percent",
@@ -28896,6 +29913,36 @@
     {
       "variety_id": "Krush",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.012
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/krush"
+    },
+    {
+      "variety_id": "Krush",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.03
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/krush"
+    },
+    {
+      "variety_id": "Krush",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "10.1 - 14.1",
       "stated_unit": "percent",
@@ -29071,6 +30118,21 @@
         0.012
       ],
       "source_label": "LINALOOL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/Krush-Data-Sheet.pdf"
+    },
+    {
+      "variety_id": "Krush",
+      "source_id": "haas-sheet",
+      "attribute": "geraniol",
+      "stated_value": "0.0 - 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.0,
+        0.003
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://hops.com.au/downloads/data-sheet/america/Krush-Data-Sheet.pdf"
     },
     {
@@ -29755,6 +30817,36 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/loralr"
+    },
+    {
+      "variety_id": "Loral",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.7 - 1.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.007,
+        0.016
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/loralr"
+    },
+    {
+      "variety_id": "Loral",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.2 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.006
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/loralr"
     },
     {
@@ -30955,6 +32047,36 @@
     {
       "variety_id": "Mandarina Bavaria",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.003
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mandarina-bavaria"
+    },
+    {
+      "variety_id": "Mandarina Bavaria",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.003
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mandarina-bavaria"
+    },
+    {
+      "variety_id": "Mandarina Bavaria",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "up to 12.1",
       "stated_unit": "percent",
@@ -32046,6 +33168,36 @@
     {
       "variety_id": "Millennium",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.006
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/millennium"
+    },
+    {
+      "variety_id": "Millennium",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.003
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/millennium"
+    },
+    {
+      "variety_id": "Millennium",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "15.5 - 18.5",
       "stated_unit": "percent",
@@ -32396,6 +33548,36 @@
     {
       "variety_id": "Monroe",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.012
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/monroe"
+    },
+    {
+      "variety_id": "Monroe",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.001
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/monroe"
+    },
+    {
+      "variety_id": "Monroe",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "2 - 7.5",
       "stated_unit": "percent",
@@ -32496,6 +33678,36 @@
         0.005
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.5 - 0.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.009
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
+    },
+    {
+      "variety_id": "Mosaic",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.5 - 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.01
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/mosaicr"
     },
     {
@@ -34785,6 +35997,36 @@
     {
       "variety_id": "Nugget",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.5 - 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.01
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/nugget"
+    },
+    {
+      "variety_id": "Nugget",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.002
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/nugget"
+    },
+    {
+      "variety_id": "Nugget",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "9 - 16",
       "stated_unit": "percent",
@@ -35961,6 +37203,21 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/opal"
+    },
+    {
+      "variety_id": "Opal",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 1.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.015
+      ],
+      "source_label": "LINALOOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/opal"
     },
     {
@@ -37680,6 +38937,36 @@
     {
       "variety_id": "Perle",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.006
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/perle"
+    },
+    {
+      "variety_id": "Perle",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.003
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/perle"
+    },
+    {
+      "variety_id": "Perle",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "3 - 11",
       "stated_unit": "percent",
@@ -39035,6 +40322,21 @@
     {
       "variety_id": "Polaris",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.004
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/polaris"
+    },
+    {
+      "variety_id": "Polaris",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "14.7 - 24.4",
       "stated_unit": "percent",
@@ -39514,6 +40816,36 @@
         0.055
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/premiant"
+    },
+    {
+      "variety_id": "Premiant",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.5 - 1.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.015
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/premiant"
+    },
+    {
+      "variety_id": "Premiant",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.003
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/premiant"
     },
     {
@@ -41361,6 +42693,36 @@
     {
       "variety_id": "Saaz",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.002
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
+    },
+    {
+      "variety_id": "Saaz",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.001
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saazer"
+    },
+    {
+      "variety_id": "Saaz",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "1.4 - 7.5",
       "stated_unit": "percent",
@@ -41865,6 +43227,36 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/sabror"
+    },
+    {
+      "variety_id": "Sabro",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.4 - 0.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.004,
+        0.008
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/sabror"
+    },
+    {
+      "variety_id": "Sabro",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.7 - 1.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.007,
+        0.015
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/sabror"
     },
     {
@@ -42609,6 +44001,21 @@
         0.003
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/saphir"
+    },
+    {
+      "variety_id": "Saphir",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.003
+      ],
+      "source_label": "LINALOOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/saphir"
     },
     {
@@ -44047,6 +45454,36 @@
     {
       "variety_id": "Sládek",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.2 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.006
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/sladek"
+    },
+    {
+      "variety_id": "Sládek",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.006
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/sladek"
+    },
+    {
+      "variety_id": "Sládek",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "4.5 - 9",
       "stated_unit": "percent",
@@ -44365,6 +45802,21 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/smaragd"
+    },
+    {
+      "variety_id": "Smaragd",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.9 - 1.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.009,
+        0.014
+      ],
+      "source_label": "LINALOOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/smaragd"
     },
     {
@@ -44967,6 +46419,36 @@
         0.05
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/sorachi-ace"
+    },
+    {
+      "variety_id": "Sorachi Ace",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 0.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.008
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/sorachi-ace"
+    },
+    {
+      "variety_id": "Sorachi Ace",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.005
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/sorachi-ace"
     },
     {
@@ -45939,6 +47421,21 @@
     {
       "variety_id": "Sovereign",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.8 - 1.4",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.008,
+        0.014
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/sovereign"
+    },
+    {
+      "variety_id": "Sovereign",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "4.5 - 6.5",
       "stated_unit": "percent",
@@ -46491,6 +47988,36 @@
         0.065
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/spalter-select"
+    },
+    {
+      "variety_id": "Spalter Select",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.008
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/spalter-select"
+    },
+    {
+      "variety_id": "Spalter Select",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.005
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/spalter-select"
     },
     {
@@ -48480,6 +50007,36 @@
     {
       "variety_id": "Summit",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.1 - 0.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.005
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/summitr"
+    },
+    {
+      "variety_id": "Summit",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.01
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/summitr"
+    },
+    {
+      "variety_id": "Summit",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "13.5 - 17",
       "stated_unit": "percent",
@@ -49941,6 +51498,21 @@
       "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
     },
     {
+      "variety_id": "TALUS",
+      "source_id": "haas-sheet",
+      "attribute": "geraniol",
+      "stated_value": "1 – 3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.01,
+        0.03
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://hops.com.au/downloads/data-sheet/america/TALUS-Data-Sheet.pdf"
+    },
+    {
       "variety_id": "Tahoma",
       "source_id": "hga-2017",
       "attribute": "total_oil",
@@ -50545,6 +52117,36 @@
     {
       "variety_id": "Talus",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.2 - 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.007
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/talustm"
+    },
+    {
+      "variety_id": "Talus",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.2 - 2.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.025
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/talustm"
+    },
+    {
+      "variety_id": "Talus",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "6.3 - 9.5",
       "stated_unit": "percent",
@@ -50673,6 +52275,36 @@
         0.055
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/tango"
+    },
+    {
+      "variety_id": "Tango",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.2 - 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.003
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/tango"
+    },
+    {
+      "variety_id": "Tango",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.5 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.006
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/tango"
     },
     {
@@ -50915,6 +52547,21 @@
         0.17
       ],
       "source_label": "HUMULENE",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/wye-target"
+    },
+    {
+      "variety_id": "Target",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.8 - 1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.008,
+        0.01
+      ],
+      "source_label": "LINALOOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/wye-target"
     },
     {
@@ -51755,6 +53402,36 @@
     {
       "variety_id": "Titan",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.4 - 0.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.004,
+        0.005
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/titan"
+    },
+    {
+      "variety_id": "Titan",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.2 - 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.003
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/titan"
+    },
+    {
+      "variety_id": "Titan",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "14 - 20",
       "stated_unit": "percent",
@@ -52124,6 +53801,36 @@
         0.01
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/topaz"
+    },
+    {
+      "variety_id": "Topaz",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.5 - 0.9",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.009
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/topaz"
+    },
+    {
+      "variety_id": "Topaz",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.2",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.002
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/topaz"
     },
     {
@@ -53816,6 +55523,36 @@
     {
       "variety_id": "Vic Secret",
       "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.3 - 0.7",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.003,
+        0.007
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/vic-secret"
+    },
+    {
+      "variety_id": "Vic Secret",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "up to 0.1",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.001
+      ],
+      "source_label": "GERANIOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/vic-secret"
+    },
+    {
+      "variety_id": "Vic Secret",
+      "source_id": "barthhaas-variety",
       "attribute": "alpha",
       "stated_value": "14 - 21.6",
       "stated_unit": "percent",
@@ -54365,6 +56102,36 @@
         0.035
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/vital"
+    },
+    {
+      "variety_id": "Vital",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "0.5 - 1.5",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.005,
+        0.015
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/vital"
+    },
+    {
+      "variety_id": "Vital",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.2 - 0.6",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.002,
+        0.006
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/vital"
     },
     {
@@ -55841,6 +57608,36 @@
         0.1
       ],
       "source_label": "FARNESEN",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/willamette"
+    },
+    {
+      "variety_id": "Willamette",
+      "source_id": "barthhaas-variety",
+      "attribute": "linalool",
+      "stated_value": "up to 0.8",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "max",
+      "normalised": [
+        null,
+        0.008
+      ],
+      "source_label": "LINALOOL",
+      "page_url": "https://www.barthhaas.com/hops-and-products/hops/willamette"
+    },
+    {
+      "variety_id": "Willamette",
+      "source_id": "barthhaas-variety",
+      "attribute": "geraniol",
+      "stated_value": "0.1 - 0.3",
+      "stated_unit": "percent",
+      "stated_basis": "of total oil",
+      "value_kind": "range",
+      "normalised": [
+        0.001,
+        0.003
+      ],
+      "source_label": "GERANIOL",
       "page_url": "https://www.barthhaas.com/hops-and-products/hops/willamette"
     },
     {
