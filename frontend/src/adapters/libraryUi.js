@@ -8,6 +8,7 @@
 // never references a batch.
 
 import { CATALOGS, IDENTITY_KINDS, validateComponent } from "../store/userCatalog.js";
+import { fieldErrorText } from "../views/registry/fieldLabels.js";
 import { createLibraryFields, KEYS as libraryFieldKeys } from "./libraryFields.js";
 import { createLibraryFieldEditor, KEYS as fieldEditorKeys } from "./libraryFieldEditor.js";
 import { createLibrarySeedActions, KEYS as seedActionKeys } from "./librarySeedActions.js";
@@ -300,6 +301,10 @@ export function createLibraryUi({ artifact, cache, getView, modalFocus }) {
       return titleOf(CATALOGS[getView().activeKind], item);
     },
 
+    libraryErrorMessage(error) {
+      return fieldErrorText(error);
+    },
+
     librarySeedItemTitle(item) {
       const meta = CATALOGS[getView().activeKind];
       return titleOf(meta, item);
@@ -380,4 +385,4 @@ export function createLibraryLayers(ctx) {
 
 export const KEYS = [
   ...compositionKeys,
-  "catalogItems", "catalogItem", "referenceSnapshot", "libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySeedLimit", "librarySetSearch", "showMoreSeeds", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "librarySearchLabel", "libraryTab", "libraryDraft", "libraryCloneOf", "libraryErrors", "libraryNotice", "libraryEditorTitle", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "canCloneRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "librarySeedItemTitle", "newLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...seedActionKeys, ...fieldEditorKeys, ...libraryFieldKeys, ...libraryListKeys];
+  "catalogItems", "catalogItem", "referenceSnapshot", "libraryOpen", "librarySection", "sourceKind", "librarySearch", "librarySearchNotes", "librarySeedLimit", "librarySetSearch", "showMoreSeeds", "toggleLibrarySearchNotes", "activeKindHasNotes", "librarySearchFields", "librarySearchLabel", "libraryTab", "libraryDraft", "libraryCloneOf", "libraryErrors", "libraryNotice", "libraryEditorTitle", "libraryTabs", "identityTabs", "activeKind", "activeKindLabel", "canAuthorRecord", "canForkRecord", "canCloneRecord", "libraryRecords", "librarySeedItems", "librarySeedCount", "libraryLoading", "libraryError", "openLibrary", "closeLibrary", "selectLibrarySection", "selectSourceKind", "selectLibraryTab", "libraryItemId", "libraryItemTitle", "libraryErrorMessage", "librarySeedItemTitle", "newLibraryItem", "cancelLibraryItem", "saveLibraryItem", "deleteLibraryItem", ...seedActionKeys, ...fieldEditorKeys, ...libraryFieldKeys, ...libraryListKeys];

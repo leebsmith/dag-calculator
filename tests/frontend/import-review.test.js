@@ -147,7 +147,15 @@ test("verification wording distinguishes no check from a clean one", () => {
     unmatched: [{ field: "mashes[0].duration_min", value: "60", page: 4 }],
   });
   assert.equal(flagged.tone, "warn");
-  assert.match(flagged.detail, /duration_min = 60 \(p4\)/);
+  assert.match(flagged.detail, /Duration = 60 \(p4\)/);
+
+  const target = describeVerification({
+    text_layer: true,
+    numbers_checked: 9,
+    unmatched: [{ field: "targets.ibu", value: "99" }],
+  });
+  assert.match(target.detail, /IBU = 99/);
+  assert.doesNotMatch(target.detail, /targets\./);
 });
 
 test("units read the way a brewer writes them", () => {

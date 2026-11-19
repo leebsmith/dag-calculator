@@ -6,6 +6,7 @@
 // they arrive with the ledger and the gate.
 
 import { countLabel } from "../../utils/format/count.js";
+import { fieldLabelFromPath } from "../registry/fieldLabels.js";
 
 export const STAGES = [
   { id: "transcribe", title: "Transcribe" },
@@ -124,7 +125,10 @@ function flaggedCheck(checked, unmatched) {
     tone: "warn",
     label: `${unmatched.length} of ${checked} not found in the imported recipe`,
     detail: unmatched
-      .map((item) => `${item.field} = ${item.value}${item.page ? ` (p${item.page})` : ""}`)
+      .map(
+        (item) =>
+          `${fieldLabelFromPath(item.field)} = ${item.value}${item.page ? ` (p${item.page})` : ""}`
+      )
       .join(" · "),
   };
 }

@@ -2,14 +2,11 @@
 // The library's editor binds to these models; this module owns no persistence.
 
 import { CATALOGS, schemaFor } from "../store/userCatalog.js";
+import { fieldLabel } from "../views/registry/fieldLabels.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../views/registry/units.js";
 import { formatPercent, unitSymbol } from "../utils.js";
 
 const CAPTURE_FIELDS = new Set(["yield_basis"]);
-const FIELD_LABELS = {
-  sta1: "STA1 (vendor QC)",
-  pof: "POF",
-};
 const TAXONOMY_LABELS = {
   pof_status: { unknown: "Unknown", positive: "Positive", negative: "Negative" },
 };
@@ -23,12 +20,12 @@ function isCapturedField(field) {
   );
 }
 
-function numberField(field, spec, unitMode) {
+function numberField(field, spec, unitMode, label = fieldLabel(field)) {
   const dimDef = UNIT_DIMENSIONS.find((entry) => entry.id === spec.dimension);
   if (!dimDef) {
     return {
       field,
-      label: field,
+      label,
       kind: "number",
       dimension: spec.dimension,
       unitId: null,
@@ -38,7 +35,7 @@ function numberField(field, spec, unitMode) {
   const unitId = unitMode[spec.dimension] ?? dimDef.default ?? dimDef.units[0][0];
   return {
     field,
-    label: field,
+    label,
     kind: "number",
     dimension: spec.dimension,
     unitId,
@@ -55,7 +52,7 @@ function listField(field, label, spec, view) {
     fields: Object.entries(spec.item ?? {}).map(([itemField, itemSpec]) =>
       itemSpec.dimension
         ? numberField(itemField, itemSpec, view.unitMode)
-        : { field: itemField, label: itemField, kind: "text" }
+        : { field: itemField, label: fieldLabel(itemField), kind: "text" }
     ),
   };
 }
@@ -90,7 +87,7 @@ export function attenuationRangeOf(draft) {
 }
 
 function fieldModel(field, spec, { artifact, cache, view }) {
-  const label = FIELD_LABELS[field] ?? field;
+  const label = fieldLabel(field);
   let model;
   if (spec.type === "list") model = listField(field, label, spec, view);
   else if (spec.format === "date") model = { field, label, kind: "date" };
@@ -98,7 +95,7 @@ function fieldModel(field, spec, { artifact, cache, view }) {
   else if (spec.taxonomy) model = taxonomyField(field, label, spec, artifact);
   else if (spec.type === "boolean") model = { field, label, kind: "boolean" };
   else if (!spec.dimension) model = { field, label, kind: "text" };
-  else model = numberField(field, spec, view.unitMode);
+  else model = numberField(field, spec, view.unitMode, label);
 
   if (field === "attenuation_cap_pct") {
     const range = attenuationRangeOf(view.libraryDraft);

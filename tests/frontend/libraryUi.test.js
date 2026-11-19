@@ -555,6 +555,19 @@ test("a failed delete surfaces the message in the Library", async () => {
   assert.deepEqual(app.libraryErrors, [{ field: "*", message: "record is referenced" }]);
 });
 
+test("library errors use the friendly field label", () => {
+  const { app } = setup();
+
+  assert.equal(
+    app.libraryErrorMessage({ field: "ambient_temp_c", message: "must be a number" }),
+    "Ambient temperature: must be a number"
+  );
+  assert.equal(
+    app.libraryErrorMessage({ field: "*", message: "a curve needs two points" }),
+    "a curve needs two points"
+  );
+});
+
 test("cooling curves expose a date, equipment reference and sortable point rows", () => {
   const { app } = setup();
   app.openLibrary("cooling_curve");

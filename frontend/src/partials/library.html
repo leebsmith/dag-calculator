@@ -318,7 +318,7 @@
                 return {
                   id: `library-field-${field.field}`,
                   type: 'repeat',
-                  label: '',
+                  label: field.label,
                   labelClass: 'form-label text-xs',
                   items: () => libraryPointRows(),
                   key: (row, index) => String(index),
@@ -421,7 +421,7 @@
         <template x-if="libraryErrors.length">
           <div class="text-xs text-muted">
             <template x-for="e in libraryErrors" :key="e.field + e.message">
-              <div x-text="e.field + ': ' + e.message"></div>
+              <div x-text="libraryErrorMessage(e)"></div>
             </template>
           </div>
         </template>
