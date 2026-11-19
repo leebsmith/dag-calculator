@@ -126,10 +126,17 @@ These are boundaries of the product, not gaps:
    invent a different one.
 7. **Author a mass to obtain a target.** A hop charge is solved from the IBU the brewer
    asked for, never guessed at and then described. The grams are the output of the
-   inversion; a product sheet's substitution ratio is guidance, not an equation.
+   inversion; a product sheet's substitution ratio is guidance, not an equation. A
+   *share* is not a mass: a bill may author mass proportions as dimensionless parts,
+   and the solver still owns the grams.
 8. **Solve during a brew.** Freezing is where solving stops. Brew day reads the frozen
    bundle and records state, so a session never needs a solver — offline is a state
    (cached bundle, queued writes), not a second solver.
+9. **Score a sensory outcome.** No retention curve, no odour thresholds, no compound
+   interaction matrix. The compounds that would need to be summed are absent from the
+   data by decision, and the weights have no calibration source; a score built from
+   them would be an authored guess wearing a derived value's clothes. Choosing a hop
+   combination is the brewer's taste, and the tools for it live outside this app.
 
 ---
 

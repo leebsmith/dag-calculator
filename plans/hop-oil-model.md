@@ -87,8 +87,10 @@ priced charge prints nothing rather than a zero.
 
 **Python, when there is a consumer.** The solver does not price oil yet, so
 mirroring the model in `backend/app/core/` now would be dead code. It becomes
-the solver's when oil starts influencing a solve — which is the layering
-authoring, not this plan.
+the solver's when oil starts influencing a solve — which the layering authoring
+would have done, and no longer will: hop allocation is authored as mass
+proportions against one pooled IBU target, with no oil term at all
+(`plans/hop-allocation-modes.md`). The oil charge stays a readout.
 
 **Scope: kettle only.** The charge covers the boil and the whirlpool. Dry hops are
 not priced, which is the larger omission in an aromatic beer — a hazy's dry hop

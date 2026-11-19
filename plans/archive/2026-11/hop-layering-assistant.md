@@ -1,6 +1,7 @@
 ---
 title: Hop layering assistant — composition and substitution
-status: exploratory (direction unspecified)
+status: superseded
+superseded_by: plans/hop-allocation-modes.md
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: []
@@ -9,6 +10,12 @@ gate: make check + make test; identical inputs produce an identical ranked list,
 ---
 
 # Hop layering assistant — composition and substitution
+
+**Superseded by `plans/hop-allocation-modes.md`.** The scoring direction was dropped
+before it was built: the compound data it needs is not in this repo and the
+interaction weights have no calibration source. The pairing work lives in an
+external notebook; the app authors the physical bill. The data constraints recorded
+below still hold and are still worth reading.
 
 **Exploratory: the direction is not yet chosen.** This file was written after the
 oil data landed, from the question "now that we have oils, what can we do with

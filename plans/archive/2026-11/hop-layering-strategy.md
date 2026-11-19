@@ -1,6 +1,7 @@
 ---
 title: Hop layering strategy
-status: needs discussion (UI design)
+status: superseded
+superseded_by: plans/hop-allocation-modes.md
 program: deterministic-dag-calculator
 depends_on: []
 blocks: []
@@ -10,6 +11,14 @@ gate: make verify
 <!-- claims: proposed batch.whirlpool_authoring batch.whirlpool_hot_ibu_fraction batch.whirlpool_hot_target_ibu batch.whirlpool_cool_target_ibu -->
 
 # Layered whirlpool: authored hot/cool IBU split and cool-side weight ratios
+
+**Superseded by `plans/hop-allocation-modes.md`.** The direction here — author oil
+shares so a layering is a mass ratio — was dropped: the sensory judgement lives in
+an external notebook, and the app's job is the physical bill. What survives is the
+hot/cool cut and its physics; what changes is that the allocation is expressed as a
+mass share against one pooled IBU target rather than an oil ratio, and `parts`
+keeps its IBU meaning instead of changing it. The seven questions below are
+answered in §8 of the successor.
 
 **Tabled: needs a UI discussion before any build.** The model is settled — an
 authored hot/cool IBU split plus a cool-side mass ratio, masses solved from both —
