@@ -36,6 +36,9 @@ reviewed.
 The two labels narrate; they never decide. Missing batch volume is a completable
 defaults gap, not a failure — a recipe stays a recipe when it is unquantified.
 
+The numbers check names a missing value by its reader-facing label (`IBU`,
+`Duration`), not by its extraction path (targets.ibu, mashes[0].duration_min).
+
 ## 3. The ledger
 
 One row per transcribed line, carrying `destination`, `ref`, `transform` and

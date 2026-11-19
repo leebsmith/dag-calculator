@@ -102,7 +102,10 @@ bitterness; faster cooling predicts less.
 The hops card offers `Default cooling`, the built-in `108.7 min` constant, and
 any authored curves in the cooling-curve library. A curve record carries its
 measured date, vessel reference, start and ambient temperatures, and time /
-temperature points. Selecting one fits the log-linear model:
+temperature points. The curve editor labels its point columns **Time** and
+**Temperature**; the temperature input follows the active unit — °F or °C —
+while the record always stores `temp_c`. Selecting one fits the log-linear
+model:
 
 ```
 y_i = ln((T_i - T_amb) / (T_start - T_amb))

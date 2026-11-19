@@ -75,6 +75,13 @@ input, `type: "boolean"` becomes a tri-state selector (Unknown / Yes / No), and
 `type: "list"` becomes a point-row editor with add/remove. The row list is
 sorted by its declared `ordered_by` before validation.
 
+Schema keys are transport names, not labels. The form, the point rows, and the
+validation messages resolve through `frontend/src/views/registry/fieldLabels.js`:
+known fields get a curated name and new ones are humanized, so a raw underscore
+key never reaches the reader. A form-level (`*`) error prints without a field
+prefix. `tests/guards/library-labels.test.js` enforces the rule across every
+catalog kind.
+
 A bundled seed can be cloned into an editable draft; nothing is saved until
 **Save and seal**. Styles are forked instead, because their lineage is part of
 the declaration. Pickers only select; cloning happens here.
