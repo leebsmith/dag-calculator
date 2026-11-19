@@ -39,6 +39,9 @@ thiols) and two uncalibrated terms — an interaction matrix and a target-cosine
 band — that no source publishes. Shipping a score built from those would be a
 derived value dressed over an authored guess, which `docs/vision.md` refuses.
 
+The chemometric case, and the data it would need, is written up in
+`docs/hops/reference/hop-synergy-reference.md` — background, not a contract.
+
 What the app can do exactly, and a spreadsheet cannot, is scale a bill to a
 specific kettle: gravity, volume, boil time, cooling curve, product form and
 alpha. So the app owns the *physical* bill and the notebook owns the
