@@ -167,6 +167,9 @@ minutes. Raw values are the record; they are never display-ready.
   carries the option label when the catalog declares one.
 - Identity dimensions (`reference`, `dimensionless`) carry no display unit:
   reference values are ids (text), dimensionless values are unitless numbers.
+  One host-derived exception: `formatted["batch.cooling_curve_id"].text` is the
+  card's status label — a selected curve's name, `Default cooling`, `Custom`, or
+  `Missing curve` — while `state` keeps the raw curve id.
 - Collection tables (grist, sugars) read `formatted_tables[collection]`, one
   dict per row. Derived columns (mass from the solved grist and bill share, PPG
   from yield, the within-table and grist shares) are computed by the producer.

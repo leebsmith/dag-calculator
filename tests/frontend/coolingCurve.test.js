@@ -34,6 +34,19 @@ test("an exact Newton curve recovers k and tau", () => {
   assert.ok(fit.r2 > 0.999999, `r2=${fit.r2}`);
 });
 
+test("a point at time zero is usable", () => {
+  const fit = fitCoolingCurve({
+    startTempC: START,
+    ambientTempC: AMBIENT,
+    points: newtonPoints(0.02, [0, 10, 20]),
+  });
+
+  assert.equal(fit.valid, true);
+  assert.equal(fit.pointCount, 3);
+  assert.equal(fit.ignored, 0);
+  assert.ok(Math.abs(fit.kPerMin - 0.02) < 1e-9, `k=${fit.kPerMin}`);
+});
+
 test("a noisy curve recovers k within tolerance", () => {
   const fit = fitCoolingCurve({
     startTempC: START,

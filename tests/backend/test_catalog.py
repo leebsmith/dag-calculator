@@ -273,6 +273,18 @@ def test_create_cooling_curve_uses_the_record_schema():
     assert created.component["points"][0]["temp_c"] == 80
 
 
+def test_create_cooling_curve_accepts_time_zero():
+    curve = {
+        **CURVE,
+        "points": [
+            {"time_min": 0, "temp_c": 99},
+            {"time_min": 20, "temp_c": 68},
+        ],
+    }
+    created = service().create_item("u1", "cooling_curve", curve)
+    assert created.component["points"][0]["time_min"] == 0
+
+
 @pytest.mark.parametrize(
     "component",
     [
@@ -284,6 +296,13 @@ def test_create_cooling_curve_uses_the_record_schema():
             "points": [
                 {"time_min": 20, "temp_c": 80},
                 {"time_min": 10, "temp_c": 68},
+            ],
+        },
+        {
+            **CURVE,
+            "points": [
+                {"time_min": -1, "temp_c": 80},
+                {"time_min": 20, "temp_c": 68},
             ],
         },
         {

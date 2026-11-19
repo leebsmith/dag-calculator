@@ -35,8 +35,12 @@ The first record kind is `cooling_curve`:
 - `ambient_temp_c` — required measurement context and fit input
 - `start_temp_c` — required fit input
 - `points` — at least two rows of `time_min` and `temp_c`; times must be strictly
-  increasing and unique
+  increasing and unique. `time_min` may be zero (the start of the measurement);
+  negative times are rejected.
 - `notes` — optional
+
+The record's name is the display label used by the picker, card and report; the
+stored reference remains the record id.
 
 The curve's ambient is **not** copied into a batch. Ambient is an environment
 condition; a curve measured at one ambient can still inform a brew at another.

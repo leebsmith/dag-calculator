@@ -113,7 +113,8 @@ k = -slope(t_i, y_i)
 ```
 
 The fit ignores points at or below ambient and requires at least two usable
-points with strictly increasing, unique times. It writes `1/k` into
+points with strictly increasing, unique times. Point times may start at zero;
+negative times are rejected. It writes `1/k` into
 `batch.whirlpool_cooling_time_constant_min` and records the curve id in
 `batch.cooling_curve_id`.
 

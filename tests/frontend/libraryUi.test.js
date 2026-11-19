@@ -579,7 +579,10 @@ test("cooling curves expose a date, equipment reference and sortable point rows"
 
   app.newLibraryItem();
   app.libraryAddPoint();
+  assert.equal(app.libraryPointRows()[0].time_min, 0);
+  assert.equal(app.libraryPointRows()[0].temp_c, null);
   app.libraryAddPoint();
+  assert.equal(app.libraryPointRows()[1].time_min, 1);
   app.librarySetPointField(0, "time_min", 20);
   app.librarySetPointField(0, "temp_c", 68);
   app.librarySetPointField(1, "time_min", 10);

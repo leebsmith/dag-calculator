@@ -49,6 +49,7 @@ function listField(field, label, spec, view) {
     field,
     label,
     kind: "list",
+    orderedBy: spec.ordered_by ?? null,
     fields: Object.entries(spec.item ?? {}).map(([itemField, itemSpec]) =>
       itemSpec.dimension
         ? numberField(itemField, itemSpec, view.unitMode)

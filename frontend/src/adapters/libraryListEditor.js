@@ -6,6 +6,18 @@ import { toBase } from "../engine/units.js";
 import { displayValue, nonlinearFns } from "../views/producer.js";
 import { formatWithDecimals } from "../utils.js";
 
+function pointRow(listField, previous = null) {
+  const previousTime = previous?.[listField.orderedBy];
+  return Object.fromEntries(
+    listField.fields.map((field) => {
+      if (field.field === listField.orderedBy) {
+        return [field.field, Number.isFinite(previousTime) ? previousTime + 1 : 0];
+      }
+      return [field.field, field.kind === "number" ? null : ""];
+    })
+  );
+}
+
 export function createLibraryListEditor({ artifact, engine, getView }) {
   const nl = () => nonlinearFns(artifact, engine);
 
@@ -41,7 +53,7 @@ export function createLibraryListEditor({ artifact, engine, getView }) {
       const spec = view.libraryPointSpec(field);
       let next = value;
       if (value === "") {
-        next = 0;
+        next = null;
       } else if (spec?.kind === "number") {
         let n = Number(value);
         if (Number.isFinite(n) && spec.unitId && spec.dimension != null) {
@@ -57,12 +69,10 @@ export function createLibraryListEditor({ artifact, engine, getView }) {
       const view = getView();
       const listField = view.libraryListField();
       if (!listField) return;
-      const row = Object.fromEntries(
-        listField.fields.map((field) => [field.field, field.kind === "number" ? 0 : ""])
-      );
+      const rows = view.libraryPointRows();
       view.libraryDraft = {
         ...view.libraryDraft,
-        [listField.field]: [...view.libraryPointRows(), row],
+        [listField.field]: [...rows, pointRow(listField, rows.at(-1))],
       };
     },
 

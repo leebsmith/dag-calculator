@@ -26,7 +26,7 @@ function usablePoints(points, ambientTempC) {
   for (const point of points) {
     const time = point?.time_min;
     const temp = point?.temp_c;
-    if (!finite(time) || !finite(temp) || time <= 0 || temp <= ambientTempC) {
+    if (!finite(time) || !finite(temp) || time < 0 || temp <= ambientTempC) {
       ignored += 1;
       continue;
     }

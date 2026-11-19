@@ -5,7 +5,7 @@
     "ambient_temp_c": 12,
     "start_temp_c": 99,
     "points": [
-      { "time_min": 10, "temp_c": 80 },
+      { "time_min": 0, "temp_c": 80 },
       { "time_min": 20, "temp_c": 68 }
     ]
   },
@@ -61,6 +61,20 @@
         ]
       },
       "field": "points.1.time_min"
+    },
+    {
+      "case": "negative point time",
+      "component": {
+        "name": "Garage kettle",
+        "measured_at": "2026-11-01",
+        "ambient_temp_c": 12,
+        "start_temp_c": 99,
+        "points": [
+          { "time_min": -1, "temp_c": 80 },
+          { "time_min": 20, "temp_c": 68 }
+        ]
+      },
+      "field": "points.0.time_min"
     },
     {
       "case": "unknown point field",
