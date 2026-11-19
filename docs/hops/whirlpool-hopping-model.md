@@ -181,10 +181,34 @@ Inverse mass for IBU-share authoring:
 m_g = IBU · V_L / (A · 1000 · U)
 ```
 
-The hops card authors whirlpool additions by IBU share. The style card splits
-the total IBU target into boil and whirlpool pools; each hop table normalizes
-its `parts` into shares of its own pool and back-calculates mass with the
-inverse model.
+Inverse mass for a mass-share pool (`mass_pool`), where the shares are
+`mass_pct` and one scale factor sets the grams:
+
+```
+IBU_i  = m_i · k_i                     k_i = IBU per kg of charge i
+m_i    = mass_pct_i · M
+M      = target_ibu / Σ (mass_pct_i · k_i)
+```
+
+`k_i` is the forward model's IBU per kilogram, so `k_i = A_i · U_i · 1000 / V_L`
+and the same utilisation and form rules apply. The solve is one division because
+IBU is linear in mass and utilisation depends on time, gravity, temperature and
+form but never on mass. Shares are invariant under `M`: the same percentages
+land on a different mass for a different volume, gravity or target.
+
+Two modes exist, chosen by `batch.hop_allocation_mode`:
+
+- `ibu_split` (default) — the style card splits the total IBU target into boil
+  and whirlpool pools; each hop table normalizes its `parts` into shares of its
+  own pool and back-calculates mass with the inverse model above.
+- `mass_pool` — the kettle and both whirlpool stands are one pool. Each charge
+  authors `mass_parts` (normalized to `mass_pct` across both tables), the whole
+  target is spent across it, and the stage IBU split is a result. The splits in
+  §"IBU splits" are then derived from the masses rather than authored.
+
+The mode is a root, not a compile-time choice: `parts` keeps its IBU meaning in
+both modes, and the mass shares live in their own column, so no stored batch is
+reinterpreted and switching modes is lossless.
 
 ### Extract practice
 
@@ -281,10 +305,19 @@ the charge is saved; the boundary remains the authority.
 
 ### IBU splits
 
-The report prints two splits. The boil/whirlpool split is the authored pool
-division: `batch.boil_target_ibu` and `batch.whirlpool_target_ibu` over
-`batch.target_ibu`, declared as the shares `batch.boil_ibu_share` and
-`batch.whirlpool_ibu_share`.
+The report prints a stage table — boil, hot whirlpool, cool whirlpool, and the
+hot-side total — with each stage's mass share, mass, IBU and IBU share, plus the
+boil/whirlpool and hot/cool pairs below it.
+
+The boil/whirlpool split is reported from what the charges carry:
+`batch.boil_ibu_share` and `batch.whirlpool_ibu_share` divide
+`solver.hops.boil_ibu` and the two whirlpool sums over
+`batch.hop_realized_ibu`. In `ibu_split` this equals the authored pool division
+`batch.boil_target_ibu` / `batch.whirlpool_target_ibu` over `batch.target_ibu`,
+because the shares are assigned; in `mass_pool` it is the split the masses
+produced. The stage mass shares are `batch.hop_boil_mass_share`,
+`batch.hop_hot_mass_share` and `batch.hop_cool_mass_share`, over
+`solver.hops.total_mass_kg`.
 
 The hot/cool split cuts the whirlpool pool at the **top of the isomerization
 floor band** (`79 °C`, `isomerization_floor` in the whirlpool notes): above it a

@@ -18,6 +18,8 @@ export function makeWhirlpoolRow(hop, defaults, catalogForm = null) {
     total_oil_ml_per_100g: hop.total_oil_ml_per_100g,
     linalool_pct_of_oil: hop.linalool_pct_of_oil,
     geraniol_pct_of_oil: hop.geraniol_pct_of_oil,
+    mass_parts: null,
+    mass_pct: null,
     addition_at_min: lupulin ? defaults.lupulinAdditionAtMin : defaults.additionAtMin,
     initial_temp_c: lupulin ? defaults.lupulinInitialTempC : defaults.initialTempC,
     parts: 10,

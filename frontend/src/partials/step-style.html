@@ -305,7 +305,28 @@
           <span class="form-hint" x-show="!styleIbuSliderBounds">No IBU range in this style's envelope.</span>
         </div>
 
+        <div class="field">
+          <span class="field-label">Hop allocation</span>
+          <select
+            id="hop-allocation-mode"
+            class="form-input"
+            :value="hopAllocationTarget"
+            @change="setHopAllocationMode($event.target.value)"
+          >
+            <option value="ibu_split">Two pools (boil / whirlpool)</option>
+            <option value="mass_pool">One pool (kettle + whirlpool)</option>
+          </select>
+          <span class="form-hint" x-show="hopAllocationTarget === 'mass_pool'">
+            The whole target is one pool; each charge's share is a proportion of the
+            hot-side mass and the stage IBU split is what falls out.
+          </span>
+          <span class="form-hint" x-show="hopAllocationTarget !== 'mass_pool'">
+            The target is divided into a boil pool and a whirlpool pool.
+          </span>
+        </div>
+
         <div
+          x-show="hopAllocationTarget !== 'mass_pool'"
           x-data="formBuilder({
             schema: [
               {

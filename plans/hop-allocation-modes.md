@@ -1,6 +1,6 @@
 ---
 title: Hop allocation modes — IBU split and one mass pool
-status: proposed (design settled; build not started)
+status: implemented (model, card strip, report table)
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [plans/hop-oil-model.md]
@@ -11,6 +11,15 @@ gate: make check + make test; identical inputs produce identical masses in both 
 <!-- claims: proposed batch.hop_allocation_mode batch.hop_mass_parts_total batch.hop_boil_mass_share batch.hop_hot_mass_share batch.hop_cool_mass_share solver.hops.whirlpool_hot_mass_kg solver.hops.whirlpool_cool_mass_kg batch.hop_scale -->
 
 # Hop allocation modes — IBU split and one mass pool
+
+**Built.** The model, the card's stage strip, the report's allocation table and
+the lossless mode switch landed as specified. Two deviations from the draft:
+the mode selector sits in the Style card next to `Bitterness allocation` (where
+the slider it replaces already lived, rather than in the hops card), and the
+report prints one allocation table in both modes instead of gating on the mode,
+so the authored-pool bullets below it are derived rather than assumed. §10's
+open questions are settled: `mass_parts` seeds from the solved masses, the strip
+shows in both modes, and the labels are "Two pools / One pool".
 
 **What this is:** a second way to author a hop bill, beside the one that exists.
 Today the style card splits the IBU target into a boil pool and a whirlpool pool,
@@ -294,11 +303,12 @@ token in a living doc against the artifact:
 7. `TODO.md` — the two oil-allocation bullets retire.
 8. Generated: inventory, report sections, glossary, dot/svg, bundle fixture.
 
-## 10. Remaining questions
+## 10. Settled
 
-- `mass_parts` default for a freshly added row: `null` (no guess) or an even split?
-  This plan assumes `null`, with a hint.
-- Should the strip also appear in `ibu_split` mode? This plan says yes — it is the
-  same three masses — but the alternative is to keep that mode exactly as it looks
-  today and show the strip only in the new one.
-- Mode labels: "Two pools / One pool" (proposed) versus "IBU split / Mass pool".
+- A freshly added row's `mass_parts` is `null` and the card counts it, rather than
+  seeding an even split the brewer did not author.
+- The strip shows in both modes: the masses exist either way, and only the source
+  of the stage split differs.
+- Mode labels are "Two pools (boil / whirlpool)" and "One pool (kettle +
+  whirlpool)"; the footer row is "Hot side (kettle + WP)" so a stage name never
+  reads as the pool name.

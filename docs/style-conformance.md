@@ -24,7 +24,7 @@ so downstream presentation (the recipe document) reads it without recomputing.
 | Color | SRM | `grist.finished_beer_srm` | SRM |
 
 IBU is the planned total bitterness; because the boil/whirlpool hop schedule is
-dosed by IBU share, total realized IBU equals `batch.target_ibu` by construction.
+dosed against the IBU target, total realized IBU equals `batch.target_ibu` by construction — by assignment in the two-pool mode, and by the pooled mass scale in the one-pool mode.
 
 ### 1.2 Envelope
 

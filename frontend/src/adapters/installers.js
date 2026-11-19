@@ -59,6 +59,7 @@ const HOP = [
   "frontend/src/adapters/cards/hopGetters.js",
   "frontend/src/adapters/cards/hopsCoolingCurve.js",
   "frontend/src/adapters/cards/hopsStrategy.js",
+  "frontend/src/adapters/cards/hopAllocation.js",
 ];
 const PROSE_FIELDS = ["frontend/src/adapters/cards/proseFields.js"];
 const CATALOG_DRAFT = [
@@ -163,7 +164,6 @@ export const INSTALLERS = [
   { name: "water", modules: WATER, keys: waterKeys, partials: ["step-water.html"] },
   { name: "modalFocus", modules: MODAL_FOCUS, keys: modalFocusKeys },
 ];
-
 // Cross-owner reads, baselined by Phase 1 of
 // `plans/archive/2026-10/alpine-maintainability-and-module-linting.md`. `owners` lists the
 // installers that may read the key; the installer that declares it is implicit
@@ -182,6 +182,7 @@ export const SHARED = [
     owners: ["styleTargets"],
     reason: "the pin input and its readouts print the gravity unit the navigator's plot uses",
   },
+  { key: "setHopAllocationMode", owners: ["styleDeclaration", "styleNavigator", "styleTargets", "styleConformance"], reason: "the style card's mode select drives the hop allocation root" },
   {
     key: "addDraftRow",
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],

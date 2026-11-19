@@ -36,6 +36,42 @@
       </div>
     </section>
 
+    <section class="card-section" x-show="hopMassPool" x-cloak>
+      <div class="section-header">
+        <span class="region-title">Stage Allocation</span>
+      </div>
+      <div class="section-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th class="text-right">Share</th>
+              <th class="text-right">Mass</th>
+              <th class="text-right">IBU</th>
+              <th class="text-right">IBU share</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="row in hopStageRows" :key="row.key">
+              <tr>
+                <td><span class="font-medium" x-text="row.label"></span></td>
+                <td class="text-right tabular-nums" x-text="row.share"></td>
+                <td class="text-right tabular-nums" x-text="row.mass"></td>
+                <td class="text-right tabular-nums" x-text="row.ibu"></td>
+                <td class="text-right tabular-nums" x-text="row.ibuShare"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+        <p class="form-hint">
+          Mass shares are authored, so the IBU split follows from them and the target.
+          Dry hops are weighed in grams and sit outside the pool.
+        </p>
+        <p class="form-hint text-warning" x-show="hopUnsharedCount > 0"
+          x-text="hopUnsharedCount + ' hot-side rows carry no share and add no mass.'"></p>
+      </div>
+    </section>
+
     <section class="card-section card-section--collapsible">
       <div class="section-header">
         <button
@@ -63,7 +99,9 @@
       </div>
 
       <div class="section-body" id="hops-boil" x-show="isHopSectionOpen('boil')">
-        <p class="text-xs text-muted">Author by IBU share; the hop mass is back-calculated from Tinseth.</p>
+        <p class="text-xs text-muted" x-text="hopMassPool
+          ? 'Author by mass share; one hot-side pool sets the scale.'
+          : 'Author by IBU share; the hop mass is back-calculated from Tinseth.'"></p>
 
         <div x-data="{ config: boilHopTableConfig() }">
           <load src="src/partials/ui-data-table.html" />
@@ -123,7 +161,9 @@
       </div>
 
       <div class="section-body" id="hops-whirlpool" x-show="isHopSectionOpen('whirlpool')">
-        <p class="text-xs text-muted">Author by IBU share; mass is back-calculated from the cooling integral.</p>
+        <p class="text-xs text-muted" x-text="hopMassPool
+          ? 'Author by mass share; the cooling integral still sets utilisation.'
+          : 'Author by IBU share; mass is back-calculated from the cooling integral.'"></p>
 
         <div
           class="step-grid-2col"

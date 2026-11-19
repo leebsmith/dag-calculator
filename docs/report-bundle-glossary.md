@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_138 paths_
+_147 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -38,6 +38,8 @@ _138 paths_
 | `batch.boil_hops.geraniol_pct_of_oil` | Geraniol Pct Of Oil | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.boil_hops.linalool_pct_of_oil` | Linalool Pct Of Oil | field | percentage | pct (%) | 1 | — |
+| `batch.boil_hops.mass_parts` | Share | field | dimensionless | — | — | — |
+| `batch.boil_hops.mass_pct` | Mass share | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.name` | Hop | field | — | — | — | — |
 | `batch.boil_hops.parts` | Parts | field | dimensionless | — | — | — |
 | `batch.boil_hops.pct` | IBU share | field | percentage | pct (%) | 1 | — |
@@ -76,6 +78,11 @@ _138 paths_
 | `batch.fermentation` | Fermentation | choice | — | — | — | ale, lager, wild, mixed |
 | `batch.grain_moisture_fraction` | Fallback grain moisture (when a malt has none) | root | percentage | pct (%) | 1 | — |
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |
+| `batch.hop_allocation_mode` | Hop allocation | choice | — | — | — | ibu_split, mass_pool |
+| `batch.hop_boil_mass_share` | Hop Boil Mass Share | derived | percentage | pct (%) | 1 | — |
+| `batch.hop_cool_mass_share` | Hop Cool Mass Share | derived | percentage | pct (%) | 1 | — |
+| `batch.hop_hot_mass_share` | Hop Hot Mass Share | derived | percentage | pct (%) | 1 | — |
+| `batch.hop_realized_ibu` | Hop Realized IBU | derived | ibu | IBU | 1 | — |
 | `batch.late_addition_intent` | Late addition mode | choice | — | — | — | dose, share |
 | `batch.late_addition_volume_l` | Late-addition volume | derived | volume | L | 1 | — |
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
@@ -132,6 +139,8 @@ _138 paths_
 | `batch.whirlpool_hops.hop_id` | Hop ID | field | — | — | — | — |
 | `batch.whirlpool_hops.initial_temp_c` | Temp | field | temperature | degC (°C) | 1 | — |
 | `batch.whirlpool_hops.linalool_pct_of_oil` | Linalool Pct Of Oil | field | percentage | pct (%) | 1 | — |
+| `batch.whirlpool_hops.mass_parts` | Share | field | dimensionless | — | — | — |
+| `batch.whirlpool_hops.mass_pct` | Mass share | field | percentage | pct (%) | 1 | — |
 | `batch.whirlpool_hops.name` | Hop | field | — | — | — | — |
 | `batch.whirlpool_hops.notes` | Notes | field | — | — | — | — |
 | `batch.whirlpool_hops.parts` | Parts | field | dimensionless | — | — | — |
@@ -407,19 +416,23 @@ _40 paths_
 
 ## Solver — hop bitterness
 
-_12 paths_
+_16 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `solver.hops` | Hops | boundary | — | — | — | — |
 | `solver.hops.boil_alpha_mass_kg` | Boil Alpha Mass Kg | output | mass | kg | 1 | — |
+| `solver.hops.boil_ibu` | Boil IBU | output | ibu | IBU | 1 | — |
 | `solver.hops.boil_mass_kg` | Boil hop mass | output | mass | g | 1 | — |
 | `solver.hops.boil_rows` | Boil Rows | output | — | — | — | — |
+| `solver.hops.mass_scale` | Mass Scale | output | dimensionless | — | — | — |
 | `solver.hops.total_mass_kg` | Total hop mass | output | mass | g | 1 | — |
 | `solver.hops.whirlpool_alpha_mass_kg` | Whirlpool Alpha Mass Kg | output | mass | kg | 1 | — |
 | `solver.hops.whirlpool_chills` | Whirlpool Chills | output | — | — | — | — |
 | `solver.hops.whirlpool_cool_ibu` | Whirlpool Cool IBU | output | ibu | IBU | 1 | — |
+| `solver.hops.whirlpool_cool_mass_kg` | Whirlpool Cool Mass Kg | output | mass | kg | 1 | — |
 | `solver.hops.whirlpool_hot_ibu` | Whirlpool Hot IBU | output | ibu | IBU | 1 | — |
+| `solver.hops.whirlpool_hot_mass_kg` | Whirlpool Hot Mass Kg | output | mass | kg | 1 | — |
 | `solver.hops.whirlpool_mass_kg` | Whirlpool hop mass | output | mass | g | 1 | — |
 | `solver.hops.whirlpool_rows` | Whirlpool Rows | output | — | — | — | — |
 | `solver.hops.whirlpool_timeline` | Whirlpool Timeline | output | — | — | — | — |

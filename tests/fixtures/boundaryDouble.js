@@ -50,6 +50,10 @@ function hopOutputs(inputs = {}) {
     whirlpool_alpha_mass_kg: sumOf(whirlpoolRows, "alpha_mass_kg"),
     whirlpool_hot_ibu: 0,
     whirlpool_cool_ibu: 0,
+    boil_ibu: 0,
+    whirlpool_hot_mass_kg: 0,
+    whirlpool_cool_mass_kg: 0,
+    mass_scale: 1,
   };
 }
 

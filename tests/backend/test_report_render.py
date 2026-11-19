@@ -210,7 +210,7 @@ def test_the_ibu_splits_hide_without_whirlpool_hops() -> None:
 
 def test_the_ibu_splits_render_with_whirlpool_hops(render_once) -> None:
     rendered = render_once(bundle(), parse_spec(sections="hops"))
-    assert "IBU Splits" in _pdf_text(rendered.data)
+    assert "Hop Allocation" in _pdf_text(rendered.data)
 
 
 def test_the_yeast_section_renders_a_known_pof(render_once) -> None:

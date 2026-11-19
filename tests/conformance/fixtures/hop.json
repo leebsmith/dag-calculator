@@ -1,11 +1,13 @@
 {
-  "fingerprint": "ef905277031e5eb70531d00851cf81536d3e3d5281d8a40f79bf95efb1a9971e",
+  "fingerprint": "172ed04cc6cc051015c81595f4d5f90678c65232b87eba05167ff339da240a92",
   "request": {
+    "allocation_mode": "ibu_split",
     "boil_hops": [
       {
         "alpha_acid_pct": 0.1,
         "boil_time_fraction": 1.0,
         "cone_utilization": null,
+        "mass_pct": null,
         "pct": 0.6,
         "product_form": "t90_pellet"
       },
@@ -13,6 +15,7 @@
         "alpha_acid_pct": 0.12,
         "boil_time_fraction": 0.5,
         "cone_utilization": null,
+        "mass_pct": null,
         "pct": 0.4,
         "product_form": "t90_pellet"
       }
@@ -30,6 +33,7 @@
         "alpha_acid_pct": 0.1,
         "cone_utilization": null,
         "initial_temp_c": 99.0,
+        "mass_pct": null,
         "pct": 1.0,
         "product_form": "t90_pellet"
       }

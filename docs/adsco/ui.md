@@ -257,6 +257,35 @@ therefore always carries weights; set the share to zero to remove sugar.
 "Adopt current dose" and "Adopt share into masses" are explicit re-sync actions,
 not implicit rewrites.
 
+### Hop allocation mode
+
+The hop bill has two authoring modes, chosen in the Style card beside `Target
+IBU` and stored on the batch as `batch.hop_allocation_mode`. The mode is a
+batch root, so it travels in the record, the import projection and the frozen
+report.
+
+| Mode | Authored per row | Budget | Stage IBU split |
+| --- | --- | --- | --- |
+| Two pools (default) | `parts` — share of its stage's IBU pool | `batch.target_ibu`, divided by `batch.whirlpool_ibu_fraction` | authored |
+| One pool | `mass_parts` — share of the hot-side mass | `batch.target_ibu`, undivided | emergent |
+
+Only the active share column is editable; the other stays in the row. In the
+one pool the parts normalize across both tables with the Hamilton rule, so a
+share typed in the boil table moves the whirlpool percentages too, and the
+table footer reports the share of the hot side rather than a per-table total.
+
+The hops card shows a **Stage Allocation** strip in both modes: boil, hot
+whirlpool and cool whirlpool, each with its mass share, mass, IBU and IBU share,
+then the hot-side total. The strip is the same three masses either way; what
+changes is which split was authored. A hot-side row with no share adds no mass
+and is counted in a hint rather than guessed at.
+
+Switching from two pools to one seeds `mass_parts` from the batch's current
+solved masses, so the grams do not jump — those masses already summed to the
+target. Switching back restores the untouched `parts`. Nothing migrates: the
+default is the two-pool mode, and a batch is only re-expressed when someone
+chooses the other.
+
 ### Fermentation space (Style card)
 
 The Style card plots the batch in the extract plane: `x = OE`, `y = AE`. The

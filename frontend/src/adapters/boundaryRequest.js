@@ -186,6 +186,7 @@ export const HOP_FIELDS = {
         pct: row.pct,
         product_form: row.product_form ?? "t90_pellet",
         cone_utilization: row.cone_utilization ?? null,
+        mass_pct: row.mass_pct ?? null,
       })),
   },
   whirlpool_hops: {
@@ -199,8 +200,10 @@ export const HOP_FIELDS = {
         pct: row.pct,
         product_form: row.product_form ?? "t90_pellet",
         cone_utilization: row.cone_utilization ?? null,
+        mass_pct: row.mass_pct ?? null,
       })),
   },
+  hop_allocation_mode: { path: "batch.hop_allocation_mode", wire: "allocation_mode" },
   boil_target_ibu: { path: "batch.boil_target_ibu" },
   whirlpool_target_ibu: { path: "batch.whirlpool_target_ibu" },
   boil_time_min: { path: "batch.boil_time_min" },

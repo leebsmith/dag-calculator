@@ -31,6 +31,8 @@ export function makeBoilRow(hop, catalogForm = null) {
     total_oil_ml_per_100g: hop.total_oil_ml_per_100g,
     linalool_pct_of_oil: hop.linalool_pct_of_oil,
     geraniol_pct_of_oil: hop.geraniol_pct_of_oil,
+    mass_parts: null,
+    mass_pct: null,
     boil_time_fraction: productForm === "flowable_extract" ? 0.25 : 1,
     parts: 10,
     pct: 0,

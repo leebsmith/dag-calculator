@@ -456,3 +456,105 @@ def test_whole_cone_uses_the_supplied_factor():
         return solve_hop_request(request).boil_mass_kg
 
     assert mass(0.85) == pytest.approx(mass(1.0) / 0.85, rel=1e-9)
+
+
+# --- One hot-side pool: shares of the mass, scaled to the whole IBU target -----
+
+
+def pooled_request(volume_l: float = 20.0, target: float = 70.4, **overrides):
+    return make_request(
+        boil_hops=[
+            BoilHopRow(alpha_acid_pct=0.155, boil_time_fraction=1.0, pct=0.6, mass_pct=0.2),
+            BoilHopRow(alpha_acid_pct=0.0625, boil_time_fraction=0.25, pct=0.4, mass_pct=0.2),
+        ],
+        whirlpool_hops=[
+            WhirlpoolHopRow(
+                alpha_acid_pct=0.20,
+                addition_at_min=0.0,
+                initial_temp_c=99.0,
+                pct=0.5,
+                mass_pct=0.3,
+            ),
+            WhirlpoolHopRow(
+                alpha_acid_pct=0.115,
+                addition_at_min=20.0,
+                initial_temp_c=75.5,
+                pct=0.5,
+                mass_pct=0.3,
+            ),
+        ],
+        boil_target_ibu=target,
+        whirlpool_target_ibu=0.0,
+        post_boil_volume_l=volume_l,
+        allocation_mode="mass_pool",
+        **overrides,
+    )
+
+
+def pooled_masses(response) -> list[float]:
+    return [row.mass_kg for row in response.boil_rows] + [
+        row.mass_kg for row in response.whirlpool_rows
+    ]
+
+
+def test_a_mass_pool_lands_on_the_target_and_keeps_its_shares():
+    response = solve_hop_request(pooled_request())
+    masses = pooled_masses(response)
+    total = sum(masses)
+    assert [m / total for m in masses] == pytest.approx([0.2, 0.2, 0.3, 0.3], abs=1e-12)
+    realized = response.boil_ibu + response.whirlpool_hot_ibu + response.whirlpool_cool_ibu
+    assert realized == pytest.approx(70.4, rel=1e-12)
+    assert response.mass_scale > 0.0
+
+
+def test_a_mass_pool_scales_with_the_batch_while_the_shares_hold():
+    small = solve_hop_request(pooled_request(volume_l=20.0))
+    large = solve_hop_request(pooled_request(volume_l=40.0))
+    assert large.total_mass_kg == pytest.approx(2.0 * small.total_mass_kg, rel=1e-9)
+    small_shares = [m / small.total_mass_kg for m in pooled_masses(small)]
+    large_shares = [m / large.total_mass_kg for m in pooled_masses(large)]
+    assert large_shares == pytest.approx(small_shares, abs=1e-12)
+
+
+def test_a_mass_pool_reports_the_stage_split_it_produced():
+    response = solve_hop_request(pooled_request())
+    assert response.whirlpool_hot_mass_kg + response.whirlpool_cool_mass_kg == pytest.approx(
+        response.whirlpool_mass_kg, rel=1e-12
+    )
+    assert response.whirlpool_hot_mass_kg / response.total_mass_kg == pytest.approx(0.3, rel=1e-9)
+    assert response.whirlpool_cool_mass_kg / response.total_mass_kg == pytest.approx(0.3, rel=1e-9)
+
+
+def test_a_pool_with_no_share_refuses_rather_than_guessing():
+    request = make_request(
+        boil_hops=[
+            BoilHopRow(alpha_acid_pct=0.1, boil_time_fraction=1.0, pct=1.0, mass_pct=0.0)
+        ],
+        whirlpool_hops=[],
+        boil_target_ibu=40.0,
+        whirlpool_target_ibu=0.0,
+        allocation_mode="mass_pool",
+    )
+    with pytest.raises(Exception) as exc:
+        solve_hop_request(request)
+    assert getattr(exc.value, "code", None) == "INVALID_HOP_INPUT"
+
+
+def test_a_mass_share_outside_zero_to_one_is_refused():
+    with pytest.raises(Exception) as exc:
+        BoilHopRow(alpha_acid_pct=0.1, boil_time_fraction=1.0, pct=1.0, mass_pct=1.4)
+    assert "mass_pct" in str(exc.value)
+
+
+def test_the_split_mode_ignores_mass_shares():
+    split = solve_hop_request(make_request())
+    with_shares = solve_hop_request(
+        make_request(
+            boil_hops=[
+                BoilHopRow(alpha_acid_pct=0.10, boil_time_fraction=1.0, pct=0.5, mass_pct=0.9),
+                BoilHopRow(alpha_acid_pct=0.12, boil_time_fraction=0.5, pct=0.5, mass_pct=0.1),
+            ]
+        )
+    )
+    assert split.boil_mass_kg == pytest.approx(with_shares.boil_mass_kg, rel=1e-12)
+    assert split.mass_scale == 1.0

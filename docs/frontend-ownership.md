@@ -4,18 +4,18 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **796** (537 enumerable, 259 hidden)
+- Declared members: **806** (543 enumerable, 263 hidden)
 - Installers: **23**
 - Card partials: **21**
 - Installers reading another installer's key: **14 of 23**
-- Cross-owner keys declared in `SHARED`: **49**
+- Cross-owner keys declared in `SHARED`: **51**
 
 ## Installers
 
 | installer | modules | members | card partials | foreign reads |
 |---|---|---|---|---|
 | `navigation` | `frontend/src/adapters/navigation.js` | 7 | 0 | 0 |
-| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 30 | 1 | 5 |
+| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 33 | 1 | 5 |
 | `proseValidation` | `frontend/src/adapters/proseValidation.js`, `frontend/src/markdown/validate.js` | 1 | 0 | 0 |
 | `tableConfigs` | `frontend/src/adapters/tableConfigs.js` | 4 | 0 | 0 |
 | `draftEditor` | `frontend/src/adapters/draftEditor.js` | 79 | 0 | 0 |
@@ -23,11 +23,11 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 0 |
 | `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 62 | 0 | 0 |
 | `yeast` | `frontend/src/adapters/cards/yeast.js` | 50 | 2 | 0 |
-| `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 6 | 1 | 3 |
-| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |
-| `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js` | 45 | 1 | 10 |
-| `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 154 | 4 | 20 |
+| `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 6 | 1 | 4 |
+| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 7 |
+| `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js` | 46 | 1 | 11 |
+| `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 4 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/hopAllocation.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 160 | 4 | 21 |
 | `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 4 | 2 | 1 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 67 | 2 | 20 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 43 | 2 | 20 |
@@ -66,6 +66,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `inputDraft` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `inputKey` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `maltCategories` | `malt` | `traceMalts` | the trace-malt editor lists the malt card's categories |
+| `normalizeHopMassPool` | `fieldActions` | `hop` | the hop card re-normalizes the one-pool mass shares after an edit; the rule lives with the authoring normalizers |
 | `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `openLibrary` | `libraryUi` | `hop` | the whirlpool picker links to the cooling-curve library tab |
 | `patchDraftRow` | `draftEditor` | `hop`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
@@ -79,6 +80,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `selectWaterTarget` | `water` | `fieldActions` | the generic card shell renders the water target selector |
 | `setColorField` | `draftEditor` | `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
 | `setFieldUnit` | `unitActions` | `hop` | unit toggling is shared between the hop card and the generic card shell |
+| `setHopAllocationMode` | `fieldActions` | `styleDeclaration`, `styleNavigator`, `styleTargets`, `styleConformance` | the style card's mode select drives the hop allocation root |
 | `setInputDraft` | `fieldActions` | `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `setMaltField` | `draftEditor` | `hop`, `malt`, `traceMalts` | the malt editors reuse the draft editor's colour and field helpers |
 | `styleAbvTouched` | `styleNavigator` | `styleTargets` | the style target card mirrors the navigator's touched flag |

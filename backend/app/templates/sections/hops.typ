@@ -158,11 +158,42 @@
   if present-formatted("batch.boil_ibu_share") and present-formatted-table(WHIRLPOOL) {
     v(4pt)
     block(breakable: false, {
-      heading(level: 2)[IBU Splits]
+      heading(level: 2)[Hop Allocation]
+      table(
+        columns: (auto, auto, auto, auto),
+        align: (left, right, right, right),
+        stroke: none,
+        inset: (x: 3pt, y: 2pt),
+        table.header([Stage], [Mass share], [Mass], [IBU]),
+        [Boil],
+        text-or("batch.hop_boil_mass_share"),
+        text-or("solver.hops.boil_mass_kg"),
+        text-or("solver.hops.boil_ibu"),
+        [Hot WP],
+        text-or("batch.hop_hot_mass_share"),
+        text-or("solver.hops.whirlpool_hot_mass_kg"),
+        text-or("solver.hops.whirlpool_hot_ibu"),
+        [Cool WP],
+        text-or("batch.hop_cool_mass_share"),
+        text-or("solver.hops.whirlpool_cool_mass_kg"),
+        text-or("solver.hops.whirlpool_cool_ibu"),
+        [*Hot side*],
+        [—],
+        text-or("solver.hops.total_mass_kg"),
+        text-or("batch.hop_realized_ibu"),
+      )
+      v(2pt)
+      note[
+        The hot side is every pre-fermentation charge: the boil and both whirlpool
+        stands, cut at the top of the isomerization floor band. Shares are of hop
+        mass, so a cool charge shows a small mass in a large share only when its
+        alpha is low. Dry hops add no IBU and sit outside these totals.
+      ]
+      v(2pt)
       heading(level: 3)[Boil / Whirlpool]
       [
-        - *Boil:* #text-or("batch.boil_ibu_share") (#text-or("batch.boil_target_ibu"))
-        - *Whirlpool:* #text-or("batch.whirlpool_ibu_share") (#text-or("batch.whirlpool_target_ibu"))
+        - *Boil:* #text-or("batch.boil_ibu_share") (#text-or("solver.hops.boil_ibu"))
+        - *Whirlpool:* #text-or("batch.whirlpool_ibu_share") (#text-or("solver.hops.whirlpool_hot_ibu") hot + #text-or("solver.hops.whirlpool_cool_ibu") cool)
       ]
       if present-formatted("batch.whirlpool_hot_ibu_share") {
         v(4pt)

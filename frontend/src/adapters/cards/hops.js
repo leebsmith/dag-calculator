@@ -32,6 +32,7 @@ import {
   whirlpoolStartDescriptors,
 } from "./hopGetters.js";
 import { cycleUnit } from "../../utils.js";
+import { allocationDescriptors, hopMassPartsActions, massShareLabel } from "./hopAllocation.js";
 import { makeBoilRow } from "../../views/producer/boilPolicy.js";
 import {
   makeWhirlpoolRow, readWhirlpoolCeiling, whirlpoolCeilingBadge,
@@ -187,6 +188,11 @@ function labelActions({ cache, getView, formatMass, formatTemp }) {
     hopPct(row) {
       return hopPctLabel(row);
     },
+
+    hopMassPct(row) {
+      return massShareLabel(row);
+    },
+
   };
 }
 
@@ -233,6 +239,7 @@ export function createHopCard(
     ...catalogFormActions({ getView }),
     ...labelActions({ cache, getView, formatMass, formatTemp }),
     ...alphaActions({ engine, getView }),
+    ...hopMassPartsActions({ engine, getView }),
   };
   Object.defineProperties(actions, {
     ...massDescriptors({ formatMass, getView }),
@@ -243,6 +250,7 @@ export function createHopCard(
       reportError: observability.reportError,
     }),
     ...fieldDescriptors(getView),
+    ...allocationDescriptors({ engine, getView, formatMass }),
   });
   return actions;
 }
@@ -330,6 +338,12 @@ export const KEYS = [
   "hopTemp",
   "hopIbu",
   "hopPct",
+  "hopMassPct",
+  "hopAllocationMode",
+  "hopMassPool",
+  "hopStageRows",
+  "hopUnsharedCount",
+  "setHopMassParts",
   "boilIbuField",
   "whirlpoolIbuField",
   "totalIbuField",

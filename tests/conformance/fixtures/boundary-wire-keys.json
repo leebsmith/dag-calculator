@@ -59,6 +59,7 @@
     "v_sparge_demand_l"
   ],
   "hop": [
+    "allocation_mode",
     "boil_hops",
     "boil_target_ibu",
     "boil_time_min",

@@ -2,8 +2,13 @@
 // seed-derived resets, selection copy-in, and row add/remove/normalization.
 
 import { toBase } from "../engine/index.js";
-import { clamp } from "../utils.js";
-import { fieldInputKey, normalizedRowShares, rowDefaults } from "../views/producer/authoring.js";
+import { clamp, toPercentValue } from "../utils.js";
+import {
+  fieldInputKey,
+  normalizedMassShares,
+  normalizedRowShares,
+  rowDefaults,
+} from "../views/producer/authoring.js";
 import { nonlinearFns } from "../views/producer.js";
 import { derivationsFor } from "../views/seedDerivations.js";
 import { clampBoundsFor } from "../views/registry/presentation.js";
@@ -247,6 +252,13 @@ export function createFieldActions({
       // exactly 100% at 0.1% resolution. Boil hops use the same parts -> pct rule
       // over their IBU pool.
       let next = rows;
+      if (columnId === "mass_parts") {
+        engine.setCollection(field.target.nodeId, rows);
+        actions.normalizeHopMassPool();
+        getView().scheduleSolve();
+        getView().notify();
+        return;
+      }
       if (columnId === "parts") {
         if (field.target.nodeId === N.majorMalts) next = actions.normalizeGrist(rows);
         else if (
@@ -298,6 +310,55 @@ export function createFieldActions({
       return normalizedRowShares(rows);
     },
 
+    // Switching to the one pool seeds each row's mass share from the batch's
+    // current solved masses, so the bill does not jump: those masses already
+    // summed to the target. Nothing solved means nothing to seed.
+    setHopAllocationMode(value) {
+      const view = getView();
+      const engine = session.getEngine();
+      engine.setRoot(N.hopAllocationMode, value);
+      if (value === "mass_pool") actions.seedHopMassShares();
+      view.refreshTargets?.();
+      view.scheduleSolve();
+      view.notify();
+    },
+
+    seedHopMassShares() {
+      const engine = session.getEngine();
+      const boil = engine.get(N.boilHops) ?? [];
+      const whirlpool = engine.get(N.whirlpoolHops) ?? [];
+      const solved = [
+        ...(engine.get(N.boilRows) ?? []),
+        ...(engine.get(N.whirlpoolRows) ?? []),
+      ];
+      const masses = solved.map((row) => row?.mass_kg);
+      const total = masses.reduce(
+        (sum, value) => (Number.isFinite(value) ? sum + value : sum),
+        0
+      );
+      if (!(total > 0)) return;
+      const withParts = (rows, offset) =>
+        rows.map((row, index) => {
+          const value = masses[offset + index];
+          return { ...row, mass_parts: Number.isFinite(value) ? toPercentValue(value / total) : 0 };
+        });
+      engine.setCollection(N.boilHops, withParts(boil, 0));
+      engine.setCollection(N.whirlpoolHops, withParts(whirlpool, boil.length));
+      actions.normalizeHopMassPool();
+    },
+
+    // Hamilton-normalize the hot-side mass shares (`mass_pct`) from `mass_parts`
+    // across both hop tables: the one-pool mode has a single pool, so the two
+    // collections normalize together and must be written together.
+    normalizeHopMassPool() {
+      const engine = session.getEngine();
+      const boil = engine.get(N.boilHops) ?? [];
+      const whirlpool = engine.get(N.whirlpoolHops) ?? [];
+      const next = normalizedMassShares(boil, whirlpool);
+      engine.setCollection(N.boilHops, next.boil);
+      engine.setCollection(N.whirlpoolHops, next.whirlpool);
+    },
+
     collectionCanAdd(field) {
       if (!field.prose) return true;
       const rows = field.rows ?? [];
@@ -325,4 +386,4 @@ export function createFieldActions({
   return actions;
 }
 
-export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "commitCellText", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "runCollectionAdd", "collectionCanAdd", "collectionAddLabel"];
+export const KEYS = ["inputDrafts", "inputKey", "inputDraft", "setInputDraft", "clearInputDraft", "editNumberInput", "commitNumberInput", "editCellInput", "commitCellInput", "commitCellText", "editDraftCellInput", "commitDraftCellInput", "clampToSelection", "edit", "commitField", "resetField", "handoffIntensiveValue", "pinMashThickness", "runFindingAction", "resetSeededRoots", "copyInCascade", "runAction", "editCell", "addRow", "removeRow", "normalizeGrist", "normalizeHopRows", "normalizeHopMassPool", "setHopAllocationMode", "seedHopMassShares", "runCollectionAdd", "collectionCanAdd", "collectionAddLabel"];

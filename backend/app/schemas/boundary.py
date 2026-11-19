@@ -279,6 +279,13 @@ class HopProductForm(StrEnum):
     WHOLE_CONE = "whole_cone"
 
 
+class HopAllocationMode(StrEnum):
+    """Mirrors the artifact's `hop_allocation_mode` taxonomy."""
+
+    IBU_SPLIT = "ibu_split"
+    MASS_POOL = "mass_pool"
+
+
 class BoilHopRow(BoundaryModel):
     """One boil addition as sent to the hop boundary."""
 
@@ -287,6 +294,7 @@ class BoilHopRow(BoundaryModel):
     pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
     product_form: HopProductForm = HopProductForm.T90_PELLET
     cone_utilization: Annotated[float, Field(gt=0.0, le=1.0)] | None = None
+    mass_pct: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
 
 
 class WhirlpoolHopRow(BoundaryModel):
@@ -298,6 +306,7 @@ class WhirlpoolHopRow(BoundaryModel):
     pct: Annotated[float, Field(ge=0.0, le=1.0, description="IBU share fraction")]
     product_form: HopProductForm = HopProductForm.T90_PELLET
     cone_utilization: Annotated[float, Field(gt=0.0, le=1.0)] | None = None
+    mass_pct: Annotated[float, Field(ge=0.0, le=1.0)] | None = None
 
 
 class HopSolverRequest(BoundaryModel):
@@ -315,6 +324,7 @@ class HopSolverRequest(BoundaryModel):
     whirlpool_cooling_time_constant_min: Annotated[float, Field(gt=0.0)]
     whirlpool_knockout_min: Annotated[float, Field(ge=0.0)] = 30.0
     whirlpool_start_temp_c: Annotated[float, Field(ge=0.0, le=100.0)] = 99.0
+    allocation_mode: HopAllocationMode = HopAllocationMode.IBU_SPLIT
 
 
 class BoilHopResult(BoundaryModel):
@@ -362,6 +372,10 @@ class HopSolverResponse(BoundaryModel):
     whirlpool_alpha_mass_kg: float = 0.0
     whirlpool_hot_ibu: Annotated[float, Field(ge=0.0)]
     whirlpool_cool_ibu: Annotated[float, Field(ge=0.0)]
+    boil_ibu: Annotated[float, Field(ge=0.0)] = 0.0
+    whirlpool_hot_mass_kg: float = 0.0
+    whirlpool_cool_mass_kg: float = 0.0
+    mass_scale: float = 1.0
 
 
 class WaterStrategy(StrEnum):

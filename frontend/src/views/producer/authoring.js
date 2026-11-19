@@ -17,6 +17,19 @@ export function normalizedRowShares(rows) {
   return rows.map((row, i) => ({ ...row, pct: pcts[i] }));
 }
 
+// The one-pool mode authors mass proportions across the whole hot side, so the
+// normalizer takes both hop tables at once and returns them in the same order.
+export function normalizedMassShares(boilRows, whirlpoolRows) {
+  const rows = [...boilRows, ...whirlpoolRows];
+  if (!rows.length) return { boil: boilRows, whirlpool: whirlpoolRows };
+  const pcts = hamiltonPct(rows.map((row) => row.mass_parts));
+  const withShare = (row, index) => ({ ...row, mass_pct: pcts[index] });
+  return {
+    boil: boilRows.map((row, index) => withShare(row, index)),
+    whirlpool: whirlpoolRows.map((row, index) => withShare(row, boilRows.length + index)),
+  };
+}
+
 // Seed a row with type-appropriate defaults (numbers, first taxonomy member,
 // schema default) rather than empty strings, so a new row is well-formed and
 // does not POST a request that fails validation.

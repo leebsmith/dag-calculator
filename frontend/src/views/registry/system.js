@@ -11,4 +11,8 @@ export const SYSTEM_NODES = {
   lateAdditionIntent: "batch.late_addition_intent",
   boilHops: "batch.boil_hops",
   whirlpoolHops: "batch.whirlpool_hops",
+  boilRows: "solver.hops.boil_rows",
+  whirlpoolRows: "solver.hops.whirlpool_rows",
+  hopAllocationMode: "batch.hop_allocation_mode",
+  whirlpoolHops: "batch.whirlpool_hops",
 };

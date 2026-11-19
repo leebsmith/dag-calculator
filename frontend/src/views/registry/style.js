@@ -19,6 +19,7 @@ export const STYLE_NODES = {
     whirlpoolFraction: "batch.whirlpool_ibu_fraction",
     boilIbu: "batch.boil_target_ibu",
     whirlpoolIbu: "batch.whirlpool_target_ibu",
+    hopAllocationMode: "batch.hop_allocation_mode",
   },
   realized: {
     og: "solver.batch.sg_post_boil",

@@ -39,6 +39,15 @@ SIMPSON_MAX_DEPTH = 20
 # (`isomerization_floor`); a coupling test keeps this constant equal to its top.
 ISOMERIZATION_FLOOR_C = 79.0
 
+# How the IBU target reaches the hop charges. ``ibu_split`` divides it into a boil
+# pool and a whirlpool pool and each row's ``pct`` is its share of its own pool.
+# ``mass_pool`` spends the whole target across the kettle and both whirlpool
+# stands; each row's ``mass_pct`` is its share of the hot-side mass and one scale
+# factor sets the grams.
+ALLOCATION_IBU_SPLIT = "ibu_split"
+ALLOCATION_MASS_POOL = "mass_pool"
+ALLOCATION_MODES = (ALLOCATION_IBU_SPLIT, ALLOCATION_MASS_POOL)
+
 # Whirlpool charges share one knockout end, so their durations also encode the
 # addition order. Two charges within these tolerances are one addition, and the
 # posted temperature is compared with the latent curve at that offset.
@@ -53,6 +62,7 @@ class BoilHopEntry:
     pct: float
     product_form: str = "t90_pellet"
     cone_utilization: float | None = None
+    mass_pct: float | None = None
 
 
 @dataclass(frozen=True)
@@ -63,6 +73,7 @@ class WhirlpoolHopEntry:
     pct: float
     product_form: str = "t90_pellet"
     cone_utilization: float | None = None
+    mass_pct: float | None = None
 
 
 @dataclass(frozen=True)
@@ -79,6 +90,7 @@ class HopSolverInput:
     whirlpool_cooling_time_constant_min: float
     whirlpool_knockout_min: float = 30.0
     whirlpool_start_temp_c: float = 99.0
+    allocation_mode: str = ALLOCATION_IBU_SPLIT
 
 
 @dataclass(frozen=True)
@@ -142,6 +154,10 @@ class HopSolverResult:
     whirlpool_cool_ibu: float
     boil_alpha_mass_kg: float = 0.0
     whirlpool_alpha_mass_kg: float = 0.0
+    boil_ibu: float = 0.0
+    whirlpool_hot_mass_kg: float = 0.0
+    whirlpool_cool_mass_kg: float = 0.0
+    mass_scale: float = 1.0
 
 
 def tinseth_utilization(boil_gravity_sg: float, time_min: float) -> float:
@@ -460,12 +476,25 @@ def _validate_whirlpool_hops(rows: Sequence[WhirlpoolHopEntry]) -> None:
         _validate_product_form(row)
 
 
+def _validate_allocation(inputs: HopSolverInput) -> None:
+    if inputs.allocation_mode not in ALLOCATION_MODES:
+        raise SolverValidationError(
+            "INVALID_HOP_INPUT", "Unknown hop allocation mode."
+        )
+    if inputs.allocation_mode != ALLOCATION_MASS_POOL:
+        return
+    for row in (*inputs.boil_hops, *inputs.whirlpool_hops):
+        if row.mass_pct is not None and not (0.0 <= row.mass_pct <= 1.0):
+            raise SolverValidationError("INVALID_HOP_INPUT", "Mass shares must be 0..1.")
+
+
 def _validate(inputs: HopSolverInput) -> None:
     _validate_targets(inputs)
     _validate_gravity(inputs)
     _validate_boil_hops(inputs.boil_hops)
     _validate_whirlpool_hops(inputs.whirlpool_hops)
     _validate_cone((*inputs.boil_hops, *inputs.whirlpool_hops))
+    _validate_allocation(inputs)
 
 
 def _split_ibu(
@@ -482,11 +511,45 @@ def _split_ibu(
     return total
 
 
-def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
-    """Resolve the hop-bitterness boundary."""
-    _validate(inputs)
-    k_per_min = 1.0 / inputs.whirlpool_cooling_time_constant_min
+def _split_mass(
+    charges: Sequence[WhirlpoolHopEntry],
+    results: Sequence[WhirlpoolHopResult],
+    *,
+    above_hot: bool,
+) -> float:
+    """Hop mass carried by the whirlpool charges on one side of the hot threshold."""
+    total = 0.0
+    for charge, result in zip(charges, results, strict=True):
+        if result.mass_kg is None:
+            continue
+        if (charge.initial_temp_c > ISOMERIZATION_FLOOR_C) is above_hot:
+            total += result.mass_kg
+    return total
 
+
+def _boil_ibu_per_kg(
+    alpha_fraction: float, utilization: float, volume_l: float
+) -> float | None:
+    """IBU one kilogram of this charge would add, independent of how much is used."""
+    if not (alpha_fraction > 0.0) or not (volume_l > 0.0) or utilization <= 0.0:
+        return None
+    volume_gal = volume_l / L_PER_GAL
+    return utilization * alpha_fraction * TINSETH_FACTOR / (volume_gal * KG_PER_OZ)
+
+
+def _whirlpool_ibu_per_kg(
+    alpha_fraction: float, utilization: float, volume_l: float
+) -> float | None:
+    """Whirlpool equivalent of :func:`_boil_ibu_per_kg`."""
+    if not (alpha_fraction > 0.0) or not (volume_l > 0.0) or utilization <= 0.0:
+        return None
+    return alpha_fraction * utilization * 1_000_000.0 / volume_l
+
+
+def _solve_split(
+    inputs: HopSolverInput, k_per_min: float
+) -> tuple[list[BoilHopResult], list[WhirlpoolHopResult], WhirlpoolTimeline]:
+    """Each row draws an IBU share of its own stage pool."""
     boil_rows: list[BoilHopResult] = []
     for row in inputs.boil_hops:
         minutes = row.boil_time_fraction * inputs.boil_time_min
@@ -542,6 +605,122 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
                 alpha_mass_kg=None if mass is None else mass * row.alpha_acid_pct,
             )
         )
+    return boil_rows, whirlpool_rows, timeline
+
+
+def _solve_pooled(
+    inputs: HopSolverInput, k_per_min: float
+) -> tuple[list[BoilHopResult], list[WhirlpoolHopResult], WhirlpoolTimeline, float]:
+    """One pool: shares of the hot-side mass, scaled to the whole IBU target.
+
+    IBU is linear in mass on both stages, so the shares fix the shape and a single
+    scale factor lands the bill on the target. A charge with no usable yield drops
+    out of the sum and keeps a null mass rather than a guessed one.
+    """
+    ambient_temp_c = inputs.whirlpool_ambient_temp_c
+    volume_l = inputs.post_boil_volume_l
+    timeline = build_whirlpool_timeline(
+        inputs.whirlpool_hops,
+        ambient_temp_c,
+        k_per_min,
+        inputs.whirlpool_knockout_min,
+        inputs.whirlpool_start_temp_c,
+    )
+
+    boil_plan: list[tuple[float, float, float | None]] = []
+    for row in inputs.boil_hops:
+        minutes = row.boil_time_fraction * inputs.boil_time_min
+        form = product_form_utilization(row.product_form, row.cone_utilization)
+        utilization = (
+            None
+            if form is None
+            else tinseth_utilization(inputs.pre_boil_gravity, minutes) * form
+        )
+        yield_per_kg = (
+            None
+            if utilization is None
+            else _boil_ibu_per_kg(row.alpha_acid_pct, utilization, volume_l)
+        )
+        boil_plan.append((minutes, row.mass_pct or 0.0, yield_per_kg))
+
+    whirlpool_plan: list[tuple[float, float, float, float | None]] = []
+    for row in inputs.whirlpool_hops:
+        minutes = max(0.0, inputs.whirlpool_knockout_min - row.addition_at_min)
+        effective_minutes = timeline.effective_minutes(
+            row.addition_at_min, ambient_temp_c, k_per_min
+        )
+        form = product_form_utilization(row.product_form, row.cone_utilization)
+        utilization = (
+            0.0
+            if form is None
+            else whirlpool_utilization(inputs.post_boil_gravity, effective_minutes) * form
+        )
+        yield_per_kg = (
+            None
+            if form is None
+            else _whirlpool_ibu_per_kg(row.alpha_acid_pct, utilization, volume_l)
+        )
+        whirlpool_plan.append((minutes, effective_minutes, row.mass_pct or 0.0, yield_per_kg))
+
+    target_ibu = inputs.boil_target_ibu + inputs.whirlpool_target_ibu
+    denominator = sum(
+        share * yield_per_kg
+        for _, share, yield_per_kg in boil_plan
+        if yield_per_kg is not None
+    )
+    denominator += sum(
+        share * yield_per_kg
+        for _, _, share, yield_per_kg in whirlpool_plan
+        if yield_per_kg is not None
+    )
+    if not (target_ibu > 0.0) or not (denominator > 0.0):
+        raise SolverValidationError(
+            "INVALID_HOP_INPUT",
+            "A mass pool needs a positive IBU target and at least one charge "
+            "whose share and alpha can carry it.",
+        )
+    scale = target_ibu / denominator
+
+    boil_rows: list[BoilHopResult] = []
+    for row, (minutes, share, yield_per_kg) in zip(
+        inputs.boil_hops, boil_plan, strict=True
+    ):
+        mass = None if yield_per_kg is None else share * scale
+        boil_rows.append(
+            BoilHopResult(
+                minutes=minutes,
+                ibu=0.0 if mass is None else mass * yield_per_kg,
+                mass_kg=mass,
+                alpha_mass_kg=None if mass is None else mass * row.alpha_acid_pct,
+            )
+        )
+
+    whirlpool_rows: list[WhirlpoolHopResult] = []
+    for row, (minutes, effective_minutes, share, yield_per_kg) in zip(
+        inputs.whirlpool_hops, whirlpool_plan, strict=True
+    ):
+        mass = None if yield_per_kg is None else share * scale
+        whirlpool_rows.append(
+            WhirlpoolHopResult(
+                minutes=minutes,
+                ibu=0.0 if mass is None else mass * yield_per_kg,
+                mass_kg=mass,
+                effective_minutes=effective_minutes,
+                alpha_mass_kg=None if mass is None else mass * row.alpha_acid_pct,
+            )
+        )
+    return boil_rows, whirlpool_rows, timeline, scale
+
+
+def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
+    """Resolve the hop-bitterness boundary."""
+    _validate(inputs)
+    k_per_min = 1.0 / inputs.whirlpool_cooling_time_constant_min
+    scale = 1.0
+    if inputs.allocation_mode == ALLOCATION_MASS_POOL:
+        boil_rows, whirlpool_rows, timeline, scale = _solve_pooled(inputs, k_per_min)
+    else:
+        boil_rows, whirlpool_rows, timeline = _solve_split(inputs, k_per_min)
 
     boil_mass = sum(row.mass_kg for row in boil_rows if row.mass_kg is not None)
     whirlpool_mass = sum(row.mass_kg for row in whirlpool_rows if row.mass_kg is not None)
@@ -564,4 +743,12 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
         whirlpool_cool_ibu=_split_ibu(
             inputs.whirlpool_hops, whirlpool_rows, above_hot=False
         ),
+        boil_ibu=sum(row.ibu for row in boil_rows),
+        whirlpool_hot_mass_kg=_split_mass(
+            inputs.whirlpool_hops, whirlpool_rows, above_hot=True
+        ),
+        whirlpool_cool_mass_kg=_split_mass(
+            inputs.whirlpool_hops, whirlpool_rows, above_hot=False
+        ),
+        mass_scale=scale,
     )

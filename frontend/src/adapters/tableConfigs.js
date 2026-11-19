@@ -68,6 +68,35 @@ function traceMaltTableConfig(getView) {
   };
 }
 
+function shareColumns(view, kind) {
+  if (view.hopAllocationMode !== "mass_pool") {
+    return [
+      { id: "parts", label: "Parts", width: "5%", align: "right", cell: "number", value: (row) => row.parts },
+      { id: "pct", label: "IBU share", width: "10%", align: "right", cell: "number", value: (row) => view.hopPct(row) },
+    ];
+  }
+  return [
+    {
+      id: "mass_parts",
+      label: "Share",
+      width: "8%",
+      align: "right",
+      cell: "input",
+      input: {
+        type: "number",
+        step: 1,
+        min: 0,
+        class: "form-input table-input-parts",
+        value: (row) => (row.mass_parts == null ? "" : String(row.mass_parts)),
+        onChange: (row, index, raw) => view.setHopMassParts(kind, index, raw),
+        ariaLabel: (row) => "Mass share parts for " + row.name,
+        hint: () => "Share of the hot-side pool",
+      },
+    },
+    { id: "mass_pct", label: "Mass share", width: "10%", align: "right", cell: "number", value: (row) => view.hopMassPct(row) },
+  ];
+}
+
 function boilHopTableConfig(getView) {
   const view = getView();
 
@@ -95,8 +124,7 @@ function boilHopTableConfig(getView) {
         },
       },
       { id: "boil", label: "Boil", width: "15%", align: "right", cell: "number", value: (row) => view.hopBoilPct(row) + " · " + view.hopMinutes(row) },
-      { id: "parts", label: "Parts", width: "5%", align: "right", cell: "number", value: (row) => row.parts },
-      { id: "pct", label: "IBU share", width: "10%", align: "right", cell: "number", value: (row) => view.hopPct(row) },
+      ...shareColumns(view, "boil"),
       { id: "ibu", label: "IBU", width: "5%", align: "right", cell: "number", value: (row) => view.hopIbu(row) },
       { id: "mass", label: "Mass", width: "10%", align: "right", cell: "number", value: (row) => view.hopMass(row) },
     ],
@@ -138,8 +166,7 @@ function whirlpoolHopTableConfig(getView) {
       },
       { id: "addition", label: "After flameout", width: "8%", align: "right", cell: "number", value: (row) => view.hopAddition(row) },
       { id: "temp", label: "Initial", width: "8%", align: "right", cell: "number", value: (row) => view.hopTemp(row) },
-      { id: "parts", label: "Parts", width: "5%", align: "right", cell: "number", value: (row) => row.parts },
-      { id: "pct", label: "IBU share", width: "10%", align: "right", cell: "number", value: (row) => view.hopPct(row) },
+      ...shareColumns(view, "whirlpool"),
       { id: "ibu", label: "IBU", width: "5%", align: "right", cell: "number", value: (row) => view.hopIbu(row) },
       { id: "mass", label: "Mass", width: "10%", align: "right", cell: "number", value: (row) => view.whirlpoolHopMass(row) },
     ],
@@ -170,6 +197,11 @@ export const KEYS = [
 ];
 
 export const SHARED = [
+  {
+    key: "normalizeHopMassPool",
+    owners: ["hop"],
+    reason: "the hop card re-normalizes the one-pool mass shares after an edit; the rule lives with the authoring normalizers",
+  },
   {
     key: "gristTableConfig",
     owners: ["malt", "traceMalts"],

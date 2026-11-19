@@ -23,6 +23,12 @@
   "batch.boil_hops.hop_id": {
     "label": "Hop ID"
   },
+  "batch.boil_hops.mass_parts": {
+    "label": "Share"
+  },
+  "batch.boil_hops.mass_pct": {
+    "label": "Mass share"
+  },
   "batch.boil_hops.name": {
     "label": "Hop"
   },
@@ -138,6 +144,14 @@
   },
   "batch.hlt_starting_volume_l": {
     "label": "HLT starting volume"
+  },
+  "batch.hop_allocation_mode": {
+    "label": "Hop allocation",
+    "hint": "Split the IBU target into a boil and a whirlpool pool, or author one pool where each charge's share is a proportion of the hot-side mass.",
+    "optionLabels": {
+      "ibu_split": "Two pools (boil / whirlpool)",
+      "mass_pool": "One pool (kettle + whirlpool)"
+    }
   },
   "batch.late_addition_intent": {
     "label": "Late addition mode",
@@ -266,6 +280,12 @@
   },
   "batch.whirlpool_hops.initial_temp_c": {
     "label": "Temp"
+  },
+  "batch.whirlpool_hops.mass_parts": {
+    "label": "Share"
+  },
+  "batch.whirlpool_hops.mass_pct": {
+    "label": "Mass share"
   },
   "batch.whirlpool_hops.name": {
     "label": "Hop"

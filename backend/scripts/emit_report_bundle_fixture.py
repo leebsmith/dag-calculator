@@ -301,10 +301,15 @@ RECORD = {
         "batch.whirlpool_ibu_fraction": 0.25,
         "batch.whirlpool_target_ibu": 10.0,
         "batch.boil_target_ibu": 30.0,
+        "batch.hop_allocation_mode": "ibu_split",
         "batch.boil_ibu_share": 0.75,
         "batch.whirlpool_ibu_share": 0.25,
         "batch.whirlpool_hot_ibu_share": 0.70,
         "batch.whirlpool_cool_ibu_share": 0.30,
+        "batch.hop_boil_mass_share": 0.3141,
+        "batch.hop_hot_mass_share": 0.4801,
+        "batch.hop_cool_mass_share": 0.2058,
+        "batch.hop_realized_ibu": 40.0,
         "batch.whirlpool_ambient_temp_c": 20.0,
         "batch.whirlpool_cooling_time_constant_min": 108.7,
         # The volume-ledger rows reconcile: (V_post 22.4 + late 0.5) * 0.96
@@ -416,6 +421,10 @@ RECORD = {
             "total_mass_kg": 0.0729,
             "whirlpool_hot_ibu": 7.0,
             "whirlpool_cool_ibu": 3.0,
+            "boil_ibu": 30.0,
+            "whirlpool_hot_mass_kg": 0.035,
+            "whirlpool_cool_mass_kg": 0.015,
+            "mass_scale": 1.0,
         },
     },
 }
@@ -1070,6 +1079,52 @@ PAYLOAD = FreezePayload(
             "batch.whirlpool_cooling_time_constant_min": NodePresentation(
                 label="Cooling time constant", dimension="time", unit="min", symbol="min", decimals=1
             ),
+            "batch.hop_allocation_mode": NodePresentation(
+                label="Hop allocation",
+                options=["ibu_split", "mass_pool"],
+                option_labels={
+                    "ibu_split": "Two pools (boil / whirlpool)",
+                    "mass_pool": "One pool (kettle + whirlpool)",
+                },
+            ),
+            "batch.hop_boil_mass_share": NodePresentation(
+                label="Boil mass share", dimension="percentage", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.hop_hot_mass_share": NodePresentation(
+                label="Hot whirlpool mass share",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "batch.hop_cool_mass_share": NodePresentation(
+                label="Cool whirlpool mass share",
+                dimension="percentage",
+                unit="pct",
+                symbol="%",
+                decimals=1,
+            ),
+            "batch.hop_realized_ibu": NodePresentation(
+                label="Realized hop IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
+            ),
+            "solver.hops.boil_ibu": NodePresentation(
+                label="Boil realized IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
+            ),
+            "solver.hops.whirlpool_hot_mass_kg": NodePresentation(
+                label="Hot whirlpool hop mass",
+                dimension="mass",
+                unit="g",
+                symbol="g",
+                decimals=1,
+            ),
+            "solver.hops.whirlpool_cool_mass_kg": NodePresentation(
+                label="Cool whirlpool hop mass",
+                dimension="mass",
+                unit="g",
+                symbol="g",
+                decimals=1,
+            ),
+            "solver.hops.mass_scale": NodePresentation(label="Pooled mass scale"),
             "batch.boil_ibu_share": NodePresentation(
                 label="Boil IBU share", dimension="percentage", unit="pct", symbol="%", decimals=1
             ),

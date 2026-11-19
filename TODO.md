@@ -38,12 +38,12 @@ tracks only what is outstanding.
   It lands as a *batch source* (a draft batch straight into the editor), not as an
   import document, so it never enters the ledger. See `plans/recipe-language.md`.
 
-* **Hop allocation modes (next, planned)** — a second authoring mode beside the
+* **Hop allocation modes (shipped)** — a second authoring mode beside the
   two-pool IBU split: one kettle-and-whirlpool pool where the row shares are mass
   proportions and a single IBU target scales the bill, so a split authored
-  elsewhere lands on this kettle's grams. The existing split stays and stays the
-  default, and no stored batch migrates. Both the control and the stage strip are
-  specified in `plans/hop-allocation-modes.md`.
+  elsewhere lands on this kettle's grams. The existing split stays the default and
+  no stored batch migrates. The card strip and the report table ship with it;
+  `plans/hop-allocation-modes.md` carries the decisions.
 
 * **Sensory pairing and substitution (out of scope in-app)** — the chemometrics
   belong to an external notebook: this repo carries no β-pinene, limonene,

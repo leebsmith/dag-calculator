@@ -131,6 +131,7 @@ const HOP_VALUES = {
   "batch.whirlpool_cooling_time_constant_min": 108.7,
   "batch.whirlpool_knockout_min": 30.0,
   "batch.whirlpool_start_temp_c": 99.0,
+  "batch.hop_allocation_mode": "ibu_split",
 };
 
 const HOP_BOIL_ROWS = [

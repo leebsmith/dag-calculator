@@ -95,6 +95,7 @@ function targetActions({ engine, getView }) {
       view.whirlpoolFraction = engine.get(N.targets.whirlpoolFraction);
       view.boilIbu = engine.get(N.targets.boilIbu);
       view.whirlpoolIbu = engine.get(N.targets.whirlpoolIbu);
+      view.hopAllocationTarget = engine.get(N.targets.hopAllocationMode);
     },
 
     setTargetSrm(value) {
@@ -259,6 +260,7 @@ export function createStyleTargets(ctx) {
     whirlpoolFraction: 0,
     boilIbu: 30,
     whirlpoolIbu: 0,
+    hopAllocationTarget: "ibu_split",
     ...pinActions(ctx),
     ...targetActions(ctx),
   };
@@ -311,6 +313,7 @@ export const KEYS = [
   "setTargetSrm",
   "setTargetIbu",
   "setWhirlpoolFraction",
+  "hopAllocationTarget",
   "scalePinOptions",
   "styleSrmBounds",
   "styleIbuBounds",

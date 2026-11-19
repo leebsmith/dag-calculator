@@ -41,6 +41,7 @@ def _to_input(req: HopSolverRequest) -> HopSolverInput:
                 pct=row.pct,
                 product_form=row.product_form.value,
                 cone_utilization=row.cone_utilization,
+                mass_pct=row.mass_pct,
             )
             for row in req.boil_hops
         ],
@@ -52,6 +53,7 @@ def _to_input(req: HopSolverRequest) -> HopSolverInput:
                 pct=row.pct,
                 product_form=row.product_form.value,
                 cone_utilization=row.cone_utilization,
+                mass_pct=row.mass_pct,
             )
             for row in req.whirlpool_hops
         ],
@@ -65,6 +67,7 @@ def _to_input(req: HopSolverRequest) -> HopSolverInput:
         whirlpool_cooling_time_constant_min=req.whirlpool_cooling_time_constant_min,
         whirlpool_knockout_min=req.whirlpool_knockout_min,
         whirlpool_start_temp_c=req.whirlpool_start_temp_c,
+        allocation_mode=req.allocation_mode.value,
     )
 
 
@@ -108,6 +111,10 @@ def _to_response(result: HopSolverResult) -> HopSolverResponse:
         whirlpool_alpha_mass_kg=result.whirlpool_alpha_mass_kg,
         whirlpool_hot_ibu=result.whirlpool_hot_ibu,
         whirlpool_cool_ibu=result.whirlpool_cool_ibu,
+        boil_ibu=result.boil_ibu,
+        whirlpool_hot_mass_kg=result.whirlpool_hot_mass_kg,
+        whirlpool_cool_mass_kg=result.whirlpool_cool_mass_kg,
+        mass_scale=result.mass_scale,
     )
 
 

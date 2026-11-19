@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:fee7d4f5633bf68cad78f451f22b7d27a96fe5127140011ff297e30d215a51a6",
+    "hash": "sha256:fbf8c811104ef4374f9e068d1d954ae799c99f8f175f0ea1ffcda341518ba1ef",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -523,6 +523,10 @@
           "boil",
           "whirlpool",
           "fermentation"
+        ],
+        "hop_allocation_mode": [
+          "ibu_split",
+          "mass_pool"
         ],
         "hop_application_event": [
           "pitch",
@@ -1204,6 +1208,15 @@
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
+          "mass_parts": {
+            "dimension": "dimensionless",
+            "default": null,
+            "domain": "$value >= 0"
+          },
+          "mass_pct": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
           "alpha_provenance": {},
           "boil_time_fraction": {
             "dimension": "percentage",
@@ -1249,6 +1262,15 @@
             "domain": "$value >= 0 && $value <= 1"
           },
           "geraniol_pct_of_oil": {
+            "dimension": "percentage",
+            "domain": "$value >= 0 && $value <= 1"
+          },
+          "mass_parts": {
+            "dimension": "dimensionless",
+            "default": null,
+            "domain": "$value >= 0"
+          },
+          "mass_pct": {
             "dimension": "percentage",
             "domain": "$value >= 0 && $value <= 1"
           },
@@ -1572,6 +1594,11 @@
           "dimension": "percentage",
           "default": "0",
           "domain": "$value >= 0 && $value <= 1"
+        },
+        "batch.hop_allocation_mode": {
+          "kind": "choice",
+          "taxonomy": "hop_allocation_mode",
+          "default": "\"ibu_split\""
         },
         "batch.whirlpool_ambient_temp_c": {
           "kind": "root",
@@ -2278,8 +2305,8 @@
         "batch.boil_ibu_share": {
           "kind": "derived",
           "inputs": {
-            "boil": "batch.boil_target_ibu",
-            "total": "batch.target_ibu"
+            "boil": "solver.hops.boil_ibu",
+            "total": "batch.hop_realized_ibu"
           },
           "expr": "((total > 0) ? (boil / total) : 0)",
           "output": {
@@ -2289,10 +2316,11 @@
         "batch.whirlpool_ibu_share": {
           "kind": "derived",
           "inputs": {
-            "whirlpool": "batch.whirlpool_target_ibu",
-            "total": "batch.target_ibu"
+            "hot": "solver.hops.whirlpool_hot_ibu",
+            "cool": "solver.hops.whirlpool_cool_ibu",
+            "total": "batch.hop_realized_ibu"
           },
-          "expr": "((total > 0) ? (whirlpool / total) : 0)",
+          "expr": "((total > 0) ? ((hot + cool) / total) : 0)",
           "output": {
             "dimension": "percentage"
           }
@@ -2301,9 +2329,9 @@
           "kind": "derived",
           "inputs": {
             "hot": "solver.hops.whirlpool_hot_ibu",
-            "whirlpool": "batch.whirlpool_target_ibu"
+            "cool": "solver.hops.whirlpool_cool_ibu"
           },
-          "expr": "((whirlpool > 0) ? (hot / whirlpool) : 0)",
+          "expr": "(((hot + cool) > 0) ? (hot / (hot + cool)) : 0)",
           "output": {
             "dimension": "percentage"
           }
@@ -2311,12 +2339,57 @@
         "batch.whirlpool_cool_ibu_share": {
           "kind": "derived",
           "inputs": {
-            "cool": "solver.hops.whirlpool_cool_ibu",
-            "whirlpool": "batch.whirlpool_target_ibu"
+            "hot": "solver.hops.whirlpool_hot_ibu",
+            "cool": "solver.hops.whirlpool_cool_ibu"
           },
-          "expr": "((whirlpool > 0) ? (cool / whirlpool) : 0)",
+          "expr": "(((hot + cool) > 0) ? (cool / (hot + cool)) : 0)",
           "output": {
             "dimension": "percentage"
+          }
+        },
+        "batch.hop_boil_mass_share": {
+          "kind": "derived",
+          "inputs": {
+            "boil": "solver.hops.boil_mass_kg",
+            "total": "solver.hops.total_mass_kg"
+          },
+          "expr": "((total > 0) ? (boil / total) : 0)",
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.hop_hot_mass_share": {
+          "kind": "derived",
+          "inputs": {
+            "hot": "solver.hops.whirlpool_hot_mass_kg",
+            "total": "solver.hops.total_mass_kg"
+          },
+          "expr": "((total > 0) ? (hot / total) : 0)",
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.hop_cool_mass_share": {
+          "kind": "derived",
+          "inputs": {
+            "cool": "solver.hops.whirlpool_cool_mass_kg",
+            "total": "solver.hops.total_mass_kg"
+          },
+          "expr": "((total > 0) ? (cool / total) : 0)",
+          "output": {
+            "dimension": "percentage"
+          }
+        },
+        "batch.hop_realized_ibu": {
+          "kind": "derived",
+          "inputs": {
+            "boil": "solver.hops.boil_ibu",
+            "hot": "solver.hops.whirlpool_hot_ibu",
+            "cool": "solver.hops.whirlpool_cool_ibu"
+          },
+          "expr": "(boil + hot + cool)",
+          "output": {
+            "dimension": "ibu"
           }
         },
         "batch.total_water_used": {
@@ -2551,6 +2624,7 @@
           "inputs": {
             "boil_hops": "batch.boil_hops",
             "whirlpool_hops": "batch.whirlpool_hops",
+            "hop_allocation_mode": "batch.hop_allocation_mode",
             "boil_target_ibu": "batch.boil_target_ibu",
             "whirlpool_target_ibu": "batch.whirlpool_target_ibu",
             "boil_time_min": "batch.boil_time_min",
@@ -2585,6 +2659,15 @@
             "whirlpool_mass_kg": {
               "dimension": "mass"
             },
+            "whirlpool_hot_mass_kg": {
+              "dimension": "mass"
+            },
+            "whirlpool_cool_mass_kg": {
+              "dimension": "mass"
+            },
+            "mass_scale": {
+              "dimension": "dimensionless"
+            },
             "total_mass_kg": {
               "dimension": "mass"
             },
@@ -2598,6 +2681,9 @@
               "dimension": "ibu"
             },
             "whirlpool_cool_ibu": {
+              "dimension": "ibu"
+            },
+            "boil_ibu": {
               "dimension": "ibu"
             }
           },
@@ -5004,6 +5090,102 @@
         "options": null,
         "option_labels": null
       },
+      "batch.hop_allocation_mode": {
+        "label": "Hop allocation",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "ibu_split",
+          "mass_pool"
+        ],
+        "option_labels": {
+          "ibu_split": "Two pools (boil / whirlpool)",
+          "mass_pool": "One pool (kettle + whirlpool)"
+        }
+      },
+      "batch.hop_boil_mass_share": {
+        "label": "Boil mass share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.hop_hot_mass_share": {
+        "label": "Hot whirlpool mass share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.hop_cool_mass_share": {
+        "label": "Cool whirlpool mass share",
+        "dimension": "percentage",
+        "unit": "pct",
+        "symbol": "%",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.hop_realized_ibu": {
+        "label": "Realized hop IBU",
+        "dimension": "ibu",
+        "unit": "IBU",
+        "symbol": "IBU",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.boil_ibu": {
+        "label": "Boil realized IBU",
+        "dimension": "ibu",
+        "unit": "IBU",
+        "symbol": "IBU",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.whirlpool_hot_mass_kg": {
+        "label": "Hot whirlpool hop mass",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.whirlpool_cool_mass_kg": {
+        "label": "Cool whirlpool hop mass",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.mass_scale": {
+        "label": "Pooled mass scale",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "batch.boil_ibu_share": {
         "label": "Boil IBU share",
         "dimension": "percentage",
@@ -5625,7 +5807,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:888936888430784b4a0c2e8ece26adddb5dee8629385c63ab743f019da89b7f4"
+    "hash": "sha256:ca80691a6611e70d0bb00d80d61cd0ac6d1640e5be6cbefe72abb120928ebe11"
   },
   "batch": {
     "id": "frozen-1",
@@ -5811,10 +5993,15 @@
       "batch.whirlpool_ibu_fraction": 0.25,
       "batch.whirlpool_target_ibu": 10.0,
       "batch.boil_target_ibu": 30.0,
+      "batch.hop_allocation_mode": "ibu_split",
       "batch.boil_ibu_share": 0.75,
       "batch.whirlpool_ibu_share": 0.25,
       "batch.whirlpool_hot_ibu_share": 0.7,
       "batch.whirlpool_cool_ibu_share": 0.3,
+      "batch.hop_boil_mass_share": 0.3141,
+      "batch.hop_hot_mass_share": 0.4801,
+      "batch.hop_cool_mass_share": 0.2058,
+      "batch.hop_realized_ibu": 40.0,
       "batch.whirlpool_ambient_temp_c": 20.0,
       "batch.whirlpool_cooling_time_constant_min": 108.7,
       "solver.batch": {
@@ -5941,7 +6128,11 @@
         "whirlpool_mass_kg": 0.05,
         "total_mass_kg": 0.0729,
         "whirlpool_hot_ibu": 7.0,
-        "whirlpool_cool_ibu": 3.0
+        "whirlpool_cool_ibu": 3.0,
+        "boil_ibu": 30.0,
+        "whirlpool_hot_mass_kg": 0.035,
+        "whirlpool_cool_mass_kg": 0.015,
+        "mass_scale": 1.0
       }
     },
     "roots": {
@@ -8246,5 +8437,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:ab56756efab6164dbb845897a70242a2a94a43adda21d3883a79e1ce4a546460"
+  "content_hash": "sha256:bbd1ebac540cfbac3b2efa7d3e687f2091b6a8bf554d58a3149eff35d576e2f0"
 }
