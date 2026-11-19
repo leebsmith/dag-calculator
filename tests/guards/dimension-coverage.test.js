@@ -9,6 +9,7 @@ import { artifact } from "./util.js";
 const INTENTIONAL_UNCHECKED = [
   "batch.attenuation_above_cap",
   "batch.boil_ibu_share",
+  "batch.bract_shortfall_kg",
   "batch.delta_v_evap",
   "batch.hop_boil_mass_share",
   "batch.hop_cool_mass_share",

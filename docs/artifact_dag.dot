@@ -3,7 +3,7 @@ digraph artifact {
   graph [rankdir="LR", splines="true", overlap="false", nodesep="0.35", ranksep="0.9", fontname="Helvetica", fontsize="14", bgcolor="white", compound="true"];
   node [fontname="Helvetica", fontsize="9", margin="0.08,0.04"];
   edge [fontname="Helvetica", fontsize="8", arrowsize="0.7", color="#546e7a"];
-  label="Brewing calculator artifact (schema 12): 128 nodes, 8 relations";
+  label="Brewing calculator artifact (schema 12): 131 nodes, 8 relations";
   labelloc="t";
   labeljust="l";
   subgraph "cluster_batch" {
@@ -18,6 +18,9 @@ digraph artifact {
     "batch.boil_off_rate_l_per_hr" [id="batch.boil_off_rate_l_per_hr", label="boil_off_rate_l_per_hr", tooltip="batch.boil_off_rate_l_per_hr", shape="box", style="rounded,filled", fillcolor="#e3f2fd", color="#1565c0"];
     "batch.boil_target_ibu" [id="batch.boil_target_ibu", label="boil_target_ibu", tooltip="batch.boil_target_ibu", shape="ellipse", style="filled", fillcolor="#ffffff", color="#424242"];
     "batch.boil_time_min" [id="batch.boil_time_min", label="boil_time_min", tooltip="batch.boil_time_min", shape="box", style="rounded,filled", fillcolor="#e3f2fd", color="#1565c0"];
+    "batch.bract_floor_kg" [id="batch.bract_floor_kg", label="bract_floor_kg", tooltip="batch.bract_floor_kg", shape="ellipse", style="filled", fillcolor="#ffffff", color="#424242"];
+    "batch.bract_floor_ratio" [id="batch.bract_floor_ratio", label="bract_floor_ratio", tooltip="batch.bract_floor_ratio", shape="box", style="rounded,filled", fillcolor="#e3f2fd", color="#1565c0"];
+    "batch.bract_shortfall_kg" [id="batch.bract_shortfall_kg", label="bract_shortfall_kg", tooltip="batch.bract_shortfall_kg", shape="ellipse", style="filled", fillcolor="#ffffff", color="#424242"];
     "batch.brew_checklist" [id="batch.brew_checklist", label="brew_checklist", tooltip="batch.brew_checklist", shape="box3d", style="filled", fillcolor="#f3e5f5", color="#6a1b9a"];
     "batch.checklist_level" [id="batch.checklist_level", label="checklist_level", tooltip="batch.checklist_level", shape="box", style="rounded,filled", fillcolor="#e1f5fe", color="#0277bd"];
     "batch.conversion_efficiency" [id="batch.conversion_efficiency", label="conversion_efficiency", tooltip="batch.conversion_efficiency", shape="box", style="rounded,filled", fillcolor="#e3f2fd", color="#1565c0"];
@@ -194,6 +197,8 @@ digraph artifact {
   "batch.boil_target_ibu" -> "solver.hops" [color="#546e7a", penwidth=1.0];
   "batch.boil_time_min" -> "batch.delta_v_evap" [color="#546e7a", penwidth=1.0];
   "batch.boil_time_min" -> "solver.hops" [color="#546e7a", penwidth=1.0];
+  "batch.bract_floor_kg" -> "batch.bract_shortfall_kg" [color="#546e7a", penwidth=1.0];
+  "batch.bract_floor_ratio" -> "batch.bract_floor_kg" [color="#546e7a", penwidth=1.0];
   "batch.conversion_efficiency" -> "solver.batch" [color="#546e7a", penwidth=1.0];
   "batch.delta_v_evap" -> "solver.batch" [color="#546e7a", penwidth=1.0];
   "batch.extract_loss_retention" -> "batch.extract_loss_mash" [color="#546e7a", penwidth=1.0];
@@ -334,6 +339,8 @@ digraph artifact {
   "solver.batch" -> "water.kettle_blend.sodium_na" [color="#546e7a", penwidth=1.0];
   "solver.batch" -> "water.kettle_blend.sulfate_so4" [color="#546e7a", penwidth=1.0];
   "solver.hops" -> "batch.boil_ibu_share" [color="#546e7a", penwidth=1.0];
+  "solver.hops" -> "batch.bract_floor_kg" [color="#546e7a", penwidth=1.0];
+  "solver.hops" -> "batch.bract_shortfall_kg" [color="#546e7a", penwidth=1.0];
   "solver.hops" -> "batch.hop_boil_mass_share" [color="#546e7a", penwidth=1.0];
   "solver.hops" -> "batch.hop_cool_mass_share" [color="#546e7a", penwidth=1.0];
   "solver.hops" -> "batch.hop_hot_mass_share" [color="#546e7a", penwidth=1.0];

@@ -310,6 +310,9 @@ RECORD = {
         "batch.hop_hot_mass_share": 0.4801,
         "batch.hop_cool_mass_share": 0.2058,
         "batch.hop_realized_ibu": 40.0,
+        "batch.bract_floor_ratio": 0.625,
+        "batch.bract_floor_kg": 0.0125,
+        "batch.bract_shortfall_kg": 0.0,
         "batch.whirlpool_ambient_temp_c": 20.0,
         "batch.whirlpool_cooling_time_constant_min": 108.7,
         # The volume-ledger rows reconcile: (V_post 22.4 + late 0.5) * 0.96
@@ -424,6 +427,8 @@ RECORD = {
             "boil_ibu": 30.0,
             "whirlpool_hot_mass_kg": 0.035,
             "whirlpool_cool_mass_kg": 0.015,
+            "bract_mass_kg": 0.045,
+            "lupulin_mass_kg": 0.020,
             "mass_scale": 1.0,
         },
     },
@@ -1036,6 +1041,12 @@ PAYLOAD = FreezePayload(
             "solver.hops.total_mass_kg": NodePresentation(
                 label="Total hop mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
+            "solver.hops.bract_mass_kg": NodePresentation(
+                label="Bract hop mass", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "solver.hops.lupulin_mass_kg": NodePresentation(
+                label="Lupulin hop mass", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
             "solver.hops.boil_mass_kg": NodePresentation(
                 label="Boil hop mass", dimension="mass", unit="g", symbol="g", decimals=1
             ),
@@ -1106,6 +1117,15 @@ PAYLOAD = FreezePayload(
             ),
             "batch.hop_realized_ibu": NodePresentation(
                 label="Realized hop IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
+            ),
+            "batch.bract_floor_ratio": NodePresentation(
+                label="Bract floor ratio", dimension="dimensionless"
+            ),
+            "batch.bract_floor_kg": NodePresentation(
+                label="Bract floor", dimension="mass", unit="g", symbol="g", decimals=1
+            ),
+            "batch.bract_shortfall_kg": NodePresentation(
+                label="Bract shortfall", dimension="mass", unit="g", symbol="g", decimals=1
             ),
             "solver.hops.boil_ibu": NodePresentation(
                 label="Boil realized IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
@@ -1480,6 +1500,11 @@ PAYLOAD = FreezePayload(
             text="4.7 g", number="4.7", unit="g"
         ),
         "solver.hops.total_mass_kg": FormattedValue(text="72.9 g", number="72.9", unit="g"),
+        "solver.hops.bract_mass_kg": FormattedValue(text="45.0 g", number="45.0", unit="g"),
+        "solver.hops.lupulin_mass_kg": FormattedValue(text="20.0 g", number="20.0", unit="g"),
+        "batch.bract_floor_ratio": FormattedValue(text="0.625", number="0.625"),
+        "batch.bract_floor_kg": FormattedValue(text="12.5 g", number="12.5", unit="g"),
+        "batch.bract_shortfall_kg": FormattedValue(text="0.0 g", number="0.0", unit="g"),
         "solver.hops.whirlpool_hot_ibu": FormattedValue(text="7.0 IBU", number="7.0", unit="IBU"),
         "solver.hops.whirlpool_cool_ibu": FormattedValue(text="3.0 IBU", number="3.0", unit="IBU"),
         "grist.finished_beer_srm": FormattedValue(text="6.0 SRM", number="6.0", unit="SRM"),

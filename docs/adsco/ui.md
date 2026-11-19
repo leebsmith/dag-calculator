@@ -286,6 +286,16 @@ target. Switching back restores the untouched `parts`. Nothing migrates: the
 default is the two-pool mode, and a batch is only re-expressed when someone
 chooses the other.
 
+### Bract floor
+
+The hops card shows a **hot-side bract** line whenever the bill carries lupulin:
+bract mass, lupulin mass, the floor and the ratio. The line is muted while the
+floor holds and warning-styled when it is short; a shortfall names the T-90 to
+add and the lupulin that would have to be converted instead. It is advisory and
+never rewrites the bill. A bill with no lupulin shows nothing. The ratio
+`batch.bract_floor_ratio` is a YCH benchmark held in the model, not a card
+control; the report prints the same composition in its overall-hops block.
+
 ### Fermentation space (Style card)
 
 The Style card plots the batch in the extract plane: `x = OE`, `y = AE`. The

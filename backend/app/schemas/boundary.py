@@ -375,6 +375,8 @@ class HopSolverResponse(BoundaryModel):
     boil_ibu: Annotated[float, Field(ge=0.0)] = 0.0
     whirlpool_hot_mass_kg: float = 0.0
     whirlpool_cool_mass_kg: float = 0.0
+    bract_mass_kg: float = 0.0
+    lupulin_mass_kg: float = 0.0
     mass_scale: float = 1.0
 
 

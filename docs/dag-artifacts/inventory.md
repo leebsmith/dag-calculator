@@ -185,6 +185,9 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.boil_off_rate_l_per_hr` | root |
 | `batch.boil_target_ibu` | derived |
 | `batch.boil_time_min` | root |
+| `batch.bract_floor_kg` | derived |
+| `batch.bract_floor_ratio` | root |
+| `batch.bract_shortfall_kg` | derived |
 | `batch.brew_checklist` | collection |
 | `batch.checklist_level` | choice |
 | `batch.conversion_efficiency` | root |

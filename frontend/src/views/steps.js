@@ -289,6 +289,8 @@ export const steps = [
       "batch.hop_hot_mass_share",
       "batch.hop_cool_mass_share",
       "batch.hop_realized_ibu",
+      "batch.bract_floor_kg",
+      "batch.bract_shortfall_kg",
       "batch.boil_target_ibu",
       "batch.whirlpool_target_ibu",
       "batch.whirlpool_knockout_min",

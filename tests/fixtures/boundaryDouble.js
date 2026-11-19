@@ -27,11 +27,23 @@ function sumOf(rows, key) {
   return rows.reduce((sum, row) => sum + row[key], 0);
 }
 
+function compositionMass(inputs) {
+  let bract = 0;
+  let lupulin = 0;
+  for (const row of [...(inputs.boil_hops ?? []), ...(inputs.whirlpool_hops ?? [])]) {
+    const form = row.product_form ?? "t90_pellet";
+    if (form === "lupulin_pellet") lupulin += 0.012;
+    else if (form === "t90_pellet" || form === "whole_cone") bract += 0.012;
+  }
+  return { bract, lupulin };
+}
+
 function hopOutputs(inputs = {}) {
   const boilRows = (inputs.boil_hops ?? []).map((row) => boilRow(row, inputs));
   const whirlpoolRows = (inputs.whirlpool_hops ?? []).map((row) => whirlpoolRow(row, inputs));
   const boiler = sumOf(boilRows, "mass_kg");
   const whirlpool = sumOf(whirlpoolRows, "mass_kg");
+  const { bract, lupulin } = compositionMass(inputs);
   return {
     boil_rows: boilRows,
     whirlpool_rows: whirlpoolRows,
@@ -53,6 +65,8 @@ function hopOutputs(inputs = {}) {
     boil_ibu: 0,
     whirlpool_hot_mass_kg: 0,
     whirlpool_cool_mass_kg: 0,
+    bract_mass_kg: bract,
+    lupulin_mass_kg: lupulin,
     mass_scale: 1,
   };
 }

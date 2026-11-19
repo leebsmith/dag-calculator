@@ -2,6 +2,7 @@
 // roll-up. Every figure is the bundle's frozen display string; this section only
 // arranges them.
 
+#import "../lib/bundle.typ": state
 #import "../lib/format.typ": cell-text, formatted-summary, formatted-table, formatted-text, present-formatted, present-formatted-table
 #import "../lib/prose.typ": prose-cell
 
@@ -215,5 +216,23 @@
     ]
     v(2pt)
     note[The totals cover the boil and the whirlpool; dry hops are excluded.]
+    let bract-floor = state.valuation.at("batch.bract_floor_kg", default: none)
+    if bract-floor != none {
+      if bract-floor > 0 {
+        v(4pt)
+        heading(level: 3)[Bract Floor]
+        note[
+          Hot-side bract #text-or("solver.hops.bract_mass_kg"), lupulin #text-or("solver.hops.lupulin_mass_kg"), floor #text-or("batch.bract_floor_kg") (#text-or("batch.bract_floor_ratio") × lupulin; YCH benchmark).
+        ]
+        let shortfall = state.valuation.at("batch.bract_shortfall_kg", default: none)
+        if shortfall != none {
+          if shortfall > 0 {
+            note[
+              Short #text-or("batch.bract_shortfall_kg"). Add T-90, or convert lupulin to T-90; the authored bill is unchanged.
+            ]
+          }
+        }
+      }
+    }
   })
 }

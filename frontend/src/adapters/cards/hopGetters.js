@@ -4,6 +4,7 @@
 import artifact from "../../engine/artifact.json" with { type: "json" };
 import { HOP_NODES as N } from "../../views/registry/hops.js";
 import { hopSectionMetaDescriptors } from "../../views/producer/hopSections.js";
+import { bractFloorLine, bractFloorShort } from "../../views/producer/hopBract.js";
 import {
   HOP_MASS_KEY,
   boilPolicyDescriptors,
@@ -176,6 +177,26 @@ export function policyDescriptors({ cache, engine, formatTemp, formatMass, getVi
       alphaMassKg: () => getView().boilHopAlphaMassKg,
       constants: artifact?.constants ?? {},
     }),
+    hopBractFloorLine: {
+      configurable: true,
+      get() {
+        return bractFloorLine({
+          bractKg: resolveOrNull(engine, N.bractMass, reportError),
+          lupulinKg: resolveOrNull(engine, N.lupulinMass, reportError),
+          floorKg: resolveOrNull(engine, N.bractFloor, reportError),
+          shortfallKg: resolveOrNull(engine, N.bractShortfall, reportError),
+          ratio: resolveOrNull(engine, N.bractFloorRatio, reportError),
+          unit: getView().hopMassUnit,
+          formatMass,
+        });
+      },
+    },
+    hopBractFloorShort: {
+      configurable: true,
+      get() {
+        return bractFloorShort(resolveOrNull(engine, N.bractShortfall, reportError));
+      },
+    },
     ...whirlpoolTimelineDescriptors({
       formatTemp,
       formatNumber: formatWithDecimals,

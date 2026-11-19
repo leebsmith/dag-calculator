@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:fbf8c811104ef4374f9e068d1d954ae799c99f8f175f0ea1ffcda341518ba1ef",
+    "hash": "sha256:1ab628788445c20298e3c4eb9c15eacb4c0ca9d67964ecffe885b4ba577ec282",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -1600,6 +1600,12 @@
           "taxonomy": "hop_allocation_mode",
           "default": "\"ibu_split\""
         },
+        "batch.bract_floor_ratio": {
+          "kind": "root",
+          "dimension": "dimensionless",
+          "default": "0.625",
+          "domain": "$value >= 0"
+        },
         "batch.whirlpool_ambient_temp_c": {
           "kind": "root",
           "dimension": "temperature",
@@ -2392,6 +2398,28 @@
             "dimension": "ibu"
           }
         },
+        "batch.bract_floor_kg": {
+          "kind": "derived",
+          "inputs": {
+            "ratio": "batch.bract_floor_ratio",
+            "lupulin": "solver.hops.lupulin_mass_kg"
+          },
+          "expr": "(ratio * lupulin)",
+          "output": {
+            "dimension": "mass"
+          }
+        },
+        "batch.bract_shortfall_kg": {
+          "kind": "derived",
+          "inputs": {
+            "bract": "solver.hops.bract_mass_kg",
+            "floor": "batch.bract_floor_kg"
+          },
+          "expr": "((floor > bract) ? (floor - bract) : 0)",
+          "output": {
+            "dimension": "mass"
+          }
+        },
         "batch.total_water_used": {
           "kind": "derived",
           "inputs": {
@@ -2685,6 +2713,12 @@
             },
             "boil_ibu": {
               "dimension": "ibu"
+            },
+            "bract_mass_kg": {
+              "dimension": "mass"
+            },
+            "lupulin_mass_kg": {
+              "dimension": "mass"
             }
           },
           "domain": {
@@ -4960,6 +4994,26 @@
         "options": null,
         "option_labels": null
       },
+      "solver.hops.bract_mass_kg": {
+        "label": "Bract hop mass",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "solver.hops.lupulin_mass_kg": {
+        "label": "Lupulin hop mass",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "solver.hops.boil_mass_kg": {
         "label": "Boil hop mass",
         "dimension": "mass",
@@ -5141,6 +5195,36 @@
         "dimension": "ibu",
         "unit": "IBU",
         "symbol": "IBU",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.bract_floor_ratio": {
+        "label": "Bract floor ratio",
+        "dimension": "dimensionless",
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.bract_floor_kg": {
+        "label": "Bract floor",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "batch.bract_shortfall_kg": {
+        "label": "Bract shortfall",
+        "dimension": "mass",
+        "unit": "g",
+        "symbol": "g",
         "decimals": 1,
         "step": null,
         "options": null,
@@ -5807,7 +5891,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:ca80691a6611e70d0bb00d80d61cd0ac6d1640e5be6cbefe72abb120928ebe11"
+    "hash": "sha256:b9e6d917101399478de2c9df485a5ded8173b18ab5916eb9097b1146bc2653e2"
   },
   "batch": {
     "id": "frozen-1",
@@ -6002,6 +6086,9 @@
       "batch.hop_hot_mass_share": 0.4801,
       "batch.hop_cool_mass_share": 0.2058,
       "batch.hop_realized_ibu": 40.0,
+      "batch.bract_floor_ratio": 0.625,
+      "batch.bract_floor_kg": 0.0125,
+      "batch.bract_shortfall_kg": 0.0,
       "batch.whirlpool_ambient_temp_c": 20.0,
       "batch.whirlpool_cooling_time_constant_min": 108.7,
       "solver.batch": {
@@ -6132,6 +6219,8 @@
         "boil_ibu": 30.0,
         "whirlpool_hot_mass_kg": 0.035,
         "whirlpool_cool_mass_kg": 0.015,
+        "bract_mass_kg": 0.045,
+        "lupulin_mass_kg": 0.02,
         "mass_scale": 1.0
       }
     },
@@ -6979,6 +7068,41 @@
     "solver.hops.total_mass_kg": {
       "text": "72.9 g",
       "number": "72.9",
+      "unit": "g",
+      "base": null,
+      "dimension": null
+    },
+    "solver.hops.bract_mass_kg": {
+      "text": "45.0 g",
+      "number": "45.0",
+      "unit": "g",
+      "base": null,
+      "dimension": null
+    },
+    "solver.hops.lupulin_mass_kg": {
+      "text": "20.0 g",
+      "number": "20.0",
+      "unit": "g",
+      "base": null,
+      "dimension": null
+    },
+    "batch.bract_floor_ratio": {
+      "text": "0.625",
+      "number": "0.625",
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.bract_floor_kg": {
+      "text": "12.5 g",
+      "number": "12.5",
+      "unit": "g",
+      "base": null,
+      "dimension": null
+    },
+    "batch.bract_shortfall_kg": {
+      "text": "0.0 g",
+      "number": "0.0",
       "unit": "g",
       "base": null,
       "dimension": null
@@ -8437,5 +8561,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:bbd1ebac540cfbac3b2efa7d3e687f2091b6a8bf554d58a3149eff35d576e2f0"
+  "content_hash": "sha256:6f47c220213aca0c0e9f46a31e24f718d0840e5d2cf94d2f4600f8bc0661a38a"
 }

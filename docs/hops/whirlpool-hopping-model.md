@@ -388,6 +388,22 @@ about 121 mg/L in the kettle, and 10–20 g/L of dry hops would add roughly
 210–430 mg/L more. A beer that never dry hops — most lagers, and plenty of ales —
 is unaffected by the omission.
 
+**The bract floor.** Lupulin concentration carries oil and alpha but strips the
+vegetative matter, so a bill built entirely from it loses the polyphenol and
+tannin structure. YCH's benchmark for adapting a T-90 recipe keeps 25 g of T-90
+per 40 g of Cryo — a floor of 0.625 g of bract-carrying hop per gram of lupulin,
+held in `batch.bract_floor_ratio` and overridable.
+
+The check is hot-side: bract mass is every T-90 and whole-cone charge there,
+lupulin mass every lupulin charge, and the bill passes when
+`bract ≥ ratio × lupulin`. The boundary exports the two masses as
+`solver.hops.bract_mass_kg` and `solver.hops.lupulin_mass_kg`; the artifact
+derives `batch.bract_floor_kg` and `batch.bract_shortfall_kg` from them. The
+floor is a policy benchmark, so it warns and never blocks or rewrites. The hops
+card shows the composition whenever lupulin is present and turns the line into a
+shortfall warning when the floor is missed; the report prints the same figures
+in its overall-hops block. A bill with no lupulin shows nothing.
+
 **Added, never retained.** Oils volatilise in the boil and adsorb to trub, yeast
 and filter media; nothing in the source set measures the transfer, so the model
 stops at what the charge puts in and says "added". A kettle figure is not a proxy

@@ -213,6 +213,32 @@ def test_the_ibu_splits_render_with_whirlpool_hops(render_once) -> None:
     assert "Hop Allocation" in _pdf_text(rendered.data)
 
 
+def test_the_bract_floor_renders(render_once) -> None:
+    rendered = render_once(bundle(), parse_spec(sections="hops"))
+    assert "Bract Floor" in _pdf_text(rendered.data)
+
+
+def test_the_bract_floor_shortfall_renders() -> None:
+    data = bundle_dict()
+    data["state"]["valuation"]["batch.bract_shortfall_kg"] = 0.0075
+    data["formatted"]["batch.bract_shortfall_kg"] = {
+        "text": "7.5 g",
+        "number": "7.5",
+        "unit": "g",
+    }
+
+    rendered = render(seal_bundle(data), parse_spec(sections="hops"))
+    assert "Short 7.5 g" in _pdf_text(rendered.data)
+
+
+def test_the_bract_floor_hides_without_lupulin() -> None:
+    data = bundle_dict()
+    data["state"]["valuation"]["batch.bract_floor_kg"] = 0.0
+
+    rendered = render(seal_bundle(data), parse_spec(sections="hops"))
+    assert "Bract Floor" not in _pdf_text(rendered.data)
+
+
 def test_the_yeast_section_renders_a_known_pof(render_once) -> None:
     data = bundle_dict()
     data["state"]["valuation"]["batch.yeast"]["pof"] = "positive"

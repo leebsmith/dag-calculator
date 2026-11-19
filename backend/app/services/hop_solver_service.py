@@ -114,6 +114,8 @@ def _to_response(result: HopSolverResult) -> HopSolverResponse:
         boil_ibu=result.boil_ibu,
         whirlpool_hot_mass_kg=result.whirlpool_hot_mass_kg,
         whirlpool_cool_mass_kg=result.whirlpool_cool_mass_kg,
+        bract_mass_kg=result.bract_mass_kg,
+        lupulin_mass_kg=result.lupulin_mass_kg,
         mass_scale=result.mass_scale,
     )
 

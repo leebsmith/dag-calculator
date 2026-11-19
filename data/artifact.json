@@ -1595,6 +1595,12 @@
       "taxonomy": "hop_allocation_mode",
       "default": "\"ibu_split\""
     },
+    "batch.bract_floor_ratio": {
+      "kind": "root",
+      "dimension": "dimensionless",
+      "default": "0.625",
+      "domain": "$value >= 0"
+    },
     "batch.whirlpool_ambient_temp_c": {
       "kind": "root",
       "dimension": "temperature",
@@ -2387,6 +2393,28 @@
         "dimension": "ibu"
       }
     },
+    "batch.bract_floor_kg": {
+      "kind": "derived",
+      "inputs": {
+        "ratio": "batch.bract_floor_ratio",
+        "lupulin": "solver.hops.lupulin_mass_kg"
+      },
+      "expr": "(ratio * lupulin)",
+      "output": {
+        "dimension": "mass"
+      }
+    },
+    "batch.bract_shortfall_kg": {
+      "kind": "derived",
+      "inputs": {
+        "bract": "solver.hops.bract_mass_kg",
+        "floor": "batch.bract_floor_kg"
+      },
+      "expr": "((floor > bract) ? (floor - bract) : 0)",
+      "output": {
+        "dimension": "mass"
+      }
+    },
     "batch.total_water_used": {
       "kind": "derived",
       "inputs": {
@@ -2680,6 +2708,12 @@
         },
         "boil_ibu": {
           "dimension": "ibu"
+        },
+        "bract_mass_kg": {
+          "dimension": "mass"
+        },
+        "lupulin_mass_kg": {
+          "dimension": "mass"
         }
       },
       "domain": {

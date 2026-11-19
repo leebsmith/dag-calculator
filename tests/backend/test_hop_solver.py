@@ -546,6 +546,41 @@ def test_a_mass_share_outside_zero_to_one_is_refused():
     assert "mass_pct" in str(exc.value)
 
 
+def test_bract_and_lupulin_masses_follow_product_form():
+    response = solve_hop_request(
+        make_request(
+            boil_hops=[
+                BoilHopRow(alpha_acid_pct=0.10, boil_time_fraction=1.0, pct=0.25),
+                BoilHopRow(
+                    alpha_acid_pct=0.10,
+                    boil_time_fraction=1.0,
+                    pct=0.25,
+                    product_form=HopProductForm.WHOLE_CONE,
+                    cone_utilization=0.5,
+                ),
+                BoilHopRow(
+                    alpha_acid_pct=0.10,
+                    boil_time_fraction=1.0,
+                    pct=0.25,
+                    product_form=HopProductForm.LUPULIN_PELLET,
+                ),
+                BoilHopRow(
+                    alpha_acid_pct=0.10,
+                    boil_time_fraction=1.0,
+                    pct=0.25,
+                    product_form=HopProductForm.FLOWABLE_EXTRACT,
+                ),
+            ],
+            whirlpool_hops=[],
+            whirlpool_target_ibu=0.0,
+        )
+    )
+    masses = [row.mass_kg for row in response.boil_rows]
+    assert response.bract_mass_kg == pytest.approx(masses[0] + masses[1], rel=1e-12)
+    assert response.lupulin_mass_kg == pytest.approx(masses[2], rel=1e-12)
+    assert response.bract_mass_kg + response.lupulin_mass_kg <= response.total_mass_kg
+
+
 def test_the_split_mode_ignores_mass_shares():
     split = solve_hop_request(make_request())
     with_shares = solve_hop_request(

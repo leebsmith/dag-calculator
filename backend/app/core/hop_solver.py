@@ -30,6 +30,11 @@ PRODUCT_FORM_UTILIZATION: dict[str, float | None] = {
     "whole_cone": None,
 }
 
+# The bract floor is a mass-composition check, not a sensory one: T-90 and whole
+# cone carry the vegetative matter, lupulin concentrate carries none of it.
+BRACT_PRODUCT_FORMS = frozenset({"t90_pellet", "whole_cone"})
+LUPULIN_PRODUCT_FORM = "lupulin_pellet"
+
 SIMPSON_TOLERANCE = 1e-10
 SIMPSON_MAX_DEPTH = 20
 
@@ -157,6 +162,8 @@ class HopSolverResult:
     boil_ibu: float = 0.0
     whirlpool_hot_mass_kg: float = 0.0
     whirlpool_cool_mass_kg: float = 0.0
+    bract_mass_kg: float = 0.0
+    lupulin_mass_kg: float = 0.0
     mass_scale: float = 1.0
 
 
@@ -527,6 +534,28 @@ def _split_mass(
     return total
 
 
+def _composition_masses(
+    inputs: HopSolverInput,
+    boil_rows: Sequence[BoilHopResult],
+    whirlpool_rows: Sequence[WhirlpoolHopResult],
+) -> tuple[float, float]:
+    """Bract-carrying and lupulin hop mass across the solved hot side."""
+    bract = 0.0
+    lupulin = 0.0
+    for charges, results in (
+        (inputs.boil_hops, boil_rows),
+        (inputs.whirlpool_hops, whirlpool_rows),
+    ):
+        for charge, result in zip(charges, results, strict=True):
+            if result.mass_kg is None:
+                continue
+            if charge.product_form in BRACT_PRODUCT_FORMS:
+                bract += result.mass_kg
+            elif charge.product_form == LUPULIN_PRODUCT_FORM:
+                lupulin += result.mass_kg
+    return bract, lupulin
+
+
 def _boil_ibu_per_kg(
     alpha_fraction: float, utilization: float, volume_l: float
 ) -> float | None:
@@ -724,6 +753,7 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
 
     boil_mass = sum(row.mass_kg for row in boil_rows if row.mass_kg is not None)
     whirlpool_mass = sum(row.mass_kg for row in whirlpool_rows if row.mass_kg is not None)
+    bract_mass, lupulin_mass = _composition_masses(inputs, boil_rows, whirlpool_rows)
     return HopSolverResult(
         boil_rows=boil_rows,
         whirlpool_rows=whirlpool_rows,
@@ -750,5 +780,7 @@ def solve_hops(inputs: HopSolverInput) -> HopSolverResult:
         whirlpool_cool_mass_kg=_split_mass(
             inputs.whirlpool_hops, whirlpool_rows, above_hot=False
         ),
+        bract_mass_kg=bract_mass,
+        lupulin_mass_kg=lupulin_mass,
         mass_scale=scale,
     )

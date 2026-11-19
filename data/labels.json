@@ -145,6 +145,18 @@
   "batch.hlt_starting_volume_l": {
     "label": "HLT starting volume"
   },
+  "batch.bract_floor_kg": {
+    "label": "Bract floor",
+    "displayUnit": "g"
+  },
+  "batch.bract_floor_ratio": {
+    "label": "Bract floor ratio",
+    "hint": "YCH's benchmark: grams of bract-carrying hop per gram of lupulin. A policy default, not a physical limit."
+  },
+  "batch.bract_shortfall_kg": {
+    "label": "Bract shortfall",
+    "displayUnit": "g"
+  },
   "batch.hop_allocation_mode": {
     "label": "Hop allocation",
     "hint": "Split the IBU target into a boil and a whirlpool pool, or author one pool where each charge's share is a proportion of the hot-side mass.",
@@ -557,8 +569,16 @@
   "solver.batch.sg_post_boil": {
     "label": "Post-boil gravity"
   },
+  "solver.hops.bract_mass_kg": {
+    "label": "Bract hop mass",
+    "displayUnit": "g"
+  },
   "solver.hops.boil_mass_kg": {
     "label": "Boil hop mass",
+    "displayUnit": "g"
+  },
+  "solver.hops.lupulin_mass_kg": {
+    "label": "Lupulin hop mass",
     "displayUnit": "g"
   },
   "solver.hops.total_mass_kg": {

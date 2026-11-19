@@ -24,7 +24,7 @@ collection field; `identity` is a component field.
 
 ## Batch & grist inputs
 
-_147 paths_
+_150 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -49,6 +49,9 @@ _147 paths_
 | `batch.boil_off_rate_l_per_hr` | Boil-off rate | root | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `batch.boil_target_ibu` | Boil IBU | derived | ibu | IBU | 1 | — |
 | `batch.boil_time_min` | Boil time | root | time | min | 0 | — |
+| `batch.bract_floor_kg` | Bract floor | derived | mass | g | 1 | — |
+| `batch.bract_floor_ratio` | Bract floor ratio | root | dimensionless | — | — | — |
+| `batch.bract_shortfall_kg` | Bract shortfall | derived | mass | g | 1 | — |
 | `batch.brew_checklist` | Brew checklist | collection | — | — | — | — |
 | `batch.brew_checklist.note` | Note | field | — | — | — | — |
 | `batch.brew_checklist.skip_reason` | Skip reason | field | — | — | — | — |
@@ -416,7 +419,7 @@ _40 paths_
 
 ## Solver — hop bitterness
 
-_16 paths_
+_18 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
@@ -425,6 +428,8 @@ _16 paths_
 | `solver.hops.boil_ibu` | Boil IBU | output | ibu | IBU | 1 | — |
 | `solver.hops.boil_mass_kg` | Boil hop mass | output | mass | g | 1 | — |
 | `solver.hops.boil_rows` | Boil Rows | output | — | — | — | — |
+| `solver.hops.bract_mass_kg` | Bract hop mass | output | mass | g | 1 | — |
+| `solver.hops.lupulin_mass_kg` | Lupulin hop mass | output | mass | g | 1 | — |
 | `solver.hops.mass_scale` | Mass Scale | output | dimensionless | — | — | — |
 | `solver.hops.total_mass_kg` | Total hop mass | output | mass | g | 1 | — |
 | `solver.hops.whirlpool_alpha_mass_kg` | Whirlpool Alpha Mass Kg | output | mass | kg | 1 | — |
