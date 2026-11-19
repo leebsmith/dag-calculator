@@ -76,9 +76,13 @@ export function createSetupStore({
     // Alpine re-evaluates them (the reference cache is a plain object).
     revision: 0,
 
+    catalogChanged() {
+      this.revision += 1;
+    },
+
     async refreshAssets() {
       await catalog.refresh();
-      this.revision += 1;
+      this.catalogChanged();
       return catalog.items();
     },
 

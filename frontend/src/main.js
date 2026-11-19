@@ -68,6 +68,7 @@ const appHandle = { current: null };
 function syncReferenceCache() {
   referenceCache.syncLibraryItems(library.items());
   appHandle.current?.refreshReferences();
+  Alpine.store("setup")?.catalogChanged?.();
 }
 
 const persistence = createPersistenceManager({

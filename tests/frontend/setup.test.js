@@ -66,6 +66,27 @@ test("identity() snapshots the chosen quartet", () => {
   assert.equal(identity["water.source"].calcium_ca, 0);
 });
 
+test("a catalogue change bumps the option revision", () => {
+  const cache = createReferenceCache();
+  const store = createSetupStore({ cache, library: createLibrary({}) });
+  const before = store.revision;
+
+  cache.references = {
+    ...cache.references,
+    equipment: {
+      ...cache.references.equipment,
+      "unique-rig": { id: "unique-rig", name: "Unique Rig" },
+    },
+  };
+  store.catalogChanged();
+
+  assert.equal(store.revision, before + 1);
+  assert.equal(
+    store.equipmentOptions().find((option) => option.value === "unique-rig")?.label,
+    "Unique Rig"
+  );
+});
+
 test("canCreate requires a name, a style, a rig, a fermenter, and a water source", () => {
   const store = createSetupStore({});
   store.openModal();
