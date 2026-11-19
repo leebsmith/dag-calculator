@@ -127,6 +127,10 @@ constant by hand clears the id and reads as `Custom`. Deleting the selected
 record leaves the copied roots in place and reads as `Missing curve`; a
 corrected measurement is a new record.
 
+The card shows the active status beneath the cooling settings, and the report
+prints the same label beside the time constant and ambient: a selected curve's
+name, `Default cooling`, `Custom`, or `Missing curve`.
+
 ## 4. Effective boiling-equivalent time
 
 Integrate the relative rate over the cooling curve:

@@ -133,6 +133,10 @@
       oil-note(WHIRLPOOL)
       v(2pt)
       note[
+        Cooling curve: #text-or("batch.cooling_curve_id") · time constant #text-or("batch.whirlpool_cooling_time_constant_min") · ambient #text-or("batch.whirlpool_ambient_temp_c")
+      ]
+      v(2pt)
+      note[
         Additions count from flameout; knockout closes the window from
         #text-or("batch.whirlpool_start_temp_c") at the batch's
         #text-or("batch.whirlpool_cooling_time_constant_min") time constant toward

@@ -5200,6 +5200,16 @@
         "options": null,
         "option_labels": null
       },
+      "batch.cooling_curve_id": {
+        "label": "Cooling curve",
+        "dimension": "reference",
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "batch.bract_floor_ratio": {
         "label": "Bract floor ratio",
         "dimension": "dimensionless",
@@ -5891,7 +5901,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:b9e6d917101399478de2c9df485a5ded8173b18ab5916eb9097b1146bc2653e2"
+    "hash": "sha256:7c1be6bf4c6ebeaa8f487372936246584c5589ee16b33a56404c1700160b4113"
   },
   "batch": {
     "id": "frozen-1",
@@ -6086,6 +6096,7 @@
       "batch.hop_hot_mass_share": 0.4801,
       "batch.hop_cool_mass_share": 0.2058,
       "batch.hop_realized_ibu": 40.0,
+      "batch.cooling_curve_id": "garage-kettle",
       "batch.bract_floor_ratio": 0.625,
       "batch.bract_floor_kg": 0.0125,
       "batch.bract_shortfall_kg": 0.0,
@@ -6971,6 +6982,13 @@
       "text": "40.0 IBU",
       "number": "40.0",
       "unit": "IBU",
+      "base": null,
+      "dimension": null
+    },
+    "batch.cooling_curve_id": {
+      "text": "Garage kettle",
+      "number": null,
+      "unit": null,
       "base": null,
       "dimension": null
     },
@@ -8561,5 +8579,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:6f47c220213aca0c0e9f46a31e24f718d0840e5d2cf94d2f4600f8bc0661a38a"
+  "content_hash": "sha256:04464966001b181b9e79d8fd6dd5ae2806215447833c5feeff414f9215e1a574"
 }

@@ -310,6 +310,7 @@ RECORD = {
         "batch.hop_hot_mass_share": 0.4801,
         "batch.hop_cool_mass_share": 0.2058,
         "batch.hop_realized_ibu": 40.0,
+        "batch.cooling_curve_id": "garage-kettle",
         "batch.bract_floor_ratio": 0.625,
         "batch.bract_floor_kg": 0.0125,
         "batch.bract_shortfall_kg": 0.0,
@@ -1118,6 +1119,9 @@ PAYLOAD = FreezePayload(
             "batch.hop_realized_ibu": NodePresentation(
                 label="Realized hop IBU", dimension="ibu", unit="IBU", symbol="IBU", decimals=1
             ),
+            "batch.cooling_curve_id": NodePresentation(
+                label="Cooling curve", dimension="reference"
+            ),
             "batch.bract_floor_ratio": NodePresentation(
                 label="Bract floor ratio", dimension="dimensionless"
             ),
@@ -1482,6 +1486,7 @@ PAYLOAD = FreezePayload(
         "solver.batch.apparent_attenuation": FormattedValue(text="75.6%", number="75.6", unit="%"),
         "batch.realized_abv": FormattedValue(text="5.6%", number="5.6", unit="%"),
         "batch.target_ibu": FormattedValue(text="40.0 IBU", number="40.0", unit="IBU"),
+        "batch.cooling_curve_id": FormattedValue(text="Garage kettle"),
         "batch.boil_target_ibu": FormattedValue(text="30.0 IBU", number="30.0", unit="IBU"),
         "batch.whirlpool_target_ibu": FormattedValue(text="10.0 IBU", number="10.0", unit="IBU"),
         "batch.whirlpool_ibu_fraction": FormattedValue(text="25.0%", number="25.0", unit="%"),

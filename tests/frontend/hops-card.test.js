@@ -595,6 +595,7 @@ test("cooling curve selection copies only tau and the id", async () => {
   );
   assert.equal(app.master.getRoot("batch.whirlpool_ambient_temp_c"), 25);
   assert.equal(app.coolingCurveStatus, "Garage kettle");
+  assert.equal(app.reportFormatted()["batch.cooling_curve_id"].text, "Garage kettle");
   assert.match(app.coolingCurveSummary, /k 0\.0200\/min/);
   assert.ok(app.coolingCurveWarnings.some((warning) => warning.includes("measured at")));
 });
@@ -607,6 +608,7 @@ test("default cooling resets the time constant and clears the id", async () => {
   assert.equal(app.master.getRoot("batch.cooling_curve_id"), "");
   assert.equal(app.master.getRoot("batch.whirlpool_cooling_time_constant_min"), 108.7);
   assert.equal(app.coolingCurveStatus, "Default cooling");
+  assert.equal(app.reportFormatted()["batch.cooling_curve_id"].text, "Default cooling");
   assert.equal(app.coolingCurveValue, "");
 });
 
@@ -618,6 +620,7 @@ test("a manual time-constant edit clears the id and reads as custom", async () =
   assert.equal(app.master.getRoot("batch.cooling_curve_id"), "");
   assert.equal(app.master.getRoot("batch.whirlpool_cooling_time_constant_min"), 60);
   assert.equal(app.coolingCurveStatus, "Custom");
+  assert.equal(app.reportFormatted()["batch.cooling_curve_id"].text, "Custom");
   assert.equal(app.coolingCurveValue, CUSTOM_COOLING_CURVE);
 });
 
@@ -644,6 +647,7 @@ test("a deleted curve keeps the copied roots and reads as missing", async () => 
     Math.abs(app.master.getRoot("batch.whirlpool_cooling_time_constant_min") - 50) < 1e-6
   );
   assert.equal(app.coolingCurveStatus, "Missing curve");
+  assert.equal(app.reportFormatted()["batch.cooling_curve_id"].text, "Missing curve");
   assert.ok(app.coolingCurveWarnings.some((warning) => warning.includes("Missing curve")));
 });
 

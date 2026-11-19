@@ -213,6 +213,12 @@ def test_the_ibu_splits_render_with_whirlpool_hops(render_once) -> None:
     assert "Hop Allocation" in _pdf_text(rendered.data)
 
 
+def test_the_cooling_curve_provenance_renders(render_once) -> None:
+    text = _pdf_text(render_once(bundle(), parse_spec(sections="hops")).data)
+    assert "Cooling curve" in text
+    assert "Garage kettle" in text
+
+
 def test_the_bract_floor_renders(render_once) -> None:
     rendered = render_once(bundle(), parse_spec(sections="hops"))
     assert "Bract Floor" in _pdf_text(rendered.data)

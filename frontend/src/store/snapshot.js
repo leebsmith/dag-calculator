@@ -4,6 +4,7 @@
 // so its methods never depend on Alpine's `this`.
 
 import { buildReportCatalog } from "../views/registry/catalog.js";
+import { HOP_NODES } from "../views/registry/hops.js";
 import { requireObservability } from "../observability.js";
 import {
   buildReportFormatted,
@@ -97,12 +98,15 @@ export function createSnapshotActions({
   }
 
   function reportFormatted() {
-    return buildReportFormatted(
+    const formatted = buildReportFormatted(
       artifact,
       reportCatalog(),
       session.getEngine(),
       observability.reportError
     );
+    const coolingCurve = getView().coolingCurveStatus;
+    if (coolingCurve) formatted[HOP_NODES.coolingCurveId] = { text: coolingCurve };
+    return formatted;
   }
 
   function reportFormattedTables() {
