@@ -2,7 +2,14 @@
 // target-selector options, and the fixed-precision readouts. The effectful
 // handlers and the engine reads stay in adapters/cards/water.js.
 
-import { fieldOr, formatQuantity, formatValue, formatWithDecimals, joinNonEmpty } from "../utils.js";
+import {
+  fieldOr,
+  formatQuantity,
+  formatValue,
+  formatWithDecimals,
+  joinNonEmpty,
+  provenanceFor,
+} from "../utils.js";
 import { WATER_ION_BY_PIN, heldFromProfile } from "./registry/water.js";
 import { constraintLabel, phLine } from "./waterMessages.js";
 import { registry } from "./registry/index.js";
@@ -223,6 +230,17 @@ export function sourceDetailText(component) {
  *   readonly target: object, readonly floor: object, readonly mashPh: object }} args
  * @returns {object}
  */
+function provenanceOf(field, authored) {
+  const base = provenanceFor(field);
+  if (!authored || base.showSeed) return base;
+  const inherited = Boolean(field?.seededSource);
+  return {
+    ...base,
+    showReset: true,
+    resetTitle: inherited ? base.resetTitle : "Reset to the default value",
+  };
+}
+
 export function waterPlanView({
   sourceTitle,
   sourceDetail,
@@ -231,6 +249,7 @@ export function waterPlanView({
   ceiling,
   floorNotice,
   mashPh,
+  authored = {},
 }) {
   return {
     source: {
@@ -244,6 +263,11 @@ export function waterPlanView({
     ceiling,
     floorNotice,
     mashPh,
+    provenance: {
+      floor: provenanceOf(floor, authored.floor),
+      ceiling: provenanceOf(ceiling, authored.ceiling),
+      mashPh: provenanceOf(mashPh, authored.mashPh),
+    },
   };
 }
 

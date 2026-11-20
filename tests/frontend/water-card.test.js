@@ -170,6 +170,63 @@ test("the calcium band exposes both ends and commits the ceiling", withFreshApp(
   assert.equal(app.engine.get("water.calcium_ceiling_ppm"), 115);
 }));
 
+test("the band shows a seed badge while both ends inherit", withFreshApp((app) => {
+  app.compute();
+
+  for (const bound of ["floor", "ceiling"]) {
+    assert.equal(app.waterPlan.provenance[bound].showSeed, true, bound);
+    assert.equal(app.waterPlan.provenance[bound].showReset, false, bound);
+  }
+  assert.equal(app.waterPlan.provenance.mashPh.showSeed, false);
+  assert.equal(app.waterPlan.provenance.mashPh.showReset, false);
+}));
+
+test("an authored ceiling offers a reset back to the profile", withFreshApp((app) => {
+  app.editWaterNumber("ceiling", app.waterPlan.ceiling, "115");
+  app.commitWaterNumber("ceiling", app.waterPlan.ceiling);
+  app.compute();
+
+  assert.equal(app.waterPlan.provenance.ceiling.showSeed, false);
+  assert.equal(app.waterPlan.provenance.ceiling.showReset, true);
+
+  app.resetWaterField(app.waterPlan.ceiling);
+  app.compute();
+
+  assert.equal(app.engine.hasRoot("water.calcium_ceiling_ppm"), false);
+  assert.equal(app.waterPlan.ceiling.display, "150");
+  assert.equal(app.waterPlan.provenance.ceiling.showSeed, true);
+}));
+
+test("an authored mash pH resets to its constant default", withFreshApp((app) => {
+  app.editWaterNumber("mashph", app.waterPlan.mashPh, "5.2");
+  app.commitWaterNumber("mashph", app.waterPlan.mashPh);
+  app.compute();
+
+  assert.equal(app.waterPlan.provenance.mashPh.showSeed, false);
+  assert.equal(app.waterPlan.provenance.mashPh.showReset, true);
+  assert.equal(app.waterPlan.provenance.mashPh.resetTitle, "Reset to the default value");
+
+  app.resetWaterField(app.waterPlan.mashPh);
+  app.compute();
+
+  assert.equal(app.engine.hasRoot("water.target_mash_ph"), false);
+  assert.equal(app.waterPlan.mashPh.display, "5.4");
+  assert.equal(app.waterPlan.provenance.mashPh.showReset, false);
+}));
+
+test("clearing every objective also clears the calcium ceiling", withFreshApp((app) => {
+  app.setRoot("water.calcium_ceiling_ppm", 120);
+  app.setRoot("water.calcium_floor_ppm", 60);
+  app.compute();
+
+  app.resetWaterTargets();
+  app.compute();
+
+  assert.equal(app.engine.hasRoot("water.calcium_ceiling_ppm"), false);
+  assert.equal(app.engine.hasRoot("water.calcium_floor_ppm"), false);
+  assert.equal(app.waterPlan.ceiling.display, "150");
+}));
+
 test("checking an ion on a preset keeps the other checked values", withFreshApp((app) => {
   app.selectWaterTarget("malty-amber");
   app.editWaterTarget("alk", "90");

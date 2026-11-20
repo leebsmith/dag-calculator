@@ -36,6 +36,14 @@
               write: () => commitWaterNumber(inputKey('water', waterPlan.floor.id), waterPlan.floor),
               step: 1,
               commit: 'change',
+              badge: () => (waterPlan.provenance.floor.showSeed
+                ? { text: 'seed', title: waterPlan.provenance.floor.seedTitle }
+                : null),
+              reset: () => ({
+                show: waterPlan.provenance.floor.showReset,
+                title: waterPlan.provenance.floor.resetTitle,
+                run: () => resetWaterField(waterPlan.floor)
+              }),
               hint: () => waterPlan.floorNotice || waterPlan.floor.hint,
               hints: [
                 {
@@ -57,6 +65,14 @@
               write: () => commitWaterNumber(inputKey('water', waterPlan.ceiling.id), waterPlan.ceiling),
               step: 5,
               commit: 'change',
+              badge: () => (waterPlan.provenance.ceiling.showSeed
+                ? { text: 'seed', title: waterPlan.provenance.ceiling.seedTitle }
+                : null),
+              reset: () => ({
+                show: waterPlan.provenance.ceiling.showReset,
+                title: waterPlan.provenance.ceiling.resetTitle,
+                run: () => resetWaterField(waterPlan.ceiling)
+              }),
               hint: () => waterPlan.floorNotice || waterPlan.ceiling.hint,
               hints: [
                 {
@@ -78,6 +94,14 @@
               write: () => commitWaterNumber(inputKey('water', waterPlan.mashPh.id), waterPlan.mashPh),
               step: 0.1,
               commit: 'change',
+              badge: () => (waterPlan.provenance.mashPh.showSeed
+                ? { text: 'seed', title: waterPlan.provenance.mashPh.seedTitle }
+                : null),
+              reset: () => ({
+                show: waterPlan.provenance.mashPh.showReset,
+                title: waterPlan.provenance.mashPh.resetTitle,
+                run: () => resetWaterField(waterPlan.mashPh)
+              }),
               hint: () => waterPlan.mashPh.hint,
               hints: [
                 {

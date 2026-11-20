@@ -120,8 +120,7 @@ export function refreshWaterCard(app, ctx) {
     const spargeDoseText = spargeDoses.rows.map((d) => `${d.label} ${d.text}`.trim()).join(", ");
     const hltStart = read(N.hltStart);
     const basis = `Masses assume ${gypsum} · ${cacl2} · ${acid}`;
-    const notModelled =
-      "Not modelled: grist ions and metabisulfite (≤ ~8 mg/L SO₄ per tablet/15 US gal; ~15 mg/L in a 30 L HLT).";
+    const notModelled = "Not modelled: grist ions and metabisulfite (≤ ~8 mg/L SO₄ per tablet/15 US gal; ~15 mg/L in a 30 L HLT).";
     const targetLine = routeLine(valued);
     const targetWarningText = targetWarning(valued);
 
@@ -145,8 +144,7 @@ export function refreshWaterCard(app, ctx) {
     const residualField = fieldOr(ctx.fieldsById, N.residualHlt);
 
     const sourceComponent = engine.identity?.[N.sourceReport] ?? {};
-    const sourceTitle =
-      sourceComponent.source_name || sourceComponent.laboratory || sourceComponent.report_id || "";
+    const sourceTitle = sourceComponent.source_name || sourceComponent.laboratory || sourceComponent.report_id || "";
     app.waterPlan = waterPlanView({
       sourceTitle,
       sourceDetail: sourceDetailText(sourceComponent),
@@ -155,6 +153,7 @@ export function refreshWaterCard(app, ctx) {
       ceiling: fieldOr(ctx.fieldsById, N.calciumCeiling),
       floorNotice: floorNotice(checkedSet.size, checkedSet.has("ca"), read(N.calciumFloor), read(`${N.target}.calcium_ca`)),
       mashPh: fieldOr(ctx.fieldsById, N.targetMashPh),
+      authored: { floor: engine.hasRoot(N.calciumFloor), ceiling: engine.hasRoot(N.calciumCeiling), mashPh: engine.hasRoot(N.targetMashPh) },
     });
     app.waterTreatmentFields = [
       N.saltDistribution,
@@ -264,5 +263,6 @@ export const KEYS = [
   "telemetryLine",
   "telemetryClass",
   "resetWaterTargets",
+  "resetWaterField",
   "materializeWaterTargets",
 ];

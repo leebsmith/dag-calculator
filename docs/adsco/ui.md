@@ -44,6 +44,8 @@ The water card is four labelled regions, in this order:
    line, kettle ratio, the
    mash-pH line (before → after plus the resolved correction at each
    destination), and actionable warnings. This is the primary decision surface.
+   The band and the mash-pH objective carry a `seed` badge while their value is
+   inherited and a `↺` reset once it has been authored.
 2. **Practice** — salt distribution, acid medium, gypsum and CaCl₂ forms, and
    the alkaline agent.
 3. **Prescription** — dosing volume, residual HLT, nonzero mash/sparge additions,

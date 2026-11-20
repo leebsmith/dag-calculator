@@ -239,6 +239,16 @@ function syncActions({ engine, getView }) {
       const view = getView();
       for (const { ion } of WATER_IONS) view.unsetRoot(`${N.target}.${ion}`);
       view.unsetRoot(N.calciumFloor);
+      view.unsetRoot(N.calciumCeiling);
+    },
+
+    resetWaterField(field) {
+      const nodeId = field?.target?.nodeId;
+      if (!nodeId) return;
+      const view = getView();
+      view.unsetRoot(nodeId);
+      view.scheduleSolve();
+      view.notify();
     },
 
     // Convert inherited targets into explicit overrides, so clearing the profile
