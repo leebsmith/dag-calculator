@@ -1,4 +1,4 @@
-"""Routing and constraint surface: the AUTO truth table and the pin fixture.
+"""Routing and constraint surface: the accepted strategies and the pin fixture.
 
 The frontend renders a target only for the ions a mode actually constrains
 (``views/registry/water.js:pinnedIonsFor``). That table is declared in JS and
@@ -11,7 +11,6 @@ Refresh with ``UPDATE_FIXTURES=1 uv run pytest tests/backend/conformance/test_wa
 
 from __future__ import annotations
 
-import itertools
 import json
 import os
 from pathlib import Path
@@ -20,8 +19,9 @@ import pytest
 
 from app.core.errors import SolverValidationError
 from app.core.water.dosing import solve_salt_dose
-from app.core.water.router import infer_adsco_mode
+from app.core.water.router import STRATEGIES, resolve_strategy
 from app.core.water.salts import ions_added_ppm
+from app.schemas.boundary import WaterStrategy
 
 FIXTURE = (
     Path(__file__).resolve().parents[2] / "conformance" / "fixtures" / "ion-constraints.json"
@@ -75,66 +75,21 @@ def test_ion_constraint_fixture_matches_solver_behaviour():
     )
 
 
-def _expected_auto(subset: frozenset[str]) -> str:
-    """The classification spec, written independently of the router's branches."""
-    if not subset:
-        return "BASELINE"
-    if subset == frozenset(IONS):
-        return "OPTIMIZE"
-    if subset & {"so4", "cl"} and "alk" in subset and not subset & {"ca", "mg", "na"}:
-        return "HYBRID"
-    if subset & {"so4", "cl", "na"} and not subset & {"ca", "mg", "alk"}:
-        return "CALCIUM_FLOOR"
-    return "OPTIMIZE"
+@pytest.mark.parametrize("strategy", STRATEGIES)
+def test_canonical_strategies_resolve_to_themselves(strategy):
+    assert resolve_strategy(strategy) == strategy
 
 
-@pytest.mark.parametrize(
-    "subset",
-    [frozenset(c) for n in range(len(IONS) + 1) for c in itertools.combinations(IONS, n)],
-)
-def test_auto_routing_truth_table(subset):
-    target = {ion: (200.0 if ion in subset else 0.0) for ion in IONS}
-    _mode, canonical, fallback = infer_adsco_mode("AUTO", target, [])
-    assert canonical == _expected_auto(subset)
-    assert fallback is (canonical == "OPTIMIZE" and subset != frozenset(IONS))
+@pytest.mark.parametrize("strategy", ["AUTO", "MODE_1", "FLAVOR_ONLY", "", "bogus"])
+def test_unknown_strategies_are_rejected(strategy):
+    with pytest.raises(SolverValidationError) as exc:
+        resolve_strategy(strategy)
+    assert exc.value.code == "UNKNOWN_STRATEGY"
+    assert "Expected one of" in exc.value.message
 
 
-@pytest.mark.parametrize("subset", [frozenset({"ca", "so4"}), frozenset({"na"})])
-@pytest.mark.parametrize("pins", [("so4",), ("ca", "cl")])
-def test_auto_with_pins_always_uses_custom(subset, pins):
-    target = {ion: (200.0 if ion in subset else 0.0) for ion in IONS}
-    _mode, canonical, fallback = infer_adsco_mode("AUTO", target, list(pins))
-    assert (canonical, fallback) == ("CUSTOM", False)
-
-
-@pytest.mark.parametrize("pins", [("so4",), ("ca", "cl")])
-def test_auto_without_targets_is_baseline_even_with_pins(pins):
-    empty = {ion: 0.0 for ion in IONS}
-    _mode, canonical, _fallback = infer_adsco_mode("AUTO", empty, list(pins))
-    assert canonical == "BASELINE"
-
-
-@pytest.mark.parametrize(
-    ("strategy", "canonical"),
-    [
-        ("CALCIUM_FLOOR", "CALCIUM_FLOOR"),
-        ("MODE_1", "CALCIUM_FLOOR"),
-        ("FLAVOR", "FLAVOR"),
-        ("HYBRID", "HYBRID"),
-        ("MODE_2", "HYBRID"),
-        ("OPTIMIZE", "OPTIMIZE"),
-        ("MODE_3", "OPTIMIZE"),
-        ("BASELINE", "BASELINE"),
-        ("MODE_4", "BASELINE"),
-        ("CUSTOM", "CUSTOM"),
-        ("MODE_5", "CUSTOM"),
-    ],
-)
-def test_explicit_strategies_are_not_rerouted(strategy, canonical):
-    _mode, resolved, fallback = infer_adsco_mode(
-        strategy, TARGET, ["so4"] if canonical == "CUSTOM" else []
-    )
-    assert (resolved, fallback) == (canonical, False)
+def test_accepted_strategies_match_the_schema_enum():
+    assert set(STRATEGIES) == {member.value for member in WaterStrategy}
 
 
 def test_custom_without_pins_raises():
@@ -148,22 +103,6 @@ def test_custom_without_pins_raises():
             50.0,
         )
     assert exc.value.code == "PINNED_IONS_REQUIRED"
-
-
-def test_auto_falls_back_to_best_fit_instead_of_going_unactionable():
-    events: list = []
-    dose, _notes, canonical = solve_salt_dose(
-        "AUTO",
-        {"ca": 20.0, "so4": 9.0},
-        {"ca": 60.0, "so4": 100.0},
-        "GYPSUM_DIHYDRATE",
-        "CACL2_DIHYDRATE",
-        50.0,
-        events=events,
-    )
-    assert canonical == "OPTIMIZE"
-    assert dose.gypsum_g_per_l >= 0.0
-    assert "ROUTER_AUTO_BEST_FIT" in [event.code for event in events]
 
 
 def test_custom_pins_are_honoured():

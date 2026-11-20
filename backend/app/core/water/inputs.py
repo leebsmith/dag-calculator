@@ -26,7 +26,7 @@ class WaterChemistryInput:
     v_sparge_demand_l: float
     mash_thickness_l_per_kg: float
     target_mash_ph: float
-    strategy: str = "AUTO"  # AUTO | FLAVOR | CALCIUM_FLOOR | OPTIMIZE | HYBRID | BASELINE | CUSTOM
+    strategy: str  # FLAVOR | CALCIUM_FLOOR | OPTIMIZE | HYBRID | BASELINE | CUSTOM
     salt_distribution: str = "PROPORTIONAL"  # PROPORTIONAL | MASH_ONLY
     acid_medium: str = "LACTIC_88"
     gypsum_form: str = "GYPSUM_DIHYDRATE"

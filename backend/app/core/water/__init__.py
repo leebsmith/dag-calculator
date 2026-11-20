@@ -35,7 +35,7 @@ Module map, in pipeline order:
 ``inputs``       ``GrainEntry``; ``WaterChemistryInput``
 ``chemistry``    grist acidity, residual alkalinity, mash pH, acid/base dosing
 ``salts``        ``SaltDose``; dose-to-ion stoichiometry
-``router``       the AUTO intent classifier (mode resolution)
+``router``       the accepted strategies and their validation
 ``engines``      the LP minimalists, the least-squares cloner, the sparse LP
 ``dosing``       ``solve_salt_dose`` — routed mode to one per-litre dose
 ``orchestration`` ``WaterChemistryOutput``, the phases, ``solve_water_chemistry``

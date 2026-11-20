@@ -13,7 +13,7 @@ import pytest
 
 from app.core.batch import constants as batch_constants
 from app.core.water import constants as water_constants
-from app.schemas.boundary import BatchSolverRequest, WaterSolverRequest
+from app.schemas.boundary import BatchSolverRequest, WaterSolverRequest, WaterStrategy
 
 ARTIFACT = json.loads(
     (Path(__file__).resolve().parents[3] / "data" / "artifact.json").read_text()
@@ -54,3 +54,8 @@ def test_default_mash_ph_matches_artifact():
 def test_batch_request_absorption_default_matches_artifact():
     field = BatchSolverRequest.model_fields["k_abs_true"]
     assert field.default == CONSTANTS["k_abs_true"]
+
+
+def test_water_strategy_enum_matches_the_artifact_taxonomy():
+    taxonomy = set(ARTIFACT["taxonomies"]["strategy"])
+    assert {member.value for member in WaterStrategy} == taxonomy

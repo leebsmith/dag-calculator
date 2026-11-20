@@ -677,7 +677,6 @@
       "FLAVOR": "Flavor",
       "CALCIUM_FLOOR": "Calcium floor",
       "OPTIMIZE": "Best fit (all six)",
-      "AUTO": "Auto",
       "HYBRID": "Ratio + buffer",
       "BASELINE": "Baseline",
       "CUSTOM": "Custom sparse"

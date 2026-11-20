@@ -104,7 +104,7 @@ def test_default_recipe_generates_end_to_end():
     assert batch.max_achievable_abv > 0.0
     assert 0.0 < water.prescription.predicted_mash_ph <= 14.0
     assert water.prescription.mash_ph_status in {"OPTIMAL", "LOW", "HIGH"}
-    assert water.strategy != WaterStrategy.AUTO
+    assert water.strategy is WaterStrategy.BASELINE
 
     additions = [
         water.mash_additions,

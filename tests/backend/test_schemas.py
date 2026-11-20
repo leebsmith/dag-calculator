@@ -109,8 +109,8 @@ def test_water_request_builds():
 def test_water_defaults():
     """C3/C5: omitted fields fall back to the corrected defaults.
 
-    ``strategy`` must default to AUTO (matching core + UI), and
-    ``target_mash_ph`` to 5.4 (not the legacy 5.35).
+    ``target_mash_ph`` defaults to 5.4 (not the legacy 5.35); ``strategy`` has no
+    default, because the caller must name the route.
     """
     ions = {
         "calcium_ca": 10.0,
@@ -129,10 +129,34 @@ def test_water_defaults():
             "v_hlt_treat_l": 10.0,
             "v_sparge_demand_l": 8.0,
             "mash_thickness_l_per_kg": 3.0,
+            "strategy": "FLAVOR",
         }
     )
-    assert req.strategy is WaterStrategy.AUTO
+    assert req.strategy is WaterStrategy.FLAVOR
     assert req.target_mash_ph == 5.4
+
+
+def test_water_strategy_is_required():
+    ions = {
+        "calcium_ca": 10.0,
+        "magnesium_mg": 2.0,
+        "sodium_na": 8.0,
+        "sulfate_so4": 5.0,
+        "chloride_cl": 7.0,
+        "alkalinity_as_caco3": 40.0,
+    }
+    with pytest.raises(ValidationError):
+        WaterSolverRequest.model_validate(
+            {
+                "grist": [{"mass_kg": 5.0, "color_lovibond": 3.0, "grain_type": "BASE"}],
+                "source": ions,
+                "target": ions,
+                "v_mash_treat_l": 15.0,
+                "v_hlt_treat_l": 10.0,
+                "v_sparge_demand_l": 8.0,
+                "mash_thickness_l_per_kg": 3.0,
+            }
+        )
 
 
 def test_grain_bill_normalization_accepts_valid_bills():

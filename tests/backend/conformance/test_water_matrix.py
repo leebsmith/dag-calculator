@@ -49,7 +49,7 @@ BUFFER_TARGET = {"so4": 50.0, "cl": 120.0, "alk": 60.0}
 CLONE_TARGET = {"ca": 60.0, "mg": 8.0, "na": 20.0, "so4": 100.0, "cl": 70.0, "alk": 40.0}
 
 
-def _request(beer, water, target, **overrides):
+def _request(beer, water, target, strategy, **overrides):
     grist, thickness, ph = BEERS[beer]
     params = dict(
         grist=list(grist),
@@ -61,7 +61,7 @@ def _request(beer, water, target, **overrides):
         v_sparge_demand_l=18.0,
         mash_thickness_l_per_kg=thickness,
         target_mash_ph=ph,
-        strategy="AUTO",
+        strategy=strategy,
     )
     params.update(overrides)
     return WaterChemistryInput(**params)
@@ -75,10 +75,10 @@ SCENARIOS = [
         id="ro-pilsner-flavor",
     ),
     pytest.param(
-        "soft-pale-auto",
-        _request("pale-ale", "soft", FLAVOR_TARGET),
+        "soft-pale-flavor",
+        _request("pale-ale", "soft", FLAVOR_TARGET, "CALCIUM_FLOOR"),
         {"held": {"so4": 250.0, "cl": 50.0}},
-        id="soft-pale-auto",
+        id="soft-pale-flavor",
     ),
     pytest.param(
         "ward-stout-hybrid",
@@ -99,16 +99,16 @@ SCENARIOS = [
         id="mineralized-imperial-clone",
     ),
     pytest.param(
-        "chloride-heavy-amber-auto",
-        _request("amber", "chloride-heavy", {"cl": 150.0, "so4": 30.0}),
+        "chloride-heavy-amber",
+        _request("amber", "chloride-heavy", {"cl": 150.0, "so4": 30.0}, "CALCIUM_FLOOR"),
         {
             "error": "ION_TARGET_BELOW_SOURCE",
         },
-        id="chloride-heavy-amber-auto",
+        id="chloride-heavy-amber",
     ),
     pytest.param(
         "sulfate-heavy-acid-malt",
-        _request("acid-malt", "sulfate-heavy", {"so4": 450.0, "cl": 60.0}),
+        _request("acid-malt", "sulfate-heavy", {"so4": 450.0, "cl": 60.0}, "CALCIUM_FLOOR"),
         {"held": {"so4": 450.0, "cl": 60.0}},
         id="sulfate-heavy-acid-malt",
     ),
@@ -287,7 +287,7 @@ def test_seeded_combination_sweep():
     rng = _lcg(SEED)
     beer_names = list(BEERS)
     water_names = list(WATERS)
-    strategies = ["AUTO", "CALCIUM_FLOOR", "HYBRID", "OPTIMIZE", "BASELINE"]
+    strategies = ["FLAVOR", "CALCIUM_FLOOR", "HYBRID", "OPTIMIZE", "BASELINE"]
     distributions = ["PROPORTIONAL", "MASH_ONLY"]
     acids = ["LACTIC_88", "PHOSPHORIC_10", "PHOSPHORIC_85"]
     forms = [("GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE"), ("GYPSUM_ANHYDROUS", "CACL2_ANHYDROUS")]

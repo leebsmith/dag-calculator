@@ -25,7 +25,7 @@ from app.core.water.orchestration import solve_water_chemistry
 CASES = int(os.environ.get("WATER_FUZZ_CASES", "0"))
 SEED = int(os.environ.get("WATER_FUZZ_SEED", "20261022"))
 
-STRATEGIES = ("AUTO", "CALCIUM_FLOOR", "HYBRID", "OPTIMIZE", "BASELINE")
+STRATEGIES = ("FLAVOR", "CALCIUM_FLOOR", "HYBRID", "OPTIMIZE", "BASELINE")
 DISTRIBUTIONS = ("PROPORTIONAL", "MASH_ONLY")
 ACIDS = ("LACTIC_88", "PHOSPHORIC_10", "PHOSPHORIC_85")
 FORMS = (

@@ -95,10 +95,6 @@ tracks only what is outstanding.
   determinism / A1 no-reactivity). Production runs HTTP-debounced; the synchronous path
   (`boundaryRunner.js` scheduleSolve) is tests-only. Revisit only if profiling shows jank
   as field count grows (cooling curves, style-water axis).
-* **One routing table** — `water.route` derives the pin set in the artifact, but
-  `backend/app/core/water/router.py` still carries the alias/`AUTO` table for API
-  clients, so the two can drift. Fold the aliases into the artifact, or drop `AUTO`
-  from the accepted strategies.
 * **Sparge-acid target** — the dose neutralises the HLT's residual alkalinity as a
   proxy for `SPARGE_ACID_PH`; it never models an HLT pH. Revisit only if an HLT pH
   readout is surfaced.

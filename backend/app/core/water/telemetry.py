@@ -135,16 +135,6 @@ def router_mode_5_custom_sparse(pinned_ions: Sequence[str]) -> TelemetryEvent:
     )
 
 
-def router_auto_best_fit() -> TelemetryEvent:
-    return _event(
-        "ROUTER_AUTO_BEST_FIT",
-        ROUTER,
-        NOTE,
-        "Strategy AUTO could not classify the target vector; routed to the Non-Linear "
-        "Cloner (Mode 3: best fit across all six ions, nothing held exactly).",
-    )
-
-
 # ---------------------------------------------------------------------------
 # Guardrails (GUARDRAIL)
 # ---------------------------------------------------------------------------
@@ -544,7 +534,7 @@ TELEMETRY_CODES: frozenset[str] = frozenset(
         "ROUTER_MODE_3_NONLINEAR_CLONE",
         "ROUTER_MODE_4_BASELINE_ONLY",
         "ROUTER_MODE_5_CUSTOM_SPARSE",
-        "ROUTER_AUTO_BEST_FIT",
+
         "GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE",
         "GUARDRAIL_CALCIUM_FLOOR_OVERRIDDEN",
         "GUARDRAIL_CALCIUM_BELOW_FLOOR",

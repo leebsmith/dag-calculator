@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:649963d12f650d685c35ec492e7f004eaedba34adc3b68d1d96fe70b7e0d5661",
+    "hash": "sha256:a692f3f89e16d406979e477a259e83eebcaeada7a871135a6876835f4084e752",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -437,7 +437,6 @@
           "FLAVOR",
           "CALCIUM_FLOOR",
           "OPTIMIZE",
-          "AUTO",
           "HYBRID",
           "BASELINE",
           "CUSTOM"
@@ -8602,5 +8601,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:e24fc5f889ff4387eca97267d4430080ed54b71c96e1e4f67257e148e657e50b"
+  "content_hash": "sha256:a5ebb58f7f44331b439afb0e61256fac90fb85b0e488773402751f998b715e5a"
 }

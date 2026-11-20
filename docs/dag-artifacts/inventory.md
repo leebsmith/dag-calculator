@@ -59,7 +59,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `pof_status` | `unknown`, `positive`, `negative` |
 | `salt_distribution` | `MASH_ONLY`, `PROPORTIONAL` |
 | `scale_pin` | `abv`, `og`, `fg` |
-| `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE`, `AUTO`, `HYBRID`, `BASELINE`, `CUSTOM` |
+| `strategy` | `FLAVOR`, `CALCIUM_FLOOR`, `OPTIMIZE`, `HYBRID`, `BASELINE`, `CUSTOM` |
 | `style_type` | `beer`, `mead`, `cider` |
 | `topology` | `r_l_to_g`, `runoff_ratio` |
 

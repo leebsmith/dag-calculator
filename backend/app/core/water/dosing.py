@@ -1,4 +1,4 @@
-"""Salt-dosing orchestrator: resolve the routed mode to one per-litre dose."""
+"""Salt-dosing orchestrator: resolve the caller's strategy to one per-litre dose."""
 
 from __future__ import annotations
 
@@ -11,12 +11,11 @@ from app.core.water.engines import (
     _solve_linear_minimalist,
     _solve_nonlinear_cloner,
 )
-from app.core.water.router import infer_adsco_mode
+from app.core.water.router import resolve_strategy
 from app.core.water.salts import SaltDose, _agent_g_per_l, _salt_ion_coeffs
 from app.core.water.telemetry import (
     TelemetryEvent,
     derive_findings,
-    router_auto_best_fit,
     router_mode_1_linear_flavor,
     router_mode_2_hybrid_buffer,
     router_mode_3_nonlinear_clone,
@@ -46,24 +45,19 @@ def solve_salt_dose(
     start = len(evs)
     coeffs = _salt_ion_coeffs(gypsum_form, cacl2_form)
 
-    mode, canonical_strat, auto_fallback = infer_adsco_mode(
-        strategy, target, custom_pinned_ions
-    )
+    canonical = resolve_strategy(strategy)
 
-    if canonical_strat == "CUSTOM" and not custom_pinned_ions:
+    if canonical == "CUSTOM" and not custom_pinned_ions:
         raise SolverValidationError(
             "PINNED_IONS_REQUIRED",
             "Custom mode requires at least one pinned ion; pin one to four ions or choose another mode.",
         )
 
-    if auto_fallback:
-        evs.append(router_auto_best_fit())
-
-    if mode == "MODE_4":  # Baseline Mode
+    if canonical == "BASELINE":
         evs.append(router_mode_4_baseline_only())
-        return SaltDose(), derive_findings(evs[start:])[1], canonical_strat
+        return SaltDose(), derive_findings(evs[start:])[1], canonical
 
-    if mode == "MODE_1":  # Linear Minimalist
+    if canonical in ("CALCIUM_FLOOR", "FLAVOR"):
         evs.append(router_mode_1_linear_flavor())
         dose = _solve_linear_minimalist(
             source,
@@ -71,12 +65,12 @@ def solve_salt_dose(
             coeffs,
             calcium_floor_ppm,
             calcium_ceiling_ppm,
-            unbounded_ca=(canonical_strat == "FLAVOR"),
+            unbounded_ca=(canonical == "FLAVOR"),
             events=evs,
         )
-        return dose, derive_findings(evs[start:])[1], canonical_strat
+        return dose, derive_findings(evs[start:])[1], canonical
 
-    if mode == "MODE_2":  # Hybrid Mode
+    if canonical == "HYBRID":
         evs.append(router_mode_2_hybrid_buffer(preferred_alkaline_agent))
         dose = _solve_linear_minimalist(
             source,
@@ -94,16 +88,16 @@ def solve_salt_dose(
             nacl_g_per_l=dose.nacl_g_per_l,
             alkaline_agent_g_per_l=_agent_g_per_l(source, target, preferred_alkaline_agent),
         )
-        return dose, derive_findings(evs[start:])[1], canonical_strat
+        return dose, derive_findings(evs[start:])[1], canonical
 
-    if mode == "MODE_3":  # Non-Linear Cloner
+    if canonical == "OPTIMIZE":
         evs.append(router_mode_3_nonlinear_clone())
         dose = _solve_nonlinear_cloner(
             source, target, coeffs, calcium_floor_ppm, evs, preferred_alkaline_agent
         )
-        return dose, derive_findings(evs[start:])[1], canonical_strat
+        return dose, derive_findings(evs[start:])[1], canonical
 
-    # Mode 5: Custom Sparse
+    # CUSTOM
     evs.append(router_mode_5_custom_sparse(custom_pinned_ions))
     dose = _solve_dynamic_sparse(
         source,
@@ -115,4 +109,4 @@ def solve_salt_dose(
         evs,
         preferred_alkaline_agent,
     )
-    return dose, derive_findings(evs[start:])[1], canonical_strat
+    return dose, derive_findings(evs[start:])[1], canonical

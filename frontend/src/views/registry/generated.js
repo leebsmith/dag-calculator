@@ -186,7 +186,7 @@ export const generatedRegistry = {
   "solver.water.sparge_additions.gypsum_kg": {"label":"Sparge gypsum","displayUnit":"g"},
   "solver.water.sparge_additions.nacl_kg": {"label":"Sparge table salt","displayUnit":"g"},
   "solver.water.sparge_additions.pickling_lime_kg": {"label":"Sparge pickling lime","displayUnit":"g"},
-  "solver.water.strategy": {"label":"Resolved strategy","optionLabels":{"FLAVOR":"Flavor","CALCIUM_FLOOR":"Calcium floor","OPTIMIZE":"Best fit (all six)","AUTO":"Auto","HYBRID":"Ratio + buffer","BASELINE":"Baseline","CUSTOM":"Custom sparse"}},
+  "solver.water.strategy": {"label":"Resolved strategy","optionLabels":{"FLAVOR":"Flavor","CALCIUM_FLOOR":"Calcium floor","OPTIMIZE":"Best fit (all six)","HYBRID":"Ratio + buffer","BASELINE":"Baseline","CUSTOM":"Custom sparse"}},
   "style.abv_max": {"label":"ABV max"},
   "style.abv_min": {"label":"ABV min"},
   "style.fg_max": {"label":"FG max"},

@@ -79,8 +79,8 @@ with a mix adds `Only nonzero additions shown.`
 ## Objective selector
 
 One select decides which ions the solver must satisfy. Routing is *derived* from
-the checked set; there is no separate mode control and the UI never writes
-`AUTO`.
+the checked set and sent as the request's `strategy`; there is no separate mode
+control.
 
 | Selection | Checked ions | Values | Route |
 | --- | --- | --- | --- |

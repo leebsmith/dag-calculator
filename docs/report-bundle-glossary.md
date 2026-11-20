@@ -322,7 +322,7 @@ _69 paths_
 | `water.target_profile.description` | Description | field | — | — | — | — |
 | `water.target_profile.id` | ID | field | — | — | — | — |
 | `water.target_profile.magnesium_mg` | Magnesium | field | concentration | ppm | 1 | — |
-| `water.target_profile.mode` | Mode | field | — | — | — | FLAVOR, CALCIUM_FLOOR, OPTIMIZE, AUTO, HYBRID, BASELINE, CUSTOM |
+| `water.target_profile.mode` | Mode | field | — | — | — | FLAVOR, CALCIUM_FLOOR, OPTIMIZE, HYBRID, BASELINE, CUSTOM |
 | `water.target_profile.name` | Name | field | — | — | — | — |
 | `water.target_profile.notes` | Notes | field | — | — | — | — |
 | `water.target_profile.sodium_na` | Sodium | field | concentration | ppm | 1 | — |
@@ -416,7 +416,7 @@ _40 paths_
 | `solver.water.sparge_additions.gypsum_kg` | Sparge gypsum | output | mass | g | 1 | — |
 | `solver.water.sparge_additions.nacl_kg` | Sparge table salt | output | mass | g | 1 | — |
 | `solver.water.sparge_additions.pickling_lime_kg` | Sparge pickling lime | output | mass | g | 1 | — |
-| `solver.water.strategy` | Resolved strategy | output | — | — | — | FLAVOR, CALCIUM_FLOOR, OPTIMIZE, AUTO, HYBRID, BASELINE, CUSTOM |
+| `solver.water.strategy` | Resolved strategy | output | — | — | — | FLAVOR, CALCIUM_FLOOR, OPTIMIZE, HYBRID, BASELINE, CUSTOM |
 | `solver.water.total_added_salt_mass_g` | Total Added Salt Mass G | output | mass | kg | 1 | — |
 
 ## Solver — hop bitterness

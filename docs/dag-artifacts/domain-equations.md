@@ -463,7 +463,7 @@ program via `scipy.optimize.linprog`). **Realization:** the package
 | `v_sparge_demand_l` | volume | sparge demand (L) |
 | `mash_thickness_l_per_kg` | mash_thickness | resolved L/kg |
 | `target_mash_ph` | ph | desired mash pH |
-| `strategy` | taxonomy | `AUTO` \| `FLAVOR` \| `CALCIUM_FLOOR` \| `OPTIMIZE` \| `HYBRID` \| `BASELINE` \| `CUSTOM` (the UI derives it and never sends `AUTO`) |
+| `strategy` | taxonomy | `FLAVOR` \| `CALCIUM_FLOOR` \| `OPTIMIZE` \| `HYBRID` \| `BASELINE` \| `CUSTOM` — required; the caller names the route and the solver never infers it |
 | `salt_distribution` | taxonomy | `MASH_ONLY` \| `PROPORTIONAL` |
 | `acid_medium` | taxonomy | `LACTIC_88` \| `PHOSPHORIC_10` \| `PHOSPHORIC_85` |
 | `gypsum_form` / `cacl2_form` | taxonomy | hydrate forms |
@@ -477,8 +477,8 @@ read-only in the batch); `target` is read from the editable `water.target.*`
 roots, seeded from the selected preset's declared ions. The route is derived
 from the checked set as the `water.route` node: `{}` → `BASELINE`,
 `{SO₄,Cl}` → `CALCIUM_FLOOR`, `{SO₄,Cl,alk}` → `HYBRID`, all six → `OPTIMIZE`,
-anything else → `CUSTOM` with those ions as pins. The UI never writes `AUTO`,
-though the solver still accepts it for API clients. `target` alkalinity is the
+anything else → `CUSTOM` with those ions as pins. The request carries that code;
+there is no inference in the solver. `target` alkalinity is the
 root's `alkalinity_as_caco3` while `source` alkalinity is the report's
 `total_alkalinity_caco3`. `calcium_floor_ppm` and `calcium_ceiling_ppm` are a
 **band** — a minimum (`final Ca ≥ floor`) and a maximum (`final Ca ≤ ceiling`) —
