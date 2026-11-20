@@ -25,6 +25,51 @@ test("boil hops: parts normalize to IBU shares and the served mass renders", wit
   assert.match(app.hopTotalMassDisplay, /(oz|g|kg|lb)/);
 }));
 
+test("the hop editor follows the active allocation mode", withFreshApp((app) => {
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
+  let columns = app.draftColumns.map((column) => column.id);
+  assert.ok(columns.includes("parts"));
+  assert.ok(columns.includes("pct"));
+  assert.equal(columns.includes("mass_parts"), false);
+  assert.ok(columns.includes("boil_min"));
+
+  app.cancelHopEditor();
+  app.setHopAllocationMode("mass_pool");
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
+  columns = app.draftColumns.map((column) => column.id);
+  assert.ok(columns.includes("mass_parts"));
+  assert.ok(columns.includes("mass_pct"));
+  assert.equal(columns.includes("parts"), false);
+  assert.equal(columns.includes("pct"), false);
+  assert.equal(app.draftDisplayRows[0].boil_min, "60");
+
+  app.patchDraftRow(0, { boil_time_fraction: 0.5 });
+  assert.equal(app.draftDisplayRows[0].boil_min, "30");
+}));
+
+test("mass pool: saving the editor normalizes both hop tables and keeps parts", withFreshApp((app) => {
+  app.setHopAllocationMode("mass_pool");
+
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
+  app.patchDraftRow(0, { mass_parts: 3, parts: 99 });
+  app.saveHopEditor();
+
+  app.openWhirlpoolHopEditor();
+  app.addCatalogWhirlpoolHop("citra");
+  app.patchDraftRow(0, { mass_parts: 1, parts: 88 });
+  app.saveWhirlpoolHopEditor();
+
+  const boil = app.engine.get("batch.boil_hops");
+  const whirlpool = app.engine.get("batch.whirlpool_hops");
+  assert.equal(boil[0].parts, 99);
+  assert.equal(whirlpool[0].parts, 88);
+  assert.ok(Math.abs(boil[0].mass_pct - 0.75) < 1e-9);
+  assert.ok(Math.abs(whirlpool[0].mass_pct - 0.25) < 1e-9);
+}));
+
 test("boil hops: parts renormalize when an addition is removed", withFreshApp((app) => {
   app.openHopEditor();
   app.addCatalogHop("cascade");

@@ -6985,6 +6985,13 @@
       "base": null,
       "dimension": null
     },
+    "batch.hop_allocation_mode": {
+      "text": "Two pools (boil / whirlpool)",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
     "batch.cooling_curve_id": {
       "text": "Garage kettle",
       "number": null,
@@ -8579,5 +8586,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:04464966001b181b9e79d8fd6dd5ae2806215447833c5feeff414f9215e1a574"
+  "content_hash": "sha256:a8000b808baa007f9eb129760285b858b860cc8c82a4a2f93a2b5fac43d1efb6"
 }

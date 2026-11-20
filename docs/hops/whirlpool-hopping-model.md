@@ -209,10 +209,12 @@ Two modes exist, chosen by `batch.hop_allocation_mode`:
 - `ibu_split` (default) — the style card splits the total IBU target into boil
   and whirlpool pools; each hop table normalizes its `parts` into shares of its
   own pool and back-calculates mass with the inverse model above.
-- `mass_pool` — the kettle and both whirlpool stands are one pool. Each charge
+- `mass_pool` — the boil and both whirlpool stands are one pool. Each charge
   authors `mass_parts` (normalized to `mass_pct` across both tables), the whole
-  target is spent across it, and the stage IBU split is a result. The splits in
-  §"IBU splits" are then derived from the masses rather than authored.
+  target is spent across it, and the stage IBU split is a result. The cool
+  stand still isomerises, just less; it is inside the pool, not outside it.
+  The splits in §"IBU splits" are then derived from the masses rather than
+  authored.
 
 The mode is a root, not a compile-time choice: `parts` keeps its IBU meaning in
 both modes, and the mass shares live in their own column, so no stored batch is
@@ -238,7 +240,8 @@ truth, and a cool stand simply yields less.
 
 ### Boil timeline
 
-A boil charge authors its **share of the boil**, not a minute count:
+A boil charge authors its **share of the boil** — labelled **Boil time
+remaining** — not a minute count:
 
 ```
 t_exposure_i = boil_time_fraction_i × batch.boil_time_min
@@ -314,7 +317,7 @@ the charge is saved; the boundary remains the authority.
 ### IBU splits
 
 The report prints a stage table — boil, hot whirlpool, cool whirlpool, and the
-hot-side total — with each stage's mass share, mass, IBU and IBU share, plus the
+boil + whirlpool total — with each stage's mass share, mass, IBU and IBU share, plus the
 boil/whirlpool and hot/cool pairs below it.
 
 The boil/whirlpool split is reported from what the charges carry:
@@ -402,7 +405,7 @@ tannin structure. YCH's benchmark for adapting a T-90 recipe keeps 25 g of T-90
 per 40 g of Cryo — a floor of 0.625 g of bract-carrying hop per gram of lupulin,
 held in `batch.bract_floor_ratio` and overridable.
 
-The check is hot-side: bract mass is every T-90 and whole-cone charge there,
+The check covers the boil + whirlpool pool: bract mass is every T-90 and whole-cone charge there,
 lupulin mass every lupulin charge, and the bill passes when
 `bract ≥ ratio × lupulin`. The boundary exports the two masses as
 `solver.hops.bract_mass_kg` and `solver.hops.lupulin_mass_kg`; the artifact

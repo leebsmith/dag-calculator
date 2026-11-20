@@ -33,7 +33,7 @@ _150 paths_
 | `batch.boil_hops` | Boil hops | collection | — | — | — | — |
 | `batch.boil_hops.alpha_acid_pct` | Alpha | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.alpha_provenance` | Alpha Provenance | field | — | — | — | — |
-| `batch.boil_hops.boil_time_fraction` | Portion of boil | field | percentage | pct (%) | 1 | — |
+| `batch.boil_hops.boil_time_fraction` | Boil time remaining | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.cone_utilization` | Cone Utilization | field | dimensionless | — | — | — |
 | `batch.boil_hops.geraniol_pct_of_oil` | Geraniol Pct Of Oil | field | percentage | pct (%) | 1 | — |
 | `batch.boil_hops.hop_id` | Hop ID | field | — | — | — | — |

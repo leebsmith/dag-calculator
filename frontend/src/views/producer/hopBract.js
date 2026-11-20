@@ -12,7 +12,7 @@
 import { formatWithDecimals, isFiniteNumber } from "../../utils.js";
 
 /**
- * The hot-side bract-floor readout, or "" when the bill has no lupulin.
+ * The boil + whirlpool bract-floor readout, or "" when the bill has no lupulin.
  * @pure
  * @param {{ readonly bractKg?: number|null, readonly lupulinKg?: number|null, readonly floorKg?: number|null, readonly shortfallKg?: number|null, readonly ratio?: number|null, readonly unit?: string, readonly formatMass: (kg: number, unit: string) => string }} args
  */
@@ -31,7 +31,7 @@ export function bractFloorLine({
   }
   if (!isFiniteNumber(ratio) || ratio <= 0) return "";
   const composition = [
-    `Hot-side bract ${formatMass(bractKg, unit)}`,
+    `Boil + whirlpool bract ${formatMass(bractKg, unit)}`,
     `lupulin ${formatMass(lupulinKg, unit)}`,
     `floor ${formatMass(floorKg, unit)} (${formatWithDecimals(ratio, 3)} × lupulin)`,
   ].join(" \u00b7 ");

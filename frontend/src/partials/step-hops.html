@@ -36,7 +36,7 @@
       </div>
     </section>
 
-    <section class="card-section" x-show="hopMassPool" x-cloak>
+    <section class="card-section">
       <div class="section-header">
         <span class="region-title">Stage Allocation</span>
       </div>
@@ -63,12 +63,9 @@
             </template>
           </tbody>
         </table>
-        <p class="form-hint">
-          Mass shares are authored, so the IBU split follows from them and the target.
-          Dry hops are weighed in grams and sit outside the pool.
-        </p>
-        <p class="form-hint text-warning" x-show="hopUnsharedCount > 0"
-          x-text="hopUnsharedCount + ' hot-side rows carry no share and add no mass.'"></p>
+        <p class="form-hint" x-text="hopStageNote"></p>
+        <p class="form-hint text-warning" x-show="hopMassPool && hopUnsharedCount > 0"
+          x-text="hopUnsharedCount + ' boil + whirlpool rows carry no share and add no mass.'"></p>
       </div>
     </section>
 

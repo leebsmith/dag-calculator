@@ -344,6 +344,7 @@ export const KEYS = [
   "hopAllocationMode",
   "hopMassPool",
   "hopStageRows",
+  "hopStageNote",
   "hopUnsharedCount",
   "setHopMassParts",
   "boilIbuField",

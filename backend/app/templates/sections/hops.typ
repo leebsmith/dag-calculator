@@ -164,6 +164,8 @@
     v(4pt)
     block(breakable: false, {
       heading(level: 2)[Hop Allocation]
+      note[Hop allocation: #text-or("batch.hop_allocation_mode")]
+      v(2pt)
       table(
         columns: (auto, auto, auto, auto),
         align: (left, right, right, right),
@@ -182,17 +184,18 @@
         text-or("batch.hop_cool_mass_share"),
         text-or("solver.hops.whirlpool_cool_mass_kg"),
         text-or("solver.hops.whirlpool_cool_ibu"),
-        [*Hot side*],
+        [*Boil + whirlpool*],
         [—],
         text-or("solver.hops.total_mass_kg"),
         text-or("batch.hop_realized_ibu"),
       )
       v(2pt)
       note[
-        The hot side is every pre-fermentation charge: the boil and both whirlpool
-        stands, cut at the top of the isomerization floor band. Shares are of hop
-        mass, so a cool charge shows a small mass in a large share only when its
-        alpha is low. Dry hops add no IBU and sit outside these totals.
+        The boil + whirlpool pool is every pre-fermentation charge: the boil and
+        both whirlpool stands, cut at the top of the isomerization floor band.
+        Shares are of hop mass, so a cool charge shows a small mass in a large
+        share only when its alpha is low. Dry hops add no IBU and sit outside
+        these totals.
       ]
       v(2pt)
       heading(level: 3)[Boil / Whirlpool]
@@ -226,7 +229,7 @@
         v(4pt)
         heading(level: 3)[Bract Floor]
         note[
-          Hot-side bract #text-or("solver.hops.bract_mass_kg"), lupulin #text-or("solver.hops.lupulin_mass_kg"), floor #text-or("batch.bract_floor_kg") (#text-or("batch.bract_floor_ratio") × lupulin; YCH benchmark).
+          Boil + whirlpool bract #text-or("solver.hops.bract_mass_kg"), lupulin #text-or("solver.hops.lupulin_mass_kg"), floor #text-or("batch.bract_floor_kg") (#text-or("batch.bract_floor_ratio") × lupulin; YCH benchmark).
         ]
         let shortfall = state.valuation.at("batch.bract_shortfall_kg", default: none)
         if shortfall != none {

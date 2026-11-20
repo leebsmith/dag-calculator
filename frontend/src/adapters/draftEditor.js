@@ -9,6 +9,7 @@ import {
   EQUAL_SUGAR_PARTS,
   resolvedSugarMasses,
 } from "../views/producer/sugarAllocation.js";
+import { hopDraftEntry, normalizeHopDraft } from "../views/producer/hopDraft.js";
 import { registry, steps } from "../views/steps.js";
 import { UNIT_SYMBOLS } from "../views/registry/units.js";
 import { HOP_NODES as H } from "../views/registry/hops.js";
@@ -110,31 +111,49 @@ export function createDraftEditor({
     },
 
     saveDraft() {
+      const nodeId = getView().draftNodeId;
       actions.seedSugarShareWeights();
       session.engine.setCollection(
-        getView().draftNodeId,
+        nodeId,
         JSON.parse(JSON.stringify(actions.normalizeDraft()))
       );
+      if (
+        (nodeId === H.collection || nodeId === H.whirlpoolCollection) &&
+        session.engine.get(H.allocationMode) === "mass_pool"
+      ) {
+        getView().normalizeHopMassPool?.();
+      }
       actions.closeDraft();
       getView().scheduleSolve();
       getView().notify();
     },
 
     // AI AGENT HOOKS: Use this normalizer for every draft row collection that
-    // derives its shares from `parts`. Do not duplicated this logic elsewhere.
+    // derives its shares. The active mode decides whether `parts` or
+    // `mass_parts` is the authored column.
     normalizeDraft() {
+      const nodeId = getView().draftNodeId;
+      const rows = getView().draftRows;
+      if (!rows.length) return rows;
+
+      const pooled = normalizeHopDraft({
+        nodeId,
+        rows,
+        engine: session.getEngine(),
+      });
+      if (pooled) return pooled;
+
       if (
-        (getView().draftNodeId === N.majorMalts ||
-          getView().draftNodeId === N.boilHops ||
-          getView().draftNodeId === N.whirlpoolHops) &&
-        getView().draftRows.length
+        nodeId === N.majorMalts ||
+        nodeId === H.collection ||
+        nodeId === H.whirlpoolCollection
       ) {
-        const pcts = hamiltonPct(getView().draftRows.map((r) => r.parts));
-        getView().draftRows.forEach((r, i) => {
+        const pcts = hamiltonPct(rows.map((r) => r.parts));
+        rows.forEach((r, i) => {
           r.pct = pcts[i];
         });
       }
-      return getView().draftRows;
+      return rows;
     },
 
     // Share mode's per-row mass is computed by the artifact on read; a draft is
@@ -265,14 +284,34 @@ export function createDraftEditor({
     draftColumns: {
       configurable: true,
       get() {
-        if (!getView().draftNodeId) return [];
+        const nodeId = getView().draftNodeId;
+        if (!nodeId) return [];
+        const engine = session.getEngine();
+        const hopNode = nodeId === H.collection || nodeId === H.whirlpoolCollection;
+        const entry = hopNode
+          ? hopDraftEntry(actions.draftEntry(), engine.get(H.allocationMode))
+          : actions.draftEntry();
         const columns = resolveCollectionColumns(
           artifact,
           registry,
-          getView().draftNodeId,
-          actions.draftEntry(),
+          nodeId,
+          entry,
           ui.unitMode
         );
+        if (nodeId === H.collection) {
+          const at = columns.findIndex((column) => column.id === "boil_time_fraction");
+          if (at >= 0) {
+            columns.splice(at + 1, 0, {
+              id: "boil_min",
+              label: "Time",
+              dimension: "time",
+              displayUnit: "min",
+              unit: "min",
+              decimals: 0,
+              editable: false,
+            });
+          }
+        }
         if (getView().draftNodeId === N.sugars) {
           const shareMode =
             session.getEngine().get(N.lateAdditionIntent) === "share";
@@ -322,18 +361,19 @@ export function createDraftEditor({
       configurable: true,
       get() {
         const columns = actions.draftColumns;
-        const nl = nonlinearFns(artifact, session.getEngine());
+        const engine = session.getEngine();
+        const nl = nonlinearFns(artifact, engine);
         const resolved = actions.draftResolvedRows();
         const ceilings = actions.draftCeilings;
+        const boilTimeMin = Number(engine.get(H.boilTime)) || 0;
         return getView().draftRows.map((row, ri) => {
           const out = { ...row };
           for (const col of columns) {
-            const value = draftCellDisplay(
-              artifact,
-              col,
-              draftCellValue(col, row, ri, resolved, ceilings),
-              nl
-            );
+            const raw =
+              col.id === "boil_min"
+                ? (Number(row?.boil_time_fraction) || 0) * boilTimeMin
+                : draftCellValue(col, row, ri, resolved, ceilings);
+            const value = draftCellDisplay(artifact, col, raw, nl);
             if (!(col.editable && typeof getView().inputDraft === "function")) {
               out[col.id] = value;
               continue;

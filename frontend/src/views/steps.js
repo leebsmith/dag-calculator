@@ -269,7 +269,7 @@ export const steps = [
     id: "hops",
     slice: "hops",
     title: "Hops",
-    subtitle: "Boil and whirlpool by IBU share; dry hops by schedule",
+    subtitle: "Boil and whirlpool by share; dry hops by schedule",
     partial: "./src/partials/step-hops.html",
     fields: [
       {

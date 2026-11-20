@@ -213,6 +213,12 @@ def test_the_ibu_splits_render_with_whirlpool_hops(render_once) -> None:
     assert "Hop Allocation" in _pdf_text(rendered.data)
 
 
+def test_the_hop_allocation_mode_renders(render_once) -> None:
+    text = _pdf_text(render_once(bundle(), parse_spec(sections="hops")).data)
+    assert "Hop allocation" in text
+    assert "Two pools" in text
+
+
 def test_the_cooling_curve_provenance_renders(render_once) -> None:
     text = _pdf_text(render_once(bundle(), parse_spec(sections="hops")).data)
     assert "Cooling curve" in text

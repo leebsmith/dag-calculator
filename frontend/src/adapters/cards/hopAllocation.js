@@ -6,6 +6,12 @@ import { HOP_NODES as N } from "../../views/registry/hops.js";
 import { formatPercent, formatWithDecimals } from "../../utils.js";
 import { resolveOrNull } from "./hopGetters.js";
 
+function stageNote(massPool) {
+  return massPool
+    ? "Mass shares are authored across the boil + whirlpool pool; the IBU split follows from them and the target. Dry hops are weighed in grams and sit outside the pool."
+    : "Stage masses and the IBU split are readouts of the solved bill; the two-pool IBU shares are authored in each hop table. Dry hops sit outside these totals.";
+}
+
 export function allocationDescriptors({ engine, getView, formatMass }) {
   const number = (path, decimals) => {
     const value = resolveOrNull(engine, path);
@@ -62,7 +68,7 @@ export function allocationDescriptors({ engine, getView, formatMass }) {
           },
           {
             key: "hot-side",
-            label: "Hot side (kettle + WP)",
+            label: "Boil + whirlpool total",
             share: "100 %",
             mass: mass(N.totalMass),
             ibu: number(N.realizedIbu, 1),
@@ -70,6 +76,10 @@ export function allocationDescriptors({ engine, getView, formatMass }) {
           },
         ];
       },
+    },
+    hopStageNote: {
+      configurable: true,
+      get: () => stageNote(getView().hopMassPool),
     },
     hopUnsharedCount: {
       configurable: true,

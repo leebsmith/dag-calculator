@@ -1,3 +1,5 @@
+import { hopShareFields } from "../views/producer/hopShareFields.js";
+
 function gristTableConfig(getView) {
   const view = getView();
 
@@ -69,16 +71,17 @@ function traceMaltTableConfig(getView) {
 }
 
 function shareColumns(view, kind) {
-  if (view.hopAllocationMode !== "mass_pool") {
+  const share = hopShareFields(view.hopAllocationMode);
+  if (!share.massPool) {
     return [
-      { id: "parts", label: "Parts", width: "5%", align: "right", cell: "number", value: (row) => row.parts },
-      { id: "pct", label: "IBU share", width: "10%", align: "right", cell: "number", value: (row) => view.hopPct(row) },
+      { id: share.shareId, label: share.shareLabel, width: "5%", align: "right", cell: "number", value: (row) => row.parts },
+      { id: share.derivedId, label: share.derivedLabel, width: "10%", align: "right", cell: "number", value: (row) => view.hopPct(row) },
     ];
   }
   return [
     {
-      id: "mass_parts",
-      label: "Share",
+      id: share.shareId,
+      label: share.shareLabel,
       width: "8%",
       align: "right",
       cell: "input",
@@ -89,11 +92,11 @@ function shareColumns(view, kind) {
         class: "form-input table-input-parts",
         value: (row) => (row.mass_parts == null ? "" : String(row.mass_parts)),
         onChange: (row, index, raw) => view.setHopMassParts(kind, index, raw),
-        ariaLabel: (row) => "Mass share parts for " + row.name,
-        hint: () => "Share of the hot-side pool",
+        ariaLabel: (row) => share.shareAria + row.name,
+        hint: () => share.shareHint,
       },
     },
-    { id: "mass_pct", label: "Mass share", width: "10%", align: "right", cell: "number", value: (row) => view.hopMassPct(row) },
+    { id: share.derivedId, label: share.derivedLabel, width: "10%", align: "right", cell: "number", value: (row) => view.hopMassPct(row) },
   ];
 }
 
@@ -123,7 +126,7 @@ function boilHopTableConfig(getView) {
           hintClass: (row) => (view.hopAlphaOutsideStock(row) ? "text-warning" : null),
         },
       },
-      { id: "boil", label: "Boil", width: "15%", align: "right", cell: "number", value: (row) => view.hopBoilPct(row) + " · " + view.hopMinutes(row) },
+      { id: "boil", label: "Boil time remaining", width: "15%", align: "right", cell: "number", value: (row) => view.hopMinutes(row) + " · " + view.hopBoilPct(row) },
       ...shareColumns(view, "boil"),
       { id: "ibu", label: "IBU", width: "5%", align: "right", cell: "number", value: (row) => view.hopIbu(row) },
       { id: "mass", label: "Mass", width: "10%", align: "right", cell: "number", value: (row) => view.hopMass(row) },

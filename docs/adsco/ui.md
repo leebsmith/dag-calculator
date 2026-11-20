@@ -267,17 +267,17 @@ report.
 | Mode | Authored per row | Budget | Stage IBU split |
 | --- | --- | --- | --- |
 | Two pools (default) | `parts` — share of its stage's IBU pool | `batch.target_ibu`, divided by `batch.whirlpool_ibu_fraction` | authored |
-| One pool | `mass_parts` — share of the hot-side mass | `batch.target_ibu`, undivided | emergent |
+| One pool | `mass_parts` — share of the boil + whirlpool mass | `batch.target_ibu`, undivided | emergent |
 
 Only the active share column is editable; the other stays in the row. In the
 one pool the parts normalize across both tables with the Hamilton rule, so a
 share typed in the boil table moves the whirlpool percentages too, and the
-table footer reports the share of the hot side rather than a per-table total.
+table footer reports the share of the boil + whirlpool pool rather than a per-table total.
 
 The hops card shows a **Stage Allocation** strip in both modes: boil, hot
 whirlpool and cool whirlpool, each with its mass share, mass, IBU and IBU share,
-then the hot-side total. The strip is the same three masses either way; what
-changes is which split was authored. A hot-side row with no share adds no mass
+then the boil + whirlpool total. The strip is the same three masses either way;
+what changes is which split was authored. A boil + whirlpool row with no share adds no mass
 and is counted in a hint rather than guessed at.
 
 Switching from two pools to one seeds `mass_parts` from the batch's current
@@ -288,7 +288,7 @@ chooses the other.
 
 ### Bract floor
 
-The hops card shows a **hot-side bract** line whenever the bill carries lupulin:
+The hops card shows a **boil + whirlpool bract** line whenever the bill carries lupulin:
 bract mass, lupulin mass, the floor and the ratio. The line is muted while the
 floor holds and warning-styled when it is short; a shortfall names the T-90 to
 add and the lupulin that would have to be converted instead. It is advisory and

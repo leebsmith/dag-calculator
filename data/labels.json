@@ -18,7 +18,8 @@
     "label": "Alpha"
   },
   "batch.boil_hops.boil_time_fraction": {
-    "label": "Portion of boil"
+    "label": "Boil time remaining",
+    "hint": "Share of the boil left at the addition; 100% is a full boil and 0% is flameout. The table also shows the derived minutes."
   },
   "batch.boil_hops.hop_id": {
     "label": "Hop ID"
@@ -159,10 +160,10 @@
   },
   "batch.hop_allocation_mode": {
     "label": "Hop allocation",
-    "hint": "Split the IBU target into a boil and a whirlpool pool, or author one pool where each charge's share is a proportion of the hot-side mass.",
+    "hint": "Split the IBU target into a boil and a whirlpool pool, or author one pool where each charge's share is a proportion of the boil + whirlpool mass.",
     "optionLabels": {
       "ibu_split": "Two pools (boil / whirlpool)",
-      "mass_pool": "One pool (kettle + whirlpool)"
+      "mass_pool": "One pool (boil + whirlpool)"
     }
   },
   "batch.late_addition_intent": {

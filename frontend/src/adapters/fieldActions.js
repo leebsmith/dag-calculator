@@ -327,10 +327,15 @@ export function createFieldActions({
       const engine = session.getEngine();
       const boil = engine.get(N.boilHops) ?? [];
       const whirlpool = engine.get(N.whirlpoolHops) ?? [];
-      const solved = [
-        ...(engine.get(N.boilRows) ?? []),
-        ...(engine.get(N.whirlpoolRows) ?? []),
-      ];
+      const solvedRows = (path) => {
+        try {
+          return engine.resolve(path) ?? [];
+        } catch (err) {
+          observability.reportError("fieldActions.seedHopMassShares", err);
+          return [];
+        }
+      };
+      const solved = [...solvedRows(N.boilRows), ...solvedRows(N.whirlpoolRows)];
       const masses = solved.map((row) => row?.mass_kg);
       const total = masses.reduce(
         (sum, value) => (Number.isFinite(value) ? sum + value : sum),

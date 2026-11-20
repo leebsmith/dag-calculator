@@ -1486,6 +1486,7 @@ PAYLOAD = FreezePayload(
         "solver.batch.apparent_attenuation": FormattedValue(text="75.6%", number="75.6", unit="%"),
         "batch.realized_abv": FormattedValue(text="5.6%", number="5.6", unit="%"),
         "batch.target_ibu": FormattedValue(text="40.0 IBU", number="40.0", unit="IBU"),
+        "batch.hop_allocation_mode": FormattedValue(text="Two pools (boil / whirlpool)"),
         "batch.cooling_curve_id": FormattedValue(text="Garage kettle"),
         "batch.boil_target_ibu": FormattedValue(text="30.0 IBU", number="30.0", unit="IBU"),
         "batch.whirlpool_target_ibu": FormattedValue(text="10.0 IBU", number="10.0", unit="IBU"),

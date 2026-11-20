@@ -30,7 +30,7 @@ test("no lupulin means no readout", () => {
 
 test("a satisfied floor shows the composition without a warning", () => {
   const line = readout(0.025, 0.04);
-  assert.match(line, /Hot-side bract 25\.0 g/);
+  assert.match(line, /Boil \+ whirlpool bract 25\.0 g/);
   assert.match(line, /lupulin 40\.0 g/);
   assert.match(line, /floor 25\.0 g \(0\.625 × lupulin\)/);
   assert.doesNotMatch(line, /Short/);
