@@ -109,7 +109,7 @@ tracks only what is outstanding.
 * **HLT volume readouts** — `solver.water.prescription.residual_hlt_water_l` (treated
   minus sparge demand) and `batch.surplus_sparge_capacity` (deliverable minus demand)
   are both "left in the HLT" with different bases; name one, or both explicitly.
-* **Water field provenance** — a `seed`/`↺` affordance for the calcium minimum and the
+* **Water field provenance** — a `seed`/`↺` affordance for the calcium band and the
   mash-pH objective, so a default value and an authored one are visibly different.
 * **Boundary message envelope (parked)** — findings travel as the 200 `telemetry`
   list; errors as 422 `code/message` plus an additive `messages` chain of the
