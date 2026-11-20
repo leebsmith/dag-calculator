@@ -64,7 +64,12 @@ test("the stage strip and table columns follow the current hop card", withFreshA
   assert.ok(app.hopCardRevision > revision);
   assert.equal(app.hopStageRows.length, 4);
 
-  let columns = app.boilHopTableConfig().columns.map((column) => column.id);
+  const boilConfig = app.boilHopTableConfig();
+  const whirlpoolConfig = app.whirlpoolHopTableConfig();
+  assert.equal(typeof Object.getOwnPropertyDescriptor(boilConfig, "columns").get, "function");
+  assert.equal(typeof Object.getOwnPropertyDescriptor(whirlpoolConfig, "columns").get, "function");
+
+  let columns = boilConfig.columns.map((column) => column.id);
   assert.ok(columns.includes("parts"));
   app.setHopAllocationMode("mass_pool");
   app.compute();

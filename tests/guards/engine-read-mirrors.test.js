@@ -12,10 +12,16 @@ const IDENT = /[A-Za-z_$][\w$]*/g;
 
 const ALLOW = {
   brewDayLevel: "reads the engine root for the checklist level picker's value binding",
-  coolingCurveId: "reads the engine root for the picker's value binding",
+  brewDaySections: "selects through the engine against view.brewDayRows, which every refresh reassigns",
   lateSugarField: "reads view.fieldsBySlice, which every refresh reassigns",
   sugarDraftMassDisplay: "reads view.draftRows, which the editor reassigns",
 };
+
+const REFRESH_TOKEN = /\b(?:getView\(\)|view)\.(?:hopCardRevision|libraryRevision)\b/;
+
+function withoutComments(source) {
+  return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+}
 
 // A descriptor getter, wherever it lives: inline in an `Object.defineProperties`
 // literal or returned by a card's descriptor factory. Anchoring on the getter body
@@ -51,7 +57,9 @@ function engineGetters() {
   for (const abs of walk("frontend/src/adapters", [".js"])) {
     const src = read(rel(abs));
     for (const getter of descriptorGetters(src)) {
-      if (!/ctx\.engine|\bengine\./.test(getter.body)) continue;
+      const body = withoutComments(getter.body);
+      if (!/(?:^|[^\w$.])engine\b/.test(body)) continue;
+      if (REFRESH_TOKEN.test(body)) continue;
       found.push({ name: getter.name, file: rel(abs), line: getter.line });
     }
   }
