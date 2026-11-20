@@ -6,9 +6,12 @@ sweep verifies against the known-good code.
 
 > **Provenance.** The batch math derives from `docs/batch-math/unified-treatment.md`
 > and `docs/batch-math/batch-sparge-non-linear-root-finding-v2.md`. The water
-> math derives from `docs/good-enough-water-chemistry-calculator.md` and
-> `scripts/water-chemistry-module.py` (Bru'n Water port). The color math derives
-> from `docs/srm-ebc-and-lovibond-reference.md`.
+> math derives from the predecessor repository's
+> `good-enough-water-chemistry-calculator.md` and `water-chemistry-module.py` (a
+> Bru'n Water port); neither is vendored here. The sealed solver lives in
+> `backend/app/core/water/`, and the vendored ADSCO inputs it is reconciled
+> against are under `docs/adsco/`. The color math derives from
+> `docs/srm-ebc-and-lovibond-reference.md`.
 >
 > **Provenance (batch).** The batch math was originally specified in the legacy
 > `docs/batch-math/` treatment (`unified-treatment.md`,
@@ -465,7 +468,7 @@ program via `scipy.optimize.linprog`). **Realization:** the package
 | `acid_medium` | taxonomy | `LACTIC_88` \| `PHOSPHORIC_10` \| `PHOSPHORIC_85` |
 | `gypsum_form` / `cacl2_form` | taxonomy | hydrate forms |
 | `preferred_alkaline_agent` | taxonomy | `BAKING_SODA` \| `CHALK` \| `PICKLING_LIME` |
-| `calcium_floor_ppm` | concentration | Ca floor (ppm) |
+| `calcium_floor_ppm` / `calcium_ceiling_ppm` | concentration | Ca band (ppm) |
 
 The six working ions: `calcium_ca`, `magnesium_mg`, `sodium_na`, `sulfate_so4`,
 `chloride_cl`, `alkalinity_as_caco3` (ppm, except alkalinity as CaCO₃). `source`
@@ -477,12 +480,19 @@ from the checked set as the `water.route` node: `{}` → `BASELINE`,
 anything else → `CUSTOM` with those ions as pins. The UI never writes `AUTO`,
 though the solver still accepts it for API clients. `target` alkalinity is the
 root's `alkalinity_as_caco3` while `source` alkalinity is the report's
-`total_alkalinity_caco3`. `calcium_floor_ppm` is a **minimum**
-(`final Ca ≥ floor`) applied by every dosing route, relaxed with one
-`GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE` warning when the pinned equalities cannot
-also meet it; `BASELINE` and `FLAVOR` do not apply it, so the audit does not
-grade them. It is the editable `water.calcium_floor_ppm` root (seeded from the
-profile); `custom_pinned_ions`
+`total_alkalinity_caco3`. `calcium_floor_ppm` and `calcium_ceiling_ppm` are a
+**band** — a minimum (`final Ca ≥ floor`) and a maximum (`final Ca ≤ ceiling`) —
+applied by every route that optimises salts. Inside the band the dose is ordered:
+satisfy the pinned equalities, hold the band, prefer gypsum over Epsom salt,
+minimise magnesium, then minimise added ion load. A band the equalities cannot
+hold is dropped with one `OPT_LP_RELAXATION_APPLIED` note; a shortfall against
+the floor is then graded by `GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE`, and a finished
+concentration above a reachable ceiling by `GUARDRAIL_CALCIUM_ABOVE_CEILING`. A
+ceiling below the floor collapses to the floor with
+`GUARDRAIL_CALCIUM_BAND_OVERRIDDEN`. `BASELINE` and `FLAVOR` do not apply the
+band, so the audit does not grade them. Both bounds are editable roots
+(`water.calcium_floor_ppm`, `water.calcium_ceiling_ppm`) seeded from the profile;
+`custom_pinned_ions`
 is the checked subset in the `water.pinned_ions` collection — ignored by the
 named strategies, and the equality set for `CUSTOM`. A checked ion with no
 positive target is dropped by the request builder rather than sent as a zero

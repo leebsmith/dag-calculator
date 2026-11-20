@@ -14,7 +14,7 @@ differ; decisions are recorded in `plans/archive/2026-11/adsco-contract.md` (§ 
   minimum and a maximum applied by the dosing routes, not objectives.
 - **Objectives**: `water.pinned_ions` collection.
 - **Profile**: a quick-fill affordance, **not** persisted selection. Applying a
-  profile sets the objective set, values and minimum, then becomes inert; the
+  profile sets the objective set, values and calcium band, then becomes inert; the
   selector reads Custom objectives once the set is edited.
 
 ## Recompute
