@@ -152,12 +152,8 @@ export function refreshWaterCard(app, ctx) {
       sourceDetail: sourceDetailText(sourceComponent),
       target: fieldOr(ctx.fieldsById, N.targetProfileId),
       floor: fieldOr(ctx.fieldsById, N.calciumFloor),
-      floorNotice: floorNotice(
-        checkedSet.size,
-        checkedSet.has("ca"),
-        read(N.calciumFloor),
-        read(`${N.target}.calcium_ca`)
-      ),
+      ceiling: fieldOr(ctx.fieldsById, N.calciumCeiling),
+      floorNotice: floorNotice(checkedSet.size, checkedSet.has("ca"), read(N.calciumFloor), read(`${N.target}.calcium_ca`)),
       mashPh: fieldOr(ctx.fieldsById, N.targetMashPh),
     });
     app.waterTreatmentFields = [

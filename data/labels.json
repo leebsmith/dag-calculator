@@ -732,6 +732,10 @@
     "label": "Calcium minimum",
     "hint": "A guardrail, not a target: the dose adds calcium until the finished mash reaches this minimum, relaxed and reported in Details when the pinned objectives leave no room."
   },
+  "water.calcium_ceiling_ppm": {
+    "label": "Calcium maximum",
+    "hint": "The upper half of the calcium band: the dose prefers gypsum up to this ceiling and falls back on Epsom salt beyond it, so magnesium only rises when the ceiling leaves no other route to the sulfate target."
+  },
   "water.gypsum_form": {
     "label": "Gypsum form",
     "optionLabels": {
@@ -764,6 +768,9 @@
   "water.target_profile.calcium_ca": {},
   "water.target_profile.calcium_floor_ppm": {
     "label": "Calcium minimum"
+  },
+  "water.target_profile.calcium_ceiling_ppm": {
+    "label": "Calcium maximum"
   },
   "water.target_profile.chloride_cl": {},
   "water.target_profile.magnesium_mg": {},

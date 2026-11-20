@@ -32,6 +32,7 @@
   "water": [
     "acid_medium",
     "cacl2_form",
+    "calcium_ceiling_ppm",
     "calcium_floor_ppm",
     "custom_pinned_ions",
     "grist",

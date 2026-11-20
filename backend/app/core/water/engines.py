@@ -16,6 +16,7 @@ from app.core.water.telemetry import (
     clone_constraint_relaxed,
     clone_weighted_compromise,
     lp_lexicographic_tie_break,
+    lp_relaxation_applied,
     sparse_equalities_only,
 )
 
@@ -64,60 +65,80 @@ def _flavor_dose(
     )
 
 
-def _primary_solution(
-    c_primary: list[float],
-    a_eq: list[list[float]],
-    b_eq: list[float],
-    a_ub: list[list[float]],
-    b_ub: list[float],
-    events: list[TelemetryEvent] | None,
-):
-    capped = _solve_lp(c_primary, a_eq, b_eq, a_ub, b_ub)
-    if capped.success:
-        return capped
-    relaxed = _solve_lp(c_primary, a_eq, b_eq, None, None)
-    if not relaxed.success:
-        raise SolverValidationError(
-            "SALT_SOLVE_FAILED", "Salt optimization failed to find a feasible dose."
-        )
-    return relaxed
+_TOL = 1e-6
 
 
-def _tie_broken_solution(
-    x: list[float],
-    opt_primary: float,
-    a_eq: list[list[float]],
-    b_eq: list[float],
-    a_ub: list[list[float]],
-    b_ub: list[float],
-    c_primary: list[float],
+def _calcium_band_rows(
+    salts: Sequence[dict[str, float]],
+    source_ca: float,
+    floor_ppm: float,
+    ceiling_ppm: float,
+) -> tuple[list[list[float]], list[float], bool]:
+    """The floor is a minimum and the ceiling a maximum; salts only add ions."""
+    row = [salt.get("ca", 0.0) for salt in salts]
+    rows: list[list[float]] = []
+    bounds: list[float] = []
+    if source_ca < floor_ppm - 1e-9:
+        rows.append([-value for value in row])
+        bounds.append(-(floor_ppm - source_ca))
+    has_ceiling = ceiling_ppm > floor_ppm + 1e-9
+    if has_ceiling:
+        rows.append(row)
+        bounds.append(max(0.0, ceiling_ppm - source_ca))
+    return rows, bounds, has_ceiling
+
+
+def _dose_passes(
+    salts: Sequence[dict[str, float]],
     epsom: dict[str, float],
-    nacl: dict[str, float],
-    events: list[TelemetryEvent] | None,
-) -> list[float]:
-    tol = 1e-6
-    c_secondary = [0.0, 0.0, epsom.get("mg", 0.0), nacl.get("na", 0.0)]
-    secondary_ub = a_ub + [c_primary, [-v for v in c_primary]]
-    secondary_bub = b_ub + [opt_primary + tol, -(opt_primary - tol)]
-    secondary = _solve_lp(c_secondary, a_eq, b_eq, secondary_ub, secondary_bub)
-    if not secondary.success:
-        return x
-    x = [max(0.0, v) for v in secondary.x]
-    opt_secondary = float(secondary.fun)
+    epsom_index: int,
+) -> list[list[float]]:
+    """The lexicographic order: prefer gypsum, then low magnesium, then low load."""
+    prefer_gypsum = [0.0] * len(salts)
+    prefer_gypsum[epsom_index] = 1.0
+    prefer_low_magnesium = [0.0] * len(salts)
+    prefer_low_magnesium[epsom_index] = epsom.get("mg", 0.0)
+    return [prefer_gypsum, prefer_low_magnesium, [sum(s.values()) for s in salts]]
 
-    c_tertiary = [0.0, 0.0, 1.0, 1.0]
-    tertiary = _solve_lp(
-        c_tertiary,
-        a_eq,
-        b_eq,
-        secondary_ub + [c_secondary, [-v for v in c_secondary]],
-        secondary_bub + [opt_secondary + tol, -(opt_secondary - tol)],
-    )
-    if tertiary.success:
-        x = [max(0.0, v) for v in tertiary.x]
-        if events is not None:
-            events.append(lp_lexicographic_tie_break())
-    return x
+
+def _resolve_dose(
+    passes: list[list[float]],
+    a_eq: list[list[float]],
+    b_eq: list[float],
+    band: tuple[list[list[float]], list[float], bool],
+    epsom_index: int,
+    events: list[TelemetryEvent] | None,
+    relax,
+) -> list[float] | None:
+    """Solve the passes in order, pinning each optimum before the next runs.
+
+    The calcium band is the only soft guardrail: if it leaves the equalities
+    infeasible it is dropped once, reported, and the solve continues. A dropped
+    floor is reported by the caller's floor audit, so only a dropped ceiling
+    raises the relaxation note here.
+    """
+    rows, bounds, has_ceiling = band
+    reference = _solve_lp(passes[-1], a_eq, b_eq, rows or None, bounds or None)
+    ub, bub = list(rows), list(bounds)
+    solution: list[float] | None = None
+    for weights in passes:
+        result = _solve_lp(weights, a_eq, b_eq, ub or None, bub or None)
+        if not result.success and ub:
+            ub, bub = [], []
+            if has_ceiling:
+                relax()
+            result = _solve_lp(weights, a_eq, b_eq, None, None)
+        if not result.success:
+            return None
+        solution = [max(0.0, value) for value in result.x]
+        optimal = float(result.fun)
+        ub = ub + [weights, [-value for value in weights]]
+        bub = bub + [optimal + _TOL, -(optimal - _TOL)]
+    if events is not None and reference.success and solution is not None:
+        saved = max(0.0, float(reference.x[epsom_index])) - solution[epsom_index]
+        if saved > 1e-9:
+            events.append(lp_lexicographic_tie_break(saved))
+    return solution
 
 
 def _minimal_salt_vector(
@@ -128,23 +149,19 @@ def _minimal_salt_vector(
     nacl: dict[str, float],
     need_so4: float,
     need_cl: float,
-    calcium_gap: float,
+    calcium_band: tuple[float, float, float],
     events: list[TelemetryEvent] | None,
-) -> list[float]:
+    relax,
+) -> list[float] | None:
     a_eq = [
         [gyp.get("so4", 0.0), 0.0, epsom.get("so4", 0.0), 0.0],
         [0.0, cacl2.get("cl", 0.0), 0.0, nacl.get("cl", 0.0)],
     ]
     b_eq = [need_so4, need_cl]
-    # The calcium floor is a minimum: added Ca must cover the gap to it.
-    a_ub = [[-gyp.get("ca", 0.0), -cacl2.get("ca", 0.0), 0.0, 0.0]]
-    b_ub = [-calcium_gap]
-    c_primary = [sum(s.values()) for s in salts]
-
-    res = _primary_solution(c_primary, a_eq, b_eq, a_ub, b_ub, events)
-    x = [max(0.0, val) for val in res.x]
-    return _tie_broken_solution(
-        x, float(res.fun), a_eq, b_eq, a_ub, b_ub, c_primary, epsom, nacl, events
+    source_ca, floor_ppm, ceiling_ppm = calcium_band
+    band = _calcium_band_rows(salts, source_ca, floor_ppm, ceiling_ppm)
+    return _resolve_dose(
+        _dose_passes(salts, epsom, 2), a_eq, b_eq, band, 2, events, relax
     )
 
 
@@ -153,10 +170,11 @@ def _solve_linear_minimalist(
     target: dict[str, float],
     coeffs: dict[str, dict[str, float]],
     calcium_floor_ppm: float,
+    calcium_ceiling_ppm: float,
     unbounded_ca: bool = False,
     events: list[TelemetryEvent] | None = None,
 ) -> SaltDose:
-    """Mode 1: Linear Minimalist Engine (Mass minimization via HiGHS)."""
+    """Mode 1: flavour equalities, then the calcium band, then the preferences."""
     gyp, cacl2, epsom, nacl = coeffs["GYPSUM"], coeffs["CACL2"], coeffs["EPSOM"], coeffs["NACL"]
     salts = [gyp, cacl2, epsom, nacl]
 
@@ -169,8 +187,11 @@ def _solve_linear_minimalist(
         # Pure unconstrained flavor dosing (Ca floats freely)
         return flavor
 
+    def relax() -> None:
+        if events is not None:
+            events.append(lp_relaxation_applied())
+
     source_ca = source.get("ca", 0.0)
-    calcium_gap = max(0.0, calcium_floor_ppm - source_ca)
     x = _minimal_salt_vector(
         salts,
         gyp,
@@ -179,9 +200,14 @@ def _solve_linear_minimalist(
         nacl,
         need_so4,
         need_cl,
-        calcium_gap,
+        (source_ca, calcium_floor_ppm, calcium_ceiling_ppm),
         events,
+        relax,
     )
+    if x is None:
+        raise SolverValidationError(
+            "SALT_SOLVE_FAILED", "Salt optimization failed to find a feasible dose."
+        )
     final_ca = source_ca + x[0] * gyp.get("ca", 0.0) + x[1] * cacl2.get("ca", 0.0)
     if final_ca < calcium_floor_ppm - 1e-6 and events is not None:
         events.append(calcium_floor_unreachable(final_ca, calcium_floor_ppm))
@@ -307,6 +333,7 @@ def _solve_dynamic_sparse(
     coeffs: dict[str, dict[str, float]],
     pinned_ions: Sequence[str],
     calcium_floor_ppm: float,
+    calcium_ceiling_ppm: float,
     events: list[TelemetryEvent],
     preferred_alkaline_agent: str = "PICKLING_LIME",
 ) -> SaltDose:
@@ -326,37 +353,35 @@ def _solve_dynamic_sparse(
         a_eq.append([s.get(ion, 0.0) for s in salts])
         b_eq.append(deficit)
 
-    c_primary = [sum(s.values()) for s in salts]
+    source_ca = source.get("ca", 0.0)
+    if "ca" in pinned:
+        band = ([], [], False)
+    else:
+        band = _calcium_band_rows(salts, source_ca, calcium_floor_ppm, calcium_ceiling_ppm)
 
-    a_ub = None
-    b_ub = None
-    if "ca" not in pinned and source.get("ca", 0.0) < calcium_floor_ppm:
-        ca_gap = calcium_floor_ppm - source.get("ca", 0.0)
-        a_ub = [[-gyp.get("ca", 0.0), -cacl2.get("ca", 0.0), 0.0, 0.0, -agent.get("ca", 0.0)]]
-        b_ub = [-ca_gap]
-
-    res = _solve_lp(c_primary, a_eq, b_eq, a_ub, b_ub)
-    if not res.success:
+    def relax() -> None:
         events.append(sparse_equalities_only())
-        res = _solve_lp(c_primary, a_eq, b_eq, None, None)
-        if not res.success:
-            count = len(pinned)
-            noun = "target" if count == 1 else "targets"
-            detail = ""
-            if "ca" in pinned:
-                max_ca = _max_reachable_calcium(source, target, salts, pinned)
-                if max_ca is not None:
-                    detail = (
-                        f" The most this set can reach is {max_ca:.1f} ppm calcium "
-                        f"against a pinned {target.get('ca', 0.0):.1f} ppm."
-                    )
-            raise SolverValidationError(
-                "SALT_SOLVE_FAILED",
-                f"No salt dose can satisfy all {count} pinned {noun}.{detail} "
-                "Unpin one ion to leave a degree of freedom, or choose a target preset.",
-            )
 
-    x = [max(0.0, val) for val in res.x]
+    x = _resolve_dose(
+        _dose_passes(salts, epsom, 2), a_eq, b_eq, band, 2, events, relax
+    )
+    if x is None:
+        count = len(pinned)
+        noun = "target" if count == 1 else "targets"
+        detail = ""
+        if "ca" in pinned:
+            max_ca = _max_reachable_calcium(source, target, salts, pinned)
+            if max_ca is not None:
+                detail = (
+                    f" The most this set can reach is {max_ca:.1f} ppm calcium "
+                    f"against a pinned {target.get('ca', 0.0):.1f} ppm."
+                )
+        raise SolverValidationError(
+            "SALT_SOLVE_FAILED",
+            f"No salt dose can satisfy all {count} pinned {noun}.{detail} "
+            "Unpin one ion to leave a degree of freedom, or choose a target preset.",
+        )
+
     return SaltDose(
         gypsum_g_per_l=x[0],
         cacl2_g_per_l=x[1],

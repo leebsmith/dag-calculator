@@ -223,7 +223,15 @@ export function sourceDetailText(component) {
  *   readonly target: object, readonly floor: object, readonly mashPh: object }} args
  * @returns {object}
  */
-export function waterPlanView({ sourceTitle, sourceDetail, target, floor, floorNotice, mashPh }) {
+export function waterPlanView({
+  sourceTitle,
+  sourceDetail,
+  target,
+  floor,
+  ceiling,
+  floorNotice,
+  mashPh,
+}) {
   return {
     source: {
       label: "Source water",
@@ -233,6 +241,7 @@ export function waterPlanView({ sourceTitle, sourceDetail, target, floor, floorN
     },
     target,
     floor,
+    ceiling,
     floorNotice,
     mashPh,
   };

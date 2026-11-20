@@ -61,6 +61,7 @@ function initialState() {
       source: {},
       target: {},
       floor: {},
+      ceiling: {},
       floorNotice: "",
       mashPh: {},
     },

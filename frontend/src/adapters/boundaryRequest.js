@@ -164,6 +164,7 @@ export const WATER_FIELDS = {
   cacl2_form: { path: "water.cacl2_form" },
   preferred_alkaline_agent: { path: "water.preferred_alkaline_agent" },
   calcium_floor_ppm: { path: "water.calcium_floor_ppm", default: 50 },
+  calcium_ceiling_ppm: { path: "water.calcium_ceiling_ppm", default: 150 },
   custom_pinned_ions: {
     path: "water.pinned_ions",
     read: "get",

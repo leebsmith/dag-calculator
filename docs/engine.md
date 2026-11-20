@@ -274,7 +274,7 @@ Shared values and the single test surface that pins each:
 | Contract | Artifact source | JS consumer | Python consumer | Pinning test |
 |---|---|---|---|---|
 | Sucrose gravity points, extract volume/absorption, shrinkage | `sucrose_yield_ldk`, `v_bar`, `k_abs_true`, `rho_water`, `default_shrinkage_fraction` | engine functions | `batch_solver` constants | `tests/backend/conformance/test_artifact_constants.py` |
-| Water equivalents, calcium floor, mash-pH window and default | `bicarbonate_eq_weight`, `default_calcium_floor_ppm`, `mash_ph_optimal_low/high`, `default_target_mash_ph` | engine functions | `core/water/constants.py`, `WaterSolverRequest` | `tests/backend/conformance/test_artifact_constants.py` |
+| Water equivalents, calcium band, mash-pH window and default | `bicarbonate_eq_weight`, `default_calcium_floor_ppm`, `default_calcium_ceiling_ppm`, `mash_ph_optimal_low/high`, `default_target_mash_ph` | engine functions | `core/water/constants.py`, `WaterSolverRequest` | `tests/backend/conformance/test_artifact_constants.py` |
 | ASBC Plato↔SG, Cutaia ABV, maximum achievable ABV, Phase 1 SG-from-ABV | `plato_to_sg`, `sg_to_plato`, `realized_abv` | engine functions | `core/utils.py`, `batch_solver` | `tests/conformance/numeric-parity.test.js` + `tests/backend/conformance/test_numeric_parity.py` on `tests/conformance/fixtures/numeric-parity.json` |
 | Canonical JSON + SHA-256 fingerprint | n/a | `engine/boundary.js` | `schemas/boundary.py` | `tests/frontend/boundary.test.js` + `tests/backend/test_fingerprint.py` on `tests/conformance/fixtures/canonical-json.json` |
 | Boundary wire keys | node `inputs` aliases | declarative `BATCH_FIELDS` / `WATER_FIELDS` / `HOP_FIELDS` | Pydantic model fields | `tests/guards/boundary-inputs.test.js` + `tests/backend/conformance/test_boundary_wire_contract.py` on `tests/conformance/fixtures/boundary-wire-keys.json` |
@@ -339,7 +339,7 @@ active target as a read-only display of the same root. The Belgian knob is
 retired (see `docs/attenuation-model.md` §6.1).
 
 Water source ions are **read-only selection readouts** (the boundary reads them
-straight from `water.source`). Water target ions and the calcium floor are
+straight from `water.source`). Water target ions and the calcium band are
 **editable roots** (`water.target.*`), seeded from the
 selected `water.target_profile` on copy-in; the routing mode is not a root — it is
 derived from the checked set as `water.route`. The assumed dosing practice is

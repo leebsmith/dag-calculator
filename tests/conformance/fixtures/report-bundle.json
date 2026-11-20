@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:1ab628788445c20298e3c4eb9c15eacb4c0ca9d67964ecffe885b4ba577ec282",
+    "hash": "sha256:649963d12f650d685c35ec492e7f004eaedba34adc3b68d1d96fe70b7e0d5661",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -271,6 +271,10 @@
         },
         "default_calcium_floor_ppm": {
           "value": 50,
+          "dimension": "concentration"
+        },
+        "default_calcium_ceiling_ppm": {
+          "value": 150,
           "dimension": "concentration"
         },
         "default_target_ibu": {
@@ -1498,6 +1502,11 @@
             "domain": "$value >= 0",
             "default": 50
           },
+          "calcium_ceiling_ppm": {
+            "dimension": "concentration",
+            "domain": "$value >= 0",
+            "default": 150
+          },
           "mode": {
             "taxonomy": "strategy"
           },
@@ -1828,6 +1837,12 @@
           "kind": "root",
           "dimension": "concentration",
           "default": "((water.target_profile.calcium_floor_ppm > 0) ? water.target_profile.calcium_floor_ppm : constants.default_calcium_floor_ppm)",
+          "domain": "$value >= 0"
+        },
+        "water.calcium_ceiling_ppm": {
+          "kind": "root",
+          "dimension": "concentration",
+          "default": "((water.target_profile.calcium_ceiling_ppm > 0) ? water.target_profile.calcium_ceiling_ppm : constants.default_calcium_ceiling_ppm)",
           "domain": "$value >= 0"
         },
         "water.target_mash_ph": {
@@ -2509,6 +2524,7 @@
             "cacl2_form": "water.cacl2_form",
             "preferred_alkaline_agent": "water.preferred_alkaline_agent",
             "calcium_floor_ppm": "water.calcium_floor_ppm",
+            "calcium_ceiling_ppm": "water.calcium_ceiling_ppm",
             "custom_pinned_ions": "water.pinned_ions"
           },
           "outputs": {
@@ -8586,5 +8602,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:a8000b808baa007f9eb129760285b858b860cc8c82a4a2f93a2b5fac43d1efb6"
+  "content_hash": "sha256:e24fc5f889ff4387eca97267d4430080ed54b71c96e1e4f67257e148e657e50b"
 }

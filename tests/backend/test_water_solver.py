@@ -15,8 +15,9 @@ from app.core.water.chemistry import (
     resolve_grist,
 )
 from app.core.water.dosing import solve_salt_dose
-from app.core.water.inputs import GrainEntry
-from app.core.water.salts import _salt_ion_coeffs
+from app.core.water.inputs import GrainEntry, WaterChemistryInput
+from app.core.water.orchestration import solve_water_chemistry
+from app.core.water.salts import _salt_ion_coeffs, ions_added_ppm
 from app.schemas.boundary import (
     IonProfile,
     MashPhStatus,
@@ -440,3 +441,117 @@ def test_targets_outside_the_model_band_are_flagged():
         high.prescription.predicted_mash_ph
     )
     assert high_event["context"]["model_ceiling"] == 6.0
+
+
+# ---------------------------------------------------------------------------
+# Lexicographic salt-dose hierarchy
+# ---------------------------------------------------------------------------
+
+_WARD = {"ca": 21.5, "mg": 5.0, "na": 3.3, "so4": 6.7, "cl": 3.3, "alk": 40.0}
+
+
+def _post(dose):
+    added = ions_added_ppm(dose, "GYPSUM_DIHYDRATE", "CACL2_DIHYDRATE")
+    return {ion: _WARD.get(ion, 0.0) + added.get(ion, 0.0) for ion in _WARD}
+
+
+def test_linear_route_prefers_gypsum_over_epsom():
+    dose, _notes, _route = solve_salt_dose(
+        "CALCIUM_FLOOR",
+        _WARD,
+        {"so4": 140.0, "cl": 70.0},
+        "GYPSUM_DIHYDRATE",
+        "CACL2_DIHYDRATE",
+        50.0,
+        150.0,
+    )
+    post = _post(dose)
+    assert dose.gypsum_g_per_l > 0.0
+    assert dose.epsom_g_per_l == pytest.approx(0.0, abs=1e-6)
+    assert post["so4"] == pytest.approx(140.0)
+    assert post["cl"] == pytest.approx(70.0)
+    assert post["mg"] == pytest.approx(_WARD["mg"])
+    assert 110.0 < post["ca"] < 120.0
+
+
+def test_the_calcium_ceiling_forces_epsom_back_in():
+    dose, _notes, _route = solve_salt_dose(
+        "CALCIUM_FLOOR",
+        _WARD,
+        {"so4": 400.0, "cl": 70.0},
+        "GYPSUM_DIHYDRATE",
+        "CACL2_DIHYDRATE",
+        50.0,
+        150.0,
+    )
+    post = _post(dose)
+    assert dose.epsom_g_per_l > 0.0
+    assert post["so4"] == pytest.approx(400.0)
+    assert post["ca"] == pytest.approx(150.0, abs=1e-6)
+    assert post["mg"] > _WARD["mg"]
+
+
+def test_custom_pins_resolve_like_the_linear_route():
+    custom, _notes, _route = solve_salt_dose(
+        "CUSTOM",
+        _WARD,
+        {"so4": 140.0, "cl": 70.0},
+        "GYPSUM_DIHYDRATE",
+        "CACL2_DIHYDRATE",
+        50.0,
+        150.0,
+        custom_pinned_ions=["so4", "cl"],
+    )
+    linear, _notes, _route = solve_salt_dose(
+        "CALCIUM_FLOOR",
+        _WARD,
+        {"so4": 140.0, "cl": 70.0},
+        "GYPSUM_DIHYDRATE",
+        "CACL2_DIHYDRATE",
+        50.0,
+        150.0,
+    )
+    assert custom == linear
+
+
+def test_an_inverted_band_collapses_to_the_floor():
+    out = solve_water_chemistry(
+        WaterChemistryInput(
+            grist=[GrainEntry(5.0, 3.0, "BASE")],
+            source=_WARD,
+            target={"so4": 140.0, "cl": 70.0},
+            v_mash_treat_l=23.85,
+            v_hlt_treat_l=0.0,
+            v_hlt_debt_l=0.0,
+            v_sparge_demand_l=0.0,
+            mash_thickness_l_per_kg=2.6,
+            target_mash_ph=5.4,
+            strategy="CALCIUM_FLOOR",
+            calcium_floor_ppm=120.0,
+            calcium_ceiling_ppm=80.0,
+        )
+    )
+    codes = {event["code"] for event in out.telemetry}
+    assert "GUARDRAIL_CALCIUM_BAND_OVERRIDDEN" in codes
+    assert "OPT_LP_RELAXATION_APPLIED" not in codes
+
+
+def test_a_source_above_the_ceiling_is_reported_and_uses_epsom():
+    source = {**_WARD, "ca": 180.0}
+    out = solve_water_chemistry(
+        WaterChemistryInput(
+            grist=[GrainEntry(5.0, 3.0, "BASE")],
+            source=source,
+            target={"so4": 140.0, "cl": 70.0},
+            v_mash_treat_l=23.85,
+            v_hlt_treat_l=0.0,
+            v_hlt_debt_l=0.0,
+            v_sparge_demand_l=0.0,
+            mash_thickness_l_per_kg=2.6,
+            target_mash_ph=5.4,
+            strategy="CALCIUM_FLOOR",
+        )
+    )
+    codes = {event["code"] for event in out.telemetry}
+    assert "GUARDRAIL_CALCIUM_ABOVE_CEILING" in codes
+    assert out.post_dose_mash_ions["mg"] > source["mg"]

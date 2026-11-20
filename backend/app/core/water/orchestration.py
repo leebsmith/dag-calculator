@@ -46,6 +46,8 @@ from app.core.water.telemetry import (
     TelemetryEvent,
     acid_dose_prescribed,
     alkaline_dose_prescribed,
+    calcium_above_ceiling,
+    calcium_band_overridden,
     calcium_below_floor,
     calcium_floor_overridden,
     chloride_above_recommended,
@@ -137,6 +139,9 @@ def _gate_inputs(inp: WaterChemistryInput, events: list[TelemetryEvent]) -> None
     # Validate Calcium Floor user setting
     if inp.calcium_floor_ppm < RECOMMENDED_CALCIUM_MIN_PPM:
         events.append(calcium_floor_overridden(inp.calcium_floor_ppm))
+
+    if inp.calcium_ceiling_ppm < inp.calcium_floor_ppm:
+        events.append(calcium_band_overridden(inp.calcium_floor_ppm, inp.calcium_ceiling_ppm))
 
 
 def _stage1_ions(
@@ -452,6 +457,17 @@ def _emit_operational_findings(
     ):
         events.append(calcium_below_floor(post_dose["ca"], inp.calcium_floor_ppm))
 
+    ceiling_relaxed = any(
+        event.code == "OPT_LP_RELAXATION_APPLIED" for event in events
+    )
+    effective_ceiling = max(inp.calcium_floor_ppm, inp.calcium_ceiling_ppm)
+    if (
+        floor_applied
+        and not ceiling_relaxed
+        and post_dose["ca"] > effective_ceiling + 1e-6
+    ):
+        events.append(calcium_above_ceiling(post_dose["ca"], effective_ceiling))
+
     return residual_hlt
 
 
@@ -500,6 +516,7 @@ def _solve(inp: WaterChemistryInput, events: list[TelemetryEvent]) -> WaterChemi
         inp.gypsum_form,
         inp.cacl2_form,
         inp.calcium_floor_ppm,
+        inp.calcium_ceiling_ppm,
         custom_pinned_ions=inp.custom_pinned_ions,
         preferred_alkaline_agent=inp.preferred_alkaline_agent,
         events=events,

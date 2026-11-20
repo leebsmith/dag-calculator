@@ -88,7 +88,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `water_grist_row` | `color_lovibond` (dimension grain_color, domain "$value >= 0"), `grain_type` (taxonomy malt_category), `mass_kg` (dimension mass, domain "$value > 0") |
 | `water_pinned_ion` | `ion` (taxonomy ion) |
 | `water_report` | `bicarbonate_hco3` (dimension concentration, domain "$value >= 0"), `calcium_ca` (dimension concentration, domain "$value >= 0"), `chloride_cl` (dimension concentration, domain "$value >= 0"), `date_received` (—), `date_reported` (—), `electrical_conductivity_mmho_cm` (dimension dimensionless, domain "$value >= 0"), `laboratory` (—), `location` (—), `magnesium_mg` (dimension concentration, domain "$value >= 0"), `nitrate_no3_n` (dimension concentration, domain "$value >= 0"), `notes` (—), `ph` (dimension ph, domain "$value >= 0 && $value <= 14"), `potassium_k` (dimension concentration, domain "$value >= 0"), `report_id` (—), `sample_id` (—), `sodium_na` (dimension concentration, domain "$value >= 0"), `source_name` (—), `sulfate_so4` (dimension concentration, domain "$value >= 0"), `tds_ppm` (dimension concentration, domain "$value >= 0"), `total_alkalinity_caco3` (dimension concentration, domain "$value >= 0"), `total_hardness_caco3` (dimension concentration, domain "$value >= 0"), `total_iron_fe` (dimension concentration, domain "$value >= 0"), `total_phosphorus_p` (dimension concentration, domain "$value >= 0") |
-| `water_target` | `alkalinity_as_caco3` (dimension concentration, domain "$value >= 0"), `calcium_ca` (dimension concentration, domain "$value >= 0"), `calcium_floor_ppm` (dimension concentration, domain "$value >= 0", default 50), `chloride_cl` (dimension concentration, domain "$value >= 0"), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain "$value >= 0"), `mode` (taxonomy strategy), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain "$value >= 0"), `sulfate_so4` (dimension concentration, domain "$value >= 0") |
+| `water_target` | `alkalinity_as_caco3` (dimension concentration, domain "$value >= 0"), `calcium_ca` (dimension concentration, domain "$value >= 0"), `calcium_ceiling_ppm` (dimension concentration, domain "$value >= 0", default 150), `calcium_floor_ppm` (dimension concentration, domain "$value >= 0", default 50), `chloride_cl` (dimension concentration, domain "$value >= 0"), `description` (—), `id` (—), `magnesium_mg` (dimension concentration, domain "$value >= 0"), `mode` (taxonomy strategy), `name` (—), `notes` (—), `sodium_na` (dimension concentration, domain "$value >= 0"), `sulfate_so4` (dimension concentration, domain "$value >= 0") |
 | `whirlpool_chill` | `at_min` (dimension time), `from_temp_c` (dimension temperature), `to_temp_c` (dimension temperature) |
 | `whirlpool_hop_result` | `alpha_mass_kg` (dimension mass), `effective_minutes` (dimension time), `ibu` (dimension ibu), `mass_kg` (dimension mass), `minutes` (dimension time) |
 | `whirlpool_hop_row` | `addition_at_min` (dimension time, domain "$value >= 0", default 0), `alpha_acid_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `alpha_provenance` (—), `cone_utilization` (dimension dimensionless, domain "$value > 0 && $value <= 1", default null), `geraniol_pct_of_oil` (dimension percentage, domain "$value >= 0 && $value <= 1"), `hop_id` (—), `initial_temp_c` (dimension temperature, domain "$value >= 0 && $value <= 100", default 99), `linalool_pct_of_oil` (dimension percentage, domain "$value >= 0 && $value <= 1"), `mass_parts` (dimension dimensionless, domain "$value >= 0", default null), `mass_pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `name` (—), `notes` (—), `parts` (dimension dimensionless, domain "$value >= 0"), `pct` (dimension percentage, domain "$value >= 0 && $value <= 1"), `product_form` (taxonomy hop_product_form, default "t90_pellet"), `total_oil_ml_per_100g` (—) |
@@ -132,6 +132,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `cutaia_re_ae2` | 0.00029431 | `dimensionless` |
 | `default_attenuation_derate_points` | 0 | `percentage` |
 | `default_boil_time_min` | 60 | `time` |
+| `default_calcium_ceiling_ppm` | 150 | `concentration` |
 | `default_calcium_floor_ppm` | 50 | `concentration` |
 | `default_equipment_profile_id` | "herms-30l" | `reference` |
 | `default_fermenter_profile_id` | "fermenter-7gal" | `reference` |
@@ -280,6 +281,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `solver.water` | boundary |
 | `water.acid_medium` | choice |
 | `water.cacl2_form` | choice |
+| `water.calcium_ceiling_ppm` | root |
 | `water.calcium_floor_ppm` | root |
 | `water.gypsum_form` | choice |
 | `water.kettle_blend.alkalinity_as_caco3` | derived |

@@ -111,6 +111,7 @@ const WATER_VALUES = {
   "water.cacl2_form": "CACL2_DIHYDRATE",
   "water.preferred_alkaline_agent": "PICKLING_LIME",
   "water.calcium_floor_ppm": 50.0,
+  "water.calcium_ceiling_ppm": 150.0,
 };
 
 test("conformance: adapted BatchSolverRequest matches the backend dump", () => {

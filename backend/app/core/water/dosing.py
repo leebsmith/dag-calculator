@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from app.core.errors import SolverValidationError
+from app.core.water.constants import DEFAULT_CALCIUM_CEILING_PPM
 from app.core.water.engines import (
     _solve_dynamic_sparse,
     _solve_linear_minimalist,
@@ -31,6 +32,7 @@ def solve_salt_dose(
     gypsum_form: str,
     cacl2_form: str,
     calcium_floor_ppm: float,
+    calcium_ceiling_ppm: float = DEFAULT_CALCIUM_CEILING_PPM,
     custom_pinned_ions: Sequence[str] = (),
     preferred_alkaline_agent: str = "PICKLING_LIME",
     events: list[TelemetryEvent] | None = None,
@@ -68,6 +70,7 @@ def solve_salt_dose(
             target,
             coeffs,
             calcium_floor_ppm,
+            calcium_ceiling_ppm,
             unbounded_ca=(canonical_strat == "FLAVOR"),
             events=evs,
         )
@@ -80,6 +83,7 @@ def solve_salt_dose(
             target,
             coeffs,
             calcium_floor_ppm,
+            calcium_ceiling_ppm,
             unbounded_ca=False,
             events=evs,
         )
@@ -102,6 +106,13 @@ def solve_salt_dose(
     # Mode 5: Custom Sparse
     evs.append(router_mode_5_custom_sparse(custom_pinned_ions))
     dose = _solve_dynamic_sparse(
-        source, target, coeffs, custom_pinned_ions, calcium_floor_ppm, evs, preferred_alkaline_agent
+        source,
+        target,
+        coeffs,
+        custom_pinned_ions,
+        calcium_floor_ppm,
+        calcium_ceiling_ppm,
+        evs,
+        preferred_alkaline_agent,
     )
     return dose, derive_findings(evs[start:])[1], canonical_strat

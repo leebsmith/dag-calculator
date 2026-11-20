@@ -139,6 +139,7 @@ const LABELS = {
   total_iron_fe: "Total iron",
   alkalinity_as_caco3: "Alkalinity",
   calcium_floor_ppm: "Calcium floor",
+  calcium_ceiling_ppm: "Calcium ceiling",
 };
 
 const WORDS = {

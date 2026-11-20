@@ -9,8 +9,9 @@ differ; decisions are recorded in `plans/adsco-contract.md` (§ Locked decisions
 - **Route**: `water.route`, derived from `water.pinned_ions`; never persisted.
   The persisted state is the objective set and its values.
 - **Objective values**: six editable roots `water.target.<ion>`.
-- **Calcium minimum**: `water.target_profile.calcium_floor_ppm` (or its root),
-  editable; a minimum applied by the dosing routes, not an objective.
+- **Calcium band**: `water.target_profile.calcium_floor_ppm` and
+  `water.target_profile.calcium_ceiling_ppm` (or their roots), both editable; a
+  minimum and a maximum applied by the dosing routes, not objectives.
 - **Objectives**: `water.pinned_ions` collection.
 - **Profile**: a quick-fill affordance, **not** persisted selection. Applying a
   profile sets the objective set, values and minimum, then becomes inert; the
@@ -38,8 +39,9 @@ behind `libraryRevision`.
 
 The water card is four labelled regions, in this order:
 
-1. **Water plan** — source report picker, objective preset picker, calcium floor,
-   mash pH objective, the objective-vs-actual grid, route line, kettle ratio, the
+1. **Water plan** — source report picker, objective preset picker, calcium band
+   (minimum and maximum), mash pH objective, the objective-vs-actual grid, route
+   line, kettle ratio, the
    mash-pH line (before → after plus the resolved correction at each
    destination), and actionable warnings. This is the primary decision surface.
 2. **Practice** — salt distribution, acid medium, gypsum and CaCl₂ forms, and
@@ -153,10 +155,13 @@ the ions it declares a number for (`null` floats).
 - **Route line**: one line under the grid — the objective set and its exactness.
 - **Audit log**: collapsible drawer grouped by category; INFO collapsed, NOTE
   neutral, WARNING/ERROR surfaced. Host-side only (never a DAG output).
-- **Calcium minimum**: graded only by a route that applied it, and only once —
-  the shortfall warning names the finished concentration, the floor, and that
-  the pinned equalities took precedence. A baseline batch carries no floor
-  finding.
+- **Calcium band**: a minimum and a maximum, both editable, both graded only by
+  a route that applied them, and each reported once. The minimum's shortfall
+  warning names the finished concentration, the floor, and that the pinned
+  equalities took precedence; the maximum's warning fires when the source or a
+  pinned objective leaves no room to stay under it. A baseline batch carries no
+  band finding. The band is what orders the dose: gypsum first, Epsom only when
+  the ceiling leaves no other route to the sulfate target.
 - **Ion ceilings**: magnesium (40/50 ppm), sulfate (400), sodium (50) and chloride
   (300) warn on the finished water and never clamp a dose; the sodium and chloride
   warnings name their sources and the styles that go higher by design.

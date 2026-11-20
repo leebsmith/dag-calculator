@@ -47,16 +47,24 @@ Consequences worth stating plainly:
 - `PROPORTIONAL` means one per-litre concentration applied to both vessels. The grams
   differ only because the volumes differ.
 
-### The calcium minimum
+### The calcium band
 
-The calcium floor is a **minimum**, not a ceiling. A dosing route adds calcium
-until the finished mash reaches it, whenever the pinned equalities leave room; a
-flavour dose that happens to carry extra calcium is allowed, and a source already
-above the minimum needs no extra calcium at all. When the equalities cannot also
-reach the minimum, the solver keeps the equalities, reports one
-`GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE` warning, and does not grade the floor a
-second time. `BASELINE` and `FLAVOR` never apply it, so they carry no floor
-finding.
+Calcium is a **band**: a minimum (default 50 ppm) and a maximum (default 150 ppm),
+both from the ion-limits source. A dosing route adds calcium until the finished
+mash reaches the minimum, whenever the pinned equalities leave room; a source
+already above the minimum needs no extra calcium. The maximum is what orders the
+dose: the solver prefers gypsum, and reaches for Epsom salt only when the ceiling
+would otherwise be breached, so magnesium rises above the source only when the
+sulfate target has no other route.
+
+The band is soft in the same way as the old floor. When the equalities cannot
+hold it, the solver keeps the equalities, drops the band, and reports one
+relaxation note; the minimum's shortfall is then graded by
+`GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE`, and a finished concentration above the
+maximum by `GUARDRAIL_CALCIUM_ABOVE_CEILING`. A maximum below the minimum
+collapses to the minimum and reports
+`GUARDRAIL_CALCIUM_BAND_OVERRIDDEN`. `BASELINE` and `FLAVOR` never apply the
+band, so they carry no band finding.
 
 ### Ion ceilings
 

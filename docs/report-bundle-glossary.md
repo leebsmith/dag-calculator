@@ -255,12 +255,13 @@ _19 paths_
 
 ## Water chemistry
 
-_67 paths_
+_69 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `water.acid_medium` | Acid medium | choice | — | — | — | LACTIC_88, PHOSPHORIC_10, PHOSPHORIC_85 |
 | `water.cacl2_form` | CaCl2 form | choice | — | — | — | CACL2_DIHYDRATE, CACL2_ANHYDROUS |
+| `water.calcium_ceiling_ppm` | Calcium maximum | root | concentration | ppm | 1 | — |
 | `water.calcium_floor_ppm` | Calcium minimum | root | concentration | ppm | 1 | — |
 | `water.gypsum_form` | Gypsum form | choice | — | — | — | GYPSUM_DIHYDRATE, GYPSUM_ANHYDROUS |
 | `water.kettle_blend.alkalinity_as_caco3` | Alkalinity | derived | concentration | ppm | 1 | — |
@@ -315,6 +316,7 @@ _67 paths_
 | `water.target_profile` | Target Profile | selection | — | — | — | — |
 | `water.target_profile.alkalinity_as_caco3` | Alkalinity (as CaCO3) | field | concentration | ppm | 1 | — |
 | `water.target_profile.calcium_ca` | Calcium | field | concentration | ppm | 1 | — |
+| `water.target_profile.calcium_ceiling_ppm` | Calcium maximum | field | concentration | ppm | 1 | — |
 | `water.target_profile.calcium_floor_ppm` | Calcium minimum | field | concentration | ppm | 1 | — |
 | `water.target_profile.chloride_cl` | Chloride | field | concentration | ppm | 1 | — |
 | `water.target_profile.description` | Description | field | — | — | — | — |

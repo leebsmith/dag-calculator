@@ -54,6 +54,7 @@ export const WATER_NODES = {
   phStatus: "solver.water.prescription.mash_ph_status",
   waterBoundary: "solver.water",
   calciumFloor: "water.calcium_floor_ppm",
+  calciumCeiling: "water.calcium_ceiling_ppm",
   sourceReport: "water.source",
   pinnedIons: "water.pinned_ions",
   targetProfile: "water.target_profile",

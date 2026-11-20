@@ -46,6 +46,27 @@
               ]
             },
             {
+              id: waterPlan.ceiling.id || 'water-calcium-ceiling',
+              type: 'number',
+              label: () => (waterPlan.ceiling ? fmt.formatFieldLabel(waterPlan.ceiling.label, waterPlan.ceiling.unit) : ''),
+              read: () => waterPlan.ceiling.display,
+              draft: {
+                read: () => inputDraft(inputKey('water', waterPlan.ceiling.id), waterPlan.ceiling.display),
+                write: (raw) => editWaterNumber(inputKey('water', waterPlan.ceiling.id), waterPlan.ceiling, raw)
+              },
+              write: () => commitWaterNumber(inputKey('water', waterPlan.ceiling.id), waterPlan.ceiling),
+              step: 5,
+              commit: 'change',
+              hint: () => waterPlan.floorNotice || waterPlan.ceiling.hint,
+              hints: [
+                {
+                  text: 'Outside the allowed range',
+                  class: 'text-danger',
+                  when: () => waterPlan.ceiling.validation && waterPlan.ceiling.validation.holds === false
+                }
+              ]
+            },
+            {
               id: waterPlan.mashPh.id || 'water-target-mash-ph',
               type: 'number',
               label: () => (waterPlan.mashPh ? fmt.formatFieldLabel(waterPlan.mashPh.label, waterPlan.mashPh.unit) : ''),

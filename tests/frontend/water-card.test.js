@@ -153,8 +153,21 @@ test("a pristine batch floats calcium and states the pH objective", withFreshApp
   assert.equal(ca.valueText, "(none)");
   assert.equal(ca.status, "Floated");
   assert.equal(app.waterPlan.floor.display, "50");
+  assert.equal(app.waterPlan.ceiling.display, "150");
   assert.match(app.waterPlan.floorNotice, /no ion objectives are held/);
   assert.match(app.waterVerdict.phLine, /→/);
+}));
+
+test("the calcium band exposes both ends and commits the ceiling", withFreshApp((app) => {
+  assert.equal(app.waterPlan.floor.id, "water.calcium_floor_ppm");
+  assert.equal(app.waterPlan.ceiling.id, "water.calcium_ceiling_ppm");
+
+  app.editWaterNumber("ceiling", app.waterPlan.ceiling, "115");
+  app.commitWaterNumber("ceiling", app.waterPlan.ceiling);
+  app.compute();
+
+  assert.equal(app.waterPlan.ceiling.display, "115");
+  assert.equal(app.engine.get("water.calcium_ceiling_ppm"), 115);
 }));
 
 test("checking an ion on a preset keeps the other checked values", withFreshApp((app) => {

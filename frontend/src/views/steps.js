@@ -341,6 +341,7 @@ export const steps = [
     fields: [
       "water.target_profile_id",
       "water.calcium_floor_ppm",
+      "water.calcium_ceiling_ppm",
       "water.salt_distribution",
       "water.acid_medium",
       "water.gypsum_form",

@@ -268,6 +268,10 @@
       "value": 50,
       "dimension": "concentration"
     },
+    "default_calcium_ceiling_ppm": {
+      "value": 150,
+      "dimension": "concentration"
+    },
     "default_target_ibu": {
       "value": 30,
       "dimension": "ibu"
@@ -1493,6 +1497,11 @@
         "domain": "$value >= 0",
         "default": 50
       },
+      "calcium_ceiling_ppm": {
+        "dimension": "concentration",
+        "domain": "$value >= 0",
+        "default": 150
+      },
       "mode": {
         "taxonomy": "strategy"
       },
@@ -1823,6 +1832,12 @@
       "kind": "root",
       "dimension": "concentration",
       "default": "((water.target_profile.calcium_floor_ppm > 0) ? water.target_profile.calcium_floor_ppm : constants.default_calcium_floor_ppm)",
+      "domain": "$value >= 0"
+    },
+    "water.calcium_ceiling_ppm": {
+      "kind": "root",
+      "dimension": "concentration",
+      "default": "((water.target_profile.calcium_ceiling_ppm > 0) ? water.target_profile.calcium_ceiling_ppm : constants.default_calcium_ceiling_ppm)",
       "domain": "$value >= 0"
     },
     "water.target_mash_ph": {
@@ -2504,6 +2519,7 @@
         "cacl2_form": "water.cacl2_form",
         "preferred_alkaline_agent": "water.preferred_alkaline_agent",
         "calcium_floor_ppm": "water.calcium_floor_ppm",
+        "calcium_ceiling_ppm": "water.calcium_ceiling_ppm",
         "custom_pinned_ions": "water.pinned_ions"
       },
       "outputs": {

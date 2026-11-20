@@ -187,6 +187,30 @@ def calcium_below_floor(actual: float, floor: float) -> TelemetryEvent:
     )
 
 
+def calcium_above_ceiling(actual: float, ceiling: float) -> TelemetryEvent:
+    return _event(
+        "GUARDRAIL_CALCIUM_ABOVE_CEILING",
+        GUARDRAIL,
+        WARNING,
+        f"Calcium {actual:.1f} ppm is above the {ceiling:.0f} ppm ceiling. The source "
+        "water already exceeds it, or the pinned objectives leave no room to stay under.",
+        actual=actual,
+        ceiling=ceiling,
+    )
+
+
+def calcium_band_overridden(floor: float, ceiling: float) -> TelemetryEvent:
+    return _event(
+        "GUARDRAIL_CALCIUM_BAND_OVERRIDDEN",
+        GUARDRAIL,
+        WARNING,
+        f"Calcium ceiling {ceiling:.1f} ppm is below the {floor:.1f} ppm floor; the band "
+        "collapses to the floor. Raise the ceiling above the minimum.",
+        floor=floor,
+        ceiling=ceiling,
+    )
+
+
 def source_contaminant_detected(ion: str, actual: float, limit: float) -> TelemetryEvent:
     return _event(
         "GUARDRAIL_SOURCE_CONTAMINANT_DETECTED",
@@ -275,18 +299,19 @@ def lp_relaxation_applied() -> TelemetryEvent:
         "OPT_LP_RELAXATION_APPLIED",
         OPTIMIZATION,
         NOTE,
-        "Calcium upper boundary relaxed: Primary solver could not satisfy flavor "
-        "equalities without exceeding the calcium ceiling. Pinned SO4/Cl preserved.",
+        "Calcium band relaxed: the pinned flavor equalities cannot be met while holding "
+        "calcium between the floor and the ceiling. Pinned SO4/Cl preserved.",
     )
 
 
-def lp_lexicographic_tie_break() -> TelemetryEvent:
+def lp_lexicographic_tie_break(epsom_saved_g_per_l: float) -> TelemetryEvent:
     return _event(
         "OPT_LP_LEXICOGRAPHIC_TIE_BREAK",
         OPTIMIZATION,
         INFO,
-        "Lexicographic tie-break executed: Multi-pass LP resolved degenerate vertex by "
-        "penalizing secondary counter-ions (preferring Gypsum/CaCl2 over Epsom/NaCl).",
+        "Gypsum-first pass applied: the dose prefers gypsum over Epsom salt, removing "
+        f"{epsom_saved_g_per_l:.3f} g/L of Epsom from the added-ion optimum.",
+        epsom_saved_g_per_l=epsom_saved_g_per_l,
     )
 
 
@@ -522,6 +547,8 @@ TELEMETRY_CODES: frozenset[str] = frozenset(
         "GUARDRAIL_CALCIUM_FLOOR_UNREACHABLE",
         "GUARDRAIL_CALCIUM_FLOOR_OVERRIDDEN",
         "GUARDRAIL_CALCIUM_BELOW_FLOOR",
+        "GUARDRAIL_CALCIUM_ABOVE_CEILING",
+        "GUARDRAIL_CALCIUM_BAND_OVERRIDDEN",
         "GUARDRAIL_SOURCE_CONTAMINANT_DETECTED",
         "GUARDRAIL_MAGNESIUM_TOXICITY_CEILING",
         "GUARDRAIL_SULFATE_HARSHNESS_CEILING",
