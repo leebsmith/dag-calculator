@@ -256,7 +256,8 @@ table; they are read for display, never used as presence.
 **Landed:** Brewhouse, Batch Facts (identity, modeled metrics, and the four
 fermentable tables), Mash Rests (the enabled schedule and its total mash time),
 Hops, Yeast, Volume Ledger, Liquor Ledger, Water Chemistry (including the mash
-and sparge treatment doses), Limits and the Brew Checklist —
+and sparge treatment doses), Water Objectives (the checked targets and the
+resolved route), Limits and the Brew Checklist —
 `docs/report-sections.md` is the generated list. Sugars and the major/trace
 grist are tables inside Batch Facts, not standalone sections; the predicates
 above remain the record for the rest.

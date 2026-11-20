@@ -42,6 +42,7 @@ SECTION_IDS = (
     "volume-ledger",
     "liquor-ledger",
     "water-chemistry",
+    "water-objectives",
     "limits",
     "checklist",
 )
@@ -213,6 +214,16 @@ WATER_DOSE_NONZERO_PROBE = (
     '  sparge_gypsum: nonzero("sparge_additions.gypsum_kg"),\n'
     '  sparge_acid: nonzero("sparge_additions.acid_l"),\n'
     ")) <probe>\n"
+)
+
+WATER_OBJECTIVES_PRESENCE_PROBE = (
+    '#import "sections/water-objectives.typ": present-water-objectives\n'
+    "#metadata(present-water-objectives()) <probe>\n"
+)
+
+WATER_OBJECTIVES_ROWS_PROBE = (
+    '#import "sections/water-objectives.typ": objective-rows\n'
+    "#metadata(objective-rows().map(row => row.label)) <probe>\n"
 )
 
 BATCH_FACTS_PROBE = (
@@ -506,6 +517,41 @@ def test_the_water_table_has_one_row_per_working_ion(shared_root: Path) -> None:
         "Chloride",
         "Alkalinity (as CaCO₃)",
     ]
+
+
+def test_water_objectives_are_present_with_the_pinned_set(shared_root: Path) -> None:
+    assert probe(shared_root, WATER_OBJECTIVES_PRESENCE_PROBE) is True
+
+
+def test_water_objectives_are_absent_without_a_pinned_set() -> None:
+    bundle = fixture()
+    del bundle["state"]["collections"]["water.pinned_ions"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, WATER_OBJECTIVES_PRESENCE_PROBE) is False
+        render(root, "water-objectives")
+
+
+def test_water_objectives_list_the_checked_ions(shared_root: Path) -> None:
+    assert probe(shared_root, WATER_OBJECTIVES_ROWS_PROBE) == [
+        "Calcium",
+        "Magnesium",
+        "Sodium",
+        "Sulfate",
+        "Chloride",
+        "Alkalinity (as CaCO₃)",
+    ]
+
+
+def test_water_objectives_follow_the_checked_subset() -> None:
+    bundle = fixture()
+    bundle["state"]["collections"]["water.pinned_ions"] = [{"ion": "so4"}, {"ion": "cl"}]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, WATER_OBJECTIVES_ROWS_PROBE) == ["Sulfate", "Chloride"]
+        render(root, "water-objectives")
 
 
 def test_water_telemetry_reads_problems_first() -> None:

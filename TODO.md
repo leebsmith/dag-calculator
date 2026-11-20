@@ -167,9 +167,9 @@ models hop contact, not a flavour dose.
 
 ### Report sections
 
-Eleven sections have landed — Brewhouse, Batch Facts, Mash Rests, Hops, Process
-notes, Yeast, Volume Ledger, Liquor Ledger, Water Chemistry, Limits and the Brew
-Checklist — with the bundle and the render service
+Twelve sections have landed — Brewhouse, Batch Facts, Mash Rests, Hops, Process
+notes, Yeast, Volume Ledger, Liquor Ledger, Water Chemistry, Water Objectives,
+Limits and the Brew Checklist — with the bundle and the render service
 (`GET`/`POST /batches/{id}/report`). Brewhouse prints the two solved mash ratios
 (L/kg and r); Mash Rests prints only the enabled schedule plus the total mash
 time; Process notes prints the batch's free-text notes in authored order; Water
@@ -182,8 +182,6 @@ into the fermenter, and the kettle-basis brewhouse efficiency. One bullet per
 remaining section; the presence predicates are in `plans/report-renderer.md`
 §6.4. Queue order is the order below.
 
-* **Pinned ions section** — `water.pinned_ions` rows; the checked targets and their
-  values, so a reader can see what constrained the water solver.
 * **Style conformance section** — `conformance` is not `null`; SAI and the
   per-pillar verdicts already captured at freeze.
 * **Render image** — the Dockerfile that ships the Typst binary and replaces the

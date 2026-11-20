@@ -218,6 +218,14 @@ RECORD = {
         "batch.whirlpool_hops": WHIRLPOOL_HOPS,
         "batch.dry_hops": DRY_HOPS,
         "batch.process_notes": PROCESS_NOTES,
+        "water.pinned_ions": [
+            {"ion": "ca"},
+            {"ion": "mg"},
+            {"ion": "na"},
+            {"ion": "so4"},
+            {"ion": "cl"},
+            {"ion": "alk"},
+        ],
     },
     "selections": {
         "batch.yeast": {
@@ -296,6 +304,14 @@ RECORD = {
         "batch.boil_hops": BOIL_HOPS,
         "batch.whirlpool_hops": WHIRLPOOL_HOPS,
         "batch.dry_hops": DRY_HOPS,
+        "water.pinned_ions": [
+            {"ion": "ca"},
+            {"ion": "mg"},
+            {"ion": "na"},
+            {"ion": "so4"},
+            {"ion": "cl"},
+            {"ion": "alk"},
+        ],
         # 40 IBU total: 30 in the boil, 10 in the whirlpool, split 7 / 3 across
         # the hot and the cool charge.
         "batch.whirlpool_ibu_fraction": 0.25,
@@ -797,6 +813,8 @@ PAYLOAD = FreezePayload(
             "equipment.name": NodePresentation(label="Equipment"),
             "style.name": NodePresentation(label="Style"),
             "water.source.source_name": NodePresentation(label="Water source"),
+            "water.pinned_ions": NodePresentation(label="Water objectives"),
+            "water.pinned_ions.ion": NodePresentation(label="Ion"),
             "mash.rests": NodePresentation(label="Mash rests"),
             "mash.rests.rest_id": NodePresentation(label="Step"),
             "mash.rests.duration_min": NodePresentation(

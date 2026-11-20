@@ -31,5 +31,6 @@ checklist is [`adding-a-section.md`](adding-a-section.md).
 | 10 | `volume-ledger` | Volume Ledger | `present-volume-ledger` | [`sections/volume-ledger.typ`](../backend/app/templates/sections/volume-ledger.typ) |
 | 11 | `liquor-ledger` | Liquor Ledger | `present-liquor-ledger` | [`sections/liquor-ledger.typ`](../backend/app/templates/sections/liquor-ledger.typ) |
 | 12 | `water-chemistry` | Water Chemistry | `present-water-chemistry` | [`sections/water-chemistry.typ`](../backend/app/templates/sections/water-chemistry.typ) |
-| 13 | `limits` | Limits | `present-limits` | [`sections/limits.typ`](../backend/app/templates/sections/limits.typ) |
-| 14 | `checklist` | Brew Checklist | `present-checklist` | [`sections/checklist.typ`](../backend/app/templates/sections/checklist.typ) |
+| 13 | `water-objectives` | Water Objectives | `present-water-objectives` | [`sections/water-objectives.typ`](../backend/app/templates/sections/water-objectives.typ) |
+| 14 | `limits` | Limits | `present-limits` | [`sections/limits.typ`](../backend/app/templates/sections/limits.typ) |
+| 15 | `checklist` | Brew Checklist | `present-checklist` | [`sections/checklist.typ`](../backend/app/templates/sections/checklist.typ) |

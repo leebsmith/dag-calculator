@@ -4179,6 +4179,26 @@
         "options": null,
         "option_labels": null
       },
+      "water.pinned_ions": {
+        "label": "Water objectives",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.pinned_ions.ion": {
+        "label": "Ion",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
       "mash.rests": {
         "label": "Mash rests",
         "dimension": null,
@@ -5916,7 +5936,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:7c1be6bf4c6ebeaa8f487372936246584c5589ee16b33a56404c1700160b4113"
+    "hash": "sha256:9c3a0a3ce1fda577a696a301ea1a35b43ff16049ceb273f38b65239f17885536"
   },
   "batch": {
     "id": "frozen-1",
@@ -6097,6 +6117,26 @@
           "contact_until": "terminal_gravity",
           "time_of_application": "",
           "notes": ""
+        }
+      ],
+      "water.pinned_ions": [
+        {
+          "ion": "ca"
+        },
+        {
+          "ion": "mg"
+        },
+        {
+          "ion": "na"
+        },
+        {
+          "ion": "so4"
+        },
+        {
+          "ion": "cl"
+        },
+        {
+          "ion": "alk"
         }
       ],
       "batch.whirlpool_ibu_fraction": 0.25,
@@ -6367,6 +6407,26 @@
         },
         {
           "text": "0.05 oz (1.5 g) fresh-grated ginger at flame-out"
+        }
+      ],
+      "water.pinned_ions": [
+        {
+          "ion": "ca"
+        },
+        {
+          "ion": "mg"
+        },
+        {
+          "ion": "na"
+        },
+        {
+          "ion": "so4"
+        },
+        {
+          "ion": "cl"
+        },
+        {
+          "ion": "alk"
         }
       ]
     },
@@ -8601,5 +8661,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:a5ebb58f7f44331b439afb0e61256fac90fb85b0e488773402751f998b715e5a"
+  "content_hash": "sha256:56d0cc1ac3d3b21b8ac61a59379560ad89fd9b9010fd39fa71680c85a13f6a1f"
 }

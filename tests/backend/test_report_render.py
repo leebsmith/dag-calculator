@@ -53,6 +53,7 @@ SECTIONS = (
     "volume-ledger",
     "liquor-ledger",
     "water-chemistry",
+    "water-objectives",
     "limits",
     "checklist",
 )
