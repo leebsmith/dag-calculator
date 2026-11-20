@@ -98,8 +98,6 @@ tracks only what is outstanding.
 * **Sparge-acid target** — the dose neutralises the HLT's residual alkalinity as a
   proxy for `SPARGE_ACID_PH`; it never models an HLT pH. Revisit only if an HLT pH
   readout is surfaced.
-* **Water field provenance** — a `seed`/`↺` affordance for the calcium band and the
-  mash-pH objective, so a default value and an authored one are visibly different.
 * **Boundary message envelope (parked)** — findings travel as the 200 `telemetry`
   list; errors as 422 `code/message` plus an additive `messages` chain of the
   findings that preceded the failure. The card merges both into one log; the old
