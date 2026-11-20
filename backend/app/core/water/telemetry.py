@@ -85,9 +85,9 @@ def router_mode_1_linear_flavor() -> TelemetryEvent:
         "ROUTER_MODE_1_LINEAR_FLAVOR",
         ROUTER,
         INFO,
-        "Routed to Linear Minimalist Engine (Mode 1: Flavor Balance). Objective: "
-        "Minimizing total added salt mass to satisfy flavor equalities while "
-        "enforcing background biological guardrails.",
+        "Routed to Linear Minimalist Engine (Mode 1: Flavor Balance). Order: "
+        "satisfy the flavor equalities, hold the calcium band, prefer gypsum, "
+        "minimize magnesium, then minimize added ion load.",
     )
 
 

@@ -1,4 +1,4 @@
-"""The ADSCO optimization engines: mass-minimizing LP, least-squares cloner, sparse LP."""
+"""The ADSCO optimization engines: lexicographic LP, least-squares cloner, sparse LP."""
 
 from __future__ import annotations
 
