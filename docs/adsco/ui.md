@@ -162,7 +162,7 @@ the ions it declares a number for (`null` floats).
   pinned objective leaves no room to stay under it. A baseline batch carries no
   band finding. The band is what orders the dose: gypsum first, Epsom only when
   the ceiling leaves no other route to the sulfate target.
-- **Ion ceilings**: magnesium (40/50 ppm), sulfate (400), sodium (50) and chloride
+- **Ion ceilings**: magnesium (30 recommended/50 hard), sulfate (400), sodium (50) and chloride
   (300) warn on the finished water and never clamp a dose; the sodium and chloride
   warnings name their sources and the styles that go higher by design.
 

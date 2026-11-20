@@ -16,7 +16,6 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from app.core.water.constants import (
-    EPSOM_MG_WARN_PPM,
     HARD_MAGNESIUM_MAX_PPM,
     HARD_SULFATE_MAX_PPM,
     MASH_PH_CEIL,
@@ -28,6 +27,7 @@ from app.core.water.constants import (
     MASH_PH_TARGET_TOLERANCE,
     RECOMMENDED_CALCIUM_MIN_PPM,
     RECOMMENDED_CHLORIDE_MAX_PPM,
+    RECOMMENDED_MAGNESIUM_MAX_PPM,
     RECOMMENDED_SODIUM_MAX_PPM,
     SPARGE_ACID_PH,
 )
@@ -230,9 +230,10 @@ def magnesium_toxicity_ceiling(actual_mg: float, added_mg: float) -> TelemetryEv
         "GUARDRAIL_MAGNESIUM_TOXICITY_CEILING",
         GUARDRAIL,
         WARNING,
-        f"Magnesium ceiling breached: Total Mg2+ reached {actual_mg:.1f} ppm (caution "
-        f"threshold: {EPSOM_MG_WARN_PPM:.0f} ppm, hard max: {HARD_MAGNESIUM_MAX_PPM:.0f} "
-        "ppm). Risk of astringent bitterness or laxative defect.",
+        f"Magnesium above the recommended band: Total Mg2+ reached {actual_mg:.1f} ppm "
+        f"(recommended max: {RECOMMENDED_MAGNESIUM_MAX_PPM:.0f} ppm, hard max: "
+        f"{HARD_MAGNESIUM_MAX_PPM:.0f} ppm). Risk of astringent bitterness or laxative "
+        "defect.",
         actual_mg=actual_mg,
         added_mg=added_mg,
     )

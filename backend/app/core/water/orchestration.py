@@ -23,8 +23,6 @@ from app.core.water.chemistry import (
 )
 from app.core.water.constants import (
     CONTAMINANT_LIMITS,
-    EPSOM_MG_WARN_PPM,
-    HARD_MAGNESIUM_MAX_PPM,
     HARD_SULFATE_MAX_PPM,
     MASH_PH_CEIL,
     MASH_PH_FLOOR,
@@ -35,6 +33,7 @@ from app.core.water.constants import (
     RA_MG_COEFF,
     RECOMMENDED_CALCIUM_MIN_PPM,
     RECOMMENDED_CHLORIDE_MAX_PPM,
+    RECOMMENDED_MAGNESIUM_MAX_PPM,
     RECOMMENDED_SODIUM_MAX_PPM,
     SALT_COEFFS,
     SPARGE_ACID_PH,
@@ -426,7 +425,7 @@ def _emit_operational_findings(
     # Magnesium threshold check
     mg_added = added.get("mg", 0.0)
     mg_total = post_dose.get("mg", 0.0)
-    if mg_added > EPSOM_MG_WARN_PPM or mg_total > HARD_MAGNESIUM_MAX_PPM:
+    if mg_total > RECOMMENDED_MAGNESIUM_MAX_PPM:
         events.append(magnesium_toxicity_ceiling(mg_total, mg_added))
 
     # Sulfate threshold check

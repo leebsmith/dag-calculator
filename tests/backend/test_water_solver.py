@@ -555,3 +555,30 @@ def test_a_source_above_the_ceiling_is_reported_and_uses_epsom():
     codes = {event["code"] for event in out.telemetry}
     assert "GUARDRAIL_CALCIUM_ABOVE_CEILING" in codes
     assert out.post_dose_mash_ions["mg"] > source["mg"]
+
+
+@pytest.mark.parametrize(("magnesium", "warns"), [(25.0, False), (35.0, True)])
+def test_magnesium_warns_above_the_recommended_band(magnesium, warns):
+    response = solve_water_request(
+        make_water_request(
+            strategy=WaterStrategy.BASELINE,
+            source=IonProfile(
+                calcium_ca=90.0,
+                magnesium_mg=magnesium,
+                sodium_na=30.0,
+                sulfate_so4=40.0,
+                chloride_cl=30.0,
+                alkalinity_as_caco3=150.0,
+            ),
+            target=IonProfile(
+                calcium_ca=0.0,
+                magnesium_mg=0.0,
+                sodium_na=0.0,
+                sulfate_so4=0.0,
+                chloride_cl=0.0,
+                alkalinity_as_caco3=0.0,
+            ),
+        )
+    )
+    codes = {event["code"] for event in response.telemetry}
+    assert ("GUARDRAIL_MAGNESIUM_TOXICITY_CEILING" in codes) is warns
