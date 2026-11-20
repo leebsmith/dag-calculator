@@ -1,6 +1,14 @@
 # Plan: 2026-11-12 water treatment model
 
-Status: executing.
+Status: executed and archived. All twelve commits landed; the acceptance
+scenarios in §6 run in `tests/frontend/water-card.test.js`.
+
+> **Superseded in one respect.** The calcium guardrail is now a **band** — a
+> floor and an authored ceiling — not a floor alone. The cap this plan ruled out
+> in §2 was added later as `water.calcium_ceiling_ppm`, and the dose is ordered
+> gypsum-first, Epsom only when the ceiling leaves no other route to the sulfate
+> target. The living contract is
+> `docs/calculator-assumed-dosing-practice.md`; decision 6 above is historical.
 
 <!-- claims: proposed solver.water.post_dose_hlt_ions prescription.uncorrected_mash_ph solver.water.prescription.uncorrected_mash_ph water.route water.strategy solver.water.post_salt_mash_ions solver.water.post_salt_hlt_ions -->
 

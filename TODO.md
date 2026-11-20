@@ -95,17 +95,13 @@ tracks only what is outstanding.
   determinism / A1 no-reactivity). Production runs HTTP-debounced; the synchronous path
   (`boundaryRunner.js` scheduleSolve) is tests-only. Revisit only if profiling shows jank
   as field count grows (cooling curves, style-water axis).
-* **Water grid status chips** — `docs/adsco/ui.md` specifies Exact / Floor / Buffer /
-  Floating / Compromise / Below-buffer per ion; the card renders `Target` / `Best fit` /
-  `Buffer` / `Auto` / `No value`. Needs the remaining states surfaced from the
-  boundary (telemetry still carries only free-text messages).
-* **Artifact-declared routing** — the mode → pin-set mapping lives in the presentation
-  registry, pinned to the Python router by a fixture. Moving it into `data/artifact.json`
-  would remove the duplication outright, but `constants` is scalar-only today, so it
-  needs a non-scalar value kind (grammar + `schema_version` + inventory + docs).
-* **Water treatment model** — `plans/2026-11-12-water-treatment-model.md`: objectives /
-  guardrails / corrections vocabulary, corrected-vector kettle, pH disclosure,
-  artifact-derived routing, stage-1 vector removal.
+* **One routing table** — `water.route` derives the pin set in the artifact, but
+  `backend/app/core/water/router.py` still carries the alias/`AUTO` table for API
+  clients, so the two can drift. Fold the aliases into the artifact, or drop `AUTO`
+  from the accepted strategies.
+* **Sparge-acid target** — the dose neutralises the HLT's residual alkalinity as a
+  proxy for `SPARGE_ACID_PH`; it never models an HLT pH. Revisit only if an HLT pH
+  readout is surfaced.
 * **HLT volume readouts** — `solver.water.prescription.residual_hlt_water_l` (treated
   minus sparge demand) and `batch.surplus_sparge_capacity` (deliverable minus demand)
   are both "left in the HLT" with different bases; name one, or both explicitly.
