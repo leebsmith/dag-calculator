@@ -1,7 +1,7 @@
 # ADSCO UI model
 
 Status: **locked** (reconciled). Supersedes the vendored UI passages where they
-differ; decisions are recorded in `plans/adsco-contract.md` (§ Locked decisions
+differ; decisions are recorded in `plans/archive/2026-11/adsco-contract.md` (§ Locked decisions
 7-11).
 
 ## State model — one source of truth
