@@ -189,6 +189,9 @@ export function createStepView({
     app.findingsById = Object.fromEntries(
       app.findings.map((finding) => [finding.id, finding])
     );
+    app.stepFindingItems = (app.stepStatus?.[app.activeStep?.slice]?.relations ?? [])
+      .map((relation) => app.findingsById[relation.id])
+      .filter(Boolean);
     app.pinFindingAvailable =
       app.boundaryStatuses?.["solver.batch"] === "ok" && topology === "runoff_ratio";
     app.domains = safe(() => engine.domainStates());

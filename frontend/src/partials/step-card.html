@@ -265,7 +265,7 @@
   </template>
 
   <div
-    x-data="{ get findingItems() { return (stepStatus[activeStep.slice]?.relations || []).map((relation) => findingsById[relation.id]).filter(Boolean); } }"
+    x-data="{ get findingItems() { return stepFindingItems; } }"
   >
     <load src="src/partials/findings.html" />
   </div>

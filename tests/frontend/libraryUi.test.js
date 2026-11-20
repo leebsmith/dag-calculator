@@ -596,3 +596,14 @@ test("cooling curves expose a date, equipment reference and sortable point rows"
   app.libraryRemovePoint(0);
   assert.equal(app.libraryPointRows().length, 1);
 });
+
+test("the editor form schema is built from the active kind's field specs", () => {
+  const { app } = setup();
+  app.selectLibraryTab(INGREDIENT_KINDS[0]);
+
+  const config = app.libraryEditorConfig();
+
+  assert.equal(config.schema.length, app.libraryFields.length);
+  assert.ok(config.schema.every((entry) => entry.id.startsWith("library-field-")));
+  assert.equal(typeof config.buildFields, "function");
+});
