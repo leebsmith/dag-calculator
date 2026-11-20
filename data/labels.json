@@ -637,7 +637,7 @@
     "label": "Mash pH before correction"
   },
   "solver.water.prescription.residual_hlt_water_l": {
-    "label": "Residual HLT water"
+    "label": "Treated liquor remaining"
   },
   "solver.water.sparge_additions.acid_l": {
     "label": "Sparge acid",

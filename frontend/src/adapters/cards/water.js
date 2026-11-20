@@ -110,7 +110,7 @@ export function refreshWaterCard(app, ctx) {
     const notes = [];
     const surplus = read(N.surplusSpargeCapacity);
     if (surplus != null && surplus > 0) {
-      notes.push(`HLT holds ${fmtL(surplus)} more than the sparge delivers.`);
+      notes.push(`Deliverable surplus: ${fmtL(surplus)} beyond the sparge demand.`);
     }
     const residualHlt = read(N.residualHlt);
 

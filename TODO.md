@@ -102,9 +102,6 @@ tracks only what is outstanding.
 * **Sparge-acid target** — the dose neutralises the HLT's residual alkalinity as a
   proxy for `SPARGE_ACID_PH`; it never models an HLT pH. Revisit only if an HLT pH
   readout is surfaced.
-* **HLT volume readouts** — `solver.water.prescription.residual_hlt_water_l` (treated
-  minus sparge demand) and `batch.surplus_sparge_capacity` (deliverable minus demand)
-  are both "left in the HLT" with different bases; name one, or both explicitly.
 * **Water field provenance** — a `seed`/`↺` affordance for the calcium band and the
   mash-pH objective, so a default value and an authored one are visibly different.
 * **Boundary message envelope (parked)** — findings travel as the 200 `telemetry`

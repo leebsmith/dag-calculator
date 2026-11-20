@@ -637,3 +637,16 @@ test("the checklist payload carries the derived water dose", withFreshApp((app) 
   const doughIn = rows.find((row) => row.step_id === "dough-in");
   assert.match(doughIn.text, /dose the dry grist before underletting/i);
 }));
+
+test("the prescription names the deliverable surplus, not the treated residual", withFreshApp((app) => {
+  app.compute();
+
+  const surplus = app.engine.get("batch.surplus_sparge_capacity");
+  assert.equal(surplus, 1);
+  assert.equal(app.waterSummary.residualHlt, 0);
+  assert.notEqual(app.waterSummary.residualHlt, surplus);
+
+  const note = app.waterSummary.notes.find((line) => line.startsWith("Deliverable surplus:"));
+  assert.ok(note, "the surplus note names its basis");
+  assert.match(note, /beyond the sparge demand/);
+}));

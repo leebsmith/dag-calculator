@@ -96,6 +96,13 @@ the HLT when you dose. It is **not** the delivered sparge volume: dosing by
 concentration means liquor left behind (dead space, transfer loss, surplus) stays
 correctly salted, while the delivered sparge carries the right concentration.
 
+Two readouts describe what stays behind, on different bases.
+**Treated liquor remaining** (`residual_hlt_water_l`) is the treated volume minus
+the sparge demand, so it includes the undeliverable debt. **Deliverable surplus**
+(`surplus_sparge_capacity`) is the deliverable volume minus the demand, so it
+excludes the debt. They differ by `v_hlt_debt`; the surplus is the number you can
+still run through the bed.
+
 The fill rule is the batch solver's, not a calculator invention
 (`backend/app/core/batch/hlt.py`, `resolve_hlt_water_budget`): top up to
 whichever is greater, the volume needed to cover the HERMS coil or the volume needed
