@@ -29,18 +29,21 @@ export function allocationDescriptors({ engine, getView, formatMass }) {
     hopAllocationMode: {
       configurable: true,
       get() {
+        void getView().hopCardRevision;
         return resolveOrNull(engine, N.allocationMode) ?? "ibu_split";
       },
     },
     hopMassPool: {
       configurable: true,
       get() {
+        void getView().hopCardRevision;
         return resolveOrNull(engine, N.allocationMode) === "mass_pool";
       },
     },
     hopStageRows: {
       configurable: true,
       get() {
+        void getView().hopCardRevision;
         return [
           {
             key: "boil",
@@ -77,10 +80,7 @@ export function allocationDescriptors({ engine, getView, formatMass }) {
         ];
       },
     },
-    hopStageNote: {
-      configurable: true,
-      get: () => stageNote(getView().hopMassPool),
-    },
+    hopStageNote: { configurable: true, get: () => stageNote(getView().hopMassPool) },
     hopUnsharedCount: {
       configurable: true,
       get() {

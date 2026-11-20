@@ -225,6 +225,7 @@ export function createHopCard(
     hopRows: [],
     whirlpoolHopRows: [],
     whirlpoolCoolingCeiling: [],
+    hopCardRevision: 0,
     boilHopMassKg: null,
     whirlpoolHopMassKg: null,
     hopBoundaryTotalMassKg: null,
@@ -296,6 +297,7 @@ export function refreshHopCard(app, ctx) {
   app.boilHopAlphaMassKg = resolveOrNull(engine, N.boilAlphaMass, reportError);
   app.whirlpoolHopAlphaMassKg = resolveOrNull(engine, N.whirlpoolAlphaMass, reportError);
   app.hopBoundaryTotalMassKg = resolveOrNull(engine, N.totalMass, reportError);
+  app.hopCardRevision = (app.hopCardRevision ?? 0) + 1;
 }
 
 export const KEYS = [
@@ -309,6 +311,7 @@ export const KEYS = [
   "boilHopAlphaMassKg",
   "whirlpoolHopAlphaMassKg",
   "hopBoundaryTotalMassKg",
+  "hopCardRevision",
   "hopMassUnit",
   "whirlpoolHopForms",
   "whirlpoolHopCatalogForm",

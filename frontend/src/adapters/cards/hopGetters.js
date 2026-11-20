@@ -180,6 +180,7 @@ export function policyDescriptors({ cache, engine, formatTemp, formatMass, getVi
     hopBractFloorLine: {
       configurable: true,
       get() {
+        void getView().hopCardRevision;
         return bractFloorLine({
           bractKg: resolveOrNull(engine, N.bractMass, reportError),
           lupulinKg: resolveOrNull(engine, N.lupulinMass, reportError),
@@ -194,6 +195,7 @@ export function policyDescriptors({ cache, engine, formatTemp, formatMass, getVi
     hopBractFloorShort: {
       configurable: true,
       get() {
+        void getView().hopCardRevision;
         return bractFloorShort(resolveOrNull(engine, N.bractShortfall, reportError));
       },
     },

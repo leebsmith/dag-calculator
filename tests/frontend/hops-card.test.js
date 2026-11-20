@@ -49,6 +49,30 @@ test("the hop editor follows the active allocation mode", withFreshApp((app) => 
   assert.equal(app.draftDisplayRows[0].boil_min, "30");
 }));
 
+test("the stage strip and table columns follow the current hop card", withFreshApp((app) => {
+  app.setTargetIbu(40);
+  app.setWhirlpoolFraction(0.25);
+  app.openHopEditor();
+  app.addCatalogHop("cascade");
+  app.saveHopEditor();
+  app.compute();
+
+  const revision = app.hopCardRevision;
+  app.setTargetIbu(80);
+  app.compute();
+
+  assert.ok(app.hopCardRevision > revision);
+  assert.equal(app.hopStageRows.length, 4);
+
+  let columns = app.boilHopTableConfig().columns.map((column) => column.id);
+  assert.ok(columns.includes("parts"));
+  app.setHopAllocationMode("mass_pool");
+  app.compute();
+  columns = app.boilHopTableConfig().columns.map((column) => column.id);
+  assert.ok(columns.includes("mass_parts"));
+  assert.equal(columns.includes("parts"), false);
+}));
+
 test("mass pool: saving the editor normalizes both hop tables and keeps parts", withFreshApp((app) => {
   app.setHopAllocationMode("mass_pool");
 

@@ -106,7 +106,8 @@ function boilHopTableConfig(getView) {
   return {
     variant: "editor",
     label: "Boil hop additions",
-    columns: [
+    get columns() {
+      return [
       { id: "name", label: "Hop", width: "40%", cell: "name", value: (row) => row.name, subvalue: (row) => view.hopForm(row) },
       {
         id: "alpha",
@@ -130,7 +131,8 @@ function boilHopTableConfig(getView) {
       ...shareColumns(view, "boil"),
       { id: "ibu", label: "IBU", width: "5%", align: "right", cell: "number", value: (row) => view.hopIbu(row) },
       { id: "mass", label: "Mass", width: "10%", align: "right", cell: "number", value: (row) => view.hopMass(row) },
-    ],
+      ];
+    },
     get rows() {
       return view.hopRows;
     },
@@ -147,7 +149,8 @@ function whirlpoolHopTableConfig(getView) {
   return {
     variant: "editor",
     label: "Whirlpool hop additions",
-    columns: [
+    get columns() {
+      return [
       { id: "name", label: "Hop", width: "39%", cell: "name", value: (row) => row.name, subvalue: (row) => view.hopForm(row) },
       {
         id: "alpha",
@@ -172,7 +175,8 @@ function whirlpoolHopTableConfig(getView) {
       ...shareColumns(view, "whirlpool"),
       { id: "ibu", label: "IBU", width: "5%", align: "right", cell: "number", value: (row) => view.hopIbu(row) },
       { id: "mass", label: "Mass", width: "10%", align: "right", cell: "number", value: (row) => view.whirlpoolHopMass(row) },
-    ],
+      ];
+    },
     get rows() {
       return view.whirlpoolHopRows;
     },
