@@ -306,6 +306,11 @@ EXTRACT_ROW_LABELS_PROBE = (
     "#metadata(extract-rows.map(row => row.label)) <probe>\n"
 )
 
+BREWHOUSE_ROWS_PROBE = (
+    '#import "sections/brewhouse.typ": rows\n'
+    "#metadata(rows.map(row => (row.at(0), row.at(1)))) <probe>\n"
+)
+
 # Both ratios print as solved values, whichever constraint the solve held.
 BREWHOUSE_CONSTRAINT_PROBE = (
     '#import "sections/brewhouse.typ": constraint-rows\n'
@@ -455,6 +460,47 @@ def test_brewhouse_is_absent_without_a_process_input() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, BREWHOUSE_PRESENCE_PROBE) is False
+        render(root, "brewhouse")
+
+
+def test_the_brewhouse_names_the_pinned_target(shared_root: Path) -> None:
+    assert probe(shared_root, BREWHOUSE_ROWS_PROBE)[0] == [
+        "Target ABV",
+        "batch.target_abv",
+    ]
+
+
+def test_an_og_pin_retitles_the_target_row() -> None:
+    bundle = fixture()
+    bundle["state"]["valuation"]["batch.scale_pin"] = "og"
+    bundle["formatted"]["batch.target_og"] = {
+        "text": "1.075",
+        "number": "1.075",
+        "unit": "SG",
+        "base": None,
+        "dimension": None,
+    }
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, BREWHOUSE_ROWS_PROBE)[0] == ["Target OG", "batch.target_og"]
+        render(root, "brewhouse")
+
+
+def test_an_fg_pin_retitles_the_target_row() -> None:
+    bundle = fixture()
+    bundle["state"]["valuation"]["batch.scale_pin"] = "fg"
+    bundle["formatted"]["batch.target_fg"] = {
+        "text": "1.012",
+        "number": "1.012",
+        "unit": "SG",
+        "base": None,
+        "dimension": None,
+    }
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, BREWHOUSE_ROWS_PROBE)[0] == ["Target FG", "batch.target_fg"]
         render(root, "brewhouse")
 
 

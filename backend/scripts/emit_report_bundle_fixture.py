@@ -260,6 +260,7 @@ RECORD = {
     "valuation": {
         "batch.v_ferm": 20.0,
         "batch.target_abv": 5.5,
+        "batch.scale_pin": "abv",
         "batch.topology": "r_l_to_g",
         "batch.conversion_efficiency": 0.90,
         "batch.mash_thickness_l_per_kg": 3.0,
@@ -527,6 +528,11 @@ PAYLOAD = FreezePayload(
             ),
             "batch.target_abv": NodePresentation(
                 label="Target ABV", dimension="abv", unit="pct", symbol="%", decimals=1
+            ),
+            "batch.scale_pin": NodePresentation(
+                label="Scale target",
+                options=["abv", "og", "fg"],
+                option_labels={"abv": "ABV", "og": "OG", "fg": "FG"},
             ),
             "batch.topology": NodePresentation(
                 label="Topology",

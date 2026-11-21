@@ -3479,6 +3479,24 @@
         "options": null,
         "option_labels": null
       },
+      "batch.scale_pin": {
+        "label": "Scale target",
+        "dimension": null,
+        "unit": null,
+        "symbol": null,
+        "decimals": null,
+        "step": null,
+        "options": [
+          "abv",
+          "og",
+          "fg"
+        ],
+        "option_labels": {
+          "abv": "ABV",
+          "og": "OG",
+          "fg": "FG"
+        }
+      },
       "batch.topology": {
         "label": "Topology",
         "dimension": null,
@@ -5974,7 +5992,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:d393542309f98343f7c0404ad1408749d7879a8f1a6caec9e2d174a7a18b31b6"
+    "hash": "sha256:5eba0bf3f574e0925a5a6c74a38934b084f5253e593a5d5890e13cd0b3e51a8c"
   },
   "batch": {
     "id": "frozen-1",
@@ -6026,6 +6044,7 @@
     "valuation": {
       "batch.v_ferm": 20.0,
       "batch.target_abv": 5.5,
+      "batch.scale_pin": "abv",
       "batch.topology": "r_l_to_g",
       "batch.conversion_efficiency": 0.9,
       "batch.mash_thickness_l_per_kg": 3.0,
@@ -8707,5 +8726,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:579aa4487e0992af768e38bb18b29bf31b23f11e1cd502a86d43d8cc159f6b42"
+  "content_hash": "sha256:da6fa52874ab277edf0b8cdf9b3ac76295d73a2b3e1acb20db09ccce8cd9b73a"
 }

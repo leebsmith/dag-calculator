@@ -1,6 +1,7 @@
 // Brewhouse: the process inputs that produce the batch's numbers. Every figure
 // is the bundle's frozen display string; this section only arranges them.
 
+#import "../lib/bundle.typ": state
 #import "../lib/format.typ": formatted-text, present-formatted
 
 // The process inputs are defaulted roots. Keying presence off the conversion
@@ -18,8 +19,22 @@
   ("Runnings ratio (r)", "batch.runnings_ratio"),
 )
 
+// The authored scale target is whichever one the batch pinned; the other two
+// follow from it and the attenuation, so the section names only the input.
+#let scale-pin() = {
+  let pin = state.valuation.at("batch.scale_pin", default: "abv")
+  if type(pin) == str { pin } else { "abv" }
+}
+
+#let scale-target() = {
+  let pin = scale-pin()
+  if pin == "og" { ("Target OG", "batch.target_og") }
+  else if pin == "fg" { ("Target FG", "batch.target_fg") }
+  else { ("Target ABV", "batch.target_abv") }
+}
+
 #let rows = (
-  ("Target ABV", "batch.target_abv"),
+  scale-target(),
 ) + constraint-rows + (
   ("Conversion efficiency", "batch.conversion_efficiency"),
   ("Brewhouse efficiency", "solver.batch.brewhouse_efficiency"),
