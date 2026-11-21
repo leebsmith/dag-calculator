@@ -153,14 +153,25 @@
   if sentence == "" { none } else { sentence + "." }
 }
 
+// The deliverable volume is what can leave the HLT; the sparge demand is what
+// the tun actually takes. Name both so a surplus does not read as delivered.
+#let sparge-line() = {
+  let salted = text-or("batch.sparge_salted_volume")
+  let available = text-or("solver.batch.hlt.v_sparge_deliverable")
+  let sparged = text-or("solver.batch.cascade.v_sparge")
+  join-parts((
+    if salted == none { "HLT after top-up" } else { "HLT after top-up to " + salted },
+    if available == none or sparged == none { none } else { sparged + " sparged of " + available + " available" },
+  ))
+}
+
 #let render-dosage() = {
   let acid = text-or("water.acid_medium")
   let acid-label = if acid == none { "Acid" } else { acid }
   let mash = dose-table("mash_additions", acid-label)
   let sparge = dose-table("sparge_additions", acid-label)
   let strike = text-or("solver.batch.cascade.v_strike")
-  let salted = text-or("batch.sparge_salted_volume")
-  let delivered = text-or("solver.batch.hlt.v_sparge_deliverable")
+  let sparge-detail = sparge-line()
   let basis = dosage-basis()
 
   heading(level: 3)[Treatment Dosage]
@@ -179,10 +190,6 @@
   }
 
   v(4pt)
-  let sparge-detail = join-parts((
-    if salted == none { "HLT after top-up" } else { "HLT after top-up to " + salted },
-    if delivered == none { none } else { delivered + " delivered" },
-  ))
   text(size: 9pt)[*Sparge* — #sparge-detail]
   if sparge == none {
     v(2pt)

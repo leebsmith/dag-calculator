@@ -423,6 +423,22 @@ def sparge_acid_prescribed(volume_ml: float, acid_medium: str, meq_total: float)
     )
 
 
+def sparge_acid_not_required(
+    residual_alkalinity_ppm: float, source_alkalinity_ppm: float
+) -> TelemetryEvent:
+    return _event(
+        "ENZYMATIC_SPARGE_ACID_NOT_REQUIRED",
+        ENZYMATIC,
+        INFO,
+        f"No sparge acid: the treated HLT's residual alkalinity is "
+        f"{residual_alkalinity_ppm:.1f} ppm as CaCO3, at or below the target; the "
+        f"calcium and magnesium in the liquor offset the source alkalinity "
+        f"({source_alkalinity_ppm:.1f} ppm).",
+        residual_alkalinity_ppm=residual_alkalinity_ppm,
+        source_alkalinity_ppm=source_alkalinity_ppm,
+    )
+
+
 def mash_ph_optimal(predicted_ph: float) -> TelemetryEvent:
     return _event(
         "ENZYMATIC_MASH_PH_OPTIMAL",
@@ -555,6 +571,7 @@ TELEMETRY_CODES: frozenset[str] = frozenset(
         "ENZYMATIC_ACID_DOSE_PRESCRIBED",
         "ENZYMATIC_ALKALINE_DOSE_PRESCRIBED",
         "ENZYMATIC_SPARGE_ACID_PRESCRIBED",
+        "ENZYMATIC_SPARGE_ACID_NOT_REQUIRED",
         "ENZYMATIC_MASH_PH_OPTIMAL",
         "ENZYMATIC_MASH_PH_OUT_OF_BOUNDS",
         "TARGET_MASH_PH_UNREACHABLE",

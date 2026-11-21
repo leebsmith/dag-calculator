@@ -89,6 +89,16 @@ lactate and the guardrail is therefore slightly stricter than the finished
 concentration. Phosphoric acid carries no taste guardrail: its practical limit is
 calcium phosphate precipitation, which the model does not compute.
 
+Sparge acid is a separate decision. The boundary prescribes it only when the
+treated HLT's **residual alkalinity** is positive: the source alkalinity minus
+the calcium and magnesium credit (`Ca × 0.7143 + Mg × 0.5879`). When the salts
+in the liquor already offset the source alkalinity, no acid is dosed and one
+INFO finding says so, naming the residual alkalinity; a source with no
+alkalinity stays silent. A higher-alkalinity source does prescribe acid, sized
+to the residual alkalinity of the treated liquor. The dose is always sized for
+the whole treated HLT, not the delivered sparge volume, because dosing is by
+concentration.
+
 Threshold provenance: Dysvik et al. (2020), Thompson Witrick et al. (2017) and
 Carriglio et al. (2022) for the 400 ppm figure; Li et al. (2015) for the
 buffering and phosphate behaviour that makes phosphoric acid taste-neutral.

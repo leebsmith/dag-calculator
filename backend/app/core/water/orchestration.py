@@ -60,6 +60,7 @@ from app.core.water.telemetry import (
     salt_dissolution_limit,
     sodium_above_recommended,
     source_contaminant_detected,
+    sparge_acid_not_required,
     sparge_acid_prescribed,
     sulfate_harshness_ceiling,
     target_mash_ph_missed,
@@ -354,6 +355,12 @@ def _resolve_sparge_acid(
             )
         )
         return _SpargeCorrection(acid_ml=sparge_acid_ml, alk_correction_ppm=ra_hlt)
+    if (
+        inp.source.get("alk", 0.0) > 0.0
+        and inp.v_sparge_demand_l > 0.0
+        and inp.v_hlt_treat_l > 0.0
+    ):
+        events.append(sparge_acid_not_required(ra_hlt, inp.source.get("alk", 0.0)))
     return _SpargeCorrection(acid_ml=0.0, alk_correction_ppm=0.0)
 
 

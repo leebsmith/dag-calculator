@@ -583,3 +583,54 @@ def test_magnesium_warns_above_the_recommended_band(magnesium, warns):
     )
     codes = {event["code"] for event in response.telemetry}
     assert ("GUARDRAIL_MAGNESIUM_TOXICITY_CEILING" in codes) is warns
+
+
+# ---------------------------------------------------------------------------
+# Sparge acidification
+# ---------------------------------------------------------------------------
+
+_REPORT_SOURCE = {"ca": 21.5, "mg": 5.0, "na": 10.0, "so4": 9.0, "cl": 3.0, "alk": 78.0}
+
+_LACTATE_BATCH = {
+    "grist": [GrainEntry(5.0, 3.0, "BASE")],
+    "target": {"so4": 140.0, "cl": 70.0},
+    "v_mash_treat_l": 23.85,
+    "v_hlt_treat_l": 41.64,
+    "v_hlt_debt_l": 2.27,
+    "v_sparge_demand_l": 17.4,
+    "mash_thickness_l_per_kg": 2.6,
+    "target_mash_ph": 5.4,
+    "strategy": "CALCIUM_FLOOR",
+}
+
+
+def test_no_sparge_acid_is_explained_when_the_salts_offset_the_alkalinity():
+    out = solve_water_chemistry(
+        WaterChemistryInput(source=dict(_REPORT_SOURCE), **_LACTATE_BATCH)
+    )
+    assert out.sparge_acid_ml == 0.0
+    event = next(
+        item
+        for item in out.telemetry
+        if item["code"] == "ENZYMATIC_SPARGE_ACID_NOT_REQUIRED"
+    )
+    assert event["context"]["residual_alkalinity_ppm"] == pytest.approx(-6.3, abs=0.5)
+    assert event["context"]["source_alkalinity_ppm"] == pytest.approx(78.0)
+
+
+def test_a_high_alkalinity_source_still_prescribes_sparge_acid():
+    out = solve_water_chemistry(
+        WaterChemistryInput(source={**_REPORT_SOURCE, "alk": 200.0}, **_LACTATE_BATCH)
+    )
+    assert out.sparge_acid_ml > 0.0
+    codes = {item["code"] for item in out.telemetry}
+    assert "ENZYMATIC_SPARGE_ACID_NOT_REQUIRED" not in codes
+    assert "ENZYMATIC_SPARGE_ACID_PRESCRIBED" in codes
+
+
+def test_an_alkalinity_free_source_has_nothing_to_explain():
+    source = {"ca": 5.0, "mg": 0.0, "na": 0.0, "so4": 0.0, "cl": 0.0, "alk": 0.0}
+    out = solve_water_chemistry(WaterChemistryInput(source=source, **_LACTATE_BATCH))
+    assert out.sparge_acid_ml == 0.0
+    codes = {item["code"] for item in out.telemetry}
+    assert "ENZYMATIC_SPARGE_ACID_NOT_REQUIRED" not in codes

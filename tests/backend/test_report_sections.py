@@ -206,6 +206,11 @@ WATER_DOSAGE_PROBE = (
     "#metadata(present-dosage()) <probe>\n"
 )
 
+WATER_SPARGE_LINE_PROBE = (
+    '#import "sections/water-chemistry.typ": sparge-line\n'
+    "#metadata(sparge-line()) <probe>\n"
+)
+
 WATER_DOSE_KEYS_PROBE = (
     '#import "sections/water-chemistry.typ": dose-keys\n'
     '#metadata(dose-keys("mash_additions")) <probe>\n'
@@ -590,6 +595,12 @@ def test_the_dosage_subsection_is_present_with_the_additions(shared_root: Path) 
         "sparge_gypsum": True,
         "sparge_acid": True,
     }
+
+
+def test_the_sparge_line_names_the_demand_and_the_available_liquor(shared_root: Path) -> None:
+    assert probe(shared_root, WATER_SPARGE_LINE_PROBE) == (
+        "HLT after top-up to 18.7 L · 17.7 L sparged of 17.7 L available"
+    )
 
 
 def test_the_dose_table_hides_zero_rounded_rows(shared_root: Path) -> None:
