@@ -206,6 +206,11 @@ WATER_DOSAGE_PROBE = (
     "#metadata(present-dosage()) <probe>\n"
 )
 
+WATER_DOSE_KEYS_PROBE = (
+    '#import "sections/water-chemistry.typ": dose-keys\n'
+    '#metadata(dose-keys("mash_additions")) <probe>\n'
+)
+
 WATER_LACTATE_PROBE = (
     '#import "sections/water-chemistry.typ": lactate-line\n'
     "#metadata(lactate-line()) <probe>\n"
@@ -585,6 +590,58 @@ def test_the_dosage_subsection_is_present_with_the_additions(shared_root: Path) 
         "sparge_gypsum": True,
         "sparge_acid": True,
     }
+
+
+def test_the_dose_table_hides_zero_rounded_rows(shared_root: Path) -> None:
+    assert probe(shared_root, WATER_DOSE_KEYS_PROBE) == [
+        "mash_additions.gypsum_kg",
+        "mash_additions.cacl2_kg",
+        "mash_additions.acid_l",
+    ]
+
+
+def test_a_residue_that_rounds_to_zero_is_not_a_dose() -> None:
+    bundle = fixture()
+    water = bundle["state"]["valuation"]["solver.water"]
+    water["mash_additions.epsom_kg"] = 1e-9
+    bundle["formatted"]["solver.water.mash_additions.epsom_kg"] = {
+        "text": "0.0 g",
+        "number": "0.0",
+        "unit": "g",
+        "base": None,
+        "dimension": None,
+    }
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, WATER_DOSE_KEYS_PROBE) == [
+            "mash_additions.gypsum_kg",
+            "mash_additions.cacl2_kg",
+            "mash_additions.acid_l",
+        ]
+        render(root, "water-chemistry")
+
+
+def test_a_visible_dose_prints_even_when_it_is_small() -> None:
+    bundle = fixture()
+    water = bundle["state"]["valuation"]["solver.water"]
+    water["mash_additions.epsom_kg"] = 0.0012
+    bundle["formatted"]["solver.water.mash_additions.epsom_kg"] = {
+        "text": "1.2 g",
+        "number": "1.2",
+        "unit": "g",
+        "base": None,
+        "dimension": None,
+    }
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, WATER_DOSE_KEYS_PROBE) == [
+            "mash_additions.gypsum_kg",
+            "mash_additions.cacl2_kg",
+            "mash_additions.epsom_kg",
+            "mash_additions.acid_l",
+        ]
 
 
 def test_the_dosage_reports_the_lactate_load(shared_root: Path) -> None:

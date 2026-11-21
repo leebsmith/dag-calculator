@@ -58,6 +58,16 @@
   (type(value) == int or type(value) == float) and value > 0
 }
 
+// A dose prints only when a brewer would see it: the raw amount is positive and
+// the frozen display string does not round to zero. Solver residues are positive
+// numbers that format as "0.0 g", and the card suppresses those rows the same way.
+#let displays-amount(key) = {
+  if not nonzero(key) { return false }
+  let number = formatted-number("solver.water." + key)
+  if number == none or number == "" { return true }
+  float(number) > 0
+}
+
 #let dose-rows(prefix, acid-label) = (
   (key: prefix + ".gypsum_kg", label: "Gypsum"),
   (key: prefix + ".cacl2_kg", label: "Calcium chloride"),
@@ -69,8 +79,12 @@
   (key: prefix + ".pickling_lime_kg", label: "Pickling lime"),
 )
 
+#let shown-doses(prefix, acid-label) = dose-rows(prefix, acid-label).filter(row => displays-amount(row.key))
+
+#let dose-keys(prefix) = shown-doses(prefix, "Acid").map(row => row.key)
+
 #let dose-table(prefix, acid-label) = {
-  let rows = dose-rows(prefix, acid-label).filter(row => nonzero(row.key))
+  let rows = shown-doses(prefix, acid-label)
   if rows.len() == 0 { return none }
   table(
     columns: (1fr, auto),
