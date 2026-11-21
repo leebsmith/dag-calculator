@@ -59,3 +59,9 @@ def test_batch_request_absorption_default_matches_artifact():
 def test_water_strategy_enum_matches_the_artifact_taxonomy():
     taxonomy = set(ARTIFACT["taxonomies"]["strategy"])
     assert {member.value for member in WaterStrategy} == taxonomy
+
+
+def test_lactic_acid_mass_matches_the_acid_properties():
+    props = water_constants.ACID_PROPERTIES["LACTIC_88"]
+    expected = props["density_g_per_ml"] * props["strength_pct"] / 100.0 * 1000.0
+    assert CONSTANTS["lactic_acid_mg_per_ml"] == pytest.approx(expected, rel=1e-3)

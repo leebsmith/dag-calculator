@@ -312,6 +312,7 @@ RECORD = {
             {"ion": "cl"},
             {"ion": "alk"},
         ],
+        "water.added_lactate_ppm": 110.6724890829694,
         # 40 IBU total: 30 in the boil, 10 in the whirlpool, split 7 / 3 across
         # the hot and the cool charge.
         "batch.whirlpool_ibu_fraction": 0.25,
@@ -911,6 +912,9 @@ PAYLOAD = FreezePayload(
             "water.source.calcium_ca": NodePresentation(
                 label="Calcium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
             ),
+            "water.added_lactate_ppm": NodePresentation(
+                label="Added lactate", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
+            ),
             "water.source.magnesium_mg": NodePresentation(
                 label="Magnesium", dimension="concentration", unit="ppm", symbol="ppm", decimals=1
             ),
@@ -1430,6 +1434,9 @@ PAYLOAD = FreezePayload(
         ),
         "water.mash_adjustment.alkalinity_as_caco3": FormattedValue(
             text="-3.0 ppm", number="-3.0", unit="ppm"
+        ),
+        "water.added_lactate_ppm": FormattedValue(
+            text="110.7 ppm", number="110.7", unit="ppm"
         ),
         "solver.water.strategy": FormattedValue(text="Best fit (all six)"),
         "solver.water.prescription.predicted_mash_ph": FormattedValue(

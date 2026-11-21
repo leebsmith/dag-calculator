@@ -157,6 +157,8 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `fermentability_prior_sugar` | 1 | `percentage` |
 | `grain_displacement_l_per_kg` | 0.667632 | `mash_thickness` |
 | `k_abs_true` | 1.043176 | `mash_thickness` |
+| `lactic_acid_mg_per_ml` | 1056 | `dimensionless` |
+| `lactic_sensory_threshold_ppm` | 400 | `concentration` |
 | `mash_ph_optimal_high` | 5.6 | `ph` |
 | `mash_ph_optimal_low` | 5.2 | `ph` |
 | `mash_thermal_factor` | 0.41 | `dimensionless` |
@@ -280,6 +282,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `solver.hops` | boundary |
 | `solver.water` | boundary |
 | `water.acid_medium` | choice |
+| `water.added_lactate_ppm` | derived |
 | `water.cacl2_form` | choice |
 | `water.calcium_ceiling_ppm` | root |
 | `water.calcium_floor_ppm` | root |
@@ -329,6 +332,7 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `hlt_demand_not_overfilled` | true |
 | `hlt_not_overfilled` | true |
 | `kettle_not_overfilled` | true |
+| `lactate_below_sensory_threshold` | false |
 | `mash_thickness_above_equipment_floor` | false |
 | `mash_thickness_below_ceiling` | false |
 | `mash_tun_not_overfilled` | true |

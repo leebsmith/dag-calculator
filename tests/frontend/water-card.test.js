@@ -650,3 +650,52 @@ test("the prescription names the deliverable surplus, not the treated residual",
   assert.ok(note, "the surplus note names its basis");
   assert.match(note, /beyond the sparge demand/);
 }));
+
+function lactateExpected(app) {
+  const acid =
+    app.engine.resolve("solver.water.mash_additions.acid_l") +
+    app.engine.resolve("solver.water.sparge_additions.acid_l");
+  const volume =
+    app.engine.resolve("solver.batch.cascade.v_post_boil") +
+    app.engine.get("batch.late_addition_volume_l");
+  return (acid * 1000 * 1056) / volume;
+}
+
+test("added lactate is the acid load over the knockout volume", withFreshApp((app) => {
+  app.compute();
+
+  const value = app.engine.get("water.added_lactate_ppm");
+  assert.ok(Math.abs(value - lactateExpected(app)) < 1e-9);
+  assert.ok(value < 400, "the fixture dose is below the sensory threshold");
+
+  const relation = app.relations.find((row) => row.id === "lactate_below_sensory_threshold");
+  assert.equal(relation.holds, true);
+}));
+
+test("phosphoric acid carries no lactate load", withFreshApp((app) => {
+  app.setRoot("water.acid_medium", "PHOSPHORIC_85");
+  app.compute();
+
+  assert.equal(app.engine.get("water.added_lactate_ppm"), 0);
+  const relation = app.relations.find((row) => row.id === "lactate_below_sensory_threshold");
+  assert.equal(relation.holds, true);
+}));
+
+test("a high lactic dose warns at the sensory threshold", withFreshApp((app) => {
+  app.compute();
+
+  assert.ok(app.engine.get("water.added_lactate_ppm") > 400);
+  const finding = app.findings.find((row) => row.id === "lactate_below_sensory_threshold");
+  assert.ok(finding, "the acid load is reported");
+  assert.equal(finding.severity, "warning");
+  assert.match(finding.message, /Added lactate/);
+  assert.match(finding.message, /400/);
+}, {
+  boundaries: {
+    ...BOUNDARY_DOUBLE,
+    water_chemistry_solver: () => ({
+      ...BOUNDARY_DOUBLE.water_chemistry_solver(),
+      "mash_additions.acid_l": 0.009,
+    }),
+  },
+}));

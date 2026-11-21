@@ -255,11 +255,12 @@ _19 paths_
 
 ## Water chemistry
 
-_69 paths_
+_70 paths_
 
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `water.acid_medium` | Acid medium | choice | — | — | — | LACTIC_88, PHOSPHORIC_10, PHOSPHORIC_85 |
+| `water.added_lactate_ppm` | Added lactate | derived | concentration | ppm | 1 | — |
 | `water.cacl2_form` | CaCl2 form | choice | — | — | — | CACL2_DIHYDRATE, CACL2_ANHYDROUS |
 | `water.calcium_ceiling_ppm` | Calcium maximum | root | concentration | ppm | 1 | — |
 | `water.calcium_floor_ppm` | Calcium minimum | root | concentration | ppm | 1 | — |

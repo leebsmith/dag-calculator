@@ -206,6 +206,11 @@ WATER_DOSAGE_PROBE = (
     "#metadata(present-dosage()) <probe>\n"
 )
 
+WATER_LACTATE_PROBE = (
+    '#import "sections/water-chemistry.typ": lactate-line\n'
+    "#metadata(lactate-line()) <probe>\n"
+)
+
 WATER_DOSE_NONZERO_PROBE = (
     '#import "sections/water-chemistry.typ": nonzero\n'
     "#metadata((\n"
@@ -580,6 +585,24 @@ def test_the_dosage_subsection_is_present_with_the_additions(shared_root: Path) 
         "sparge_gypsum": True,
         "sparge_acid": True,
     }
+
+
+def test_the_dosage_reports_the_lactate_load(shared_root: Path) -> None:
+    assert probe(shared_root, WATER_LACTATE_PROBE) == (
+        "Added lactate 110.7 ppm (sensory threshold 400 ppm)"
+    )
+
+
+def test_a_non_lactic_medium_reports_no_lactate_line() -> None:
+    bundle = fixture()
+    bundle["state"]["valuation"]["water.added_lactate_ppm"] = 0.0
+    bundle["formatted"]["water.added_lactate_ppm"]["number"] = "0.0"
+    bundle["formatted"]["water.added_lactate_ppm"]["text"] = "0.0 ppm"
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, WATER_LACTATE_PROBE) is None
+        render(root, "water-chemistry")
 
 
 def test_the_dosage_subsection_is_absent_without_the_additions() -> None:

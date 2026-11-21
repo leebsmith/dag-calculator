@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:a692f3f89e16d406979e477a259e83eebcaeada7a871135a6876835f4084e752",
+    "hash": "sha256:00482e325c59952f59eff42861bbca2feca1401fd3a89111c5a8ad491b9a5472",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -396,6 +396,14 @@
         "caco3_eq_weight": {
           "value": 50,
           "dimension": "dimensionless"
+        },
+        "lactic_acid_mg_per_ml": {
+          "value": 1056,
+          "dimension": "dimensionless"
+        },
+        "lactic_sensory_threshold_ppm": {
+          "value": 400,
+          "dimension": "concentration"
         },
         "mash_ph_optimal_low": {
           "value": 5.2,
@@ -1991,6 +1999,21 @@
             "dimension": "dimensionless"
           }
         },
+        "water.added_lactate_ppm": {
+          "kind": "derived",
+          "inputs": {
+            "mash_acid_l": "solver.water.mash_additions.acid_l",
+            "sparge_acid_l": "solver.water.sparge_additions.acid_l",
+            "v_post_boil": "solver.batch.cascade.v_post_boil",
+            "late_volume": "batch.late_addition_volume_l",
+            "acid_medium": "water.acid_medium"
+          },
+          "expr": "((acid_medium == \"LACTIC_88\") ? (((v_post_boil + late_volume) > 0) ? (((mash_acid_l + sparge_acid_l) * 1000 * constants.lactic_acid_mg_per_ml) / (v_post_boil + late_volume)) : 0) : 0)",
+          "output": {
+            "dimension": "concentration"
+          },
+          "domain": "$value >= 0"
+        },
         "water.mash_adjustment.calcium_ca": {
           "kind": "derived",
           "inputs": {
@@ -3183,6 +3206,11 @@
           "id": "mash_thickness_below_ceiling",
           "blocking": false,
           "predicate": "(solver.batch.mash_thickness_l_per_kg <= constants.max_mash_thickness_l_per_kg)"
+        },
+        {
+          "id": "lactate_below_sensory_threshold",
+          "blocking": false,
+          "predicate": "(water.added_lactate_ppm <= constants.lactic_sensory_threshold_ppm)"
         }
       ]
     }
@@ -4555,6 +4583,16 @@
       },
       "water.source.calcium_ca": {
         "label": "Calcium",
+        "dimension": "concentration",
+        "unit": "ppm",
+        "symbol": "ppm",
+        "decimals": 1,
+        "step": null,
+        "options": null,
+        "option_labels": null
+      },
+      "water.added_lactate_ppm": {
+        "label": "Added lactate",
         "dimension": "concentration",
         "unit": "ppm",
         "symbol": "ppm",
@@ -5936,7 +5974,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:9c3a0a3ce1fda577a696a301ea1a35b43ff16049ceb273f38b65239f17885536"
+    "hash": "sha256:d393542309f98343f7c0404ad1408749d7879a8f1a6caec9e2d174a7a18b31b6"
   },
   "batch": {
     "id": "frozen-1",
@@ -6139,6 +6177,7 @@
           "ion": "alk"
         }
       ],
+      "water.added_lactate_ppm": 110.6724890829694,
       "batch.whirlpool_ibu_fraction": 0.25,
       "batch.whirlpool_target_ibu": 10.0,
       "batch.boil_target_ibu": 30.0,
@@ -6727,6 +6766,13 @@
     "water.mash_adjustment.alkalinity_as_caco3": {
       "text": "-3.0 ppm",
       "number": "-3.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.added_lactate_ppm": {
+      "text": "110.7 ppm",
+      "number": "110.7",
       "unit": "ppm",
       "base": null,
       "dimension": null
@@ -8661,5 +8707,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:56d0cc1ac3d3b21b8ac61a59379560ad89fd9b9010fd39fa71680c85a13f6a1f"
+  "content_hash": "sha256:579aa4487e0992af768e38bb18b29bf31b23f11e1cd502a86d43d8cc159f6b42"
 }

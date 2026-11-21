@@ -712,6 +712,10 @@
   "style.srm_min": {
     "label": "Color min"
   },
+  "water.added_lactate_ppm": {
+    "label": "Added lactate",
+    "hint": "Lactic acid does not boil off, so mash and sparge doses both reach the finished beer. The published sensory threshold is 400 ppm; sensitive tasters detect a tang from 250-300 ppm in delicate styles. Native fermentation lactate (20-60 ppm) is not modelled."
+  },
   "water.acid_medium": {
     "label": "Acid medium",
     "optionLabels": {

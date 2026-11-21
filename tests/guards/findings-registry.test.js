@@ -47,6 +47,10 @@ const SAMPLES = {
     thickness: { value: 5.0, dimension: "mash_thickness" },
     ceiling: { value: 4.1727, dimension: "mash_thickness" },
   },
+  lactate_below_sensory_threshold: {
+    lhs: { value: 420, dimension: "concentration" },
+    rhs: { value: 400, dimension: "concentration" },
+  },
 };
 
 test("every declared relation has a finding entry", () => {

@@ -198,6 +198,7 @@ export const generatedRegistry = {
   "style.srm_max": {"label":"Color max"},
   "style.srm_min": {"label":"Color min"},
   "water.acid_medium": {"label":"Acid medium","optionLabels":{"LACTIC_88":"88% lactic acid","PHOSPHORIC_10":"10% phosphoric acid","PHOSPHORIC_85":"85% phosphoric acid"}},
+  "water.added_lactate_ppm": {"label":"Added lactate","hint":"Lactic acid does not boil off, so mash and sparge doses both reach the finished beer. The published sensory threshold is 400 ppm; sensitive tasters detect a tang from 250-300 ppm in delicate styles. Native fermentation lactate (20-60 ppm) is not modelled."},
   "water.cacl2_form": {"label":"CaCl2 form","optionLabels":{"CACL2_DIHYDRATE":"Dihydrate (CaCl₂·2H₂O)","CACL2_ANHYDROUS":"Anhydrous (CaCl₂)"}},
   "water.calcium_ceiling_ppm": {"label":"Calcium maximum","hint":"The upper half of the calcium band: the dose prefers gypsum up to this ceiling and falls back on Epsom salt beyond it, so magnesium only rises when the ceiling leaves no other route to the sulfate target."},
   "water.calcium_floor_ppm": {"label":"Calcium minimum","hint":"A guardrail, not a target: the dose adds calcium until the finished mash reaches this minimum, relaxed and reported in Details when the pinned objectives leave no room."},

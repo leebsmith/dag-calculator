@@ -3,7 +3,7 @@
 // findings. Every figure is the bundle's frozen display string; this section
 // only arranges them.
 
-#import "../lib/bundle.typ": state
+#import "../lib/bundle.typ": artifact-constants, state
 #import "../lib/format.typ": boundary-telemetry, formatted-number, formatted-text, present-formatted
 
 #let ion-rows = (
@@ -85,6 +85,14 @@
 }
 
 #let present-dosage() = present-formatted("solver.water.mash_additions.gypsum_kg")
+
+// Lactic acid is non-volatile: the mash and sparge doses both reach the beer.
+#let lactate-line() = {
+  let value = state.valuation.at("water.added_lactate_ppm", default: none)
+  if value == none or value <= 0 { return none }
+  let threshold = artifact-constants.lactic_sensory_threshold_ppm.value
+  "Added lactate " + formatted-text("water.added_lactate_ppm") + " (sensory threshold " + str(threshold) + " ppm)"
+}
 
 #let source-identification() = {
   let name = first-text((
@@ -172,6 +180,12 @@
   if basis != none {
     v(2pt)
     text(size: 8pt, fill: rgb("#6b6b6b"))[#basis]
+  }
+
+  let lactate = lactate-line()
+  if lactate != none {
+    v(2pt)
+    text(size: 8pt, fill: rgb("#6b6b6b"))[#lactate]
   }
 }
 

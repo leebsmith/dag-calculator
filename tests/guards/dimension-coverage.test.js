@@ -23,6 +23,7 @@ const INTENTIONAL_UNCHECKED = [
   "batch.whirlpool_ibu_share",
   "batch.yeast_cap",
   "grist.mcu",
+  "water.added_lactate_ppm",
 ];
 
 function uncheckedDerived(a) {

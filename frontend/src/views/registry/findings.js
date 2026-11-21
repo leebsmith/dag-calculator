@@ -51,6 +51,11 @@ export const RELATION_FINDINGS = {
       label: "Use the rig-default mash thickness",
     },
   },
+  lactate_below_sensory_threshold: {
+    label: "Acid load",
+    message: ({ lhs, rhs }, format) =>
+      `Added lactate ${format(lhs)} exceeds the ${format(rhs)} sensory threshold. Dilute the liquor with RO water or switch to phosphoric acid.`,
+  },
 };
 
 // Host-only advisories: they describe a missing input rather than a numerical
@@ -132,6 +137,10 @@ const OPERANDS = {
   mash_thickness_below_ceiling: (read, readConstant) => ({
     thickness: read("solver.batch.mash_thickness_l_per_kg"),
     ceiling: readConstant("max_mash_thickness_l_per_kg"),
+  }),
+  lactate_below_sensory_threshold: (read, readConstant) => ({
+    lhs: read("water.added_lactate_ppm"),
+    rhs: readConstant("lactic_sensory_threshold_ppm"),
   }),
 };
 

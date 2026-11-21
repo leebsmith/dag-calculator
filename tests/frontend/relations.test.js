@@ -21,6 +21,7 @@ test("relationStates() evaluates every declared relation", () => {
       "hlt_demand_not_overfilled",
       "hlt_not_overfilled",
       "kettle_not_overfilled",
+      "lactate_below_sensory_threshold",
       "mash_thickness_above_equipment_floor",
       "mash_thickness_below_ceiling",
       "mash_tun_not_overfilled",

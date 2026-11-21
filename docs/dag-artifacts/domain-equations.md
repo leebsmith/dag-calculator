@@ -142,6 +142,22 @@ summing to exactly 100.0% (at 0.1% resolution), breaking ties by larger `parts`
 then original index. Purely deterministic. (This is a formulation rule; the
 solver consumes the resulting `w_i` fractions.)
 
+### 1.7 Acid load
+
+Lactic acid does not boil off, so the mash and sparge doses both reach the
+finished beer. The added concentration is one derived node,
+`water.added_lactate_ppm`:
+
+    lactate_ppm = (mash_acid_l + sparge_acid_l) × 1000 × lactic_acid_mg_per_ml
+                  / (v_post_boil + late_volume_l)
+
+`lactic_acid_mg_per_ml` is 1056, the 88% w/w stock at 1.20 g/mL, pinned to
+`ACID_PROPERTIES` in `backend/app/core/water/constants.py`. The denominator is
+the knockout volume; transfer losses do not inflate the figure. The value is
+zero for phosphoric acid. The published sensory threshold is 400 ppm
+(`lactic_sensory_threshold_ppm`), carried as the
+`lactate_below_sensory_threshold` relation.
+
 ---
 
 ## 2. Black-box contract: batch-sparge solver

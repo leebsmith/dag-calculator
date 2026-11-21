@@ -392,6 +392,14 @@
       "value": 50,
       "dimension": "dimensionless"
     },
+    "lactic_acid_mg_per_ml": {
+      "value": 1056,
+      "dimension": "dimensionless"
+    },
+    "lactic_sensory_threshold_ppm": {
+      "value": 400,
+      "dimension": "concentration"
+    },
     "mash_ph_optimal_low": {
       "value": 5.2,
       "dimension": "ph"
@@ -1986,6 +1994,21 @@
         "dimension": "dimensionless"
       }
     },
+    "water.added_lactate_ppm": {
+      "kind": "derived",
+      "inputs": {
+        "mash_acid_l": "solver.water.mash_additions.acid_l",
+        "sparge_acid_l": "solver.water.sparge_additions.acid_l",
+        "v_post_boil": "solver.batch.cascade.v_post_boil",
+        "late_volume": "batch.late_addition_volume_l",
+        "acid_medium": "water.acid_medium"
+      },
+      "expr": "((acid_medium == \"LACTIC_88\") ? (((v_post_boil + late_volume) > 0) ? (((mash_acid_l + sparge_acid_l) * 1000 * constants.lactic_acid_mg_per_ml) / (v_post_boil + late_volume)) : 0) : 0)",
+      "output": {
+        "dimension": "concentration"
+      },
+      "domain": "$value >= 0"
+    },
     "water.mash_adjustment.calcium_ca": {
       "kind": "derived",
       "inputs": {
@@ -3178,6 +3201,11 @@
       "id": "mash_thickness_below_ceiling",
       "blocking": false,
       "predicate": "(solver.batch.mash_thickness_l_per_kg <= constants.max_mash_thickness_l_per_kg)"
+    },
+    {
+      "id": "lactate_below_sensory_threshold",
+      "blocking": false,
+      "predicate": "(water.added_lactate_ppm <= constants.lactic_sensory_threshold_ppm)"
     }
   ]
 }

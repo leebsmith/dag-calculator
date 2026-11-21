@@ -77,6 +77,22 @@ or a hazy IPA may deliberately exceed them. Table salt and baking soda are the
 usual sodium sources, so a sodium warning on a dark grist usually comes from the
 alkaline agent rather than a mineral target.
 
+### Acid load
+
+Lactic acid is dosed as a volume but tasted as a concentration. The calculator
+reports the added lactate in the knockout volume, counting both the mash and the
+sparge dose because neither boils off: the published sensory threshold is
+400 ppm, and sensitive tasters detect a lactic tang from 250–300 ppm in delicate
+styles. The guardrail warns at 400 and leaves the style judgement to you. Native
+fermentation lactate (20–60 ppm) is not modelled, so the figure is **added**
+lactate and the guardrail is therefore slightly stricter than the finished
+concentration. Phosphoric acid carries no taste guardrail: its practical limit is
+calcium phosphate precipitation, which the model does not compute.
+
+Threshold provenance: Dysvik et al. (2020), Thompson Witrick et al. (2017) and
+Carriglio et al. (2022) for the 400 ppm figure; Li et al. (2015) for the
+buffering and phosphate behaviour that makes phosphoric acid taste-neutral.
+
 ## 3. Volume basis
 
 | Quantity | Node | Definition |

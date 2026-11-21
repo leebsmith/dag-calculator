@@ -21,6 +21,7 @@
 #let batch = bundle.batch
 #let state = bundle.state
 #let catalog = bundle.catalog
+#let artifact-constants = bundle.artifact.content.constants
 #let display-values = bundle.formatted
 #let display-tables = bundle.formatted_tables
 #let display-summaries = bundle.formatted_summaries
