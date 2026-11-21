@@ -245,7 +245,12 @@ export const steps = [
           { label: "Mash transfer loss", value: "equipment.mash_transfer_loss_l", subtract: true },
           { label: "Pre-boil kettle", value: "solver.batch.v_pre_boil", bold: true },
           { label: "Boil-off", value: "batch.delta_v_evap", subtract: true },
-          { label: "Post-boil (wort, hot)", value: "solver.batch.cascade.v_post_boil", bold: true },
+          {
+            label: "Post-boil (wort, hot)",
+            value: "solver.batch.cascade.v_post_boil",
+            bold: true,
+            hint: "includes the dissolved late sugar",
+          },
           { label: "Shrinkage", value: "batch.shrinkage_volume_l", subtract: true },
           { label: "Kettle dead space", value: "equipment.kettle_dead_space_l", subtract: true },
           { label: "Kettle transfer", value: "equipment.kettle_transfer_loss_l", subtract: true },

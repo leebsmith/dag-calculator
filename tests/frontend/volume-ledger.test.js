@@ -58,3 +58,11 @@ test("valuation carries the subtraction flag to the template", async () => {
   assert.equal(byLabel.Shrinkage.subtract, true);
   assert.equal(byLabel["Fermenter (cold)"].subtract, false);
 });
+
+test("the post-boil row names the sugar inside it", () => {
+  const entry = ledgerEntry();
+  const row = entry.rows.find((item) => item.label === "Post-boil (wort, hot)");
+
+  assert.ok(row);
+  assert.match(row.hint, /late sugar/);
+});

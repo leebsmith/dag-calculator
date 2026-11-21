@@ -1,7 +1,7 @@
 // Volume ledger: strike water down to the cold fermenter, including the
 // dissolved late addition. Reads the frozen solve; never recomputes.
 
-#import "../lib/format.typ": formatted-number, formatted-unit, present-formatted
+#import "../lib/format.typ": formatted-number, formatted-text, formatted-unit, present-formatted
 
 #let rows = (
   (label: "Strike water", path: "solver.batch.cascade.v_strike"),
@@ -41,6 +41,13 @@
   [#hide("(")#text#hide(")")]
 }
 
+// The sugar is inside the post-boil figure now; name it so the row is not read
+// as a missing addition.
+#let late-sugar-note() = {
+  if not present-formatted("batch.late_addition_volume_l") { return none }
+  "Late sugar (" + formatted-text("batch.late_addition_volume_l") + ") is included in the post-boil figure."
+}
+
 #let ledger-row(row) = {
   let subtract = row.at("subtract", default: false)
   let bold = row.at("bold", default: false)
@@ -65,4 +72,9 @@
     inset: (x: 3pt, y: 2pt),
     ..rows.map(ledger-row).flatten(),
   )
+  let note = late-sugar-note()
+  if note != none {
+    v(3pt)
+    text(size: 8pt, fill: rgb("#6b6b6b"))[#note]
+  }
 })

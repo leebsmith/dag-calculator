@@ -181,6 +181,11 @@ BREWHOUSE_PRESENCE_PROBE = (
     "#metadata(present-brewhouse()) <probe>\n"
 )
 
+VOLUME_LATE_NOTE_PROBE = (
+    '#import "sections/volume-ledger.typ": late-sugar-note\n'
+    "#metadata(late-sugar-note()) <probe>\n"
+)
+
 LIQUOR_PRESENCE_PROBE = (
     '#import "sections/liquor-ledger.typ": present-liquor-ledger\n'
     "#metadata(present-liquor-ledger()) <probe>\n"
@@ -539,6 +544,22 @@ def test_a_section_renders_alone_and_in_the_full_report(
 ) -> None:
     assert compiled(section).stat().st_size > 0
     assert compiled().stat().st_size > 0
+
+
+def test_the_volume_ledger_names_the_sugar_inside_the_post_boil(shared_root: Path) -> None:
+    assert probe(shared_root, VOLUME_LATE_NOTE_PROBE) == (
+        "Late sugar (0.5 L) is included in the post-boil figure."
+    )
+
+
+def test_the_late_sugar_note_is_absent_without_a_sugar_volume() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["batch.late_addition_volume_l"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, VOLUME_LATE_NOTE_PROBE) is None
+        render(root, "volume-ledger")
 
 
 def test_liquor_ledger_is_present_with_the_hlt_budget(shared_root: Path) -> None:
