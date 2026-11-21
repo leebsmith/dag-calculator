@@ -300,7 +300,7 @@
       "condition": "has_late_sugar",
       "title": "Weigh the late sugar",
       "text": "Late sugar weighed and bagged.",
-      "done_when": "The sugar is ready for knockout."
+      "done_when": "The sugar is ready for the 10-minute addition."
     },
     {
       "id": "pre-water-prep",
@@ -659,7 +659,7 @@
       "kind": "action",
       "condition": "has_late_sugar",
       "title": "Add the late sugar",
-      "text": "Add the late sugar at knockout.",
+      "text": "Add the late sugar 10 minutes before the end of the boil.",
       "done_when": "The sugar is dissolved."
     },
     {

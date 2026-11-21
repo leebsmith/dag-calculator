@@ -98,6 +98,9 @@ tracks only what is outstanding.
 * **Sparge-acid target** — the dose neutralises the HLT's residual alkalinity as a
   proxy for `SPARGE_ACID_PH`; it never models an HLT pH. Revisit only if an HLT pH
   readout is surfaced.
+* **Per-row late-sugar time** — the checklist fixes the addition at 10 minutes. A
+  per-row `addition_at_min` (0 = knockout) would let recipes differ; it needs the
+  sugar schema, editor, volume-chain placement and a checklist provider.
 * **Boundary message envelope (parked)** — findings travel as the 200 `telemetry`
   list; errors as 422 `code/message` plus an additive `messages` chain of the
   findings that preceded the failure. The card merges both into one log; the old
