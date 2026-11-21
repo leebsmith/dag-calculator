@@ -142,6 +142,7 @@ def resolve_stage_cascade(
     v_dead: float,
     delta_v_evap: float,
     mash_transfer_loss: float = 0.0,
+    s_late_add: float = 0.0,
     k_abs_true: float = K_ABS_TRUE_METRIC,
     v_bar: float = V_BAR_METRIC,
     gamma: float = GAMMA_METRIC,
@@ -171,6 +172,8 @@ def resolve_stage_cascade(
         eta_conv: Mash conversion efficiency as a fraction.
         v_dead: Mash tun dead space, in liters.
         delta_v_evap: Boil-off evaporation volume, in liters.
+        s_late_add: Late-addition extract mass, in kg; its dissolved volume joins
+            the hot kettle before flameout.
         mash_transfer_loss: Mash tun transfer (hose/pump) loss, in liters.
         k_abs_true: True husk absorption coefficient, in L/kg.
         v_bar: Apparent specific volume of dissolved extract, in L/kg.
@@ -253,10 +256,9 @@ def resolve_stage_cascade(
     )
     sg_pre_boil = calculate_sg_pre_boil(s_run1, s_run2, v_drain, gamma)
 
-    # Hot-side kettle balance: V_post_boil_hot = V_pre_boil - delta_v_evap.
-    # (Late-addition displacement is not yet modeled on the hot side; when it
-    # is, add ``+ v_bar * s_late_add`` here and thread ``s_late_add`` through.)
-    v_post_boil = v_pre_boil - delta_v_evap
+    # Hot-side kettle balance: the late sugar is added before flameout, so its
+    # dissolved volume joins the kettle before the post-boil figure is read.
+    v_post_boil = v_pre_boil - delta_v_evap + v_bar * s_late_add
 
     # Resolved liquor-to-grist ratio. Under ``r_l_to_g`` the input *is* the
     # ratio. Under ``runoff_ratio`` the ratio is an output: the topology

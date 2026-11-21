@@ -246,11 +246,6 @@ export const steps = [
           { label: "Pre-boil kettle", value: "solver.batch.v_pre_boil", bold: true },
           { label: "Boil-off", value: "batch.delta_v_evap", subtract: true },
           { label: "Post-boil (wort, hot)", value: "solver.batch.cascade.v_post_boil", bold: true },
-          {
-            label: "Late-addition volume",
-            value: "batch.late_addition_volume_l",
-            hint: "dissolved sugar: v_bar × the operative sugar extract",
-          },
           { label: "Shrinkage", value: "batch.shrinkage_volume_l", subtract: true },
           { label: "Kettle dead space", value: "equipment.kettle_dead_space_l", subtract: true },
           { label: "Kettle transfer", value: "equipment.kettle_transfer_loss_l", subtract: true },

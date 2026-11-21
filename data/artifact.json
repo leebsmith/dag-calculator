@@ -2000,10 +2000,9 @@
         "mash_acid_l": "solver.water.mash_additions.acid_l",
         "sparge_acid_l": "solver.water.sparge_additions.acid_l",
         "v_post_boil": "solver.batch.cascade.v_post_boil",
-        "late_volume": "batch.late_addition_volume_l",
         "acid_medium": "water.acid_medium"
       },
-      "expr": "((acid_medium == \"LACTIC_88\") ? (((v_post_boil + late_volume) > 0) ? (((mash_acid_l + sparge_acid_l) * 1000 * constants.lactic_acid_mg_per_ml) / (v_post_boil + late_volume)) : 0) : 0)",
+      "expr": "((acid_medium == \"LACTIC_88\") ? ((v_post_boil > 0) ? (((mash_acid_l + sparge_acid_l) * 1000 * constants.lactic_acid_mg_per_ml) / v_post_boil) : 0) : 0)",
       "output": {
         "dimension": "concentration"
       },
@@ -2500,10 +2499,9 @@
       "kind": "derived",
       "inputs": {
         "v_post_boil": "solver.batch.cascade.v_post_boil",
-        "late_volume": "batch.late_addition_volume_l",
         "f_shrink": "equipment.shrinkage_pct"
       },
-      "expr": "((v_post_boil + late_volume) * f_shrink)",
+      "expr": "(v_post_boil * f_shrink)",
       "output": {
         "dimension": "volume"
       }

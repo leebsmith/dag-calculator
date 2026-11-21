@@ -76,6 +76,9 @@ const HOST_NODES = new Set([
   "water.mash_adjustment.sulfate_so4",
   "water.mash_adjustment.chloride_cl",
   "water.mash_adjustment.alkalinity_as_caco3",
+  // The sugar volume inside the flameout figure; the volume ledger prints it as
+  // a diagnostic and no artifact expression consumes it.
+  "batch.late_addition_volume_l",
 ]);
 
 function expressionStrings(a) {

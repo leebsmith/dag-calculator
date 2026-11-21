@@ -149,11 +149,12 @@ finished beer. The added concentration is one derived node,
 `water.added_lactate_ppm`:
 
     lactate_ppm = (mash_acid_l + sparge_acid_l) × 1000 × lactic_acid_mg_per_ml
-                  / (v_post_boil + late_volume_l)
+                  / v_post_boil
 
 `lactic_acid_mg_per_ml` is 1056, the 88% w/w stock at 1.20 g/mL, pinned to
 `ACID_PROPERTIES` in `backend/app/core/water/constants.py`. The denominator is
-the knockout volume; transfer losses do not inflate the figure. The value is
+the knockout volume, which already carries the late sugar; transfer losses do
+not inflate the figure. The value is
 zero for phosphoric acid. The published sensory threshold is 400 ppm
 (`lactic_sensory_threshold_ppm`), carried as the
 `lactate_below_sensory_threshold` relation.
@@ -275,8 +276,9 @@ functions `cutaia_real_extract`, `cutaia_abv_plato`, `sg_to_plato` and `plato_to
 | `f_shrink` | `default_shrinkage_fraction` |
 
 `v_bar · S_late` is the dissolved late addition's displacement volume
-(`V_late`). The solver subtracts it from the hot pre-boil, so the fermenter
-target is the total cold volume — wort plus sugar — not the wort alone.
+(`V_late`). The solver subtracts it from the hot pre-boil and adds it back at
+flameout, so the fermenter target is the total cold volume — wort plus sugar —
+not the wort alone.
 
 Tun occupancy uses Palmer's displacement `grain_displacement_l_per_kg` (0.32 qt/lb
 = 0.667632 L/kg). The binding phase changes with gravity, so both are derived and
@@ -410,13 +412,14 @@ volume, so the grist is sized for the extract the loss carries away.
 
 Kettle to fermenter: shrink the entire hot volume first, then subtract the additives.
 
-    V_packaged = (V_post + V_late) · (1 - f_shrink)
+    V_packaged = V_post · (1 - f_shrink)
                  - V_trub - V_kettle_dead - V_kettle_transfer
 
-`V_post` is the wort-only post-boil volume (the hop-utilisation volume);
-`V_late = v_bar · S_late` is the dissolved late addition, added at knockout and
-shrunk with the wort. The volume ledger reports both rows, so the cold chain
-closes on `V_ferm`.
+`V_post = V_pre - delta_v_evap + V_late` is the hot kettle at flameout: the
+dissolved late addition (`V_late = v_bar · S_late`) joins ten minutes before the
+end of the boil, so it sits inside the post-boil figure and the hop-utilisation
+volume. The pre-boil figure still excludes it, because `V_pre` is reversed from
+the fermenter target and subtracts `V_late`.
 
 Applying shrinkage to the net volume instead would incorrectly shrink the losses themselves.
 

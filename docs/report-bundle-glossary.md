@@ -87,7 +87,7 @@ _150 paths_
 | `batch.hop_hot_mass_share` | Hop Hot Mass Share | derived | percentage | pct (%) | 1 | — |
 | `batch.hop_realized_ibu` | Hop Realized IBU | derived | ibu | IBU | 1 | — |
 | `batch.late_addition_intent` | Late addition mode | choice | — | — | — | dose, share |
-| `batch.late_addition_volume_l` | Late-addition volume | derived | volume | L | 1 | — |
+| `batch.late_addition_volume_l` | Late Addition Volume L | derived | volume | L | 1 | — |
 | `batch.mash_thickness_l_per_kg` | Liquor-to-Grist Ratio | root | mash_thickness | L_per_kg (L/kg) | 2 | — |
 | `batch.process_notes` | Process notes | collection | — | — | — | — |
 | `batch.process_notes.text` | Note | field | — | — | — | — |

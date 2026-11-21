@@ -655,9 +655,7 @@ function lactateExpected(app) {
   const acid =
     app.engine.resolve("solver.water.mash_additions.acid_l") +
     app.engine.resolve("solver.water.sparge_additions.acid_l");
-  const volume =
-    app.engine.resolve("solver.batch.cascade.v_post_boil") +
-    app.engine.get("batch.late_addition_volume_l");
+  const volume = app.engine.resolve("solver.batch.cascade.v_post_boil");
   return (acid * 1000 * 1056) / volume;
 }
 

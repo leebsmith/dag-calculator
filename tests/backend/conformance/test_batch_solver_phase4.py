@@ -129,6 +129,15 @@ def test_resolve_stage_cascade_v_post_boil_is_kettle_balance(cascade_case):
     )
 
 
+def test_resolve_stage_cascade_v_post_boil_includes_the_late_sugar(cascade_case):
+    result = resolve_stage_cascade(
+        **cascade_case, topology="r_l_to_g", intensive_value=3.0, s_late_add=0.5
+    )
+    assert result.v_post_boil == pytest.approx(
+        cascade_case["v_pre_boil"] - cascade_case["delta_v_evap"] + V_BAR_METRIC * 0.5
+    )
+
+
 def test_resolve_stage_cascade_r_l_to_g_is_pure(cascade_case):
     kwargs = dict(**cascade_case, topology="r_l_to_g", intensive_value=3.0)
     first = resolve_stage_cascade(**kwargs)

@@ -56,6 +56,5 @@ test("valuation carries the subtraction flag to the template", async () => {
   );
 
   assert.equal(byLabel.Shrinkage.subtract, true);
-  assert.equal(byLabel["Late-addition volume"].subtract, false);
   assert.equal(byLabel["Fermenter (cold)"].subtract, false);
 });

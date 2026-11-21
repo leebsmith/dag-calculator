@@ -16,7 +16,6 @@
   (label: "Pre-boil kettle", path: "solver.batch.v_pre_boil", bold: true),
   (label: "Boil-off", path: "batch.delta_v_evap", subtract: true),
   (label: "Post-boil (wort, hot)", path: "solver.batch.cascade.v_post_boil", bold: true),
-  (label: "Late-addition volume", path: "batch.late_addition_volume_l"),
   (label: "Shrinkage", path: "batch.shrinkage_volume_l", subtract: true),
   (label: "Kettle dead space", path: "equipment.kettle_dead_space_l", subtract: true),
   (label: "Kettle transfer", path: "equipment.kettle_transfer_loss_l", subtract: true),

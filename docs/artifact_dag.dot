@@ -221,8 +221,6 @@ digraph artifact {
   "batch.late_addition_intent" -> "batch.sugars" [color="#b0bec5", style="dashed", constraint=false, penwidth=0.9];
   "batch.late_addition_intent" -> "grist.sugar_weighted_lovibond" [color="#546e7a", penwidth=1.0];
   "batch.late_addition_intent" -> "grist.sugars_mass" [color="#546e7a", penwidth=1.0];
-  "batch.late_addition_volume_l" -> "batch.shrinkage_volume_l" [color="#546e7a", penwidth=1.0];
-  "batch.late_addition_volume_l" -> "water.added_lactate_ppm" [color="#546e7a", penwidth=1.0];
   "batch.mash_thickness_l_per_kg" -> "solver.batch" [color="#546e7a", penwidth=1.0];
   "batch.runoff_ratio" -> "solver.batch" [color="#546e7a", penwidth=1.0];
   "batch.s_late_add" -> "batch.s_late_add_request" [color="#546e7a", penwidth=1.0];

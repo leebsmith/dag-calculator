@@ -114,7 +114,7 @@ test("saving a share draft with no weights completes them", async () => {
   assert.ok(row.resolved_mass_kg > 0);
 });
 
-test("the late-addition volume feeds the ledger's shrinkage base", async () => {
+test("the shrinkage base is the post-boil figure", async () => {
   const app = createTestApp();
   const water = Object.values(cache.references.water_report ?? {})[0] ?? {};
   await app.loadState({
@@ -136,7 +136,8 @@ test("the late-addition volume feeds the ledger's shrinkage base", async () => {
   const post = app.engine.resolve("solver.batch.cascade.v_post_boil");
   const shrink = app.engine.resolve("equipment.shrinkage_pct");
   const shrinkage = app.engine.get("batch.shrinkage_volume_l");
-  assert.ok(Math.abs(shrinkage - (post + lateVolume) * shrink) < 1e-9);
+
+  assert.ok(Math.abs(shrinkage - post * shrink) < 1e-9);
 });
 
 test("a zero share never invents row weights", async () => {

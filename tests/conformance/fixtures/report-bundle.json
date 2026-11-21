@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:00482e325c59952f59eff42861bbca2feca1401fd3a89111c5a8ad491b9a5472",
+    "hash": "sha256:ea622497f326de7d0a91124dd81f0bb2ad70b201e13b9fd6fd53a4d853f9e2a6",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -2005,10 +2005,9 @@
             "mash_acid_l": "solver.water.mash_additions.acid_l",
             "sparge_acid_l": "solver.water.sparge_additions.acid_l",
             "v_post_boil": "solver.batch.cascade.v_post_boil",
-            "late_volume": "batch.late_addition_volume_l",
             "acid_medium": "water.acid_medium"
           },
-          "expr": "((acid_medium == \"LACTIC_88\") ? (((v_post_boil + late_volume) > 0) ? (((mash_acid_l + sparge_acid_l) * 1000 * constants.lactic_acid_mg_per_ml) / (v_post_boil + late_volume)) : 0) : 0)",
+          "expr": "((acid_medium == \"LACTIC_88\") ? ((v_post_boil > 0) ? (((mash_acid_l + sparge_acid_l) * 1000 * constants.lactic_acid_mg_per_ml) / v_post_boil) : 0) : 0)",
           "output": {
             "dimension": "concentration"
           },
@@ -2505,10 +2504,9 @@
           "kind": "derived",
           "inputs": {
             "v_post_boil": "solver.batch.cascade.v_post_boil",
-            "late_volume": "batch.late_addition_volume_l",
             "f_shrink": "equipment.shrinkage_pct"
           },
-          "expr": "((v_post_boil + late_volume) * f_shrink)",
+          "expr": "(v_post_boil * f_shrink)",
           "output": {
             "dimension": "volume"
           }
@@ -6226,7 +6224,7 @@
         "cascade.v_run1": 8.2,
         "cascade.v_sparge": 17.7,
         "cascade.v_run2": 17.7,
-        "cascade.v_post_boil": 22.4,
+        "cascade.v_post_boil": 22.9,
         "cascade.sg_pre_boil": 1.0415650363501128,
         "apparent_attenuation": 0.756,
         "hlt.v_hlt_debt": 1.0,
@@ -7343,8 +7341,8 @@
       "dimension": null
     },
     "solver.batch.cascade.v_post_boil": {
-      "text": "22.4 L",
-      "number": "22.4",
+      "text": "22.9 L",
+      "number": "22.9",
       "unit": "L",
       "base": null,
       "dimension": null
@@ -8726,5 +8724,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:da6fa52874ab277edf0b8cdf9b3ac76295d73a2b3e1acb20db09ccce8cd9b73a"
+  "content_hash": "sha256:d7a848e580b833bea1d9c9d49f92689cd6d24c395d7b5d2e5327d7f234d3889f"
 }

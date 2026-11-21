@@ -532,6 +532,7 @@ def _solve_pipeline(
         v_dead=inputs.v_dead,
         delta_v_evap=inputs.delta_v_evap,
         mash_transfer_loss=inputs.mash_transfer_loss,
+        s_late_add=s_late_add,
         k_abs_true=inputs.k_abs_true,
     )
 
