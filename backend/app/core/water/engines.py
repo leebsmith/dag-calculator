@@ -66,6 +66,12 @@ def _flavor_dose(
 
 
 _TOL = 1e-6
+_DOSE_EPSILON_G_PER_L = 1e-6
+
+
+def _clean_dose(values: list[float]) -> list[float]:
+    """Drop solver residue: below a microgram per litre nothing is a real dose."""
+    return [0.0 if value < _DOSE_EPSILON_G_PER_L else value for value in values]
 
 
 def _calcium_band_rows(
@@ -138,7 +144,9 @@ def _resolve_dose(
         saved = max(0.0, float(reference.x[epsom_index])) - solution[epsom_index]
         if saved > 1e-9:
             events.append(lp_lexicographic_tie_break(saved))
-    return solution
+    if solution is None:
+        return None
+    return _clean_dose(solution)
 
 
 def _minimal_salt_vector(
@@ -287,7 +295,7 @@ def _solve_nonlinear_cloner(
         res = minimize(objective, x0, method="SLSQP", bounds=bounds)
         events.append(clone_constraint_relaxed())
 
-    x_opt = [max(0.0, float(v)) for v in res.x]
+    x_opt = _clean_dose([max(0.0, float(v)) for v in res.x])
     final_ions = source_vec + A_matrix @ np.array(x_opt)
 
     ca_err = final_ions[0] - target_vec[0]

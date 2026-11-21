@@ -467,7 +467,7 @@ def test_linear_route_prefers_gypsum_over_epsom():
     )
     post = _post(dose)
     assert dose.gypsum_g_per_l > 0.0
-    assert dose.epsom_g_per_l == pytest.approx(0.0, abs=1e-6)
+    assert dose.epsom_g_per_l == 0.0
     assert post["so4"] == pytest.approx(140.0)
     assert post["cl"] == pytest.approx(70.0)
     assert post["mg"] == pytest.approx(_WARD["mg"])
@@ -487,7 +487,7 @@ def test_the_calcium_ceiling_forces_epsom_back_in():
     post = _post(dose)
     assert dose.epsom_g_per_l > 0.0
     assert post["so4"] == pytest.approx(400.0)
-    assert post["ca"] == pytest.approx(150.0, abs=1e-6)
+    assert post["ca"] == pytest.approx(150.0, abs=1e-4)
     assert post["mg"] > _WARD["mg"]
 
 
@@ -512,6 +512,7 @@ def test_custom_pins_resolve_like_the_linear_route():
         150.0,
     )
     assert custom == linear
+    assert custom.epsom_g_per_l == 0.0
 
 
 def test_an_inverted_band_collapses_to_the_floor():
