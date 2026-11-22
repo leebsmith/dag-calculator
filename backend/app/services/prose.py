@@ -18,7 +18,9 @@ from urllib.parse import urlsplit
 from markdown_it import MarkdownIt
 from markdown_it.tree import SyntaxTreeNode
 
-PROSE_AST_VERSION = 2
+from app.services.latex_math import parse_math
+
+PROSE_AST_VERSION = 3
 MAX_SOURCE_CODE_POINTS = 20_000
 MAX_NODES = 2_000
 MAX_DEPTH = 32
@@ -45,6 +47,41 @@ _parser = MarkdownIt(
 )
 _parser.enable("strikethrough")
 _parser.enable("table")
+
+_SPACE = " \t\n"
+
+
+def _math_inline(state, silent: bool) -> bool:
+    source = state.src
+    start = state.pos
+    if source[start] != "$":
+        return False
+    if start > 0 and source[start - 1] == "$":
+        return False
+    if start + 1 >= len(source) or source[start + 1] in _SPACE or source[start + 1] == "$":
+        return False
+    end = start + 1
+    while end < len(source):
+        char = source[end]
+        if char == "\\":
+            end += 2
+            continue
+        if char == "$":
+            break
+        if char == "\n":
+            return False
+        end += 1
+    if end >= len(source) or source[end - 1] in _SPACE:
+        return False
+    if not silent:
+        token = state.push("math_inline", "math", 0)
+        token.content = source[start + 1 : end]
+        token.markup = "$"
+    state.pos = end + 1
+    return True
+
+
+_parser.inline.ruler.before("emphasis", "dollarmath", _math_inline)
 
 
 def _allow_all_links(_url: str) -> bool:
@@ -306,7 +343,16 @@ def _inline_node(node: SyntaxTreeNode, depth: int, budget: _Budget) -> list[dict
         return [{"type": "text", "value": str(alt)}] if alt else []
     if kind == "html_inline":
         return [{"type": "text", "value": node.content}]
+    if kind == "math_inline":
+        return _math_nodes(node.content)
     return _unknown_inline(node, depth, budget)
+
+
+def _math_nodes(content: str) -> list[dict]:
+    parsed = parse_math(content)
+    if parsed is None:
+        return [{"type": "text", "value": f"${content}$"}]
+    return [parsed]
 
 
 def _wrapped_inline(kind: str, node: SyntaxTreeNode, depth: int, budget: _Budget) -> dict:
@@ -389,15 +435,21 @@ def _enrich_scalar(container: dict, key: str, prose_key: str) -> None:
 
 
 _digest: str | None = None
+_MODULE_PATHS = (Path(__file__), Path(__file__).with_name("latex_math.py"))
+
+
+def _prose_material() -> bytes:
+    return b"".join(path.read_bytes() for path in _MODULE_PATHS)
 
 
 def prose_digest() -> str:
-    """A render-key component that changes with the parser or this module."""
+    """A render-key component that changes with the parser or these modules."""
     global _digest
     if _digest is None:
         version = importlib.metadata.version("markdown-it-py")
-        material = Path(__file__).read_bytes()
         _digest = hashlib.sha256(
-            material + version.encode("utf-8") + str(PROSE_AST_VERSION).encode("utf-8")
+            _prose_material()
+            + version.encode("utf-8")
+            + str(PROSE_AST_VERSION).encode("utf-8")
         ).hexdigest()
     return _digest

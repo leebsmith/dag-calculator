@@ -18,6 +18,7 @@ from typing import Any
 import pytest
 
 from app.schemas.report_bundle import BUNDLE_FORMAT
+from app.services.prose import parse_markdown
 
 ROOT = Path(__file__).resolve().parents[2]
 TEMPLATES = ROOT / "backend" / "app" / "templates"
@@ -392,6 +393,34 @@ def test_prose_tables_render_with_a_full_cell_grid() -> None:
         assert len(rendered) == 1
         assert "0.4pt" in rendered[0]["stroke"]
         assert "#b9b1a4" in rendered[0]["stroke"]
+
+
+def test_prose_math_renders_as_inline_equations() -> None:
+    ast = parse_markdown(r"Salt $\text{CaCl}_2$ and $SO_4^{2-}$.")
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), fixture())
+        (root / "math.json").write_text(json.dumps(ast))
+        (root / "prose-math-probe.typ").write_text(
+            '#import "lib/prose.typ": prose-node\n#prose-node(json("math.json"))\n'
+        )
+        completed = run_typst(
+            [
+                "eval",
+                "query(selector(math.equation))",
+                "--in",
+                str(root / "prose-math-probe.typ"),
+            ],
+            root,
+        )
+        rendered = json.loads(completed.stdout)
+        assert [equation["block"] for equation in rendered] == [False, False]
+        assert rendered[0]["body"] == {
+            "func": "attach",
+            "base": {"func": "text", "text": "CaCl"},
+            "t": None,
+            "b": {"func": "text", "text": "2"},
+        }
+        assert rendered[1]["body"]["t"]["children"][1] == {"func": "text", "text": "-"}
 
 
 def test_the_hop_purchase_table_is_present_with_its_rows(shared_root: Path) -> None:

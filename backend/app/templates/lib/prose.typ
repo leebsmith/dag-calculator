@@ -24,6 +24,29 @@
   }
 }
 
+#let prose-math(node) = {
+  let kind = node.at("type", default: "")
+  if kind == "text" {
+    math.text(node.at("value", default: ""))
+  } else if kind == "math-symbol" {
+    math.text(node.at("char", default: ""))
+  } else if kind == "math-op" {
+    math.op(node.at("char", default: "+"))
+  } else if kind == "math-attach" {
+    let sub = node.at("sub", default: none)
+    let sup = node.at("sup", default: none)
+    math.attach(
+      node.at("base", default: ()).map(prose-math).join(),
+      t: if sup == none { none } else { sup.map(prose-math).join() },
+      b: if sub == none { none } else { sub.map(prose-math).join() },
+    )
+  } else if kind == "math-group" {
+    node.at("children", default: ()).map(prose-math).join()
+  } else {
+    ""
+  }
+}
+
 #let prose-node(node) = {
   let kind = node.at("type", default: "")
   if kind == "doc" {
@@ -91,6 +114,13 @@
       node.at("href"),
       node.at("children", default: ()).map(prose-node).join(),
     )
+  } else if kind == "math" {
+    let children = node.at("children", default: ())
+    if children.len() == 0 {
+      ""
+    } else {
+      math.equation(block: false, children.map(prose-math).join())
+    }
   } else if kind == "break" {
     linebreak()
   } else if kind == "text" {

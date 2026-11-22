@@ -83,6 +83,7 @@ export const FOREIGN = {
   semantics: "a prose reference to the artifact semantics",
   row: "the reduction element alias (row.pct, row.mass_kg)",
   jexl: "the external expression library (jexl.compile, jexl.Jexl)",
+  math: "the Typst math module (math.equation, math.attach, math.text)",
   dimensions: "the artifact's dimension table, cited without its section prefix",
   constants: "the artifact's constant table, cited without its section prefix",
   relations: "the artifact's relation table, cited without its section prefix",

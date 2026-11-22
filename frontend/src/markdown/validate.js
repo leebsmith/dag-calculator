@@ -6,7 +6,7 @@ import MarkdownIt from "markdown-it";
 import { ignoreError } from "../observability.js";
 import { safeHref } from "../utils.js";
 
-export const PROSE_SUBSET_VERSION = 2;
+export const PROSE_SUBSET_VERSION = 3;
 export const PROSE_MAX_SOURCE_CODE_POINTS = 20_000;
 export const PROSE_MAX_NODES = 2_000;
 export const PROSE_MAX_DEPTH = 32;
@@ -17,6 +17,7 @@ const MESSAGES = {
   "prose.unsupported.image": "Images print as alt text in the PDF.",
   "prose.unsupported.html": "HTML prints as text in the PDF.",
   "prose.unsafe.link": "Only http and https links remain clickable.",
+  "prose.math.unclosed": "A $ with no closing $ prints literally; use $...$ for math.",
   "prose.too_long": "This note is longer than the report supports.",
   "prose.too_deep": "This note is nested more deeply than the report supports.",
   "prose.too_many_nodes": "This note has too many elements for the report.",
@@ -33,6 +34,62 @@ const DETECTION = new MarkdownIt({
   breaks: false,
 });
 DETECTION.validateLink = () => true;
+
+const DOLLAR = 0x24;
+const BACKSLASH = 0x5c;
+const NEWLINE = 0x0a;
+const MATH_SPACE = new Set([0x20, 0x09, NEWLINE, DOLLAR]);
+
+function findMathClose(source, start) {
+  let end = start + 1;
+  while (end < source.length) {
+    const code = source.charCodeAt(end);
+    if (code === BACKSLASH) {
+      end += 2;
+      continue;
+    }
+    if (code === NEWLINE) return -1;
+    if (code === DOLLAR) return end;
+    end += 1;
+  }
+  return -1;
+}
+
+function mathInline(state, silent) {
+  const source = state.src;
+  const start = state.pos;
+  if (source.charCodeAt(start) !== DOLLAR) return false;
+  if (start > 0 && source.charCodeAt(start - 1) === DOLLAR) return false;
+  if (start + 1 >= source.length) return false;
+  if (MATH_SPACE.has(source.charCodeAt(start + 1))) return false;
+  const end = findMathClose(source, start);
+  if (end < 0) return false;
+  if (MATH_SPACE.has(source.charCodeAt(end - 1))) return false;
+  if (!silent) {
+    const token = state.push("math_inline", "math", 0);
+    token.content = source.slice(start + 1, end);
+    token.markup = "$";
+  }
+  state.pos = end + 1;
+  return true;
+}
+
+DETECTION.inline.ruler.before("escape", "dollarmath", mathInline);
+
+function mathDollar(state, silent) {
+  if (state.src.charCodeAt(state.pos) !== DOLLAR) return false;
+  const next = state.src.charCodeAt(state.pos + 1);
+  if (next >= 0x30 && next <= 0x39) return false;
+  if (!silent) {
+    const token = state.push("math_dollar", "", 0);
+    token.content = "$";
+    token.markup = "$";
+  }
+  state.pos += 1;
+  return true;
+}
+
+DETECTION.inline.ruler.after("escape", "mathdollar", mathDollar);
 
 function codePoints(text) {
   return Array.from(text).length;
@@ -57,6 +114,7 @@ function inspectInline(tokens, depth, state) {
     state.depth = Math.max(state.depth, depth);
     if (token.type === "image") addIssue(state.found, "prose.unsupported.image");
     if (token.type === "html_inline") addIssue(state.found, "prose.unsupported.html");
+    if (token.type === "math_dollar") addIssue(state.found, "prose.math.unclosed");
     if (token.type === "link_open" && safeHref(linkDestination(token)) === "") {
       addIssue(state.found, "prose.unsafe.link");
     }

@@ -166,6 +166,34 @@ walks it with content constructors: `par`, `strong`, `emph`, `strike`, `list`,
 - `prose-cell` and `prose-value` fall back to the existing text when the AST is
   absent, which keeps older bundles and unenriched local bundles compiling.
 
+## Math
+
+Math is still content, not source: `lib/prose.typ` builds an equation from data
+with the `math` module's constructors, and no `eval` is involved. Verified
+against 0.15.1:
+
+```typst
+math.equation(block: false, body)          // inline; block: true is display
+math.text("CaCl")                          // upright run
+math.op("+")                               // operator with math spacing
+math.attach(base, t: sup, b: sub)          // t/b accept content or none
+```
+
+- `attach`, `frac`, and friends want **content** for their parts, not numbers:
+  `math.attach("CaCl", b: 2)` fails with "expected content or none, found
+  integer". Pass `[2]` or `math.text("2")`.
+- `math.attach` returns an inline element, so it can be placed inside
+  `$#body$` or handed to `math.equation` directly.
+- A symbol is data too: the backend sends a Unicode character and the template
+  calls `math.text` for an upright symbol or `math.op` for a spaced operator.
+  `math.op("->")` prints the two characters `->`, not an arrow — send `→`.
+- Greek and arrows resolve from the **embedded** New Computer Modern Math.
+  `--ignore-system-fonts --font-path …` does not remove it, and no missing-glyph
+  warning appears. The maths face is therefore serif against the Plex body; that
+  is deliberate, because Plex has no maths face.
+- `eval` exists in 0.15.1 (`#eval("$x$")` compiles) and stays unused: the prose
+  invariant is that strings are data.
+
 ## What will bite you
 
 1. `datetime.from-unix` — does not exist. Use the epoch + duration form.

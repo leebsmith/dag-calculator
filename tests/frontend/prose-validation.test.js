@@ -61,6 +61,17 @@ test("unsafe links are flagged and safe links are not", () => {
   assert.deepEqual(codes(validator.validate("[good](https://example.com)")), []);
 });
 
+test("inline math is supported and unclosed dollars are flagged", () => {
+  const validator = createProseValidator();
+  assert.deepEqual(codes(validator.validate("$\\text{CaCl}_2$ and $SO_4^{2-}$")), []);
+  assert.deepEqual(codes(validator.validate("costs $5 and $10")), []);
+  assert.deepEqual(codes(validator.validate("`$x$`")), []);
+  assert.deepEqual(codes(validator.validate("a \\$5 dose")), []);
+  assert.deepEqual(codes(validator.validate("dose $x")), ["prose.math.unclosed"]);
+  assert.deepEqual(codes(validator.validate("$$x^2$$")), ["prose.math.unclosed"]);
+  assert.deepEqual(codes(validator.validate("$\\frac{1}{2}$")), []);
+});
+
 test("source length is measured in code points", () => {
   const validator = createProseValidator();
   const under = "😀".repeat(PROSE_MAX_SOURCE_CODE_POINTS - 1);

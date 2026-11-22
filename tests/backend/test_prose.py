@@ -118,6 +118,61 @@ def test_too_much_nesting_falls_back_to_one_paragraph() -> None:
     assert [node["type"] for node in ast["children"]] == ["paragraph"]
 
 
+def test_inline_math_is_normalized() -> None:
+    ast = prose.parse_markdown(r"Salt $\text{CaCl}_2$ here.")
+    paragraph = ast["children"][0]["children"]
+    assert [node["type"] for node in paragraph] == ["text", "math", "text"]
+    assert paragraph[1] == {
+        "type": "math",
+        "children": [
+            {
+                "type": "math-attach",
+                "base": [{"type": "text", "value": "CaCl"}],
+                "sub": [{"type": "text", "value": "2"}],
+            }
+        ],
+    }
+
+
+def test_currency_and_unclosed_dollars_stay_text() -> None:
+    assert prose.parse_markdown("costs $5 and $10")["children"][0]["children"] == [
+        {"type": "text", "value": "costs $5 and $10"}
+    ]
+    assert prose.parse_markdown("dose $x")["children"][0]["children"] == [
+        {"type": "text", "value": "dose $x"}
+    ]
+    assert prose.parse_markdown("a $ b$ c")["children"][0]["children"] == [
+        {"type": "text", "value": "a $ b$ c"}
+    ]
+
+
+def test_display_math_stays_text() -> None:
+    assert prose.parse_markdown("$$x^2$$")["children"][0]["children"] == [
+        {"type": "text", "value": "$$x^2$$"}
+    ]
+
+
+def test_unsupported_math_degrades_to_its_source() -> None:
+    assert prose.parse_markdown(r"$\frac{1}{2}$")["children"][0]["children"] == [
+        {"type": "text", "value": r"$\frac{1}{2}$"}
+    ]
+
+
+def test_code_spans_and_escaped_dollars_stay_literal() -> None:
+    assert prose.parse_markdown("`$x$`")["children"][0]["children"] == [
+        {"type": "code", "text": "$x$"}
+    ]
+    assert prose.parse_markdown(r"a \$5 dose")["children"][0]["children"] == [
+        {"type": "text", "value": "a $5 dose"}
+    ]
+
+
+def test_prose_digest_covers_the_math_parser() -> None:
+    material = prose._prose_material()
+    for path in prose._MODULE_PATHS:
+        assert path.read_bytes() in material
+
+
 def test_enrich_bundle_injects_known_prose_cells_only() -> None:
     payload = {
         "formatted_tables": {

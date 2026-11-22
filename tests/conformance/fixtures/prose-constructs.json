@@ -49,5 +49,41 @@
     "source": "[good](https://example.com)",
     "codes": [],
     "python": { "contains_types": ["link"] }
+  },
+  {
+    "name": "inline math",
+    "source": "Salts: $\\text{CaCl}_2$ and $SO_4^{2-}$.",
+    "codes": [],
+    "python": { "contains_types": ["math"], "contains_text": "CaCl" }
+  },
+  {
+    "name": "currency is not math",
+    "source": "costs $5 and $10",
+    "codes": [],
+    "python": { "forbidden_types": ["math"] }
+  },
+  {
+    "name": "unclosed math",
+    "source": "dose $x",
+    "codes": ["prose.math.unclosed"],
+    "python": { "forbidden_types": ["math"], "contains_text": "dose $x" }
+  },
+  {
+    "name": "display math stays literal",
+    "source": "$$x^2$$",
+    "codes": ["prose.math.unclosed"],
+    "python": { "forbidden_types": ["math"] }
+  },
+  {
+    "name": "unsupported math command",
+    "source": "$\\frac{1}{2}$",
+    "codes": [],
+    "python": { "forbidden_types": ["math"], "contains_text": "$\\frac{1}{2}$" }
+  },
+  {
+    "name": "math in a code span",
+    "source": "`$x$`",
+    "codes": [],
+    "python": { "contains_types": ["code"], "forbidden_types": ["math"] }
   }
 ]
