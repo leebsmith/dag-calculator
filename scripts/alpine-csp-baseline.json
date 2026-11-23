@@ -6,6 +6,8 @@
   "arrowsInDirectives": 0,
   "classObjectLiterals": 0,
   "optionalChaining": 52,
-  "nullish": 19,
-  "multiStatementInit": 0
+  "nullish": 18,
+  "multiStatementInit": 0,
+  "globalCalls": 0,
+  "templateLiterals": 0
 }

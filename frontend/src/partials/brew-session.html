@@ -48,8 +48,7 @@
             id="session-started-at"
             type="datetime-local"
             class="form-input"
-            :value="$store.brewSession.startedAt"
-            @change="$store.brewSession.startedAt = $event.target.value"
+            x-model.lazy="$store.brewSession.startedAt"
           />
         </div>
         <div class="form-group">
@@ -57,8 +56,7 @@
           <select
             id="session-level"
             class="form-select"
-            :value="$store.brewSession.level"
-            @change="$store.brewSession.level = $event.target.value"
+            x-model="$store.brewSession.level"
           >
             <template x-for="level in $store.brewSession.levels" :key="level.id">
               <option :value="level.id" :selected="level.id === $store.brewSession.level" x-text="level.name"></option>
@@ -100,7 +98,7 @@
               @change="$store.brewSession.selectSession($event.target.value)"
             >
               <template x-for="entry in $store.brewSession.sessions" :key="entry.id">
-                <option :value="entry.id" :selected="entry.id === $store.brewSession.session.id" x-text="entry.started_at ? new Date(entry.started_at * 1000).toLocaleDateString() : entry.id"></option>
+                <option :value="entry.id" :selected="entry.id === $store.brewSession.session.id" x-text="entry.started_at ? fmt.formatDate(entry.started_at) : entry.id"></option>
               </template>
             </select>
           </div>
@@ -162,7 +160,7 @@
                   <span x-text="'Raw ' + observation.raw.value + ' ' + observation.raw.unit"></span>
                   <span x-show="observation.corrected" x-text="' · corrected ' + (observation.corrected?.value ?? '') + ' ' + (observation.corrected?.unit ?? '')"></span>
                   <span x-text="' · ' + observation.method"></span>
-                  <span class="text-xs text-muted" x-text="' · ' + new Date(observation.at * 1000).toLocaleString()"></span>
+                  <span class="text-xs text-muted" x-text="' · ' + fmt.formatDateTime(observation.at)"></span>
                   <button type="button" class="btn-secondary btn-sm" x-show="!$store.brewSession.sealed" @click="$store.brewSession.voidObservation(observation)">Void</button>
                 </p>
               </template>

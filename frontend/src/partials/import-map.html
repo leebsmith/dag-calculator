@@ -37,7 +37,7 @@
     <h3 class="pane-title">Whirlpool IBU share</h3>
     <p class="form-hint" x-show="$store.importReview.printedPoolFraction != null">
       Printed per-addition IBUs give this exactly:
-      <strong x-text="Math.round($store.importReview.printedPoolFraction * 100) + '%'"></strong>
+      <strong x-text="fmt.formatPercentRounded($store.importReview.printedPoolFraction)"></strong>
       of <span x-text="$store.importReview.payload?.targets?.ibu?.value ?? '—'"></span> IBU.
     </p>
     <template x-if="$store.importReview.printedPoolFraction == null">
@@ -54,15 +54,15 @@
             max="100"
             step="1"
             placeholder="share %"
-            :value="$store.importReview.poolFraction == null ? '' : Math.round($store.importReview.poolFraction * 100)"
-            @change="$store.importReview.setPoolFraction(Number($event.target.value) / 100)"
+            :value="$store.importReview.poolFraction == null ? '' : fmt.percentPoints($store.importReview.poolFraction)"
+            @change="$store.importReview.setPoolFraction(fmt.fractionFromPercent($event.target.value))"
           />
           <button
             type="button"
             class="btn-outline btn-sm"
             x-show="$store.importReview.estimatedPoolFraction != null"
             @click="$store.importReview.useEstimatedPoolFraction()"
-            x-text="'Use the estimate (' + Math.round(($store.importReview.estimatedPoolFraction ?? 0) * 100) + '%)'"
+            x-text="'Use the estimate (' + fmt.formatPercentRounded($store.importReview.estimatedPoolFraction) + ')'"
           ></button>
           <span class="text-xs text-muted" x-show="$store.importReview.poolSource"
             x-text="'source: ' + $store.importReview.poolSource"></span>

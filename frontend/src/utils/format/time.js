@@ -33,3 +33,29 @@ export function formatDate(seconds, { locale, timeZone, dash = DASH } = {}) {
     return DATE_FORMAT.format(date);
   }
 }
+
+/**
+ * Format epoch seconds as a localized date and time.
+ *
+ * @param {unknown} seconds
+ * @param {{ locale?: string, timeZone?: string, dash?: string }} [options]
+ * @returns {string} e.g. `"Oct 21, 2026, 14:03"`, or the dash for invalid input.
+ */
+export function formatDateTime(seconds, { locale, timeZone, dash = DASH } = {}) {
+  const n = toFiniteOrNull(seconds);
+  if (n === null) return dash;
+  const date = new Date(n * 1000);
+  if (Number.isNaN(date.getTime())) return dash;
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      ...(timeZone ? { timeZone } : {}),
+    }).format(date);
+  } catch {
+    return date.toLocaleString();
+  }
+}

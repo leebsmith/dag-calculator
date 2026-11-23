@@ -35,9 +35,13 @@ function countIn(haystack, needle) {
   return haystack.split(needle).length - 1;
 }
 
+const GLOBALS = /\b(?:Math|JSON|parseInt|parseFloat|Number|String|Boolean|Object|Array|Date)\s*[.(]/g;
+
 function directAttributes(text) {
-  const stripped = text.replace(/x-data\s*=\s*"[^"]*"/gs, "").replace(/x-data\s*=\s*'[^']*'/gs, "");
-  return stripped;
+  return text
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/x-data\s*=\s*"[^"]*"/gs, "")
+    .replace(/x-data\s*=\s*'[^']*'/gs, "");
 }
 
 export function measure(files = templateFiles()) {
@@ -51,6 +55,8 @@ export function measure(files = templateFiles()) {
     optionalChaining: 0,
     nullish: 0,
     multiStatementInit: 0,
+    globalCalls: 0,
+    templateLiterals: 0,
   };
   for (const file of files) {
     const text = readFileSync(file, "utf8");
@@ -65,6 +71,8 @@ export function measure(files = templateFiles()) {
     totals.optionalChaining += [...rest.matchAll(/\?\./g)].length;
     totals.nullish += [...rest.matchAll(/\?\?/g)].length;
     totals.multiStatementInit += [...rest.matchAll(/x-init\s*=\s*"[^"]*;[^"]*"/g)].length;
+    totals.globalCalls += [...rest.matchAll(GLOBALS)].length;
+    totals.templateLiterals += [...rest.matchAll(/`/g)].length;
   }
   return totals;
 }

@@ -85,3 +85,25 @@ export function formatPercentRange(
   const right = (b * 100).toFixed(places);
   return left === right ? `${left}%` : `${left}${separator}${right}%`;
 }
+
+/**
+ * Whole percent points (0..100) for an input value, or null when unset.
+ *
+ * @param {unknown} fraction
+ * @returns {number|null}
+ */
+export function percentPoints(fraction) {
+  const n = toFiniteOrNull(fraction);
+  return n === null ? null : Math.round(n * 100);
+}
+
+/**
+ * Parse a percent-points input into a 0..1 fraction, or null when unset.
+ *
+ * @param {unknown} value
+ * @returns {number|null}
+ */
+export function fractionFromPercent(value) {
+  const n = toFiniteOrNull(value);
+  return n === null ? null : n / 100;
+}

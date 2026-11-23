@@ -231,3 +231,14 @@ export function unitSymbol(symbols, dimension, unitId, fallback = null) {
   if (typeof unitId === "string" && unitId !== "") return unitId;
   return fallback;
 }
+
+/**
+ * True when the value parses to a finite number greater than zero.
+ *
+ * @param {unknown} value
+ * @returns {boolean}
+ */
+export function isPositiveNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0;
+}

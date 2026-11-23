@@ -141,7 +141,7 @@
             <span class="metric-cell-val" x-text="strikeWaterTempDisplay() || '—'"></span>
             <span class="metric-cell-unit" x-text="mashField('mash.strike_water_temp_c').unit"></span>
           </div>
-          <template x-if="Number(mashField('mash.strike_water_tun_offset_c').value) > 0">
+          <template x-if="fmt.isPositiveNumber(mashField('mash.strike_water_tun_offset_c').value)">
             <span
               class="text-xs text-muted"
               x-text="'incl. tun ' + fmt.formatQuantity(mashField('mash.strike_water_tun_offset_c'), { dash: '' })"
