@@ -12,7 +12,7 @@
       <div
         class="import-verification"
         :class="fmt.classNames(
-          $store.importReview.checkSummary?.ok,
+          fmt.path($store.importReview.checkSummary, 'ok'),
           'is-ok',
           $store.importReview.checkSummary && !$store.importReview.checkSummary.ok,
           'is-warn'
@@ -20,9 +20,9 @@
         x-show="$store.importReview.checkSummary"
       >
         <span class="font-medium"
-          x-text="$store.importReview.checkSummary?.ok
+          x-text="fmt.path($store.importReview.checkSummary, 'ok')
             ? 'Solveable — ready to commit'
-            : $store.importReview.checkSummary?.blocking + ' blocking finding(s)'"></span>
+            : fmt.path($store.importReview.checkSummary, 'blocking') + ' blocking finding(s)'"></span>
         <span class="text-xs text-muted"
           x-text="$store.importReview.checkSummary
             ? $store.importReview.checkSummary.unresolved + ' line(s) to decide, '
@@ -34,7 +34,7 @@
         <button
           type="button"
           class="text-xs"
-          :class="$store.importReview.checkSummary?.ok ? 'btn-outline' : 'btn-primary'"
+          :class="fmt.path($store.importReview.checkSummary, 'ok') ? 'btn-outline' : 'btn-primary'"
           :disabled="$store.importReview.checkBusy"
           @click="$store.importReview.runCheck()"
           x-text="$store.importReview.checkBusy ? 'Solving…' : ($store.importReview.gate ? 'Run the check again' : 'Run the check')"
@@ -42,7 +42,7 @@
         <button
           type="button"
           class="btn-primary btn-sm"
-          x-show="$store.importReview.checkSummary?.ok"
+          x-show="fmt.path($store.importReview.checkSummary, 'ok')"
           :disabled="$store.importReview.commitBusy"
           @click="$store.importReview.commit()"
           x-text="$store.importReview.commitBusy ? 'Creating…' : 'Create batch'"
@@ -94,9 +94,9 @@
         <li class="import-line" x-show="$store.importReview.waterSummary.gypsum_g">
           <span class="text-xs text-muted">Mash additions</span>
           <span class="text-xs"
-            x-text="'gypsum ' + ($store.importReview.waterSummary.gypsum_g ?? 0) + ' g · CaCl2 '
-              + ($store.importReview.waterSummary.cacl2_g ?? 0) + ' g · acid '
-              + ($store.importReview.waterSummary.acid_ml ?? 0) + ' ml'"></span>
+            x-text="'gypsum ' + (fmt.or($store.importReview.waterSummary.gypsum_g, 0)) + ' g · CaCl2 '
+              + (fmt.or($store.importReview.waterSummary.cacl2_g, 0)) + ' g · acid '
+              + (fmt.or($store.importReview.waterSummary.acid_ml, 0)) + ' ml'"></span>
         </li>
       </ul>
     </template>
@@ -114,7 +114,7 @@
           <li class="import-line map-row is-undecided">
             <span class="map-badge">needs a decision</span>
             <span class="font-medium" x-text="row.name"></span>
-            <span class="text-xs text-muted" x-text="row.section + ' · p' + (row.page ?? '?')"></span>
+            <span class="text-xs text-muted" x-text="row.section + ' · p' + (fmt.or(row.page, '?'))"></span>
             <span class="text-xs text-muted" x-text="$store.importReview.rowIssue(row)"></span>
           </li>
         </template>
@@ -152,7 +152,7 @@
         <template x-for="(finding, index) in $store.importReview.gate.findings" :key="index">
           <li class="import-line map-row" :class="fmt.classWhen(finding.severity === 'blocking', 'is-undecided')">
             <span class="map-badge" x-show="finding.severity === 'blocking'">blocking</span>
-            <span class="font-medium" x-text="finding.title ?? finding.code"></span>
+            <span class="font-medium" x-text="fmt.or(finding.title, finding.code)"></span>
             <span class="text-xs text-muted" x-text="finding.message"></span>
             <span class="text-xs text-muted" x-show="finding.severity === 'advisory'">advisory only</span>
           </li>

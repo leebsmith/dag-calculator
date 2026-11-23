@@ -5,8 +5,8 @@
   "arrowsInXData": 0,
   "arrowsInDirectives": 0,
   "classObjectLiterals": 0,
-  "optionalChaining": 52,
-  "nullish": 18,
+  "optionalChaining": 0,
+  "nullish": 0,
   "multiStatementInit": 0,
   "globalCalls": 0,
   "templateLiterals": 0

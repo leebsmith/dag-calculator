@@ -18,7 +18,7 @@
             class="btn-outline btn-sm"
             x-show="row.remove"
             @click="row.remove.run(row.key, row.index)"
-            x-text="row.remove?.label || 'Remove'"
+            x-text="fmt.path(row.remove, 'label') || 'Remove'"
           ></button>
         </div>
       </template>
@@ -27,7 +27,7 @@
         class="btn-outline btn-sm"
         x-show="field.add"
         @click="field.add.run()"
-        x-text="field.add?.label || 'Add'"
+        x-text="fmt.path(field.add, 'label') || 'Add'"
       ></button>
       <p
         class="form-hint"

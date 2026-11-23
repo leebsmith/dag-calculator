@@ -6,16 +6,16 @@
     <div>
       <h2 class="import-doc-title" x-text="$store.importReview.title"></h2>
       <p class="text-xs text-muted">
-        <span x-text="$store.importReview.summary?.filename"></span>
-        <span x-show="$store.importReview.summary?.pages">
-          · <span x-text="$store.importReview.summary?.pages"></span> page(s)
+        <span x-text="fmt.path($store.importReview.summary, 'filename')"></span>
+        <span x-show="fmt.path($store.importReview.summary, 'pages')">
+          · <span x-text="fmt.path($store.importReview.summary, 'pages')"></span> page(s)
         </span>
-        <span x-show="$store.importReview.summary?.style">
-          · <span x-text="$store.importReview.summary?.style"></span>
+        <span x-show="fmt.path($store.importReview.summary, 'style')">
+          · <span x-text="fmt.path($store.importReview.summary, 'style')"></span>
         </span>
-        <span x-show="$store.importReview.summary?.model">
-          · <span x-text="$store.importReview.summary?.model"></span>
-          v<span x-text="$store.importReview.summary?.promptVersion"></span>
+        <span x-show="fmt.path($store.importReview.summary, 'model')">
+          · <span x-text="fmt.path($store.importReview.summary, 'model')"></span>
+          v<span x-text="fmt.path($store.importReview.summary, 'promptVersion')"></span>
         </span>
       </p>
     </div>
@@ -89,13 +89,13 @@
                 class="form-input"
                 type="number"
                 step="any"
-                :value="row.value ?? ''"
+                :value="fmt.or(row.value, '')"
                 @change="$store.importReview.setTarget(row.key, $event.target.value)"
               />
               <span class="text-xs text-muted" x-text="row.unit || ''"></span>
             </td>
             <td class="text-xs text-muted" x-text="row.verbatim || '—'"></td>
-            <td class="text-xs text-muted" x-text="row.page ?? '—'"></td>
+            <td class="text-xs text-muted" x-text="fmt.or(row.page, '—')"></td>
             <td class="text-xs" x-text="row.source === 'user' ? 'you' : 'page'"></td>
           </tr>
         </template>

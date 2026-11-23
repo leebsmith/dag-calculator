@@ -110,7 +110,7 @@
                       />
                       <select
                         class="form-select text-xs"
-                        :value="row.contact_until ?? ''"
+                        :value="fmt.or(row.contact_until, '')"
                         @change="setDryHopDraftContactUntil(ri, $event.target.value)"
                         :aria-label="'Contact end for ' + dryHopTitle(row)"
                       >

@@ -85,4 +85,7 @@ if (existsSync(assetsDir)) {
   if (evaluates && allowsEval) {
     console.log("build check: CSP allows 'unsafe-eval' for the evaluating bundle");
   }
+  if (!evaluates && !allowsEval) {
+    console.log("build check: bundle needs no 'unsafe-eval'");
+  }
 }

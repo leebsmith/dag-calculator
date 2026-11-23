@@ -1205,8 +1205,8 @@ test("the yeasts section asks for the carrier and offers no blend control", () =
   assert.match(map, /blendCandidates\(\)/, "the section owns the blend picker");
   assert.match(map, /chooseBlend\(chip\)/);
   assert.match(map, /rowState\(row\)\.state !== 'component'/, "a component carries no controls");
-  assert.match(map, /blendOutcome\?\.ref/, "the current blend is marked in the chips");
-  assert.match(map, /blendOutcome\?\.name/, "the section states what ferments the batch");
+  assert.match(map, /fmt\.path\(\$store\.importReview\.blendOutcome, 'ref'\)/, "the current blend is marked in the chips");
+  assert.match(map, /fmt\.path\(\$store\.importReview\.blendOutcome, 'name'\)/, "the section states what ferments the batch");
   assert.match(map, /no blend record exists yet/);
   assert.match(map, /chip\.composition/);
   assert.match(map, /setCarrier\(\$event\.target\.value\)/);

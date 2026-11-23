@@ -8,7 +8,7 @@
       <tr><th>Target</th><th>Imported recipe</th><th>This rig</th><th>Difference</th></tr>
     </thead>
     <tbody>
-      <template x-for="(row, index) in delta?.targets ?? []" :key="'t' + index">
+      <template x-for="(row, index) in fmt.or(fmt.path(delta, 'targets'), [])" :key="'t' + index">
         <tr>
           <td x-text="row.label"></td>
           <td x-text="row.source_display"></td>
@@ -25,7 +25,7 @@
       <tr><th>Line</th><th>Imported recipe</th><th>This rig</th><th>Ratio</th><th>Note</th></tr>
     </thead>
     <tbody>
-      <template x-for="(row, index) in delta?.lines ?? []" :key="'l' + index">
+      <template x-for="(row, index) in fmt.or(fmt.path(delta, 'lines'), [])" :key="'l' + index">
         <tr>
           <td x-text="row.label"></td>
           <td x-text="row.source_kg == null ? '—' : (row.source_kg * 1000).toFixed(0) + ' g'"></td>

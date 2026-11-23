@@ -198,13 +198,13 @@
             </div>
             <div class="extract-readout">
               <span class="field-label">ABV</span>
-              <span class="tabular-nums" x-text="fmt.formatPercentValue(styleTargetInfo?.abv)"></span>
+              <span class="tabular-nums" x-text="fmt.formatPercentValue(fmt.path(styleTargetInfo, 'abv'))"></span>
             </div>
             <div class="extract-readout">
               <span class="field-label">Style safety</span>
               <span
                 class="tabular-nums"
-                x-text="fmt.formatPercentRounded(styleTargetRisk?.safety)"
+                x-text="fmt.formatPercentRounded(fmt.path(styleTargetRisk, 'safety'))"
               ></span>
             </div>
             <div class="extract-readout">

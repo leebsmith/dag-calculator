@@ -6,7 +6,7 @@ import {
   fractionFromPercent,
   percentPoints,
 } from "../../frontend/src/utils/format/percent.js";
-import { isPositiveNumber } from "../../frontend/src/utils/model.js";
+import { isPositiveNumber, or, path } from "../../frontend/src/utils/model.js";
 
 test("percentPoints rounds a fraction to whole points and tolerates gaps", () => {
   assert.equal(percentPoints(0.554), 55);
@@ -39,4 +39,22 @@ test("formatDateTime renders a date and time; invalid input gets the dash", () =
   assert.match(rendered, /2023/);
   assert.equal(formatDateTime(null), "—");
   assert.equal(formatDateTime("nope"), "—");
+});
+
+test("path reads a dotted chain and returns null on any gap", () => {
+  const row = { extract: { payload: { title: "Pale" } }, zero: 0, blank: "" };
+
+  assert.equal(path(row, "extract.payload.title"), "Pale");
+  assert.equal(path(row, "extract.source.filename"), null);
+  assert.equal(path(null, "a.b"), null);
+  assert.equal(path(row, "zero"), 0);
+  assert.equal(path(row, "blank"), "");
+});
+
+test("or falls back only for null and undefined", () => {
+  assert.equal(or(null, "fb"), "fb");
+  assert.equal(or(undefined, "fb"), "fb");
+  assert.equal(or(0, "fb"), 0);
+  assert.equal(or("", "fb"), "");
+  assert.equal(or(false, true), false);
 });

@@ -57,7 +57,7 @@
                   <template x-if="r.checked">
                     <input
                       type="number"
-                      :min="r.sourceValue ?? 0"
+                      :min="fmt.or(r.sourceValue, 0)"
                       step="1"
                       class="form-input tabular-nums"
                       :value="inputDraft(inputKey('ion', r.pin), r.targetValue)"

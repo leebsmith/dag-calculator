@@ -5,7 +5,7 @@
     <div>
       <h2 class="import-doc-title" x-text="$store.importReview.title"></h2>
       <p class="text-xs text-muted">
-        <span x-text="$store.importReview.summary?.filename"></span>
+        <span x-text="fmt.path($store.importReview.summary, 'filename')"></span>
         · <span x-text="$store.importReview.ledgerCounts.total"></span> lines
       </p>
     </div>
@@ -38,7 +38,7 @@
     <p class="form-hint" x-show="$store.importReview.printedPoolFraction != null">
       Printed per-addition IBUs give this exactly:
       <strong x-text="fmt.formatPercentRounded($store.importReview.printedPoolFraction)"></strong>
-      of <span x-text="$store.importReview.payload?.targets?.ibu?.value ?? '—'"></span> IBU.
+      of <span x-text="fmt.or(fmt.path($store.importReview.payload, 'targets.ibu.value'), '—')"></span> IBU.
     </p>
     <template x-if="$store.importReview.printedPoolFraction == null">
       <div>
@@ -255,9 +255,9 @@
           </p>
           <div class="import-queue-actions" x-show="$store.importReview.blendOutcome">
             <span class="map-badge">ferments this batch</span>
-            <span class="font-medium" x-text="$store.importReview.blendOutcome?.name"></span>
+            <span class="font-medium" x-text="fmt.path($store.importReview.blendOutcome, 'name')"></span>
             <span class="text-xs text-muted"
-              x-text="($store.importReview.blendRecordAttenuationPct ?? '—') + ' % attenuation'"></span>
+              x-text="(fmt.or($store.importReview.blendRecordAttenuationPct, '—')) + ' % attenuation'"></span>
           </div>
           <div class="import-queue-actions" x-show="$store.importReview.blendMode">
             <span class="text-xs text-muted">Blend record:</span>
@@ -265,8 +265,8 @@
               <button
                 type="button"
                 class="segmented-item segmented-item--chip"
-                :class="fmt.classWhen(chip.id === $store.importReview.blendOutcome?.ref, 'is-active')"
-                :aria-pressed="chip.id === $store.importReview.blendOutcome?.ref ? 'true' : 'false'"
+                :class="fmt.classWhen(chip.id === fmt.path($store.importReview.blendOutcome, 'ref'), 'is-active')"
+                :aria-pressed="chip.id === fmt.path($store.importReview.blendOutcome, 'ref') ? 'true' : 'false'"
                 :title="chip.composition"
                 @click="$store.importReview.chooseBlend(chip)"
                 x-text="chip.name"
@@ -320,7 +320,7 @@
               <select
                 class="form-select text-xs"
                 x-show="$store.importReview.destinationsFor(row.section).length > 1"
-                :value="row.destination ?? ''"
+                :value="fmt.or(row.destination, '')"
                 @change="$store.importReview.changeDestination(row.line_id, $event.target.value)"
               >
                 <template x-for="option in $store.importReview.destinationsFor(row.section)" :key="option.id">

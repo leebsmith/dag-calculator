@@ -42,8 +42,8 @@
               <li class="import-queue-row">
                 <div>
                   <button type="button" class="btn-link" @click="$store.imports.resume(row.id)"
-                    x-text="row.extract?.payload?.title || row.extract?.source?.filename"></button>
-                  <span class="text-xs text-muted" x-text="row.extract?.source?.filename"></span>
+                    x-text="fmt.path(row.extract, 'payload.title') || fmt.path(row.extract, 'source.filename')"></button>
+                  <span class="text-xs text-muted" x-text="fmt.path(row.extract, 'source.filename')"></span>
                 </div>
                 <div class="import-queue-actions">
                   <span class="text-xs text-muted" x-text="row.status"></span>
@@ -75,7 +75,7 @@
             <template x-for="row in $store.imports.failedRows" :key="row.id">
               <li class="import-queue-row is-failed">
                 <div>
-                  <span class="font-medium" x-text="row.extract?.payload?.title || row.extract?.source?.filename"></span>
+                  <span class="font-medium" x-text="fmt.path(row.extract, 'payload.title') || fmt.path(row.extract, 'source.filename')"></span>
                   <span class="text-xs text-muted" x-text="row.failure_reason || row.status"></span>
                 </div>
                 <div class="import-queue-actions">
@@ -101,8 +101,8 @@
             <template x-for="row in $store.imports.committedRows" :key="row.id">
               <li class="import-queue-row">
                 <div>
-                  <span class="font-medium" x-text="row.extract?.payload?.title || row.extract?.source?.filename"></span>
-                  <span class="text-xs text-muted" x-text="row.extract?.source?.filename"></span>
+                  <span class="font-medium" x-text="fmt.path(row.extract, 'payload.title') || fmt.path(row.extract, 'source.filename')"></span>
+                  <span class="text-xs text-muted" x-text="fmt.path(row.extract, 'source.filename')"></span>
                 </div>
                 <div class="import-queue-actions">
                   <span class="text-xs text-muted" x-text="$store.recipes.batchLabel(row.batch_id)"></span>

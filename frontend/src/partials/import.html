@@ -61,9 +61,9 @@
     <div class="alert alert-warning import-verdict" x-show="$store.importReview.verdict">
       <div class="alert-header">
         <span class="alert-dot"></span>
-        <span x-text="$store.importReview.verdict?.title"></span>
+        <span x-text="fmt.path($store.importReview.verdict, 'title')"></span>
       </div>
-      <p x-text="$store.importReview.verdict?.detail"></p>
+      <p x-text="fmt.path($store.importReview.verdict, 'detail')"></p>
       <p class="text-xs text-muted">
         You can still enter batch quantities by hand — a grain bill can be typed straight from
         printed rates as parts.
@@ -91,7 +91,7 @@
 
   <footer class="app-footer" x-show="$store.importReview.record">
     <span class="footer-step" x-text="$store.importReview.stageLabel"></span>
-    <span class="text-xs text-muted" x-text="$store.importReview.summary?.filename || ''"></span>
+    <span class="text-xs text-muted" x-text="fmt.path($store.importReview.summary, 'filename') || ''"></span>
     <span class="text-xs text-muted" x-show="$store.importReview.dirty">Unsaved corrections</span>
     <span class="text-xs text-muted" x-show="$store.importReview.busy">Saving…</span>
     <span class="boundary-status" x-show="$store.importReview.savedAt">

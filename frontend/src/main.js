@@ -1,4 +1,4 @@
-import Alpine from "alpinejs";
+import Alpine from "@alpinejs/csp";
 
 import { createStepApp } from "./adapters/stepAdapter.js";
 import { createAuthBoot } from "./adapters/authBoot.js";

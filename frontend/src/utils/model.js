@@ -242,3 +242,33 @@ export function isPositiveNumber(value) {
   const n = Number(value);
   return Number.isFinite(n) && n > 0;
 }
+
+/**
+ * Null-safe path read: `path(row, "extract.payload.title")`.
+ *
+ * The CSP build cannot parse optional chaining, so templates use this instead.
+ *
+ * @param {unknown} source
+ * @param {string} dotted
+ * @returns {unknown} the value, or null when any link is missing.
+ */
+export function path(source, dotted) {
+  let current = source;
+  for (const key of String(dotted ?? "").split(".")) {
+    if (current == null) return null;
+    current = current[key];
+  }
+  return current ?? null;
+}
+
+/**
+ * Nullish fallback without `??`, which the CSP build cannot parse.
+ *
+ * @template T, U
+ * @param {T} value
+ * @param {U} fallback
+ * @returns {T|U}
+ */
+export function or(value, fallback) {
+  return value == null ? fallback : value;
+}

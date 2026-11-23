@@ -158,7 +158,7 @@
               <template x-for="observation in $store.brewSession.observationsFor(row.metric_id.text)" :key="observation.id">
                 <p class="text-sm">
                   <span x-text="'Raw ' + observation.raw.value + ' ' + observation.raw.unit"></span>
-                  <span x-show="observation.corrected" x-text="' · corrected ' + (observation.corrected?.value ?? '') + ' ' + (observation.corrected?.unit ?? '')"></span>
+                  <span x-show="observation.corrected" x-text="' · corrected ' + (fmt.or(fmt.path(observation.corrected, 'value'), '')) + ' ' + (fmt.or(fmt.path(observation.corrected, 'unit'), ''))"></span>
                   <span x-text="' · ' + observation.method"></span>
                   <span class="text-xs text-muted" x-text="' · ' + fmt.formatDateTime(observation.at)"></span>
                   <button type="button" class="btn-secondary btn-sm" x-show="!$store.brewSession.sealed" @click="$store.brewSession.voidObservation(observation)">Void</button>

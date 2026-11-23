@@ -24,7 +24,7 @@
       <template x-if="field.badge">
         <span class="seed-badge" :title="field.badge.title" x-text="field.badge.text"></span>
       </template>
-      <template x-if="field.reset?.show">
+      <template x-if="fmt.path(field.reset, 'show')">
         <button
           type="button"
           class="seed-reset"
@@ -42,7 +42,7 @@
         <template x-if="field.badge">
           <span class="seed-badge" :title="field.badge.title" x-text="field.badge.text"></span>
         </template>
-        <template x-if="field.reset?.show">
+        <template x-if="fmt.path(field.reset, 'show')">
           <button
             type="button"
             class="seed-reset"
@@ -57,7 +57,7 @@
             class="form-checkbox"
             type="checkbox"
             :id="field.id + '-' + option.value"
-            :checked="field.value?.includes(option.value)"
+            :checked="(field.value && field.value.includes(option.value))"
             @change="field.toggle(option.value)"
             :disabled="field.disabled === true"
           />
