@@ -247,7 +247,7 @@ export const KEYS = [
   "toggleWaterDetails",
   "waterTargetOptions",
   "waterTargetOptionsState",
-  "waterTargetProfileId",
+  "waterTargetProfileId", "waterPlanFields",
   "editWaterNumber",
   "commitWaterNumber",
   "editWaterTargetInput",

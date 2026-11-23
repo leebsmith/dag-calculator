@@ -8,6 +8,7 @@ import {
   WATER_NODES as N,
 } from "../../views/registry/water.js";
 import { ignoreError } from "../../observability.js";
+import { formatFieldLabel } from "../../utils.js";
 import {
   checkedPins,
   nextPinned,
@@ -283,6 +284,81 @@ function syncActions({ engine, getView }) {
   };
 }
 
+function waterNumberField(app, { field, provenance, fallbackId, step, hint }) {
+  return {
+    id: field.id || fallbackId,
+    type: "number",
+    label: () => (field ? formatFieldLabel(field.label, field.unit) : ""),
+    read: () => field.display,
+    draft: {
+      read: () => app.inputDraft(app.inputKey("water", field.id), field.display),
+      write: (raw) => app.editWaterNumber(app.inputKey("water", field.id), field, raw),
+    },
+    write: () => app.commitWaterNumber(app.inputKey("water", field.id), field),
+    step,
+    commit: "change",
+    badge: () => (provenance.showSeed ? { text: "seed", title: provenance.seedTitle } : null),
+    reset: () => ({
+      show: provenance.showReset,
+      title: provenance.resetTitle,
+      run: () => app.resetWaterField(field),
+    }),
+    hint,
+    hints: [
+      {
+        text: "Outside the allowed range",
+        class: "text-danger",
+        when: () => field.validation && field.validation.holds === false,
+      },
+    ],
+  };
+}
+
+export function waterPlanFieldsActions() {
+  return {
+    // The water-plan field schema. The three number fields share one builder;
+    // the target selector is the only field with its own shape.
+    waterPlanFields() {
+      const app = this;
+      const plan = app.waterPlan;
+      const notice = (field) => app.waterPlan.floorNotice || field.hint;
+      return [
+        {
+          id: plan.target.id || "water-target-profile",
+          type: "select",
+          label: () => plan.target.label || "Targets",
+          read: () => app.waterTargetSelection,
+          write: (value) => app.selectWaterTarget(value),
+          options: () => app.waterTargetOptions,
+          hint: () => plan.target.hint,
+          commit: "change",
+        },
+        waterNumberField(app, {
+          field: plan.floor,
+          provenance: plan.provenance.floor,
+          fallbackId: "water-calcium-floor",
+          step: 1,
+          hint: () => notice(plan.floor),
+        }),
+        waterNumberField(app, {
+          field: plan.ceiling,
+          provenance: plan.provenance.ceiling,
+          fallbackId: "water-calcium-ceiling",
+          step: 5,
+          hint: () => notice(plan.ceiling),
+        }),
+        waterNumberField(app, {
+          field: plan.mashPh,
+          provenance: plan.provenance.mashPh,
+          fallbackId: "water-target-mash-ph",
+          step: 0.1,
+          hint: () => plan.mashPh.hint,
+        }),
+      ];
+    },
+  };
+}
+
 export function waterActions(ctx) {
   return {
     ...initialState(),
@@ -290,6 +366,7 @@ export function waterActions(ctx) {
     ...targetActions(ctx),
     ...inputActions(ctx),
     ...syncActions(ctx),
+    ...waterPlanFieldsActions(),
   };
 }
 
