@@ -44,19 +44,7 @@
             </button>
           </div>
           <div
-            x-data="formBuilder({
-              schema: [
-                {
-                  id: 'style-scale-pin',
-                  type: 'select',
-                  label: 'Scale pin',
-                  read: () => scalePin,
-                  write: (value) => setScalePin(value),
-                  options: () => scalePinOptions,
-                  commit: 'change'
-                }
-              ]
-            })"
+            x-data="formBuilder({ schema: styleScalePinFields() })"
           >
             <load src="src/partials/ui-form-fields.html" />
           </div>
@@ -238,68 +226,14 @@
         </div>
 
         <div
-          x-data="formBuilder({
-            schema: [
-              {
-                id: 'target-srm',
-                type: 'range',
-                label: 'Target SRM',
-                min: () => styleSrmSliderBounds?.[0],
-                max: () => styleSrmSliderBounds?.[1],
-                step: 0.5,
-                when: () => Boolean(styleSrmSliderBounds),
-                read: () => targetSrm,
-                write: (value) => setTargetSrm(value),
-                commit: 'input',
-                readout: () => srmTargetDisplay,
-                hint: () => styleSrmHint,
-                badge: () => (srmTargetProvenance.showSeed
-                  ? { text: 'seed', title: srmTargetProvenance.seedTitle }
-                  : null),
-                reset: () => ({
-                  show: srmTargetProvenance.showReset,
-                  title: srmTargetProvenance.resetTitle,
-                  run: () => resetField(srmTargetField)
-                }),
-                warning: () => (srmTargetOutside ? srmTargetNote : null)
-              }
-            ]
-          })"
+          x-data="formBuilder({ schema: styleSrmFields() })"
         >
           <load src="src/partials/ui-form-fields.html" />
           <span class="form-hint" x-show="!styleSrmSliderBounds">No SRM range in this style's envelope.</span>
         </div>
 
         <div
-          x-data="formBuilder({
-            schema: [
-              {
-                id: 'target-ibu',
-                type: 'range',
-                label: 'Target IBU',
-                min: () => styleIbuSliderBounds?.[0],
-                max: () => styleIbuSliderBounds?.[1],
-                step: 1,
-                when: () => Boolean(styleIbuSliderBounds),
-                read: () => targetIbu,
-                write: (value) => setTargetIbu(value),
-                commit: 'input',
-                readout: () => fmt.formatWithDecimals(targetIbu, 1) + ' IBU',
-                hint: () => (styleIbuBounds
-                  ? 'Style ' + fmt.formatRange(styleIbuBounds[0], styleIbuBounds[1]) + ' IBU'
-                  : ''),
-                badge: () => (ibuTargetProvenance.showSeed
-                  ? { text: 'seed', title: ibuTargetProvenance.seedTitle }
-                  : null),
-                reset: () => ({
-                  show: ibuTargetProvenance.showReset,
-                  title: ibuTargetProvenance.resetTitle,
-                  run: () => resetField(ibuTargetField)
-                }),
-                warning: () => (ibuTargetOutside ? ibuTargetNote : null)
-              }
-            ]
-          })"
+          x-data="formBuilder({ schema: styleIbuFields() })"
         >
           <load src="src/partials/ui-form-fields.html" />
           <span class="form-hint" x-show="!styleIbuSliderBounds">No IBU range in this style's envelope.</span>
@@ -327,23 +261,7 @@
 
         <div
           x-show="hopAllocationTarget !== 'mass_pool'"
-          x-data="formBuilder({
-            schema: [
-              {
-                id: 'whirlpool-fraction',
-                type: 'range',
-                label: 'Bitterness allocation',
-                min: 0,
-                max: 1,
-                step: 0.01,
-                read: () => whirlpoolFraction,
-                write: (value) => setWhirlpoolFraction(value),
-                commit: 'input',
-                readout: () => 'Boil ' + boilIbuDisplay + ' IBU · ' + whirlpoolPctDisplay + '% whirlpool · ' + whirlpoolIbuDisplay + ' IBU',
-                hint: 'Left = all boil-kettle; right = all whirlpool.'
-              }
-            ]
-          })"
+          x-data="formBuilder({ schema: whirlpoolFractionFields() })"
         >
           <load src="src/partials/ui-form-fields.html" />
         </div>
@@ -385,20 +303,7 @@
       </div>
       <div
         class="step-grid-2col"
-        x-data="formBuilder({
-          schema: styleEnvelopeFields.map((row, index) => ({
-            id: row.id,
-            type: 'readout',
-            label: () => styleEnvelopeFields[index]?.field.label || '',
-            read: () => {
-              const field = styleEnvelopeFields[index]?.field;
-              if (!field) return '';
-              return field.toggleable && field.unit
-                ? field.display + ' ' + field.unit
-                : field.display;
-            }
-          }))
-        })"
+        x-data="formBuilder({ schema: styleEnvelopeReadouts() })"
       >
         <load src="src/partials/ui-form-fields.html" />
       </div>

@@ -18,6 +18,7 @@ import {
 import { nonlinearFns } from "../../../views/producer.js";
 import { provenanceFor, roundTo } from "../../../utils.js";
 import { ibuDescriptors } from "./styleTargetGetters.js";
+import { styleTargetFieldActions } from "./targetFields.js";
 
 function pinActions({ engine, getView }) {
   return {
@@ -263,6 +264,7 @@ export function createStyleTargets(ctx) {
     hopAllocationTarget: "ibu_split",
     ...pinActions(ctx),
     ...targetActions(ctx),
+    ...styleTargetFieldActions(),
   };
   Object.defineProperties(actions, {
     ...boundsDescriptors({ artifact, nl, ...ctx }),
@@ -319,6 +321,10 @@ export const KEYS = [
   "styleIbuBounds",
   "styleSrmSliderBounds",
   "styleIbuSliderBounds",
+  "styleScalePinFields",
+  "styleSrmFields",
+  "styleIbuFields",
+  "whirlpoolFractionFields",
   "styleSrmHint",
   "srmTargetDisplay",
   "srmTargetOutside",

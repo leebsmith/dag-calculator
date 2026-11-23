@@ -24,6 +24,22 @@ export function createStyleDeclaration({ cache, getView }) {
   const actions = {
     selectedStyleId: "",
 
+    styleEnvelopeReadouts() {
+      const app = this;
+      return app.styleEnvelopeFields.map((row, index) => ({
+        id: row.id,
+        type: "readout",
+        label: () => app.styleEnvelopeFields[index]?.field.label || "",
+        read: () => {
+          const field = app.styleEnvelopeFields[index]?.field;
+          if (!field) return "";
+          return field.toggleable && field.unit
+            ? field.display + " " + field.unit
+            : field.display;
+        },
+      }));
+    },
+
     styleVitals() {
       const view = getView();
       const bounds = [
@@ -86,4 +102,5 @@ export const KEYS = [
   "fermentationField",
   "fermentationProvenance",
   "styleEnvelopeFields",
+  "styleEnvelopeReadouts",
 ];

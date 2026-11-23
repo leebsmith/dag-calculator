@@ -4,7 +4,7 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **820** (555 enumerable, 265 hidden)
+- Declared members: **825** (560 enumerable, 265 hidden)
 - Installers: **23**
 - Card partials: **21**
 - Installers reading another installer's key: **14 of 23**
@@ -23,10 +23,10 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 0 |
 | `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 64 | 0 | 0 |
 | `yeast` | `frontend/src/adapters/cards/yeast.js` | 50 | 2 | 0 |
-| `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 6 | 1 | 4 |
-| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 7 |
-| `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js` | 46 | 1 | 11 |
-| `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 4 |
+| `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 7 | 1 | 3 |
+| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |
+| `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js`, `frontend/src/adapters/cards/style/targetFields.js` | 50 | 1 | 11 |
+| `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/hopAllocation.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 164 | 4 | 21 |
 | `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 6 | 2 | 1 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 68 | 2 | 20 |
@@ -72,7 +72,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `patchDraftRow` | `draftEditor` | `hop`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `proseIssues` | `proseValidation` | `hop`, `proseFields`, `fieldActions`, `brewDay` | the hop, discussion, fermentation-strategy, process-note, and brew-day cards bind the shared markdown validator |
 | `removeDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
-| `resetField` | `fieldActions` | `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets` | shared field verbs: the card partials bind the one editing surface |
+| `resetField` | `fieldActions` | `styleTargets` | shared field verbs: the card partials bind the one editing surface |
 | `resetScaleTarget` | `styleTargets` | `styleNavigator` | the style navigator reads the target selection the target card owns |
 | `saveDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `scalePin` | `styleTargets` | `lateAdditions`, `styleNavigator` | the late-addition card reads the scale pin to preview its dose |

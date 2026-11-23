@@ -51,7 +51,7 @@ const STYLE_DECLARATION = ["frontend/src/adapters/cards/style/declaration.js"];
 const STYLE_NAVIGATOR = ["frontend/src/adapters/cards/style/navigator.js"];
 const STYLE_TARGETS = [
   "frontend/src/adapters/cards/style/targets.js",
-  "frontend/src/adapters/cards/style/styleTargetGetters.js",
+  "frontend/src/adapters/cards/style/styleTargetGetters.js", "frontend/src/adapters/cards/style/targetFields.js",
 ];
 const STYLE_CONFORMANCE = ["frontend/src/adapters/cards/style/conformance.js"];
 const HOP = [
@@ -315,7 +315,7 @@ export const SHARED = [
   },
   {
     key: "resetField",
-    owners: ["styleConformance", "styleDeclaration", "styleNavigator", "styleTargets"],
+    owners: ["styleTargets"],
     reason: "shared field verbs: the card partials bind the one editing surface",
   },
   {
