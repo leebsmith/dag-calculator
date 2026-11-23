@@ -38,7 +38,7 @@ EMULATOR_IMPORT := $(wildcard $(EMULATOR_DATA)/firebase-export-metadata.json)
 BJCP_CACHE   ?=
 BJCP_EDITION ?= 2021
 
-.PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle test-visual coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
+.PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle test-visual test-csp-boot coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products seeds-whirlpool-notes \
         scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
         promote promote-status \
@@ -58,6 +58,7 @@ help:
 	@echo "  test-fuzz       Seeded water-solver invariant sweep (CASES=200 SEED=...)"
 	@echo "  test-oracle     Check the oracle snapshot against the legacy checkout"
 	@echo "  test-visual     Local Chrome container snapshot vs BASE=<ref> (not in CI)"
+	@echo "  test-csp-boot   Boot the built SPA under the production CSP (needs Chrome)"
 	@echo "  coverage        Frontend + backend coverage reports"
 	@echo "  verify          check + test + production build (hermetic)"
 	@echo "  verify-full     verify + test-oracle (needs the legacy checkout)"
@@ -193,6 +194,13 @@ test-oracle:
 # pixels depend on the local browser and fonts.
 test-visual:
 	node scripts/visual-snapshot.mjs $(if $(BASE),--base $(BASE),)
+
+# Local-only, like test-visual: CI has no browser. The build uses placeholder
+# Firebase config so a production bundle boots without real credentials.
+CSP_BOOT_ENV := VITE_FIREBASE_API_KEY=csp-boot VITE_FIREBASE_AUTH_DOMAIN=csp-boot.firebaseapp.com VITE_FIREBASE_PROJECT_ID=csp-boot
+test-csp-boot:
+	cd frontend && $(CSP_BOOT_ENV) npm run build
+	node scripts/check-csp-boot.mjs
 
 # Generative search, deliberately outside `verify`: the case count is a
 # parameter and a failure is a seed to reproduce, not a diff to review.
