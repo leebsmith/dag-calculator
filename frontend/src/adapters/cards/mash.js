@@ -186,6 +186,35 @@ function modalActions({ artifact, getView }) {
       }
       view.mashDraftDirty = true;
     },
+
+    mashPresetFields() {
+      const app = this;
+      return [
+        {
+          id: "mash-preset-selector",
+          type: "select",
+          label: "Mash Style Preset",
+          read: () => app.mashPresetId,
+          write: (value) => app.onMashPresetChange(value),
+          options: () =>
+            Object.entries(app.mashPresetLabels).map(([value, label]) => ({ value, label })),
+          commit: "change",
+        },
+      ];
+    },
+
+    mashModalConfig() {
+      const app = this;
+      return {
+        id: "mash-rests",
+        title: "Configure Mash Rests",
+        cancel: () => app.closeMashModal(),
+        save: () => app.commitMashSchedule(),
+        saveLabel: "OK",
+        saveDisabled: () => !app.isMashDraftValid,
+        escape: () => app.closeMashModal(),
+      };
+    },
   };
 }
 
@@ -237,4 +266,4 @@ export function refreshMashCard(app, ctx) {
   app.minLgrLPerKg = ctx.engine.identity?.equipment?.min_lgr_l_per_kg ?? null;
 }
 
-export const KEYS = ["mashRests", "mashDoughInTempC", "mashTotalTimeMin", "mashRampTimeMin", "mashThicknessLPerKg", "minLgrLPerKg", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "mashPresetIdState", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "totalMashTimeDisplay", "rampTimeMin", "restTimeMin", "mashThicknessUnitId", "mashThicknessUnit", "mashThicknessDisplay", "minLgrDisplay", "mashLgrBelowFloor", "mashLgrSummary", "mashTimeSummary", "sortedMashDraftRests", "isMashDraftValid"];
+export const KEYS = ["mashRests", "mashDoughInTempC", "mashTotalTimeMin", "mashRampTimeMin", "mashThicknessLPerKg", "minLgrLPerKg", "mashModalOpen", "mashDraft", "mashDraftDirty", "_convert", "restUseTempDisplay", "restTempRangeDisplay", "restBoundDisplay", "getRestDefinition", "restName", "restPurpose", "isRestOutOfRange", "mashField", "strikeWaterTempDisplay", "_materializeRests", "_writeMashRests", "onMashPresetChange", "toggleMashRest", "openMashModal", "closeMashModal", "commitMashSchedule", "mashDraftRow", "setMashDraftTemp", "setMashDraftDuration", "mashPresetLabels", "mashPresetId", "mashPresetIdState", "canonicalMashRests", "sortedMashRests", "enabledMashRests", "doughInInheritedTempC", "temperatureUnit", "doughInDisplay", "totalMashTimeMin", "totalMashTimeDisplay", "rampTimeMin", "restTimeMin", "mashThicknessUnitId", "mashThicknessUnit", "mashThicknessDisplay", "minLgrDisplay", "mashLgrBelowFloor", "mashLgrSummary", "mashTimeSummary", "sortedMashDraftRests", "isMashDraftValid", "mashPresetFields", "mashModalConfig"];

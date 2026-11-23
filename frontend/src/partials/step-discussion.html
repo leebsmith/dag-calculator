@@ -8,22 +8,7 @@
     <section class="card-section">
       <div class="section-body">
         <div
-          x-data="formBuilder({
-            schema: [
-              {
-                id: 'discussion',
-                type: 'textarea',
-                label: 'Discussion',
-                rows: 12,
-                read: () => discussion,
-                write: (value) => setDiscussion(value),
-                commit: 'change',
-                placeholder: 'Where this recipe came from, what you changed, and what you were aiming for.',
-                attrs: { maxlength: 4000 },
-                hint: 'Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.'
-              }
-            ]
-          })"
+          x-data="formBuilder({ schema: discussionFields() })"
         >
           <load src="src/partials/ui-form-fields.html" />
           <template x-for="issue in proseIssues(discussion)" :key="issue.code">

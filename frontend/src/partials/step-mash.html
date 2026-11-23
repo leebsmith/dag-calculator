@@ -8,19 +8,7 @@
     <!-- Mash style preset -->
     <div class="table-header-toolbar">
       <div
-        x-data="formBuilder({
-          schema: [
-            {
-              id: 'mash-preset-selector',
-              type: 'select',
-              label: 'Mash Style Preset',
-              read: () => mashPresetId,
-              write: (value) => onMashPresetChange(value),
-              options: () => Object.entries(mashPresetLabels).map(([value, label]) => ({ value, label })),
-              commit: 'change'
-            }
-          ]
-        })"
+        x-data="formBuilder({ schema: mashPresetFields() })"
       >
         <load src="src/partials/ui-form-fields.html" />
       </div>

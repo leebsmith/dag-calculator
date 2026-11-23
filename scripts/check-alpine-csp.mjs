@@ -43,6 +43,7 @@ function directAttributes(text) {
 export function measure(files = templateFiles()) {
   const totals = {
     inlineXDataLiterals: 0,
+    xDataCalls: 0,
     getters: 0,
     arrowsInXData: 0,
     arrowsInDirectives: 0,
@@ -56,6 +57,7 @@ export function measure(files = templateFiles()) {
     const data = xDataValues(text).join("\n");
     const rest = directAttributes(text);
     totals.inlineXDataLiterals += [...text.matchAll(/x-data\s*=\s*["']\s*\{/g)].length;
+    totals.xDataCalls += [...text.matchAll(/x-data\s*=\s*["'][A-Za-z_$][\w$.]*\s*\(/g)].length;
     totals.getters += [...data.matchAll(/\bget\s+[A-Za-z_$][\w$]*\s*\(/g)].length;
     totals.arrowsInXData += countIn(data, "=>");
     totals.arrowsInDirectives += countIn(rest, "=>");

@@ -18,6 +18,42 @@ export function createProseFields({ getView }) {
       getView().fermentationStrategy = typeof value === "string" ? value : "";
       getView().notify();
     },
+    discussionFields() {
+      const app = this;
+      return [
+        {
+          id: "discussion",
+          type: "textarea",
+          label: "Discussion",
+          rows: 12,
+          read: () => app.discussion,
+          write: (value) => app.setDiscussion(value),
+          commit: "change",
+          placeholder:
+            "Where this recipe came from, what you changed, and what you were aiming for.",
+          attrs: { maxlength: 4000 },
+          hint: "Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.",
+        },
+      ];
+    },
+    fermentationStrategyFields() {
+      const app = this;
+      return [
+        {
+          id: "fermentation-strategy",
+          type: "textarea",
+          label: "Strategy",
+          rows: 5,
+          read: () => app.fermentationStrategy,
+          write: (value) => app.setFermentationStrategy(value),
+          commit: "change",
+          placeholder:
+            "Pitch rate and starter, oxygenation, temperature schedule, and the character you want from the strain.",
+          attrs: { maxlength: 4000 },
+          hint: "Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.",
+        },
+      ];
+    },
   };
 }
 
@@ -30,4 +66,6 @@ export const KEYS = [
   "setDiscussion",
   "fermentationStrategy",
   "setFermentationStrategy",
+  "discussionFields",
+  "fermentationStrategyFields",
 ];

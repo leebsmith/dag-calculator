@@ -4,7 +4,7 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **813** (547 enumerable, 266 hidden)
+- Declared members: **818** (553 enumerable, 265 hidden)
 - Installers: **23**
 - Card partials: **21**
 - Installers reading another installer's key: **14 of 23**
@@ -28,12 +28,12 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js` | 46 | 1 | 11 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 4 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/hopAllocation.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 164 | 4 | 21 |
-| `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 4 | 2 | 1 |
+| `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 6 | 2 | 1 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 67 | 2 | 20 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 43 | 2 | 20 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 50 | 2 | 18 |
-| `mash` | `frontend/src/adapters/cards/mash.js`, `frontend/src/adapters/cards/mashGetters.js` | 51 | 2 | 4 |
-| `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 14 | 1 | 1 |
+| `mash` | `frontend/src/adapters/cards/mash.js`, `frontend/src/adapters/cards/mashGetters.js` | 53 | 2 | 4 |
+| `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 15 | 1 | 1 |
 | `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 55 | 2 | 13 |
 | `water` | `frontend/src/adapters/cards/water.js`, `frontend/src/adapters/cards/waterCardActions.js` | 29 | 1 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 1 | 0 | 0 |

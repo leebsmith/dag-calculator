@@ -11,9 +11,33 @@ import {
   updateBrewDayRow,
 } from "../../views/brewDayLogic.js";
 
+// The checklist-level picker's field schema. A module-level factory keeps the
+// card's action object under the function-length cap; the method is still called
+// as an app member, so `this` is the reactive root.
+function levelFieldActions() {
+  return {
+    brewDayLevelFields() {
+      const app = this;
+      return [
+        {
+          id: "checklist-level",
+          type: "select",
+          label: "Checklist level",
+          read: () => app.brewDayLevel,
+          write: (value) => app.setBrewDayLevel(value),
+          options: () => app.brewDayLevels.map((level) => ({ value: level.id, label: level.name })),
+          commit: "change",
+          hint: "Critical path is the short gate list; Standard is the full brew sheet; Diagnostic adds expected values, methods and model caveats.",
+        },
+      ];
+    },
+  };
+}
+
 export function createBrewDayCard({ engine, artifact, getView, observability }) {
   const actions = {
     brewDayRows: defaultBrewDayRows(),
+    brewDayLevel: selectBrewDayLevel({ level: engine.get(N.level) }),
     brewDayOpenSections: { ...INITIAL_OPEN_SECTIONS },
     brewDayLevels: BREW_DAY_LEVELS,
     brewDayRow(stepId) {
@@ -34,6 +58,8 @@ export function createBrewDayCard({ engine, artifact, getView, observability }) 
       getView().compute();
       getView().notify();
     },
+
+    ...levelFieldActions(),
 
     _writeBrewDayRows(rows) {
       getView().brewDayRows = rows;
@@ -62,12 +88,6 @@ export function createBrewDayCard({ engine, artifact, getView, observability }) 
   };
 
   Object.defineProperties(actions, {
-    brewDayLevel: {
-      configurable: true,
-      get() {
-        return selectBrewDayLevel({ level: engine.get(N.level) });
-      },
-    },
     brewDaySections: {
       configurable: true,
       get() {
@@ -98,6 +118,7 @@ export function createBrewDayLayers(ctx) {
 
 export function refreshBrewDayCard(app, ctx) {
   app.brewDayRows = materializeBrewDayRows(ctx.engine.get(N.steps));
+  app.brewDayLevel = selectBrewDayLevel({ level: ctx.engine.get(N.level) });
 }
 
 export const KEYS = [
@@ -115,4 +136,5 @@ export const KEYS = [
   "brewDayLevel",
   "brewDaySections",
   "brewDayPayload",
+  "brewDayLevelFields",
 ];

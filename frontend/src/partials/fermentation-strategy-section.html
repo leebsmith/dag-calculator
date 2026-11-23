@@ -4,22 +4,7 @@
   </div>
   <div class="section-body">
     <div
-      x-data="formBuilder({
-        schema: [
-          {
-            id: 'fermentation-strategy',
-            type: 'textarea',
-            label: 'Strategy',
-            rows: 5,
-            read: () => fermentationStrategy,
-            write: (value) => setFermentationStrategy(value),
-            commit: 'change',
-            placeholder: 'Pitch rate and starter, oxygenation, temperature schedule, and the character you want from the strain.',
-            attrs: { maxlength: 4000 },
-            hint: 'Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.'
-          }
-        ]
-      })"
+      x-data="formBuilder({ schema: fermentationStrategyFields() })"
     >
       <load src="src/partials/ui-form-fields.html" />
       <template x-for="issue in proseIssues(fermentationStrategy)" :key="issue.code">

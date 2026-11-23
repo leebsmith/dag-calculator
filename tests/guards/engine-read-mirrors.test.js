@@ -11,7 +11,6 @@ const ATTR = /\b(?:x-text|x-html|x-if|x-show|x-for|x-model|x-effect|x-data|:[\w-
 const IDENT = /[A-Za-z_$][\w$]*/g;
 
 const ALLOW = {
-  brewDayLevel: "reads the engine root for the checklist level picker's value binding",
   brewDaySections: "selects through the engine against view.brewDayRows, which every refresh reassigns",
   lateSugarField: "reads view.fieldsBySlice, which every refresh reassigns",
   sugarDraftMassDisplay: "reads view.draftRows, which the editor reassigns",

@@ -6,20 +6,7 @@
 
   <div class="card-body">
     <div
-      x-data="formBuilder({
-        schema: [
-          {
-            id: 'checklist-level',
-            type: 'select',
-            label: 'Checklist level',
-            read: () => brewDayLevel,
-            write: (value) => setBrewDayLevel(value),
-            options: () => brewDayLevels.map((level) => ({ value: level.id, label: level.name })),
-            commit: 'change',
-            hint: 'Critical path is the short gate list; Standard is the full brew sheet; Diagnostic adds expected values, methods and model caveats.'
-          }
-        ]
-      })"
+      x-data="formBuilder({ schema: brewDayLevelFields() })"
     >
       <load src="src/partials/ui-form-fields.html" />
     </div>
