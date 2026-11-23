@@ -11,22 +11,7 @@
       </div>
       <div class="section-body">
         <div
-          x-data="formBuilder({
-            schema: [
-              {
-                id: 'hop-strategy',
-                type: 'textarea',
-                label: 'Strategy',
-                rows: 4,
-                read: () => hopStrategy,
-                write: (value) => setHopStrategy(value),
-                commit: 'change',
-                placeholder: 'What the hops are for: the split, the product choices, the weight ratio, the sensory objective.',
-                attrs: { maxlength: 4000 },
-                hint: 'Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.'
-              }
-            ]
-          })"
+          x-data="formBuilder({ schema: hopStrategyFields() })"
         >
           <load src="src/partials/ui-form-fields.html" />
           <template x-for="issue in proseIssues(hopStrategy)" :key="issue.code">
@@ -170,85 +155,7 @@
 
         <div
           class="step-grid-2col"
-          x-data="formBuilder({
-            schema: [
-              {
-                id: 'whirlpool-knockout',
-                type: 'number',
-                label: () => (whirlpoolKnockoutField ? fmt.formatFieldLabel(whirlpoolKnockoutField.label, whirlpoolKnockoutField.unit) : ''),
-                read: () => whirlpoolKnockoutField?.display,
-                write: (value) => whirlpoolKnockoutField && edit(whirlpoolKnockoutField, value),
-                when: () => Boolean(whirlpoolKnockoutField),
-                step: 1,
-                min: 0,
-                commit: 'change',
-                hint: () => whirlpoolKnockoutField?.hint
-              },
-              {
-                id: 'whirlpool-start-temp',
-                type: 'number',
-                label: () => (whirlpoolStartTempField ? fmt.formatFieldLabel(whirlpoolStartTempField.label, whirlpoolStartTempField.unit) : ''),
-                read: () => whirlpoolStartTempField?.display,
-                write: (value) => whirlpoolStartTempField && edit(whirlpoolStartTempField, value),
-                when: () => Boolean(whirlpoolStartTempField),
-                step: 0.1,
-                commit: 'change',
-                hint: () => whirlpoolStartTempField?.hint
-              },
-              {
-                id: 'whirlpool-ambient',
-                type: 'number',
-                label: () => (whirlpoolAmbientField ? fmt.formatFieldLabel(whirlpoolAmbientField.label, whirlpoolAmbientField.unit) : ''),
-                read: () => whirlpoolAmbientField?.display,
-                write: (value) => whirlpoolAmbientField && edit(whirlpoolAmbientField, value),
-                when: () => Boolean(whirlpoolAmbientField),
-                step: 0.1,
-                commit: 'change',
-                hint: () => whirlpoolAmbientField?.hint
-              },
-              {
-                id: 'whirlpool-cooling-time-constant',
-                type: 'number',
-                label: () => (whirlpoolCoolingField ? fmt.formatFieldLabel(whirlpoolCoolingField.label, whirlpoolCoolingField.unit) : ''),
-                read: () => whirlpoolCoolingField?.display,
-                write: (value) => editWhirlpoolCooling(value),
-                when: () => Boolean(whirlpoolCoolingField),
-                step: 1,
-                min: 1,
-                commit: 'change',
-                hint: () => whirlpoolCoolingField?.hint
-              },
-              {
-                id: 'whirlpool-cooling-curve',
-                type: 'select',
-                label: 'Cooling curve',
-                read: () => coolingCurveValue,
-                write: (value) => selectCoolingCurve(value),
-                options: () => {
-                  const options = [{ value: '', label: 'Default cooling' }];
-                  if (coolingCurveIsCustom) {
-                    options.push({
-                      value: customCoolingCurveValue,
-                      label: 'Custom (manual time constant)'
-                    });
-                  }
-                  for (const curve of coolingCurveOptions) {
-                    options.push({ value: curve.id, label: curve.name });
-                  }
-                  if (coolingCurveMissing) {
-                    options.push({
-                      value: coolingCurveId,
-                      label: 'Missing curve — ' + coolingCurveId
-                    });
-                  }
-                  return options;
-                },
-                actions: [{ label: 'Manage library', run: () => openCoolingCurveLibrary() }],
-                hint: () => coolingCurveSummary,
-                hints: () => (coolingCurveWarnings || []).map((text) => ({ text, class: 'text-warning' }))
-              }
-            ]
-          })"
+          x-data="formBuilder({ schema: whirlpoolFields() })"
         >
           <load src="src/partials/ui-form-fields.html" />
         </div>

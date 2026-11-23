@@ -4,7 +4,7 @@
 
 import { coolingCurveWarnings, fitCoolingCurve } from "../../views/coolingCurve.js";
 import { HOP_NODES as N } from "../../views/registry/hops.js";
-import { formatWithDecimals, isFiniteNumber } from "../../utils.js";
+import { formatFieldLabel, formatWithDecimals, isFiniteNumber } from "../../utils.js";
 
 export const CUSTOM_COOLING_CURVE = "__custom__";
 
@@ -187,12 +187,95 @@ function fitDescriptors({ engine, cache, formatTemp, getView }) {
   };
 }
 
+
+function whirlpoolNumberField(app, options) {
+  const current = () => options.field();
+  return {
+    id: options.id,
+    type: "number",
+    label: () => {
+      const field = current();
+      return field ? formatFieldLabel(field.label, field.unit) : "";
+    },
+    read: () => current()?.display,
+    write: (value) =>
+      options.write ? options.write(value) : current() && app.edit(current(), value),
+    when: () => Boolean(current()),
+    step: options.step,
+    ...(options.min === undefined ? {} : { min: options.min }),
+    commit: "change",
+    hint: () => current()?.hint,
+  };
+}
+
+function whirlpoolFieldActions() {
+  return {
+    // The whirlpool settings schema. Four number fields share one builder; the
+    // cooling-curve picker carries its own option and action shape.
+    whirlpoolFields() {
+      const app = this;
+      return [
+        whirlpoolNumberField(app, {
+          id: "whirlpool-knockout",
+          field: () => app.whirlpoolKnockoutField,
+          step: 1,
+          min: 0,
+        }),
+        whirlpoolNumberField(app, {
+          id: "whirlpool-start-temp",
+          field: () => app.whirlpoolStartTempField,
+          step: 0.1,
+        }),
+        whirlpoolNumberField(app, {
+          id: "whirlpool-ambient",
+          field: () => app.whirlpoolAmbientField,
+          step: 0.1,
+        }),
+        whirlpoolNumberField(app, {
+          id: "whirlpool-cooling-time-constant",
+          field: () => app.whirlpoolCoolingField,
+          step: 1,
+          min: 1,
+          write: (value) => app.editWhirlpoolCooling(value),
+        }),
+        {
+          id: "whirlpool-cooling-curve",
+          type: "select",
+          label: "Cooling curve",
+          read: () => app.coolingCurveValue,
+          write: (value) => app.selectCoolingCurve(value),
+          options: () => {
+            const options = [{ value: "", label: "Default cooling" }];
+            if (app.coolingCurveIsCustom) {
+              options.push({
+                value: app.customCoolingCurveValue,
+                label: "Custom (manual time constant)",
+              });
+            }
+            for (const curve of app.coolingCurveOptions) {
+              options.push({ value: curve.id, label: curve.name });
+            }
+            if (app.coolingCurveMissing) {
+              options.push({ value: app.coolingCurveId, label: "Missing curve — " + app.coolingCurveId });
+            }
+            return options;
+          },
+          actions: [{ label: "Manage library", run: () => app.openCoolingCurveLibrary() }],
+          hint: () => app.coolingCurveSummary,
+          hints: () => (app.coolingCurveWarnings || []).map((text) => ({ text, class: "text-warning" })),
+        },
+      ];
+    },
+  };
+}
+
 export function createCoolingCurvePicker(ctx, { formatTemp }) {
   const { engine, artifact, cache, getView } = ctx;
   const actions = {
     coolingCurveNotice: "",
     customCoolingCurveValue: CUSTOM_COOLING_CURVE,
     ...pickerActions(ctx),
+    ...whirlpoolFieldActions(),
   };
   Object.defineProperties(actions, {
     ...stateDescriptors({ engine, artifact, cache, getView }),
@@ -217,4 +300,5 @@ export const KEYS = [
   "coolingCurveStatus",
   "coolingCurveSummary",
   "coolingCurveWarnings",
+  "whirlpoolFields",
 ];
