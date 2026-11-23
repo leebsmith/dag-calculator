@@ -8,7 +8,7 @@
     <section class="card-section">
       <div class="section-body">
         <div
-          x-data="formBuilder({ schema: discussionFields() })"
+          x-data="formBuilder" data-schema="discussionFields"
         >
           <load src="src/partials/ui-form-fields.html" />
           <template x-for="issue in proseIssues(discussion)" :key="issue.code">

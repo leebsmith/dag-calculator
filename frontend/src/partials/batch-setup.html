@@ -41,7 +41,7 @@
         </p>
 
         <div
-          x-data="formBuilder({ schema: $store.setup.recipeFileFields() })"
+          x-data="formBuilder" data-schema="$store.setup.recipeFileFields"
         >
           <load src="src/partials/ui-form-fields.html" />
         </div>
@@ -71,7 +71,7 @@
         </div>
 
         <div
-          x-data="formBuilder({ schema: $store.setup.batchIdentityFields() })"
+          x-data="formBuilder" data-schema="$store.setup.batchIdentityFields"
         >
           <load src="src/partials/ui-form-fields.html" />
         </div>

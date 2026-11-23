@@ -1,3 +1,5 @@
+import { resolveConfigFromElement } from "./configAttributes.js";
+
 function readPath(source, path) {
   if (!path) return undefined;
   return path.split(".").reduce((value, key) => (value == null ? value : value[key]), source);
@@ -300,14 +302,22 @@ function createField(source, component, context = {}) {
   );
 }
 
-export function formBuilder({ schema = [], model = null, onChange = null } = {}) {
+export function formBuilder(config = {}) {
+  const supplied = config && (config.schema || config.model || config.onChange) ? config : null;
   return {
-    schema,
-    model,
-    onChange,
+    schema: supplied?.schema ?? [],
+    model: supplied?.model ?? null,
+    onChange: supplied?.onChange ?? null,
     fields: [],
 
     init() {
+      if (!supplied) {
+        const resolved = resolveConfigFromElement(this.$el, "schema");
+        const next = Array.isArray(resolved) ? { schema: resolved } : (resolved ?? {});
+        this.schema = next.schema ?? [];
+        this.model = next.model ?? null;
+        this.onChange = next.onChange ?? null;
+      }
       this.fields = this.buildFields();
     },
 

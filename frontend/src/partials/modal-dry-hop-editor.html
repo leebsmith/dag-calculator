@@ -196,7 +196,7 @@
               <template x-if="dryHopActiveRow">
                 <div
                   class="inspector-form"
-                  x-data="formBuilder({ ...dryHopInspectorFields() })"
+                  x-data="formBuilder" data-schema="dryHopInspectorFields"
                   x-effect="setModel(dryHopActiveRow)"
                 >
                   <load src="src/partials/ui-form-fields.html" />

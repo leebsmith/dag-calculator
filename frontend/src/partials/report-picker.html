@@ -14,7 +14,7 @@
       </p>
 
       <div
-        x-data="formBuilder({ ...$store.recipes.reportPickerFields() })"
+        x-data="formBuilder" data-schema="$store.recipes.reportPickerFields"
       >
         <load src="src/partials/ui-form-fields.html" />
       </div>

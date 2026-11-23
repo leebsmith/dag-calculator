@@ -17,6 +17,7 @@ import { read, rel, walk } from "./util.js";
 const ATTR = /x-data="([^"]*)"/gs;
 const ALIAS = /^\{\s*get\s+[A-Za-z_$][\w$]*\s*\(\s*\)\s*\{\s*return\s+[A-Za-z_$][\w$.]*\s*;?\s*\}\s*\}$/s;
 const CALL = /^[A-Za-z_$][\w$]*\(\s*\)$/s;
+const BARE = /^[A-Za-z_$][\w$]*$/s;
 const FACTORY = /^(?:formBuilder|modalShell)\(\s*\{[\s\S]*\}\s*\)$/s;
 const SIMPLE = /^\{\s*[A-Za-z_$][\w$]*\s*:\s*[^{};,]+?\s*\}$/s;
 const LOGIC = /=>|\bfunction\b|\bget\s|\bMath\./;
@@ -25,6 +26,7 @@ function shapeOf(expression) {
   const source = expression.trim();
   if (ALIAS.test(source)) return null;
   if (CALL.test(source)) return null;
+  if (BARE.test(source)) return null;
   if (FACTORY.test(source)) return source.startsWith("(() =>") ? "IIFE" : null;
   if (SIMPLE.test(source) && !LOGIC.test(source)) return null;
   if (source.includes("(() =>") || source.includes("(function")) return "IIFE";
@@ -66,7 +68,7 @@ test("the thinness check rejects the shapes it exists to catch", () => {
     "{ get findingItems() { return (rows || []).map((r) => r.id); } }": "inline logic",
     "{ a: one(), b: two() }": "inline logic",
     "{ value: Math.max(1, 2) }": "inline logic",
-    stepCalculator: "inline logic",
+    "a + b": "inline logic",
   };
   for (const [expression, shape] of Object.entries(cases)) {
     assert.equal(shapeOf(expression), shape, expression);
@@ -76,6 +78,8 @@ test("the thinness check rejects the shapes it exists to catch", () => {
 test("the accepted shapes stay accepted", () => {
   for (const expression of [
     "stepCalculator()",
+    "formBuilder",
+    "modalShell",
     "draftTableConfig()",
     "formBuilder({ schema: [{ id: 'x', read: () => view.x }] })",
     "modalShell({ title: 'x', body: 'y' })",

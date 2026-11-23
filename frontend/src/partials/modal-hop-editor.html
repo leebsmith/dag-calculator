@@ -46,7 +46,7 @@
               <template x-if="hopActiveRow">
                 <div
                   class="inspector-form"
-                  x-data="formBuilder({ ...hopInspectorFields() })"
+                  x-data="formBuilder" data-schema="hopInspectorFields"
                   x-effect="setModel(hopActiveRow)"
                 >
                   <load src="src/partials/ui-form-fields.html" />

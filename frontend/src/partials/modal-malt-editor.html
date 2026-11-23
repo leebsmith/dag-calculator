@@ -46,33 +46,33 @@
               <template x-if="maltActiveRow">
                 <div class="inspector-form">
                   <div
-                    x-data="formBuilder({ ...maltRowNameField() })"
+                    x-data="formBuilder" data-schema="maltRowNameField"
                     x-effect="setModel(maltActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div
-                    x-data="formBuilder({ ...maltRowCategoryField() })"
+                    x-data="formBuilder" data-schema="maltRowCategoryField"
                     x-effect="setModel(maltActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div class="inspector-grid-2col">
                     <div
-                      x-data="formBuilder({ ...maltRowYieldField() })"
+                      x-data="formBuilder" data-schema="maltRowYieldField"
                       x-effect="setModel(maltActiveRow)"
                     >
                       <load src="src/partials/ui-form-fields.html" />
                     </div>
                     <div
-                      x-data="formBuilder({ ...maltRowColorField() })"
+                      x-data="formBuilder" data-schema="maltRowColorField"
                       x-effect="setModel(maltActiveRow)"
                     >
                       <load src="src/partials/ui-form-fields.html" />
                     </div>
                   </div>
                   <div
-                    x-data="formBuilder({ ...maltRowNotesField() })"
+                    x-data="formBuilder" data-schema="maltRowNotesField"
                     x-effect="setModel(maltActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />

@@ -4,7 +4,7 @@
   </div>
   <div class="section-body">
     <div
-      x-data="formBuilder({ schema: fermentationStrategyFields() })"
+      x-data="formBuilder" data-schema="fermentationStrategyFields"
     >
       <load src="src/partials/ui-form-fields.html" />
       <template x-for="issue in proseIssues(fermentationStrategy)" :key="issue.code">

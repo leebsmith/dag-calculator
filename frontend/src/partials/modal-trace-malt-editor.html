@@ -46,33 +46,33 @@
               <template x-if="traceActiveRow">
                 <div class="inspector-form">
                   <div
-                    x-data="formBuilder({ ...traceRowNameField() })"
+                    x-data="formBuilder" data-schema="traceRowNameField"
                     x-effect="setModel(traceActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div
-                    x-data="formBuilder({ ...traceRowCategoryField() })"
+                    x-data="formBuilder" data-schema="traceRowCategoryField"
                     x-effect="setModel(traceActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div class="inspector-grid-2col">
                     <div
-                      x-data="formBuilder({ ...traceRowYieldField() })"
+                      x-data="formBuilder" data-schema="traceRowYieldField"
                       x-effect="setModel(traceActiveRow)"
                     >
                       <load src="src/partials/ui-form-fields.html" />
                     </div>
                     <div
-                      x-data="formBuilder({ ...traceRowColorField() })"
+                      x-data="formBuilder" data-schema="traceRowColorField"
                       x-effect="setModel(traceActiveRow)"
                     >
                       <load src="src/partials/ui-form-fields.html" />
                     </div>
                   </div>
                   <div
-                    x-data="formBuilder({ ...traceRowNotesField() })"
+                    x-data="formBuilder" data-schema="traceRowNotesField"
                     x-effect="setModel(traceActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />

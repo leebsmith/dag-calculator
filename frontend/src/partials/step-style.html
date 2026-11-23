@@ -44,7 +44,7 @@
             </button>
           </div>
           <div
-            x-data="formBuilder({ schema: styleScalePinFields() })"
+            x-data="formBuilder" data-schema="styleScalePinFields"
           >
             <load src="src/partials/ui-form-fields.html" />
           </div>
@@ -226,14 +226,14 @@
         </div>
 
         <div
-          x-data="formBuilder({ schema: styleSrmFields() })"
+          x-data="formBuilder" data-schema="styleSrmFields"
         >
           <load src="src/partials/ui-form-fields.html" />
           <span class="form-hint" x-show="!styleSrmSliderBounds">No SRM range in this style's envelope.</span>
         </div>
 
         <div
-          x-data="formBuilder({ schema: styleIbuFields() })"
+          x-data="formBuilder" data-schema="styleIbuFields"
         >
           <load src="src/partials/ui-form-fields.html" />
           <span class="form-hint" x-show="!styleIbuSliderBounds">No IBU range in this style's envelope.</span>
@@ -261,7 +261,7 @@
 
         <div
           x-show="hopAllocationTarget !== 'mass_pool'"
-          x-data="formBuilder({ schema: whirlpoolFractionFields() })"
+          x-data="formBuilder" data-schema="whirlpoolFractionFields"
         >
           <load src="src/partials/ui-form-fields.html" />
         </div>
@@ -303,7 +303,7 @@
       </div>
       <div
         class="step-grid-2col"
-        x-data="formBuilder({ schema: styleEnvelopeReadouts() })"
+        x-data="formBuilder" data-schema="styleEnvelopeReadouts"
       >
         <load src="src/partials/ui-form-fields.html" />
       </div>
