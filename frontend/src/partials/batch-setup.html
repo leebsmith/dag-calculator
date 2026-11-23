@@ -1,16 +1,6 @@
 <!-- New batch dialog: selection only. Records are authored in the Library. ------->
 <div
-  x-data="modalShell({
-    id: 'new-batch',
-    title: 'New batch',
-    cancel: () => $store.setup.closeModal(),
-    cancelLabel: 'Cancel',
-    cancelDisabled: () => $store.setup.state.busy,
-    save: () => ($store.setup.state.mode === 'scratch' ? $store.setup.create() : $store.setup.startImport()),
-    saveLabel: () => ($store.setup.state.mode === 'scratch' ? 'Create batch' : $store.setup.primaryLabel()),
-    saveDisabled: () => $store.setup.state.busy || ($store.setup.state.mode === 'scratch' ? !$store.setup.canCreate() : !$store.setup.canStartImport()),
-    escape: () => $store.setup.closeModal()
-  })"
+  x-data="modalShell({ ...$store.setup.newBatchConfig() })"
   x-effect="syncOpen($store.setup.state.modalOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
@@ -51,21 +41,7 @@
         </p>
 
         <div
-          x-data="formBuilder({
-            schema: [
-              {
-                id: 'recipe-file',
-                type: 'file',
-                label: 'Recipe document (PDF)',
-                when: () => $store.setup.state.mode === 'recipe',
-                read: () => $store.setup.state.file,
-                write: (file) => $store.setup.chooseFile(file),
-                filename: () => $store.setup.state.filename,
-                attrs: { accept: 'application/pdf' },
-                hint: 'The document is read once and not kept: only the transcription and your mapping persist.'
-              }
-            ]
-          })"
+          x-data="formBuilder({ schema: $store.setup.recipeFileFields() })"
         >
           <load src="src/partials/ui-form-fields.html" />
         </div>
@@ -95,56 +71,7 @@
         </div>
 
         <div
-          x-data="formBuilder({
-            schema: [
-              {
-                id: 'batch-name',
-                type: 'text',
-                label: 'Batch name',
-                placeholder: 'e.g. House Pale',
-                when: () => $store.setup.state.mode === 'scratch',
-                read: () => $store.setup.state.name,
-                write: (value) => { $store.setup.state.name = value; },
-                commit: 'input'
-              },
-              {
-                id: 'batch-style',
-                type: 'select',
-                label: 'Style',
-                read: () => $store.setup.state.styleId,
-                write: (value) => { $store.setup.state.styleId = value; },
-                options: () => $store.setup.styleOptions(),
-                commit: 'change'
-              },
-              {
-                id: 'batch-rig',
-                type: 'select',
-                label: 'Rig',
-                read: () => $store.setup.state.equipmentId,
-                write: (value) => { $store.setup.state.equipmentId = value; },
-                options: () => $store.setup.equipmentOptions(),
-                commit: 'change'
-              },
-              {
-                id: 'batch-fermenter',
-                type: 'select',
-                label: 'Fermenter',
-                read: () => $store.setup.state.fermenterId,
-                write: (value) => { $store.setup.state.fermenterId = value; },
-                options: () => $store.setup.fermenterOptions(),
-                commit: 'change'
-              },
-              {
-                id: 'batch-water',
-                type: 'select',
-                label: 'Water source',
-                read: () => $store.setup.state.waterId,
-                write: (value) => { $store.setup.state.waterId = value; },
-                options: () => $store.setup.waterOptions(),
-                commit: 'change'
-              }
-            ]
-          })"
+          x-data="formBuilder({ schema: $store.setup.batchIdentityFields() })"
         >
           <load src="src/partials/ui-form-fields.html" />
         </div>

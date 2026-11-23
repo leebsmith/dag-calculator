@@ -16,6 +16,7 @@ import { createLibrary } from "./library.js";
 import { assertReferencePair, createReferenceCache } from "./referenceCache.js";
 import { catalogRecord, catalogRecords } from "./userCatalog.js";
 import { requireObservability } from "../observability.js";
+import { setupFieldActions } from "./setupFields.js";
 
 const PREREQUISITES = [
   { kind: "style", label: "styles" },
@@ -57,6 +58,7 @@ export function createSetupStore({
   });
 
   return {
+    ...setupFieldActions(),
     state: {
       modalOpen: false,
       mode: "scratch", // "scratch" | "recipe"

@@ -2,7 +2,7 @@
   "inlineXDataLiterals": 11,
   "xDataCalls": 44,
   "getters": 2,
-  "arrowsInXData": 99,
+  "arrowsInXData": 74,
   "arrowsInDirectives": 3,
   "classObjectLiterals": 40,
   "optionalChaining": 54,
