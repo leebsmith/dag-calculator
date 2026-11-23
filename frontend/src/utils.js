@@ -22,3 +22,5 @@ export * from "./utils/format/text.js";
 export * from "./utils/format/time.js";
 export * from "./utils/model.js";
 export * from "./utils/strings.js";
+export * from "./utils/classes.js";
+export * from "./utils/rows.js";

@@ -157,6 +157,8 @@ check:
 	./frontend/node_modules/.bin/eslint --config eslint.config.js --max-warnings 0 tests scripts
 	@echo "Checking artifact expressions..."
 	node scripts/check-expressions.mjs
+	@echo "Checking Alpine CSP readiness..."
+	node scripts/check-alpine-csp.mjs
 	@echo "Checking backend linting and architectural boundaries..."
 	cd backend && uv run ruff check . ../tests/backend ../scripts ../tools
 	cd backend && uv run tach check

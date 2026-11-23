@@ -1,0 +1,10 @@
+{
+  "inlineXDataLiterals": 11,
+  "getters": 2,
+  "arrowsInXData": 214,
+  "arrowsInDirectives": 3,
+  "classObjectLiterals": 40,
+  "optionalChaining": 54,
+  "nullish": 19,
+  "multiStatementInit": 1
+}

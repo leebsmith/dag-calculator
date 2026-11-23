@@ -127,10 +127,10 @@
           x-text="hopBractFloorLine"
         ></p>
 
-        <p class="form-hint" x-show="hopRows.length > 0 && hopRows.some((r) => r.mass_kg == null)">
+        <p class="form-hint" x-show="fmt.someRowMissing(hopRows, 'mass_kg')">
           Hop mass appears once the batch solver has produced the pre-boil gravity and post-boil volume.
         </p>
-        <p class="form-hint" x-show="hopRows.some((r) => r.product_form === 'flowable_extract')">
+        <p class="form-hint" x-show="fmt.someRowMatches(hopRows, 'product_form', 'flowable_extract')">
           Extract: weigh the lot CoA alpha; the catalog value is a preset.
         </p>
         <p class="form-hint text-warning" x-show="hopDoseWarning" x-text="hopDoseWarning"></p>
@@ -300,10 +300,10 @@
 
         <p class="form-hint" x-show="whirlpoolHopDemandLine" x-text="whirlpoolHopDemandLine"></p>
 
-        <p class="form-hint" x-show="whirlpoolHopRows.length > 0 && whirlpoolHopRows.some((r) => r.mass_kg == null)">
+        <p class="form-hint" x-show="fmt.someRowMissing(whirlpoolHopRows, 'mass_kg')">
           Whirlpool mass appears once the batch solver has produced the post-boil gravity and volume.
         </p>
-        <p class="form-hint" x-show="whirlpoolHopRows.some((r) => r.product_form === 'lupulin_pellet')">
+        <p class="form-hint" x-show="fmt.someRowMatches(whirlpoolHopRows, 'product_form', 'lupulin_pellet')">
           Lupulin concentrate: weigh the lot CoA alpha; substitute at 40–50 % (Cryo) or
           50–70 % (Lupomax) of T-90 by weight.
         </p>
