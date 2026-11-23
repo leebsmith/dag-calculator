@@ -3,9 +3,9 @@
   "xDataCalls": 44,
   "getters": 2,
   "arrowsInXData": 0,
-  "arrowsInDirectives": 3,
+  "arrowsInDirectives": 0,
   "classObjectLiterals": 40,
-  "optionalChaining": 54,
+  "optionalChaining": 52,
   "nullish": 19,
-  "multiStatementInit": 1
+  "multiStatementInit": 0
 }

@@ -194,6 +194,14 @@ function ledgerReadouts() {
       return this.ledger.filter((row) => this.rowState(row).blocks);
     },
 
+    sectionRowCount(sectionId) {
+      const section = this.sections.find((entry) => entry.id === sectionId);
+      return section ? section.rows.length : 0;
+    },
+    decidedLabel(section) {
+      const decided = section.rows.filter((r) => r.decision === "mapped" || r.decision === "ignored").length;
+      return `(${decided} of ${section.rows.length})`;
+    },
     get sections() {
       return SECTION_ORDER.map((section) => {
         const rows = this.ledger.filter((row) => row.section === section);

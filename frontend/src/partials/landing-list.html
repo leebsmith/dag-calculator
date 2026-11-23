@@ -24,7 +24,7 @@
                 @keydown.enter.prevent="$store.recipes.commitRename(b)"
                 @keydown.escape.prevent="$store.recipes.cancelRename()"
                 @blur="$store.recipes.commitRename(b)"
-                x-init="$el.focus(); $el.select()"
+                x-init="focusAndSelect($el)"
               />
             </template>
             <template x-if="$store.recipes.renamingId !== b.id">

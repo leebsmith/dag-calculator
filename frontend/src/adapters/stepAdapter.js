@@ -366,7 +366,7 @@ export function createStepApp(options = {}) {
   const hopFormatters = createHopFormatters({ artifact, engine: session.engine, ui });
   const app = composeLayers(
     baseApp,
-    { dialogFocus: modalFocus.dialogFocus },
+    { dialogFocus: modalFocus.dialogFocus, focusAndSelect: modalFocus.focusAndSelect },
     createNavigationActions({ ui, steps, isEditorActive: options.isEditorActive, getView }),
     createFieldActions({ ...core, observability, refToSelectionMap: attribution.refToSelectionMap }),
     createProseValidation({ observability }),

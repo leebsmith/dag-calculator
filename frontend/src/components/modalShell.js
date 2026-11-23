@@ -80,6 +80,11 @@ function shellActions() {
     backdropAction() {
       (this.backdrop ?? this.cancel)?.();
     },
+
+    focusRef(open, name) {
+      if (!open) return;
+      this.$nextTick(() => this.$refs?.[name]?.focus?.());
+    },
   };
 }
 

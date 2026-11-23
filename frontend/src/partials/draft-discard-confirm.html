@@ -10,7 +10,7 @@
     role="alertdialog"
     aria-modal="true"
     aria-label="Discard unsaved changes?"
-    x-effect="draftDiscardOpen && $nextTick(() => $refs.draftDiscardKeep?.focus())"
+    x-effect="focusRef(draftDiscardOpen, 'draftDiscardKeep')"
   >
     <h3 class="modal-confirm-title">Discard unsaved changes?</h3>
     <p class="modal-confirm-body">

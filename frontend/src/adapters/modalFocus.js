@@ -82,7 +82,13 @@ export function createModalFocusManager({ document: envDocument, requestAnimatio
     }
   }
 
-  return { dialogFocus, dialogRestore };
+  function focusAndSelect(element) {
+    if (!element) return;
+    element.focus?.();
+    element.select?.();
+  }
+
+  return { dialogFocus, dialogRestore, focusAndSelect };
 }
 
-export const KEYS = ["dialogFocus"];
+export const KEYS = ["dialogFocus", "focusAndSelect"];
