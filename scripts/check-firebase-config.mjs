@@ -139,6 +139,13 @@ if (indexHeaders["Cache-Control"] !== "no-cache") {
   fail('firebase.json must send Cache-Control: no-cache for /index.html');
 }
 
+// The SPA is also served at "/" through the rewrite, and headers match the
+// request path, not the rewritten target: without this entry "/" is cacheable.
+const rootHeaders = headersFor(config, "/");
+if (rootHeaders["Cache-Control"] !== "no-cache") {
+  fail('firebase.json must send Cache-Control: no-cache for /');
+}
+
 const assetHeaders = headersFor(config, "assets/**");
 if (!/immutable/.test(assetHeaders["Cache-Control"] ?? "")) {
   fail('firebase.json must send an immutable Cache-Control for assets/**');

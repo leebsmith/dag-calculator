@@ -45,7 +45,7 @@ def _candidate_dirs() -> list[Path]:
     if override:
         path = Path(override).expanduser()
         return [path.parent if path.is_file() else path]
-    return [Path(__file__).resolve().parent / "_vendor", _repo_data_dir()]
+    return [_repo_data_dir(), Path(__file__).resolve().parent / "_vendor"]
 
 
 def data_dir() -> Path:

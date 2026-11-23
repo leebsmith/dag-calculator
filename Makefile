@@ -361,6 +361,7 @@ deploy-backend:
 	@python3 scripts/check_allowlist_drift.py \
 		--file $(ALLOWLIST_FILE) \
 		--service $(CLOUD_RUN_SERVICE) --region $(CLOUD_RUN_REGION) --project $(PROJECT_ID)
+	@rm -rf backend/app/_vendor
 
 deploy-frontend:
 	@test -z "$${VITE_API_BASE:-}" || { echo "deploy-frontend: VITE_API_BASE must stay unset; production is same-origin through Hosting rewrites" >&2; exit 1; }

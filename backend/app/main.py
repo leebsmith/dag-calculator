@@ -92,6 +92,20 @@ from app.services.report_render import (
 )
 
 app = FastAPI(title="dag-calculator backend")
+
+
+@app.middleware("http")
+async def _no_store(request, call_next):
+    """Every response here is user-specific JSON or a user-specific report.
+
+    Without this a browser is free to heuristically cache a 200, which is how a
+    stale pre-deploy body can outlive the code that produced it.
+    """
+    response = await call_next(request)
+    response.headers.setdefault("Cache-Control", "no-store")
+    return response
+
+
 app.include_router(dev_router, include_in_schema=False)
 logging.getLogger("app.artifact").info(
     "Resolved artifact data directory: %s", data_dir()
