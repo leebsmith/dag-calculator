@@ -220,3 +220,22 @@ export function allocationDescriptors({ engine, artifact, getView, reportError =
     },
   };
 }
+
+// The late-additions editor's modal-shell config. Callbacks are the catalog-draft
+// layer's generated members (`cancelSugarEditor`, …) read through the app.
+export function editorConfigActions() {
+  return {
+    sugarEditorConfig() {
+      const app = this;
+      return {
+        id: "sugar-editor",
+        title: "Late Additions Editor",
+        badge: () => app.sugarDraftMassDisplay,
+        badgeClass: "badge-info",
+        cancel: () => app.cancelSugarEditor(),
+        save: () => app.saveSugarEditor(),
+        escape: () => app.handleSugarEscape(),
+      };
+    },
+  };
+}

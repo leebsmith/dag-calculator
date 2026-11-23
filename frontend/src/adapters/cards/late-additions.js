@@ -6,7 +6,7 @@ import {
   catalogDraftLayer,
   createCatalogDraft,
 } from "./catalogDraft.js";
-import { allocationDescriptors, displayDescriptors, previewInputs, stateDescriptors } from "./lateAdditionGetters.js";
+import { allocationDescriptors, displayDescriptors, editorConfigActions, previewInputs, stateDescriptors } from "./lateAdditionGetters.js";
 import { LATE_ADDITION_NODES as N } from "../../views/registry/late-additions.js";
 import { columnValueLabel, sugarEffectLabels } from "../../views/producer/lateAdditionRows.js";
 import { scalePreviewState } from "../../views/producer/scalePreview.js";
@@ -228,7 +228,7 @@ export function createLateAdditionsCard(ctx) {
     previewCompositionCaption: "",
     ...sugarSectionState(),
     ...previewActions(ctx),
-    ...doseActions(ctx),
+    ...doseActions(ctx), ...editorConfigActions(),
   };
   Object.defineProperties(actions, {
     ...sugarSectionMetaDescriptors(),
@@ -277,7 +277,7 @@ export const KEYS = [
   "sugarEffectState",
   "sugarEffectDisplay",
   "sugarEffectDisplayState",
-  "sugarDraftMassDisplay",
+  "sugarDraftMassDisplay", "sugarEditorConfig",
   "sugarDraftExtractDisplay",
   "sugarResultLabel",
   "sugarCountLabel",

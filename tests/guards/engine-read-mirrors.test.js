@@ -13,7 +13,6 @@ const IDENT = /[A-Za-z_$][\w$]*/g;
 const ALLOW = {
   brewDaySections: "selects through the engine against view.brewDayRows, which every refresh reassigns",
   lateSugarField: "reads view.fieldsBySlice, which every refresh reassigns",
-  sugarDraftMassDisplay: "reads view.draftRows, which the editor reassigns",
 };
 
 const REFRESH_TOKEN = /\b(?:getView\(\)|view)\.(?:hopCardRevision|libraryRevision)\b/;
