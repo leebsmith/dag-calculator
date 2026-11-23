@@ -60,6 +60,19 @@ def test_an_explicit_target_uid_is_accepted() -> None:
     assert options.target_uid == "uid-from-session"
 
 
+def test_a_uid_is_found_in_an_auth_export_case_insensitively() -> None:
+    payload = {
+        "users": [
+            {"localId": "abc", "email": "Other@Example.com"},
+            {"localId": "uid-1", "email": "Leeb@Lee-Smith.org"},
+        ]
+    }
+
+    assert promote.uid_for_email(payload, "leeb@lee-smith.org") == "uid-1"
+    assert promote.uid_for_email(payload, "missing@example.com") is None
+    assert promote.uid_for_email(None, "leeb@lee-smith.org") is None
+
+
 def test_targeting_the_emulator_project_is_refused() -> None:
     with pytest.raises(SystemExit, match="emulator project"):
         promote.main(["--target-email", "a@x.org", "--target-project", promote.LOCAL_PROJECT])

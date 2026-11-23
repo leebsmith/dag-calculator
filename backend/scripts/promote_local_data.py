@@ -12,6 +12,8 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
+import tempfile
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -163,6 +165,49 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return options
 
 
+def uid_for_email(payload: object, email: str) -> str | None:
+    """Pick a uid out of a Firebase CLI auth export, matching case-insensitively."""
+    if not isinstance(payload, dict):
+        return None
+    wanted = email.strip().lower()
+    for user in payload.get("users", []):
+        if not isinstance(user, dict):
+            continue
+        if str(user.get("email", "")).strip().lower() == wanted:
+            uid = user.get("localId")
+            return str(uid) if uid else None
+    return None
+
+
+def lookup_uid_via_cli(email: str, project: str) -> str | None:
+    """Resolve a uid through the Firebase CLI, whose login can read Auth users.
+
+    The Admin SDK path needs a quota project that local ADC does not carry, so
+    this is the fallback that keeps "resolve by email" working from a laptop.
+    """
+    with tempfile.TemporaryDirectory() as tmp:
+        target = Path(tmp) / "users.json"
+        completed = subprocess.run(
+            [
+                "npx",
+                "--yes",
+                "firebase",
+                "auth:export",
+                str(target),
+                "--project",
+                project,
+                "--format=json",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=180,
+            check=False,
+        )
+        if completed.returncode != 0 or not target.exists():
+            return None
+        return uid_for_email(json.loads(target.read_text(encoding="utf-8")), email)
+
+
 def target_uid_for(email: str, project: str) -> str:
     """Resolve the production uid by email, refusing to invent an account."""
     try:
@@ -179,6 +224,9 @@ def target_uid_for(email: str, project: str) -> str:
             "gcloud auth application-default login"
         ) from None
     except auth.InsufficientPermissionError:
+        resolved = lookup_uid_via_cli(email, project)
+        if resolved:
+            return resolved
         raise SystemExit(
             "promote: the current credentials cannot read Firebase Auth users; "
             "sign in to production and pass TARGET_UID=<uid from /session>"
