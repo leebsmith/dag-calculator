@@ -81,13 +81,13 @@
               <load src="src/partials/stepper.html" />
 
               <template x-if="$store.imports.originOf($store.recipes.activeId)">
-                <details class="import-origin" x-data="{ origin: $store.imports.originOf($store.recipes.activeId) }">
+                <details class="import-origin" x-data="scopeAlias" data-origin="$store.imports.originOf" data-origin-arg="$store.recipes.activeId">
                   <summary class="text-xs">
                     <span class="font-medium">Imported from</span>
                     <span x-text="origin.title"></span>
                     <span class="text-muted" x-text="origin.outcome"></span>
                   </summary>
-                  <div x-data="{ delta: origin.delta }">
+                  <div x-data="scopeAlias" data-delta="origin.delta">
                     <p class="form-hint" x-show="!delta">
                       No comparison was captured for this batch.
                     </p>
@@ -220,7 +220,7 @@
                   ></span>
                   <span x-text="'SAI ' + styleSai"></span>
                 </span>
-                <div class="footer-findings" x-data="{ get findingItems() { return findings; } }">
+                <div class="footer-findings" x-data="scopeAlias" data-findings="findings">
                   <load src="src/partials/findings.html" />
                 </div>
               </footer>

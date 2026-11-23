@@ -8,7 +8,7 @@
             <div
               :class="row.cellClass || null"
               x-show="child.visible"
-              x-data="{ field: child }"
+              x-data="scopeAlias" data-field="child"
             >
               <load src="src/partials/ui-form-field-control.html" />
             </div>

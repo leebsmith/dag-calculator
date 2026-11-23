@@ -1,7 +1,7 @@
 {
-  "inlineXDataLiterals": 6,
+  "inlineXDataLiterals": 0,
   "xDataCalls": 0,
-  "getters": 2,
+  "getters": 0,
   "arrowsInXData": 0,
   "arrowsInDirectives": 0,
   "classObjectLiterals": 40,

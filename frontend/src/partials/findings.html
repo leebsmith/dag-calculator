@@ -1,5 +1,5 @@
-<div class="findings" x-show="(findingItems || []).length > 0">
-  <template x-for="finding in (findingItems || [])" :key="finding.id">
+<div class="findings" x-show="(findings || []).length > 0">
+  <template x-for="finding in (findings || [])" :key="finding.id">
     <div class="finding" :class="'finding-' + finding.severity">
       <span class="finding-label" x-text="finding.label"></span>
       <span class="finding-message" x-text="finding.message"></span>

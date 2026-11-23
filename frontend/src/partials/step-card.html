@@ -265,7 +265,7 @@
   </template>
 
   <div
-    x-data="{ get findingItems() { return stepFindingItems; } }"
+    x-data="scopeAlias" data-findings="stepFindingItems"
   >
     <load src="src/partials/findings.html" />
   </div>

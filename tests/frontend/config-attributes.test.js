@@ -2,7 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { formBuilder } from "../../frontend/src/components/formBuilder.js";
-import { resolveConfigFromElement, resolveNamedMember } from "../../frontend/src/components/configAttributes.js";
+import {
+  resolveConfigFromElement,
+  resolveNamedMember,
+  resolveReference,
+} from "../../frontend/src/components/configAttributes.js";
+import { scopeAlias } from "../../frontend/src/components/scopeAlias.js";
 
 function withScope(scope, run) {
   const previous = globalThis.Alpine;
@@ -88,4 +93,48 @@ test("an explicit call still wins over the attribute", () => {
 
   assert.equal(component.schema[0].id, "explicit");
   assert.equal(component.onChange, null);
+});
+
+test("resolveReference returns the owner and the uncalled member", () => {
+  const store = { originOf: (id) => ({ title: id }) };
+  const scope = { $store: { imports: store } };
+
+  const reference = resolveReference(scope, "$store.imports.originOf");
+  assert.equal(reference.owner, store);
+  assert.equal(reference.value.call(reference.owner, "b1").title, "b1");
+  assert.equal(resolveReference(scope, "$store.imports.missing"), null);
+});
+
+function withAlias(dataset, scope, run) {
+  return withScope(scope, () => {
+    const component = scopeAlias();
+    component.$el = { dataset, parentElement: {} };
+    component.init();
+    return run(component);
+  });
+}
+
+test("scopeAlias resolves a call with an argument from the parent scope", () => {
+  const store = { originOf: (id) => ({ title: `origin ${id}` }) };
+  const scope = { $store: { imports: store, recipes: { activeId: "b7" } } };
+  withAlias(
+    { origin: "$store.imports.originOf", originArg: "$store.recipes.activeId" },
+    scope,
+    (component) => {
+      assert.deepEqual(component.origin, { title: "origin b7" });
+    }
+  );
+});
+
+test("scopeAlias resolves a nested path and defaults findings to an array", () => {
+  const scope = { origin: { delta: { rows: 3 } }, stepFindingItems: [{ id: "f1" }] };
+  withAlias({ delta: "origin.delta" }, scope, (component) => {
+    assert.deepEqual(component.delta, { rows: 3 });
+  });
+  withAlias({ findings: "stepFindingItems" }, scope, (component) => {
+    assert.deepEqual(component.findings, [{ id: "f1" }]);
+  });
+  withAlias({ findings: "nope" }, scope, (component) => {
+    assert.deepEqual(component.findings, []);
+  });
 });

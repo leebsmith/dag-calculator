@@ -26,10 +26,25 @@ export function resolveNamedMember(scope, name) {
 
 export function resolveConfigFromElement(element, attribute) {
   const name = element?.dataset?.[attribute];
-  if (!name) return null;
-  const parent = element.parentElement;
-  if (!parent) return null;
-  const scope = globalThis.Alpine?.$data?.(parent);
+  if (!name || !element) return null;
+  const scope = globalThis.Alpine?.$data?.(element);
   if (!scope) return null;
   return resolveNamedMember(scope, name);
+}
+
+// Return the owning scope and the raw value for a dotted name, without calling
+// it. Used when a caller needs to pass its own argument to a member method.
+export function resolveReference(scope, name) {
+  const parts = String(name ?? "")
+    .split(".")
+    .filter(Boolean);
+  if (!scope || parts.length === 0) return null;
+  let owner = scope;
+  for (let index = 0; index < parts.length - 1; index += 1) {
+    if (owner == null) return null;
+    owner = owner[parts[index]];
+  }
+  if (owner == null) return null;
+  const value = owner[parts[parts.length - 1]];
+  return value === undefined ? null : { owner, value };
 }
