@@ -20,17 +20,29 @@ function hasRewrite(rewrites) {
   );
 }
 
-// D8: production is same-origin. Every API prefix is a Cloud Run rewrite that
-// must precede the SPA catch-all, and its service/region must match the
-// Makefile's deploy target. `/health` stays off Hosting.
-const API_SOURCES = [
-  "/solve/**",
-  "/batches/**",
-  "/brew-sessions/**",
-  "/catalog/**",
-  "/report/**",
-  "/session",
-];
+// D8: production is same-origin. Every backend route prefix the SPA calls must be
+// a Cloud Run rewrite that precedes the SPA catch-all, and its service/region must
+// match the Makefile's deploy target. The bare collection root is a distinct path
+// from its wildcard (`/batches` vs `/batches/**`), so both are derived from the
+// backend's own routes rather than hand-listed. `/health` stays off Hosting.
+const UNROUTED_PREFIXES = new Set(["health", "dev"]);
+
+function backendRoutes() {
+  const source = read("backend/app/main.py");
+  return [...source.matchAll(/@app\.(?:get|post|put|patch|delete)\(\s*"([^"]+)"/g)].map(
+    (match) => match[1]
+  );
+}
+
+function requiredApiSources() {
+  const required = new Set();
+  for (const route of backendRoutes()) {
+    const [, prefix, ...rest] = route.split("/");
+    if (!prefix || UNROUTED_PREFIXES.has(prefix)) continue;
+    required.add(rest.length > 0 ? `/${prefix}/**` : `/${prefix}`);
+  }
+  return [...required];
+}
 
 function deployTargets() {
   const makefile = read("Makefile");
@@ -65,7 +77,7 @@ function checkApiRewrites(rewrites) {
   if (!targets.service || !targets.region) {
     fail("Makefile must declare CLOUD_RUN_SERVICE and CLOUD_RUN_REGION");
   }
-  for (const source of API_SOURCES) {
+  for (const source of requiredApiSources()) {
     const index = list.findIndex((r) => r?.source === source);
     checkApiRewrite(source, list[index], spaIndex, index, targets);
   }

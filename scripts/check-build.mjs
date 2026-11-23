@@ -47,3 +47,42 @@ if (existsSync(assetsDir)) {
     .filter((name) => readFileSync(`${assetsDir}${name}`, "utf8").includes("demo-api-key"));
   if (leaked.length) fail(`production bundle contains demo-api-key: ${leaked.join(", ")}`);
 }
+
+// The bundle's evaluation model and the CSP under which it is served must agree:
+// Alpine's standard build constructs functions from strings, so it needs
+// 'unsafe-eval'; the CSP build does not, and shipping the allowance with it
+// would weaken the policy for nothing.
+const EVALUATES_STRINGS = /getPrototypeOf\s*\(\s*async\b|AsyncFunction/;
+
+function hostingCsp() {
+  const configPath = fileURLToPath(new URL("../firebase.json", import.meta.url));
+  if (!existsSync(configPath)) {
+    fail("firebase.json missing - cannot reconcile the CSP with the bundle");
+    return "";
+  }
+  const config = JSON.parse(readFileSync(configPath, "utf8"));
+  const header = (config.hosting?.headers ?? [])
+    .filter((entry) => entry.source === "**")
+    .flatMap((entry) => entry.headers ?? [])
+    .find((entry) => entry.key === "Content-Security-Policy");
+  return header?.value ?? "";
+}
+
+if (existsSync(assetsDir)) {
+  const evaluates = readdirSync(assetsDir)
+    .filter((name) => name.endsWith(".js"))
+    .some((name) => EVALUATES_STRINGS.test(readFileSync(`${assetsDir}${name}`, "utf8")));
+  const csp = hostingCsp();
+  const scriptSrc = (csp.match(/script-src[^;]*/) ?? [""])[0];
+  const allowsEval = scriptSrc.includes("'unsafe-eval'");
+
+  if (evaluates && !allowsEval) {
+    fail("bundle evaluates strings but the CSP forbids 'unsafe-eval' - the app cannot boot");
+  }
+  if (!evaluates && allowsEval) {
+    fail("CSP allows 'unsafe-eval' but the bundle does not need it - drop the allowance");
+  }
+  if (evaluates && allowsEval) {
+    console.log("build check: CSP allows 'unsafe-eval' for the evaluating bundle");
+  }
+}

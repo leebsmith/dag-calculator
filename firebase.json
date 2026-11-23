@@ -28,7 +28,21 @@
         }
       },
       {
+        "source": "/batches",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
         "source": "/batches/**",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
+        "source": "/brew-sessions",
         "run": {
           "serviceId": "dag-calculator-backend",
           "region": "us-east4"
@@ -57,6 +71,13 @@
       },
       {
         "source": "/session",
+        "run": {
+          "serviceId": "dag-calculator-backend",
+          "region": "us-east4"
+        }
+      },
+      {
+        "source": "/imports",
         "run": {
           "serviceId": "dag-calculator-backend",
           "region": "us-east4"
@@ -98,7 +119,7 @@
         "headers": [
           {
             "key": "Content-Security-Policy",
-            "value": "default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.googleapis.com; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
+            "value": "default-src 'self'; script-src 'self' 'unsafe-eval' https://www.gstatic.com https://apis.google.com; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.googleapis.com; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com; img-src 'self' data:; style-src 'self' 'unsafe-inline'"
           }
         ]
       }
