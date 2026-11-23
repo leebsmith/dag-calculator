@@ -26,13 +26,13 @@
       <button
         type="button"
         class="segmented-item segmented-item--pill segmented-item--solid"
-        :class="{ 'is-active': librarySection === 'sources' }" :aria-pressed="(librarySection === 'sources') ? 'true' : 'false'"
+        :class="fmt.classWhen(librarySection === 'sources', 'is-active')" :aria-pressed="(librarySection === 'sources') ? 'true' : 'false'"
         @click="selectLibrarySection('sources')"
       >Sources</button>
       <button
         type="button"
         class="segmented-item segmented-item--pill segmented-item--solid"
-        :class="{ 'is-active': librarySection === 'ingredients' }" :aria-pressed="(librarySection === 'ingredients') ? 'true' : 'false'"
+        :class="fmt.classWhen(librarySection === 'ingredients', 'is-active')" :aria-pressed="(librarySection === 'ingredients') ? 'true' : 'false'"
         @click="selectLibrarySection('ingredients')"
       >Ingredients</button>
     </div>
@@ -57,7 +57,7 @@
             <button
               type="button"
               class="segmented-item segmented-item--pill segmented-item--solid"
-              :class="{ 'is-active': sourceKind === k.id }" :aria-pressed="(sourceKind === k.id) ? 'true' : 'false'"
+              :class="fmt.classWhen(sourceKind === k.id, 'is-active')" :aria-pressed="(sourceKind === k.id) ? 'true' : 'false'"
               @click="selectSourceKind(k.id)"
               x-text="k.label"
             ></button>
@@ -82,7 +82,7 @@
             <button
               type="button"
               class="segmented-item segmented-item--pill segmented-item--solid"
-              :class="{ 'is-active': librarySearchNotes }" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
+              :class="fmt.classWhen(librarySearchNotes, 'is-active')" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
               @click="toggleLibrarySearchNotes()"
             >Search notes</button>
           </div>
@@ -184,7 +184,7 @@
             <button
               type="button"
               class="segmented-item segmented-item--pill segmented-item--solid"
-              :class="{ 'is-active': libraryTab === t.id }" :aria-pressed="(libraryTab === t.id) ? 'true' : 'false'"
+              :class="fmt.classWhen(libraryTab === t.id, 'is-active')" :aria-pressed="(libraryTab === t.id) ? 'true' : 'false'"
               @click="selectLibraryTab(t.id)"
               x-text="t.label"
             ></button>
@@ -209,7 +209,7 @@
             <button
               type="button"
               class="segmented-item segmented-item--pill segmented-item--solid"
-              :class="{ 'is-active': librarySearchNotes }" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
+              :class="fmt.classWhen(librarySearchNotes, 'is-active')" :aria-pressed="(librarySearchNotes) ? 'true' : 'false'"
               @click="toggleLibrarySearchNotes()"
             >Search notes</button>
           </div>

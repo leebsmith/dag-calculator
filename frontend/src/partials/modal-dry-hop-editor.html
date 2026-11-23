@@ -187,7 +187,7 @@
             <button type="button" class="btn-close text-xs" @click="closeDryHopDrawer()">✕</button>
           </div>
 
-          <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': dryHopDrawer === 'search' }">
+          <div class="modal-drawer-body" :class="fmt.classWhen(dryHopDrawer === 'search', 'modal-drawer-body-pinned')">
             <template x-if="draftDrawer === 'search'">
               <load src="src/partials/draft-search-pane.html" />
             </template>

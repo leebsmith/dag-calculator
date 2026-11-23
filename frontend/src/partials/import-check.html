@@ -11,10 +11,12 @@
     <div class="import-check-header-side">
       <div
         class="import-verification"
-        :class="{
-          'is-ok': $store.importReview.checkSummary?.ok,
-          'is-warn': $store.importReview.checkSummary && !$store.importReview.checkSummary.ok,
-        }"
+        :class="fmt.classNames(
+          $store.importReview.checkSummary?.ok,
+          'is-ok',
+          $store.importReview.checkSummary && !$store.importReview.checkSummary.ok,
+          'is-warn'
+        )"
         x-show="$store.importReview.checkSummary"
       >
         <span class="font-medium"
@@ -148,7 +150,7 @@
       </p>
       <ul class="import-line-list">
         <template x-for="(finding, index) in $store.importReview.gate.findings" :key="index">
-          <li class="import-line map-row" :class="{ 'is-undecided': finding.severity === 'blocking' }">
+          <li class="import-line map-row" :class="fmt.classWhen(finding.severity === 'blocking', 'is-undecided')">
             <span class="map-badge" x-show="finding.severity === 'blocking'">blocking</span>
             <span class="font-medium" x-text="finding.title ?? finding.code"></span>
             <span class="text-xs text-muted" x-text="finding.message"></span>

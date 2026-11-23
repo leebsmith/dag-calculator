@@ -149,7 +149,7 @@
                 <button
                   type="button"
                   class="segmented-item segmented-item--pill segmented-item--solid"
-                  :class="{ 'is-active': $store.recipes.scope === s[0] }" :aria-pressed="($store.recipes.scope === s[0]) ? 'true' : 'false'"
+                  :class="fmt.classWhen($store.recipes.scope === s[0], 'is-active')" :aria-pressed="($store.recipes.scope === s[0]) ? 'true' : 'false'"
                   @click="$store.recipes.setScope(s[0])"
                   x-text="s[1]"
                 ></button>
@@ -186,7 +186,7 @@
       <button
         type="button"
         class="landing-menu-item"
-        :class="{ 'is-active': $store.recipes.sort === 'modified' }" :aria-pressed="($store.recipes.sort === 'modified') ? 'true' : 'false'"
+        :class="fmt.classWhen($store.recipes.sort === 'modified', 'is-active')" :aria-pressed="($store.recipes.sort === 'modified') ? 'true' : 'false'"
         @click="$store.recipes.setSort('modified')"
       >
         Last modified
@@ -194,7 +194,7 @@
       <button
         type="button"
         class="landing-menu-item"
-        :class="{ 'is-active': $store.recipes.sort === 'title' }" :aria-pressed="($store.recipes.sort === 'title') ? 'true' : 'false'"
+        :class="fmt.classWhen($store.recipes.sort === 'title', 'is-active')" :aria-pressed="($store.recipes.sort === 'title') ? 'true' : 'false'"
         @click="$store.recipes.setSort('title')"
       >
         Title

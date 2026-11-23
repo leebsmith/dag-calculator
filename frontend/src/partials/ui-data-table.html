@@ -1,17 +1,17 @@
 <div
   class="data-table-container"
-  :class="{
-    'data-table-container--fit': config.fixed,
-    'data-table-container--scroll': config.scroll
-  }"
+  :class="fmt.classNames(
+    config.fixed, 'data-table-container--fit',
+    config.scroll, 'data-table-container--scroll'
+  )"
 >
   <table
     class="data-table"
-    :class="[
-      'data-table--' + (config.variant || 'editor'),
-      config.dense ? 'data-table--dense' : null,
-      config.fixed ? 'data-table--fixed' : null
-    ]"
+    :class="fmt.classNames(
+      true, 'data-table--' + (config.variant || 'editor'),
+      config.dense, 'data-table--dense',
+      config.fixed, 'data-table--fixed'
+    )"
     :aria-label="config.label"
   >
     <colgroup>
@@ -40,10 +40,10 @@
         <tr :class="config.rowClass ? config.rowClass(row, index) : null">
           <template x-for="col in config.columns" :key="col.id">
             <td
-              :class="[
-                col.align === 'right' ? 'text-right tabular-nums' : null,
-                col.className ? col.className(row, index) : null
-              ]"
+              :class="fmt.classNames(
+                col.align === 'right', 'text-right tabular-nums',
+                col.className, col.className ? col.className(row, index) : null
+              )"
             >
               <template x-if="col.cell === 'text'">
                 <span x-text="col.value(row, index)"></span>

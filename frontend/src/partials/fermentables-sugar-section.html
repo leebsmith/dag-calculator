@@ -143,7 +143,7 @@
               </thead>
               <tbody>
                 <template x-for="row in scalePreviewRows" :key="row.pin">
-                  <tr :class="{ 'font-bold': row.active }">
+                  <tr :class="fmt.classWhen(row.active, 'font-bold')">
                     <td>
                       <span x-text="row.pinLabel"></span>
                       <span class="text-xs text-danger" x-show="!row.ok" x-text="row.statusLabel"></span>

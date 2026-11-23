@@ -20,21 +20,21 @@
     <button
       type="button"
       class="segmented-item segmented-item--button"
-      :class="{ 'is-active': $store.importReview.stage === 'transcribe' }"
+      :class="fmt.classWhen($store.importReview.stage === 'transcribe', 'is-active')"
       :aria-pressed="$store.importReview.stage === 'transcribe'"
       @click="$store.importReview.goTo('transcribe')"
     >1 · Transcribe</button>
     <button
       type="button"
       class="segmented-item segmented-item--button"
-      :class="{ 'is-active': $store.importReview.stage === 'map' }"
+      :class="fmt.classWhen($store.importReview.stage === 'map', 'is-active')"
       :aria-pressed="$store.importReview.stage === 'map'"
       @click="$store.importReview.goTo('map')"
     >2 · Map</button>
     <button
       type="button"
       class="segmented-item segmented-item--button"
-      :class="{ 'is-active': $store.importReview.stage === 'check' }"
+      :class="fmt.classWhen($store.importReview.stage === 'check', 'is-active')"
       :aria-pressed="$store.importReview.stage === 'check'"
       @click="$store.importReview.goTo('check')"
     >3 · Check</button>

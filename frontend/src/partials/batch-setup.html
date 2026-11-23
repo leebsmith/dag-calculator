@@ -22,14 +22,14 @@
           <button
             type="button"
             class="segmented-item segmented-item--button"
-            :class="{ 'is-active': $store.setup.state.mode === 'scratch' }"
+            :class="fmt.classWhen($store.setup.state.mode === 'scratch', 'is-active')"
             :aria-pressed="$store.setup.state.mode === 'scratch'"
             @click="$store.setup.setMode('scratch')"
           >From scratch</button>
           <button
             type="button"
             class="segmented-item segmented-item--button"
-            :class="{ 'is-active': $store.setup.state.mode === 'recipe' }"
+            :class="fmt.classWhen($store.setup.state.mode === 'recipe', 'is-active')"
             :aria-pressed="$store.setup.state.mode === 'recipe'"
             @click="$store.setup.setMode('recipe')"
           >From a recipe</button>

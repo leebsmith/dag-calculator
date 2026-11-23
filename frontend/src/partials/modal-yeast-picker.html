@@ -22,7 +22,7 @@
               <button
                 type="button"
                 class="segmented-item segmented-item--pill segmented-item--solid"
-                :class="{ 'is-active': yeastSearchNotes }"
+                :class="fmt.classWhen(yeastSearchNotes, 'is-active')"
                 :aria-pressed="yeastSearchNotes ? 'true' : 'false'"
                 @click="toggleYeastSearchNotes()"
               >
@@ -95,7 +95,7 @@
             </thead>
             <tbody>
               <template x-for="y in visibleYeasts" :key="y.id">
-                <tr :class="{ 'is-selected': selectedYeastId === y.id }">
+                <tr :class="fmt.classWhen(selectedYeastId === y.id, 'is-selected')">
                   <td>
                     <div class="yeast-row-badges">
                       <span class="font-medium" x-text="y.name"></span>
@@ -133,7 +133,7 @@
                     <button
                       type="button"
                       class="btn btn-secondary btn-sm"
-                      :class="{ 'is-active': selectedYeastId === y.id }"
+                      :class="fmt.classWhen(selectedYeastId === y.id, 'is-active')"
                       :aria-pressed="selectedYeastId === y.id ? 'true' : 'false'"
                       @click="selectYeast(y.id)"
                       x-text="selectedYeastId === y.id ? 'Selected' : 'Use'"

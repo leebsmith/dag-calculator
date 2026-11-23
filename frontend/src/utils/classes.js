@@ -31,3 +31,17 @@ export function cellClass(align, bold) {
   if (bold) parts.push("font-bold");
   return parts.join(" ");
 }
+
+/**
+ * Compose class names from `(condition, name)` pairs.
+ *
+ * @param {...unknown} pairs
+ * @returns {string}
+ */
+export function classNames(...pairs) {
+  const out = [];
+  for (let index = 0; index < pairs.length; index += 2) {
+    if (pairs[index]) out.push(String(pairs[index + 1] ?? ""));
+  }
+  return out.filter(Boolean).join(" ");
+}

@@ -38,7 +38,7 @@
             <button type="button" class="btn-close text-xs" @click="closeWhirlpoolHopDrawer()">✕</button>
           </div>
 
-          <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': whirlpoolHopDrawer === 'search' }">
+          <div class="modal-drawer-body" :class="fmt.classWhen(whirlpoolHopDrawer === 'search', 'modal-drawer-body-pinned')">
             <template x-if="draftDrawer === 'search'">
               <load src="src/partials/draft-search-pane.html" />
             </template>

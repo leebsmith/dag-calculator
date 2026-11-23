@@ -13,7 +13,7 @@
       <button
         type="button"
         class="segmented-item segmented-item--pill segmented-item--solid"
-        :class="{ 'is-active': draftSearchNotes }"
+        :class="fmt.classWhen(draftSearchNotes, 'is-active')"
         :aria-pressed="draftSearchNotes ? 'true' : 'false'"
         @click="toggleDraftSearchNotes()"
       >Search notes</button>
@@ -25,7 +25,7 @@
           <button
             type="button"
             class="segmented-item segmented-item--pill segmented-item--solid"
-            :class="{ 'is-active': draftFamily === f.name }"
+            :class="fmt.classWhen(draftFamily === f.name, 'is-active')"
             :aria-pressed="draftFamily === f.name ? 'true' : 'false'"
             @click="toggleDraftFamily(f.name)"
             x-text="f.label + ' · ' + f.count"
@@ -60,7 +60,7 @@
           <button
             type="button"
             class="segmented-item segmented-item--pill segmented-item--solid"
-            :class="{ 'is-active': draftCategoryFilter.includes(c) }"
+            :class="fmt.classWhen(draftCategoryFilter.includes(c), 'is-active')"
             :aria-pressed="draftCategoryFilter.includes(c) ? 'true' : 'false'"
             @click="toggleDraftCategory(c)"
             x-text="c"

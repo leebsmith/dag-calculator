@@ -107,7 +107,7 @@
         <p class="form-hint" x-show="hopOilLine" x-text="hopOilLine"></p>
         <p
           class="form-hint"
-          :class="{ 'text-warning': hopBractFloorShort }"
+          :class="fmt.classWhen(hopBractFloorShort, 'text-warning')"
           x-show="hopBractFloorLine"
           x-text="hopBractFloorLine"
         ></p>

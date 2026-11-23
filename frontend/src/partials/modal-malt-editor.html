@@ -37,7 +37,7 @@
             <button type="button" class="btn-close text-xs" @click="closeMaltDrawer()">✕</button>
           </div>
 
-          <div class="modal-drawer-body" :class="{ 'modal-drawer-body-pinned': maltDrawer === 'search' }">
+          <div class="modal-drawer-body" :class="fmt.classWhen(maltDrawer === 'search', 'modal-drawer-body-pinned')">
             <template x-if="draftDrawer === 'search'">
               <load src="src/partials/draft-search-pane.html" />
             </template>
