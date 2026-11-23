@@ -6,6 +6,7 @@ import {
   catalogDraftLayer,
   createCatalogDraft,
 } from "./catalogDraft.js";
+import { traceEditorFieldActions } from "./traceEditor.js";
 import { FERMENTABLE_NODES as N } from "../../views/registry/fermentables.js";
 import { countLabel } from "../../utils.js";
 import {
@@ -53,6 +54,7 @@ const TRACE_CONFIG = {
 
 export function createTraceMaltsCard({ getView }) {
   const actions = {
+    ...traceEditorFieldActions(),
     traceMaltRows: [],
     traceSectionOpen: true,
 
@@ -121,4 +123,10 @@ export const KEYS = [
   "traceMaltField",
   "traceMassField",
   "traceDraftMassDisplay",
+  "traceEditorConfig",
+  "traceRowNameField",
+  "traceRowCategoryField",
+  "traceRowYieldField",
+  "traceRowColorField",
+  "traceRowNotesField",
 ];

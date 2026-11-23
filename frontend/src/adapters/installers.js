@@ -72,7 +72,7 @@ const LATE_ADDITIONS = [
   "frontend/src/adapters/cards/lateAdditionGetters.js",
 ];
 const LATE_ADDITIONS_AND_CATALOG = [...LATE_ADDITIONS, ...CATALOG_DRAFT];
-const TRACE_MALTS = ["frontend/src/adapters/cards/trace-malts.js"];
+const TRACE_MALTS = ["frontend/src/adapters/cards/trace-malts.js", "frontend/src/adapters/cards/traceEditor.js"];
 const TRACE_MALTS_AND_CATALOG = [...TRACE_MALTS, ...CATALOG_DRAFT];
 const MALT = ["frontend/src/adapters/cards/malt.js"];
 const MALT_AND_CATALOG = [...MALT, ...CATALOG_DRAFT];

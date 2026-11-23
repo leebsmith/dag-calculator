@@ -1,15 +1,6 @@
 <!-- Grain Bill Editor (workspace modal): draft grid + catalog / inspector drawers -->
 <div
-  x-data="modalShell({
-    id: 'malt-editor',
-    title: 'Grain Bill Editor',
-    badge: () => maltValidation.label,
-    badgeClass: () => maltValidation.class,
-    cancel: () => cancelMaltEditor(),
-    save: () => saveMaltEditor(),
-    escape: () => handleMaltEscape(),
-    saveDisabled: () => maltValidation.type !== 'balanced'
-  })"
+  x-data="modalShell({ ...maltEditorConfig() })"
   x-effect="syncOpen(maltEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
@@ -55,48 +46,33 @@
               <template x-if="maltActiveRow">
                 <div class="inspector-form">
                   <div
-                    x-data="formBuilder({
-                      schema: [{ id: 'malt-row-name', type: 'text', label: 'Malt name', modelKey: 'name', default: '' }],
-                      onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
-                    })"
+                    x-data="formBuilder({ ...maltRowNameField() })"
                     x-effect="setModel(maltActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div
-                    x-data="formBuilder({
-                      schema: [{ id: 'malt-row-category', type: 'select', label: 'Category', modelKey: 'category', options: maltCategories.map((c) => ({ value: c, label: c })), lazy: true }],
-                      onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
-                    })"
+                    x-data="formBuilder({ ...maltRowCategoryField() })"
                     x-effect="setModel(maltActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div class="inspector-grid-2col">
                     <div
-                      x-data="formBuilder({
-                        schema: [{ id: 'malt-row-yield', type: 'number', label: 'Extract yield (%)', read: () => fmt.toPercentValue(maltActiveRow.yield_fraction, 0), min: 0, max: 100, step: 1, lazy: true }],
-                        onChange: (field, value) => setMaltField(maltActiveIndex, 'yield_fraction', value, 0.01)
-                      })"
+                      x-data="formBuilder({ ...maltRowYieldField() })"
                       x-effect="setModel(maltActiveRow)"
                     >
                       <load src="src/partials/ui-form-fields.html" />
                     </div>
                     <div
-                      x-data="formBuilder({
-                        schema: [{ id: 'malt-row-color', type: 'number', label: () => 'Color (' + colorUnit() + ')', read: () => colorDisplay(maltActiveRow.color_lovibond), min: 0, step: 0.1, lazy: true }],
-                        onChange: (field, value) => setColorField(maltActiveIndex, value)
-                      })"
+                      x-data="formBuilder({ ...maltRowColorField() })"
                       x-effect="setModel(maltActiveRow)"
                     >
                       <load src="src/partials/ui-form-fields.html" />
                     </div>
                   </div>
                   <div
-                    x-data="formBuilder({
-                      schema: [{ id: 'malt-row-notes', type: 'textarea', label: 'Notes', modelKey: 'notes', default: '', rows: 3 }],
-                      onChange: (field, value) => setMaltField(maltActiveIndex, field.modelKey, value)
-                    })"
+                    x-data="formBuilder({ ...maltRowNotesField() })"
                     x-effect="setModel(maltActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />

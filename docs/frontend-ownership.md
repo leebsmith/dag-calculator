@@ -4,7 +4,7 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **827** (562 enumerable, 265 hidden)
+- Declared members: **839** (574 enumerable, 265 hidden)
 - Installers: **23**
 - Card partials: **21**
 - Installers reading another installer's key: **14 of 23**
@@ -30,8 +30,8 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/hopAllocation.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 166 | 4 | 21 |
 | `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 6 | 2 | 1 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 68 | 2 | 20 |
-| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 43 | 2 | 20 |
-| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 50 | 2 | 18 |
+| `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/traceEditor.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 49 | 2 | 20 |
+| `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 56 | 2 | 18 |
 | `mash` | `frontend/src/adapters/cards/mash.js`, `frontend/src/adapters/cards/mashGetters.js` | 53 | 2 | 4 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 15 | 1 | 1 |
 | `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 55 | 2 | 13 |
