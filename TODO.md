@@ -191,6 +191,25 @@ remaining section; the presence predicates are in `plans/report-renderer.md`
   Cloud Run buildpacks; the render service itself is already live
   (`plans/report-renderer.md` §11 step 5).
 
+### Backend module size
+
+`app/main.py` carries 35 handlers in 720 lines and is the JSON seam by design: the
+handlers are ~19 lines of delegation and `ruff` `C901` holds every function under
+complexity 10. A seven-router extraction (system, solver, catalog, batches,
+report, imports, brew-sessions) was scoped on 2026-11-23 and **declined** — one
+author, 32 of 1,000 commits touch the file, and `routers/` was never a dropped
+thread (`dev.py` exists to isolate the dev inspector). The risk was accretion
+rather than complexity, so the backend now carries the frontend's ratchet:
+`tests/guards/backend-shape.test.js` pins the ten modules over 400 lines, and
+`tests/backend/test_route_table.py` pins the committed HTTP contract.
+
+Re-open the extraction when `app/main.py` passes ~1,000 lines, a second author
+commits, or a route takes more than a few seconds to find. The move is mechanical
+and provable: the auth guard already walks `@app.*` and `@router.*` by AST, and
+the route table compares method, path, status, response model, tags and
+dependencies before and after. The runbook is
+`plans/backend-router-extraction.md`.
+
 ### Low priority
 
 * **Shape-pin burn-down** — the complexity ratchet and its guard landed with the

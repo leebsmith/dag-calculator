@@ -46,6 +46,7 @@ export const RULES = [
     ["backend"],
     "core, schemas and templates sit under every boundary test"
   ),
+  coupled(["backend/app/**/*.py"], ["backend-shape"], "the file-length pins read backend modules by path"),
   coupled(["tools/**"], ["artifact-dot-sync", "precommit-contract"], "the dot generator is run by the pre-commit harness and compared by its guard"),
   coupled(
     ["frontend/index.html", "frontend/public/**", "frontend/src/*.css", "frontend/src/**/*.html", "frontend/src/**/*.css"],
@@ -289,9 +290,9 @@ function backendIndex(suites) {
 
 function selectBackend(changed) {
   const suites = discover(BACKEND_DIR, (name) => /^test_.*\.py$/.test(name));
-  const relevant = changed.filter((path) => path.startsWith("backend/") || path.startsWith("data/"));
+  const relevant = changed.filter((path) => path.startsWith("backend/") || path.startsWith("data/") || path.startsWith(`${BACKEND_DIR}/`));
   if (relevant.length === 0) {
-    return { suites, entries: [], skipped: "no backend/** or data/** path changed" };
+    return { suites, entries: [], skipped: "no backend/**, data/** or tests/backend/** path changed" };
   }
   const fallback = fullHit(relevant, "backend");
   if (fallback) return fullSelection(suites, fallback);

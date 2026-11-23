@@ -1,0 +1,537 @@
+[
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/batches",
+    "name": "list_batches",
+    "status": 200,
+    "response_model": "list[BatchRecord]",
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "DELETE"
+    ],
+    "path": "/batches/{batch_id}",
+    "name": "delete_batch",
+    "status": 204,
+    "response_model": null,
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "get_import_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/batches/{batch_id}",
+    "name": "get_batch",
+    "status": 200,
+    "response_model": "BatchRecord",
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "PATCH"
+    ],
+    "path": "/batches/{batch_id}",
+    "name": "patch_batch",
+    "status": 200,
+    "response_model": "BatchRecord",
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "PUT"
+    ],
+    "path": "/batches/{batch_id}",
+    "name": "upsert_batch",
+    "status": 200,
+    "response_model": "BatchRecord",
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/batches/{batch_id}/freeze",
+    "name": "freeze_batch",
+    "status": 201,
+    "response_model": "BatchRecord",
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/batches/{batch_id}/report",
+    "name": "get_report",
+    "status": 200,
+    "response_model": null,
+    "tags": [
+      "report"
+    ],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/batches/{batch_id}/report",
+    "name": "preview_report",
+    "status": 200,
+    "response_model": null,
+    "tags": [
+      "report"
+    ],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/batches/{batch_id}/report-bundle",
+    "name": "get_report_bundle",
+    "status": 200,
+    "response_model": "dict",
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/batches/{batch_id}/report-bundle",
+    "name": "preview_report_bundle",
+    "status": 200,
+    "response_model": "dict",
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/brew-sessions",
+    "name": "list_brew_sessions",
+    "status": 200,
+    "response_model": "list[BrewSession]",
+    "tags": [],
+    "dependencies": [
+      "get_brew_session_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/brew-sessions",
+    "name": "create_brew_session",
+    "status": 201,
+    "response_model": "BrewSession",
+    "tags": [],
+    "dependencies": [
+      "get_brew_session_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/brew-sessions/{session_id}",
+    "name": "get_brew_session",
+    "status": 200,
+    "response_model": "BrewSession",
+    "tags": [],
+    "dependencies": [
+      "get_brew_session_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "PATCH"
+    ],
+    "path": "/brew-sessions/{session_id}",
+    "name": "patch_brew_session",
+    "status": 200,
+    "response_model": "BrewSession",
+    "tags": [],
+    "dependencies": [
+      "get_brew_session_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/brew-sessions/{session_id}/finalize",
+    "name": "finalize_brew_session",
+    "status": 200,
+    "response_model": "BrewSession",
+    "tags": [],
+    "dependencies": [
+      "get_brew_session_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/brew-sessions/{session_id}/observations",
+    "name": "add_brew_observation",
+    "status": 200,
+    "response_model": "BrewSession",
+    "tags": [],
+    "dependencies": [
+      "get_brew_session_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "PATCH"
+    ],
+    "path": "/brew-sessions/{session_id}/observations/{observation_id}",
+    "name": "patch_brew_observation",
+    "status": 200,
+    "response_model": "BrewSession",
+    "tags": [],
+    "dependencies": [
+      "get_brew_session_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/brew-sessions/{session_id}/report",
+    "name": "get_brew_session_report",
+    "status": 200,
+    "response_model": null,
+    "tags": [],
+    "dependencies": [
+      "get_brew_session_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/catalog/{kind}",
+    "name": "list_catalog_items",
+    "status": 200,
+    "response_model": "list[CatalogItem]",
+    "tags": [],
+    "dependencies": [
+      "get_catalog_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/catalog/{kind}",
+    "name": "create_catalog_item",
+    "status": 201,
+    "response_model": "CatalogItem",
+    "tags": [],
+    "dependencies": [
+      "get_catalog_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "DELETE"
+    ],
+    "path": "/catalog/{kind}/{item_id}",
+    "name": "delete_catalog_item",
+    "status": 204,
+    "response_model": null,
+    "tags": [],
+    "dependencies": [
+      "get_catalog_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/catalog/{kind}/{item_id}",
+    "name": "get_catalog_item",
+    "status": 200,
+    "response_model": "CatalogItem",
+    "tags": [],
+    "dependencies": [
+      "get_catalog_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/dev/dag-visualizer",
+    "name": "dag_visualizer",
+    "status": 200,
+    "response_model": null,
+    "tags": [],
+    "dependencies": [],
+    "in_schema": false
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/health",
+    "name": "health",
+    "status": 200,
+    "response_model": "dict",
+    "tags": [],
+    "dependencies": [],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/imports",
+    "name": "list_imports",
+    "status": 200,
+    "response_model": "list[ImportRecord]",
+    "tags": [],
+    "dependencies": [
+      "get_import_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/imports",
+    "name": "create_import",
+    "status": 201,
+    "response_model": "ImportRecord",
+    "tags": [],
+    "dependencies": [
+      "get_import_service",
+      "require_llm_rate"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/imports/gapfill",
+    "name": "gap_fill_import",
+    "status": 200,
+    "response_model": "Targets",
+    "tags": [],
+    "dependencies": [
+      "require_llm_rate"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/imports/match",
+    "name": "match_import",
+    "status": 200,
+    "response_model": "MatchResponse",
+    "tags": [],
+    "dependencies": [
+      "require_llm_rate"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "DELETE"
+    ],
+    "path": "/imports/{import_id}",
+    "name": "delete_import",
+    "status": 204,
+    "response_model": null,
+    "tags": [],
+    "dependencies": [
+      "get_import_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/imports/{import_id}",
+    "name": "get_import",
+    "status": 200,
+    "response_model": "ImportRecord",
+    "tags": [],
+    "dependencies": [
+      "get_import_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "PATCH"
+    ],
+    "path": "/imports/{import_id}",
+    "name": "patch_import",
+    "status": 200,
+    "response_model": "ImportRecord",
+    "tags": [],
+    "dependencies": [
+      "get_batch_service",
+      "get_import_service",
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/report/sections",
+    "name": "list_report_sections",
+    "status": 200,
+    "response_model": "dict",
+    "tags": [
+      "report"
+    ],
+    "dependencies": [
+      "require_allowed_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "GET"
+    ],
+    "path": "/session",
+    "name": "get_session",
+    "status": 200,
+    "response_model": "dict",
+    "tags": [],
+    "dependencies": [
+      "get_current_user"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/solve/batch",
+    "name": "solve_batch",
+    "status": 200,
+    "response_model": "BatchSolverResponse",
+    "tags": [],
+    "dependencies": [
+      "require_rate"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/solve/hops",
+    "name": "solve_hops",
+    "status": 200,
+    "response_model": "HopSolverResponse",
+    "tags": [],
+    "dependencies": [
+      "require_rate"
+    ],
+    "in_schema": true
+  },
+  {
+    "methods": [
+      "POST"
+    ],
+    "path": "/solve/water",
+    "name": "solve_water",
+    "status": 200,
+    "response_model": "WaterSolverResponse",
+    "tags": [],
+    "dependencies": [
+      "require_rate"
+    ],
+    "in_schema": true
+  }
+]
