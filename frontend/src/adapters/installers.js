@@ -59,7 +59,7 @@ const HOP = [
   "frontend/src/adapters/cards/hopGetters.js",
   "frontend/src/adapters/cards/hopsCoolingCurve.js",
   "frontend/src/adapters/cards/hopsStrategy.js",
-  "frontend/src/adapters/cards/hopAllocation.js",
+  "frontend/src/adapters/cards/hopAllocation.js", "frontend/src/adapters/cards/hopEditorFields.js",
 ];
 const PROSE_FIELDS = ["frontend/src/adapters/cards/proseFields.js"];
 const CATALOG_DRAFT = [

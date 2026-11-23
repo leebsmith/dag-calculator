@@ -5,6 +5,7 @@
 import { coolingCurveWarnings, fitCoolingCurve } from "../../views/coolingCurve.js";
 import { HOP_NODES as N } from "../../views/registry/hops.js";
 import { formatFieldLabel, formatWithDecimals, isFiniteNumber } from "../../utils.js";
+import { hopEditorFieldActions } from "./hopEditorFields.js";
 
 export const CUSTOM_COOLING_CURVE = "__custom__";
 
@@ -276,6 +277,7 @@ export function createCoolingCurvePicker(ctx, { formatTemp }) {
     customCoolingCurveValue: CUSTOM_COOLING_CURVE,
     ...pickerActions(ctx),
     ...whirlpoolFieldActions(),
+    ...hopEditorFieldActions(),
   };
   Object.defineProperties(actions, {
     ...stateDescriptors({ engine, artifact, cache, getView }),

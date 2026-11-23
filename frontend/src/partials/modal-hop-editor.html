@@ -1,14 +1,6 @@
 <!-- Boil Hop Editor (workspace modal): draft grid + hop catalog / inspector drawers -->
 <div
-  x-data="modalShell({
-    id: 'hop-editor',
-    title: 'Hop Schedule Editor',
-    badge: () => hopDraftSummary,
-    badgeClass: 'badge-info',
-    cancel: () => cancelHopEditor(),
-    save: () => saveHopEditor(),
-    escape: () => handleHopEscape()
-  })"
+  x-data="modalShell({ ...hopEditorConfig() })"
   x-effect="syncOpen(hopEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
@@ -54,20 +46,7 @@
               <template x-if="hopActiveRow">
                 <div
                   class="inspector-form"
-                  x-data="formBuilder({
-                    schema: [
-                      { id: 'hop-row-name', type: 'text', label: 'Hop name', modelKey: 'name', default: '' },
-                      { id: 'hop-row-alpha', type: 'number', label: 'Alpha acid (%)', read: () => fmt.toPercentValue(hopActiveRow.alpha_acid_pct, 1), min: 0, max: 100, step: 0.1, lazy: true, hint: 'Override for crop-year alpha; defaults to the catalog median.' },
-                      { id: 'hop-row-cone', type: 'number', label: 'Cone utilization (0–1)', read: () => hopActiveRow.cone_utilization ?? '', when: () => hopActiveRow.product_form === 'whole_cone', min: 0, max: 1, step: 0.01, lazy: true, hint: 'No source publishes it; measure it or own the assumption. The mass stays unsolved until it is set.' },
-                      { id: 'hop-row-form', type: 'select', label: 'Form', read: () => hopActiveRow.product_form || 't90_pellet', options: hopForms, lazy: true }
-                    ],
-                    onChange: (field, value) => {
-                      if (field.id === 'hop-row-alpha') return setMaltField(hopActiveIndex, 'alpha_acid_pct', value, 0.01);
-                      if (field.id === 'hop-row-cone') return patchDraftRow(hopActiveIndex, { cone_utilization: value === '' ? null : Number(value) });
-                      if (field.id === 'hop-row-form') return patchDraftRow(hopActiveIndex, { product_form: value });
-                      return setMaltField(hopActiveIndex, field.modelKey, value);
-                    }
-                  })"
+                  x-data="formBuilder({ ...hopInspectorFields() })"
                   x-effect="setModel(hopActiveRow)"
                 >
                   <load src="src/partials/ui-form-fields.html" />

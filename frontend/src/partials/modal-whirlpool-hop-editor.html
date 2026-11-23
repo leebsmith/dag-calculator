@@ -1,14 +1,6 @@
 <!-- Whirlpool Hop Editor (workspace modal): draft grid + hop catalog / inspector drawers -->
 <div
-  x-data="modalShell({
-    id: 'whirlpool-hop-editor',
-    title: 'Whirlpool Hop Editor',
-    badge: () => whirlpoolHopDraftSummary,
-    badgeClass: 'badge-info',
-    cancel: () => cancelWhirlpoolHopEditor(),
-    save: () => saveWhirlpoolHopEditor(),
-    escape: () => handleWhirlpoolHopEscape()
-  })"
+  x-data="modalShell({ ...whirlpoolHopEditorConfig() })"
   x-effect="syncOpen(whirlpoolHopEditorOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />
@@ -55,83 +47,31 @@
               <template x-if="whirlpoolHopActiveRow">
                 <div class="inspector-form">
                   <div
-                    x-data="formBuilder({
-                      schema: [{ id: 'whirlpool-hop-row-name', type: 'text', label: 'Hop name', modelKey: 'name', default: '' }],
-                      onChange: (field, value) => setMaltField(whirlpoolHopActiveIndex, field.modelKey, value)
-                    })"
+                    x-data="formBuilder({ ...whirlpoolHopRowNameField() })"
                     x-effect="setModel(whirlpoolHopActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div
-                    x-data="formBuilder({
-                      schema: [{
-                        id: 'whirlpool-hop-row-cone',
-                        type: 'number',
-                        label: 'Cone utilization (0–1)',
-                        read: () => whirlpoolHopActiveRow.cone_utilization ?? '',
-                        when: () => whirlpoolHopActiveRow.product_form === 'whole_cone',
-                        min: 0,
-                        max: 1,
-                        step: 0.01,
-                        lazy: true,
-                        hint: 'No source publishes it; measure it or own the assumption. The mass stays unsolved until it is set.'
-                      }],
-                      onChange: (field, value) => patchDraftRow(whirlpoolHopActiveIndex, { cone_utilization: value === '' ? null : Number(value) })
-                    })"
+                    x-data="formBuilder({ ...whirlpoolHopRowConeField() })"
                     x-effect="setModel(whirlpoolHopActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div
-                    x-data="formBuilder({
-                      schema: [{
-                        id: 'whirlpool-hop-row-form',
-                        type: 'select',
-                        label: 'Form',
-                        read: () => whirlpoolHopActiveRow.product_form || 't90_pellet',
-                        options: whirlpoolHopForms,
-                        lazy: true
-                      }],
-                      onChange: (field, value) => patchDraftRow(whirlpoolHopActiveIndex, { product_form: value })
-                    })"
+                    x-data="formBuilder({ ...whirlpoolHopRowFormField() })"
                     x-effect="setModel(whirlpoolHopActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div
-                    x-data="formBuilder({
-                      schema: [{
-                        id: 'whirlpool-hop-row-start',
-                        type: 'select',
-                        label: 'Start temperature',
-                        read: () => whirlpoolStartBandValue,
-                        options: [...whirlpoolStartBands, { value: 'custom', label: 'Custom (edit the grid temperature)' }],
-                        lazy: true,
-                        hint: () => whirlpoolStartBandHint
-                      }],
-                      onChange: (field, value) => setWhirlpoolStartBand(value)
-                    })"
+                    x-data="formBuilder({ ...whirlpoolHopRowStartField() })"
                     x-effect="setModel(whirlpoolHopActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />
                   </div>
                   <div
-                    x-data="formBuilder({
-                      schema: [{
-                        id: 'whirlpool-hop-row-alpha',
-                        type: 'number',
-                        label: 'Alpha acid (%)',
-                        read: () => fmt.toPercentValue(whirlpoolHopActiveRow.alpha_acid_pct, 1),
-                        min: 0,
-                        max: 100,
-                        step: 0.1,
-                        lazy: true,
-                        hint: 'Override with the lot CoA alpha; defaults to the catalog preset.',
-                        hints: [{ text: 'Weigh the lot CoA alpha; substitute at 40–50 % (Cryo) or 50–70 % (Lupomax) of T-90 by weight.', when: () => whirlpoolHopActiveRow.product_form === 'lupulin_pellet' }]
-                      }],
-                      onChange: (field, value) => setMaltField(whirlpoolHopActiveIndex, 'alpha_acid_pct', value, 0.01)
-                    })"
+                    x-data="formBuilder({ ...whirlpoolHopRowAlphaField() })"
                     x-effect="setModel(whirlpoolHopActiveRow)"
                   >
                     <load src="src/partials/ui-form-fields.html" />

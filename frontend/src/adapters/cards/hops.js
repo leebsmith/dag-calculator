@@ -6,10 +6,8 @@ import {
   catalogDraftLayer,
   createCatalogDraft,
 } from "./catalogDraft.js";
-import {
-  createCoolingCurvePicker,
-  KEYS as coolingCurveKeys,
-} from "./hopsCoolingCurve.js";
+import { createCoolingCurvePicker, KEYS as coolingCurveKeys } from "./hopsCoolingCurve.js";
+import { MEMBER_KEYS as hopEditorFieldKeys } from "./hopEditorFields.js";
 import { HOP_NODES as N, WHIRLPOOL_ROW_DEFAULTS } from "../../views/registry/hops.js";
 import { hopSectionState } from "../../views/producer/hopSections.js";
 import {
@@ -380,5 +378,5 @@ export const KEYS = [
   "whirlpoolTimelineState",
   "whirlpoolInferredChills",
   "whirlpoolZeroRestNote",
-  ...coolingCurveKeys,
+  ...coolingCurveKeys, ...hopEditorFieldKeys,
 ];
