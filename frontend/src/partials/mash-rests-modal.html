@@ -1,6 +1,6 @@
 <!-- Configure Mash Rests modal: draft/cancel editor over the enabled rests. -->
 <div
-  x-data="modalShell({ ...mashModalConfig() })"
+  x-data="modalShell" data-shell="mashModalConfig"
   x-effect="syncOpen(mashModalOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />

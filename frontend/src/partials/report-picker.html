@@ -1,6 +1,6 @@
 <!-- Report sections picker: assemble a subset of the registered sections. -------->
 <div
-  x-data="modalShell({ ...$store.recipes.reportPickerConfig() })"
+  x-data="modalShell" data-shell="$store.recipes.reportPickerConfig"
   x-effect="syncOpen($store.recipes.reportPickerOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />

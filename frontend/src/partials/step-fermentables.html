@@ -28,7 +28,7 @@
           Authored as parts, normalized by the Hamilton largest-remainder algorithm (sums to 100.0%).
         </p>
 
-        <div x-data="{ config: gristTableConfig() }">
+        <div x-data="tableConfig" data-config="gristTableConfig">
           <load src="src/partials/ui-data-table.html" />
         </div>
 
@@ -74,7 +74,7 @@
         </p>
 
         <template x-if="traceMaltField">
-          <div x-data="{ config: traceMaltTableConfig() }">
+          <div x-data="tableConfig" data-config="traceMaltTableConfig">
             <load src="src/partials/ui-data-table.html" />
           </div>
         </template>

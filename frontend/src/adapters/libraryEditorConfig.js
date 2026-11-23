@@ -115,6 +115,10 @@ function fieldSchema(view, field) {
   return { ...base, type: "text", read, write, controlClass, commit: "input" };
 }
 
+export function buildLibraryEditorFields(view) {
+  return { schema: view.libraryFields.map((field) => fieldSchema(view, field)) };
+}
+
 export function buildLibraryEditorConfig(view) {
-  return formBuilder({ schema: view.libraryFields.map((field) => fieldSchema(view, field)) });
+  return formBuilder(buildLibraryEditorFields(view));
 }

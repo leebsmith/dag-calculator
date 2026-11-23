@@ -1,6 +1,6 @@
 <!-- New batch dialog: selection only. Records are authored in the Library. ------->
 <div
-  x-data="modalShell({ ...$store.setup.newBatchConfig() })"
+  x-data="modalShell" data-shell="$store.setup.newBatchConfig"
   x-effect="syncOpen($store.setup.state.modalOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />

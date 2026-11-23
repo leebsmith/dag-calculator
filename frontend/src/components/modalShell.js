@@ -1,3 +1,5 @@
+import { resolveConfigFromElement } from "./configAttributes.js";
+
 function resolve(value) {
   return typeof value === "function" ? value() : value;
 }
@@ -7,78 +9,106 @@ function resolveOption(value, fallback) {
   return resolved === undefined || resolved === null ? fallback : resolved;
 }
 
-function shellGetters(props) {
+const DEFAULTS = {
+  open: false,
+  title: "",
+  subtitle: null,
+  badge: null,
+  badgeClass: "badge-info",
+  variant: "workspace",
+  cancel: null,
+  save: null,
+  escape: null,
+  backdrop: null,
+  cancelLabel: "Cancel",
+  saveLabel: "Save & Apply",
+  saveVisible: null,
+  saveDisabled: null,
+  cancelDisabled: null,
+};
+
+function shellGetters() {
   return {
     get isOpen() {
       return Boolean(this.open);
     },
 
     get workspace() {
-      return props.variant === "workspace";
+      return this.config?.variant === "workspace";
     },
 
     get titleText() {
-      return resolve(props.title);
+      return resolve(this.config?.title);
     },
 
     get subtitleText() {
-      return resolve(props.subtitle);
+      return resolve(this.config?.subtitle);
     },
 
     get badgeText() {
-      return resolve(props.badge);
+      return resolve(this.config?.badge);
     },
 
     get badgeClassText() {
-      return resolve(props.badgeClass);
+      return resolve(this.config?.badgeClass);
     },
 
     get cancelLabelText() {
-      return resolve(props.cancelLabel);
+      return resolve(this.config?.cancelLabel);
     },
 
     get saveLabelText() {
-      return resolve(props.saveLabel);
+      return resolve(this.config?.saveLabel);
     },
 
     get cancelShown() {
-      return Boolean(props.cancel);
+      return Boolean(this.config?.cancel);
     },
 
     get saveShown() {
-      return Boolean(props.save) && resolveOption(props.saveVisible, true) !== false;
+      return Boolean(this.config?.save) && resolveOption(this.config?.saveVisible, true) !== false;
     },
 
     get saveDisabledState() {
-      return Boolean(resolveOption(props.saveDisabled, false));
+      return Boolean(resolveOption(this.config?.saveDisabled, false));
     },
 
     get cancelDisabledState() {
-      return Boolean(resolveOption(props.cancelDisabled, false));
+      return Boolean(resolveOption(this.config?.cancelDisabled, false));
     },
   };
 }
 
 function shellActions() {
   return {
+    init() {
+      const supplied = this.config ?? resolveConfigFromElement(this.$el, "shell") ?? {};
+      this.config = { ...DEFAULTS, ...supplied };
+      const id = this.config.id ?? "modal";
+      this.bodyId = `${id}-body`;
+      this.overlayId = `${id}-overlay`;
+      this.titleId = `${id}-title`;
+      this.open = Boolean(this.config.open ?? false);
+    },
+
     syncOpen(value) {
       this.open = Boolean(value);
     },
 
     cancelAction() {
-      this.cancel?.();
+      this.config?.cancel?.();
     },
 
     saveAction() {
-      this.save?.();
+      this.config?.save?.();
     },
 
     escapeAction() {
-      (this.escape ?? this.cancel)?.();
+      (this.config?.escape ?? this.config?.cancel)?.();
     },
 
     backdropAction() {
-      (this.backdrop ?? this.cancel)?.();
+      (this.config?.backdrop ?? this.config?.cancel)?.();
     },
 
     focusRef(open, name) {
@@ -88,33 +118,14 @@ function shellActions() {
   };
 }
 
-export function modalShell(config = {}) {
-  const props = {
-    open: false,
-    title: "",
-    subtitle: null,
-    badge: null,
-    badgeClass: "badge-info",
-    variant: "workspace",
-    cancel: null,
-    save: null,
-    escape: null,
-    backdrop: null,
-    cancelLabel: "Cancel",
-    saveLabel: "Save & Apply",
-    saveVisible: null,
-    saveDisabled: null,
-    cancelDisabled: null,
-    ...config,
-  };
-
+export function modalShell(config = null) {
   const data = {
-    ...props,
-    bodyId: `${props.id}-body`,
-    overlayId: `${props.id}-overlay`,
-    titleId: `${props.id}-title`,
+    config,
+    open: false,
+    bodyId: "",
+    overlayId: "",
+    titleId: "",
     ...shellActions(),
   };
-
-  return Object.defineProperties(data, Object.getOwnPropertyDescriptors(shellGetters(props)));
+  return Object.defineProperties(data, Object.getOwnPropertyDescriptors(shellGetters()));
 }

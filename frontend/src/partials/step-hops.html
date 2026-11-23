@@ -85,7 +85,7 @@
           ? 'Author by mass share; one hot-side pool sets the scale.'
           : 'Author by IBU share; the hop mass is back-calculated from Tinseth.'"></p>
 
-        <div x-data="{ config: boilHopTableConfig() }">
+        <div x-data="tableConfig" data-config="boilHopTableConfig">
           <load src="src/partials/ui-data-table.html" />
         </div>
 
@@ -187,7 +187,7 @@
           </div>
         </div>
 
-        <div x-data="{ config: whirlpoolHopTableConfig() }">
+        <div x-data="tableConfig" data-config="whirlpoolHopTableConfig">
           <load src="src/partials/ui-data-table.html" />
         </div>
 

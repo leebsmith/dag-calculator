@@ -13,7 +13,7 @@ const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const PARTIAL_DIR = "frontend/src/partials";
 const ROOT_TEMPLATE = "frontend/index.html";
 
-const BINDING_ATTR = /\s(?:x-[\w:.-]+|@[\w.:-]+|:[\w.-]+)=(?:"([^"]*)"|'([^']*)')/g;
+const BINDING_ATTR = /\s(?:x-[\w:.-]+|@[\w.:-]+|:[\w.-]+|data-(?:schema|shell|config))=(?:"([^"]*)"|'([^']*)')/g;
 const IDENTIFIER = /(?<![\w$.'])([A-Za-z_$][\w$]*)/g;
 const MEMBER_READ = /\b(?:this|app)\.([A-Za-z_$][\w$]*)/g;
 // Card factories reach the live app through the injected `getView`; the local

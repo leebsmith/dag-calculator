@@ -295,7 +295,7 @@
     <template x-if="libraryDraft">
       <div
         class="library-editor"
-        x-data="libraryEditorConfig()"
+        x-data="formBuilder" data-schema="libraryEditorFields"
       >
         <h3 class="region-title" x-text="libraryEditorTitle"></h3>
         <p class="form-hint" x-show="activeKind === 'yeast'">
