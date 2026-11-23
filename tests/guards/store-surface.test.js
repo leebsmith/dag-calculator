@@ -9,6 +9,7 @@ import assert from "node:assert/strict";
 
 import { createSetupStore } from "../../frontend/src/store/setup.js";
 import { createRecipesStore } from "../../frontend/src/store/recipes.js";
+import { reportPickerFieldActions } from "../../frontend/src/store/reportPickerFields.js";
 import { createBrewSessionStore } from "../../frontend/src/store/brewSession.js";
 import { createImportsStore } from "../../frontend/src/store/imports.js";
 import { createImportReviewStore } from "../../frontend/src/store/importReview.js";
@@ -21,11 +22,13 @@ const EXTERNAL = new Set(["auth"]);
 
 const FACTORIES = {
   setup: () => createSetupStore({}),
-  recipes: () =>
-    createRecipesStore({
+  recipes: () => ({
+    ...createRecipesStore({
       persistence: {},
       getSetup: () => ({ prerequisiteStatus: () => ({ ready: true, missing: [] }) }),
     }),
+    ...reportPickerFieldActions(),
+  }),
   brewSession: () =>
     createBrewSessionStore({ client: {}, loadBundle: async () => null }),
   imports: () =>

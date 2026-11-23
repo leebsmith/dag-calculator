@@ -184,8 +184,139 @@ function dryHopDescriptors(getView) {
   };
 }
 
+function dryHopEditorShellActions() {
+  return {
+    dryHopEditorConfig() {
+      const app = this;
+      return {
+        id: "dry-hop-editor",
+        title: "Dry Hop Editor",
+        badge: () => app.dryHopDraftSummary,
+        badgeClass: "badge-info",
+        cancel: () => app.cancelDryHopEditor(),
+        save: () => app.saveDryHopEditor(),
+        escape: () => app.handleDryHopEscape(),
+      };
+    },
+  };
+}
+
+function dryHopRowIdentitySchema(app) {
+  return [
+    {
+      id: "dry-hop-row-variety",
+      type: "text",
+      label: "Hop",
+      modelKey: "variety",
+      default: "",
+      lazy: true,
+    },
+    {
+      id: "dry-hop-row-type",
+      type: "select",
+      label: "Type",
+      modelKey: "product_type",
+      options: app.dryHopProductOptions,
+      lazy: true,
+    },
+    {
+      id: "dry-hop-row-quantity",
+      type: "number",
+      label: "Quantity",
+      modelKey: "quantity",
+      min: 0,
+      step: 0.1,
+      lazy: true,
+    },
+    {
+      id: "dry-hop-row-unit",
+      type: "select",
+      label: "Unit",
+      modelKey: "unit",
+      options: app.dryHopUnitOptions,
+      lazy: true,
+    },
+    {
+      id: "dry-hop-row-event",
+      type: "select",
+      label: "Applied at",
+      modelKey: "application_event",
+      options: app.dryHopEventOptions,
+      lazy: true,
+    },
+  ];
+}
+
+function dryHopRowContactSchema(app) {
+  return [
+    {
+      id: "dry-hop-row-contact",
+      type: "number",
+      label: "Contact (hours)",
+      read: () => app.dryHopContactHours(app.dryHopActiveRow),
+      min: 0,
+      step: 1,
+      lazy: true,
+      hint: "Clears the end event below.",
+    },
+    {
+      id: "dry-hop-row-until",
+      type: "select",
+      label: "…or until",
+      read: () => app.dryHopActiveRow.contact_until ?? "",
+      options: [{ value: "", label: "— no end event —" }, ...app.dryHopContactUntilOptions],
+      lazy: true,
+      hint: "Clears the contact hours above.",
+    },
+    {
+      id: "dry-hop-row-detail",
+      type: "text",
+      label: "Detail",
+      modelKey: "time_of_application",
+      default: "",
+      placeholder: "e.g. 50% attenuation, day 3",
+      lazy: true,
+    },
+    {
+      id: "dry-hop-row-notes",
+      type: "text",
+      label: "Notes",
+      modelKey: "notes",
+      default: "",
+      lazy: true,
+    },
+  ];
+}
+
+function dryHopInspectorActions() {
+  return {
+    dryHopInspectorFields() {
+      const app = this;
+      return {
+        schema: [...dryHopRowIdentitySchema(app), ...dryHopRowContactSchema(app)],
+        onChange: (field, value) => {
+          if (field.id === "dry-hop-row-contact") {
+            return app.setDryHopDraftContactHours(app.dryHopActiveIndex, value);
+          }
+          if (field.id === "dry-hop-row-until") {
+            return app.setDryHopDraftContactUntil(app.dryHopActiveIndex, value);
+          }
+          if (field.type === "number") {
+            return app.setDryHopDraftNumber(app.dryHopActiveIndex, field.modelKey, value);
+          }
+          return app.setDryHopDraftField(app.dryHopActiveIndex, field.modelKey, value);
+        },
+      };
+    },
+  };
+}
+
 export function createDryHopCard({ artifact, getView }) {
-  const actions = dryHopActions({ artifact, getView });
+  const actions = {
+    ...dryHopActions({ artifact, getView }),
+    ...dryHopEditorShellActions(),
+    ...dryHopInspectorActions(),
+  };
   Object.defineProperties(actions, dryHopDescriptors(getView));
   return actions;
 }
@@ -223,4 +354,6 @@ export const KEYS = [
   "setDryHopDraftContactUntil",
   "dryHopDraftSummary",
   "dryHopResultLabel",
+  "dryHopEditorConfig",
+  "dryHopInspectorFields",
 ];

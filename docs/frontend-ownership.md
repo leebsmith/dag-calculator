@@ -4,7 +4,7 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **847** (582 enumerable, 265 hidden)
+- Declared members: **850** (585 enumerable, 265 hidden)
 - Installers: **23**
 - Card partials: **21**
 - Installers reading another installer's key: **14 of 23**
@@ -22,7 +22,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `unitActions` | `frontend/src/adapters/unitActions.js` | 6 | 0 | 0 |
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 0 |
 | `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 64 | 0 | 0 |
-| `yeast` | `frontend/src/adapters/cards/yeast.js` | 50 | 2 | 0 |
+| `yeast` | `frontend/src/adapters/cards/yeast.js` | 51 | 2 | 0 |
 | `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 7 | 1 | 3 |
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js`, `frontend/src/adapters/cards/style/targetFields.js` | 50 | 1 | 11 |
@@ -34,7 +34,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 56 | 2 | 18 |
 | `mash` | `frontend/src/adapters/cards/mash.js`, `frontend/src/adapters/cards/mashGetters.js` | 53 | 2 | 4 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 15 | 1 | 1 |
-| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 55 | 2 | 13 |
+| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 57 | 2 | 13 |
 | `water` | `frontend/src/adapters/cards/water.js`, `frontend/src/adapters/cards/waterCardActions.js` | 30 | 1 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 1 | 0 | 0 |
 

@@ -36,6 +36,7 @@ import { createImportsStore } from "./store/imports.js";
 import { createImportReviewStore } from "./store/importReview.js";
 import { createSetupStore } from "./store/setup.js";
 import { createRecipesStore } from "./store/recipes.js";
+import { reportPickerFieldActions } from "./store/reportPickerFields.js";
 import { createBrewSessionStore } from "./store/brewSession.js";
 import { createThemeStore } from "./store/theme.js";
 
@@ -224,7 +225,8 @@ Alpine.store("brewSession", createBrewSessionStore({
 
 Alpine.store(
   "recipes",
-  createRecipesStore({
+  {
+    ...createRecipesStore({
     persistence,
     observability,
     getSetup: () => Alpine.store("setup"),
@@ -234,8 +236,10 @@ Alpine.store(
     openTab: openReportTab,
     showTab: showReport,
     closeTab: closeReportTab,
-    refreshImports: () => Alpine.store("imports").refresh(),
-  })
+      refreshImports: () => Alpine.store("imports").refresh(),
+    }),
+    ...reportPickerFieldActions(),
+  }
 );
 
 // Mirror the persistence save-state into the reactive recipes store so the

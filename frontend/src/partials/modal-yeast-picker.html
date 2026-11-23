@@ -1,14 +1,7 @@
 <!-- Yeast picker: one strain for the batch. The page shows the chosen row; this
      modal is the catalog. -->
 <div
-  x-data="modalShell({
-    id: 'yeast-picker',
-    title: 'Choose Yeast',
-    subtitle: () => (selectedYeast ? selectedYeast.name : 'No strain selected'),
-    cancel: () => closeYeastPicker(),
-    cancelLabel: 'Close',
-    escape: () => handleYeastEscape()
-  })"
+  x-data="modalShell({ ...yeastPickerConfig() })"
   x-effect="syncOpen(yeastPickerOpen)"
 >
   <load src="src/partials/ui-modal-shell.html" />

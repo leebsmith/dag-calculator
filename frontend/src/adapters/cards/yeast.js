@@ -150,7 +150,20 @@ function yeastActions({ artifact, engine, getView }) {
 export function createYeastCard(ctx) {
   const { cache, artifact, engine, getView } = ctx;
   const nl = nonlinearFns(artifact, engine);
-  const actions = yeastActions(ctx);
+  const actions = {
+    ...yeastActions(ctx),
+    yeastPickerConfig() {
+      const app = this;
+      return {
+        id: "yeast-picker",
+        title: "Choose Yeast",
+        subtitle: () => (app.selectedYeast ? app.selectedYeast.name : "No strain selected"),
+        cancel: () => app.closeYeastPicker(),
+        cancelLabel: "Close",
+        escape: () => app.handleYeastEscape(),
+      };
+    },
+  };
   Object.defineProperties(actions, {
     ...createYeastPickerDescriptors({ cache, getView }),
     ...createYeastAttenuationDescriptors({ cache, artifact, nl, getView }),
@@ -167,4 +180,4 @@ export function refreshYeastCard(app, ctx) {
   app.selectedYeastSnapshot = ctx.engine.get(N.selectionNode) ?? null;
 }
 
-export const KEYS = ["selectedYeastId", "selectedYeastSnapshot", "yeastSearchQuery", "yeastSearchNotes", "yeastPickerOpen", "openYeastPicker", "closeYeastPicker", "handleYeastEscape", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastPofFilter", "yeastAttenuation", "yeastPublished", "yeastSta1", "yeastPof", "yeastTemperature", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "toggleYeastPof", "commitYeastDerate", "yeastField", "fieldValue", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "yeastPofTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastPublished", "selectedYeastMeta", "selectedYeastTemp", "selectedYeastSta1", "selectedYeastPof", "attenuationCapValue", "attenuationRealizedValue", "attenuationGristValue", "attenuationAboveCap", "attenuationAboveCapLabel", "attenuationAboveCapCause", "attenuationBinding", "yeastDerateDisplay"];
+export const KEYS = ["selectedYeastId", "selectedYeastSnapshot", "yeastSearchQuery", "yeastSearchNotes", "yeastPickerOpen", "openYeastPicker", "closeYeastPicker", "handleYeastEscape", "toggleYeastSearchNotes", "yeastManufacturerFilter", "yeastAttenuationFilter", "yeastDiastaticusFilter", "yeastPofFilter", "yeastAttenuation", "yeastPublished", "yeastSta1", "yeastPof", "yeastTemperature", "selectYeast", "clearYeastSelection", "toggleYeastAttenuation", "toggleYeastDiastaticus", "toggleYeastPof", "commitYeastDerate", "yeastField", "fieldValue", "yeastCatalog", "yeastManufacturers", "yeastAttenuationTiers", "yeastDiastaticusTiers", "yeastPofTiers", "filteredYeasts", "visibleYeasts", "yeastResultCount", "isYeastListTruncated", "yeastResultLabel", "selectedYeast", "selectedYeastPublished", "selectedYeastMeta", "selectedYeastTemp", "selectedYeastSta1", "selectedYeastPof", "attenuationCapValue", "attenuationRealizedValue", "attenuationGristValue", "attenuationAboveCap", "attenuationAboveCapLabel", "attenuationAboveCapCause", "attenuationBinding", "yeastDerateDisplay", "yeastPickerConfig"];
