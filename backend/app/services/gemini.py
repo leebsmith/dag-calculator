@@ -20,6 +20,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import logging
 import os
 import time
 from collections.abc import Iterable
@@ -43,6 +44,37 @@ class GeminiUnavailable(Exception):
 
 class GeminiError(Exception):
     """The provider failed, or answered outside the contract. Maps to 502."""
+
+
+class GeminiCreditsExhausted(GeminiError):
+    """The provider refused for a billing or credit reason. Maps to 503."""
+
+
+class GeminiKeyRejected(GeminiError):
+    """The provider refused the key or its project. Maps to 503."""
+
+
+logger = logging.getLogger("app.gemini")
+
+_CREDIT_REASONS = {"BILLING_DISABLED", "BILLING_NOT_ACTIVE"}
+_CREDIT_WORDS = (
+    "credit",
+    "billing",
+    "prepay",
+    "payment",
+    "funds",
+    "insufficient",
+    "balance",
+)
+_KEY_REASONS = {
+    "API_KEY_INVALID",
+    "API_KEY_SERVICE_BLOCKED",
+    "SERVICE_DISABLED",
+    "PERMISSION_DENIED",
+    "CONSUMER_INVALID",
+    "CONSUMER_SUSPENDED",
+    "ACCESS_TOKEN_SCOPE_INSUFFICIENT",
+}
 
 
 @dataclass(frozen=True)
@@ -204,22 +236,67 @@ def _post(request: dict[str, Any]) -> dict[str, Any]:
     except httpx.HTTPError as exc:
         raise GeminiError(f"the provider could not be reached: {type(exc).__name__}") from exc
     if response.status_code != 200:
-        raise GeminiError(_provider_error(response))
+        raise _provider_failure(response.status_code, _json_body(response))
     try:
         return response.json()
     except json.JSONDecodeError as exc:
         raise GeminiError("the provider returned a body that is not JSON") from exc
 
 
-def _provider_error(response: httpx.Response) -> str:
-    """A short, key-free description of an upstream failure."""
+def _json_body(response: httpx.Response) -> object:
     try:
-        detail = response.json().get("error", {})
-        status = str(detail.get("status") or response.status_code)
-        message = str(detail.get("message") or "")[:200]
-    except (json.JSONDecodeError, AttributeError):
-        status, message = str(response.status_code), ""
-    return f"the provider returned {status}: {message}".strip()
+        return response.json()
+    except ValueError:
+        return None
+
+
+def _error_parts(status_code: int, payload: object) -> tuple[str, str, set[str]]:
+    """Pull the provider's status, message, and reason codes out of an error body."""
+    detail = payload.get("error") if isinstance(payload, dict) else None
+    if not isinstance(detail, dict):
+        return str(status_code), "", set()
+    status = str(detail.get("status") or status_code)
+    message = str(detail.get("message") or "")
+    details = detail.get("details")
+    reasons = {
+        str(item.get("reason"))
+        for item in (details if isinstance(details, list) else [])
+        if isinstance(item, dict) and item.get("reason")
+    }
+    return status, message, reasons
+
+
+def _is_credit_exhaustion(status: str, reasons: set[str], message: str) -> bool:
+    """True only for a money-shaped refusal, never for a per-minute quota."""
+    if reasons & _CREDIT_REASONS:
+        return True
+    if status != "RESOURCE_EXHAUSTED":
+        return False
+    lowered = message.lower()
+    return any(word in lowered for word in _CREDIT_WORDS)
+
+
+def _is_key_rejection(status: str, reasons: set[str]) -> bool:
+    """True when the key or the project behind it was refused."""
+    return status == "PERMISSION_DENIED" or bool(reasons & _KEY_REASONS)
+
+
+def _log_failure(event: str, detail: str) -> None:
+    """One structured record per classified failure; never the key or the document."""
+    logger.error(json.dumps({"event": event, "detail": detail}))
+
+
+def _provider_failure(status_code: int, payload: object) -> GeminiError:
+    """Classify a non-200 provider response into the narrowest error available."""
+    status, message, reasons = _error_parts(status_code, payload)
+    described = f"the provider returned {status}: {message[:200]}".strip()
+    if _is_credit_exhaustion(status, reasons, message):
+        _log_failure("llm.credits_exhausted", described)
+        return GeminiCreditsExhausted(described)
+    if _is_key_rejection(status, reasons):
+        _log_failure("llm.provider_key_rejected", described)
+        return GeminiKeyRejected(described)
+    return GeminiError(described)
 
 
 def response_text(body: dict[str, Any]) -> str:

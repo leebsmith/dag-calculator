@@ -1,0 +1,5 @@
+# Production allowlist: one address per line, lowercase.
+# This file is the source of truth for ALLOWED_EMAILS on the deployed service.
+# Local development uses its own value in scripts/local-dev.mjs (dev@localhost).
+leeb@lee-smith.org
+leebsmith@gmail.com

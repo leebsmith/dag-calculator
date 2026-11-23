@@ -3,6 +3,18 @@ PROJECT_ID        := dag-calculator
 CLOUD_RUN_SERVICE := dag-calculator-backend
 CLOUD_RUN_REGION  := us-east4
 
+# Production allowlist: one address per line; this file is the deployed truth.
+# scripts/local-dev.mjs keeps its own dev-only value (dev@localhost).
+ALLOWLIST_FILE  := backend/allowlist.txt
+ALLOWLIST_VALUE := $(shell sed -e 's/#.*//' -e 's/[[:space:]]//g' $(ALLOWLIST_FILE) 2>/dev/null | grep -v '^$$' | paste -sd';' -)
+SECRET_NAME     := gemini-api-key
+TARGET_EMAIL    ?= leeb@lee-smith.org
+
+# The buildpack runtime no longer offers 3.12 (local uses backend/.python-version,
+# which .gcloudignore keeps out of the build context). Pin the deployed runtime
+# explicitly so the build does not drift to the builder's newest Python.
+PYTHON_RUNTIME  := 3.13
+
 # Scrapers live in scripts/scrape/ (Python; deps isolated from the backend).
 SCRAPE_DIR  := scripts/scrape
 SCRAPE_DEPS := --with-requirements $(SCRAPE_DIR)/requirements.txt
@@ -29,6 +41,7 @@ BJCP_EDITION ?= 2021
 .PHONY: help hooks local-dev check test test-affected test-guards quick test-fuzz test-oracle test-visual coverage verify verify-full build clear reset-data generate local-data save-data seeds seeds-styles seeds-yeasts seeds-hops \
         seeds-fermentables seeds-standard-malts seeds-hop-products seeds-whirlpool-notes \
         scrape-yeasts scrape-whitelabs scrape-hops aggregate-bjcp clean deploy deploy-rules deploy-backend deploy-frontend destroy \
+        promote promote-status \
         report-dev report-pages dot
 
 help:
@@ -64,6 +77,8 @@ help:
 	@echo "  reset-data      Delete local emulator data (drafts, frozen batches, library)"
 	@echo "  deploy          Deploy Firestore rules, backend (Cloud Run) and frontend"
 	@echo "  deploy-rules    Deploy firestore.rules only"
+	@echo "  promote         Dry-run: copy local emulator data to production (APPLY=1 writes)"
+	@echo "  promote-status  Report documents in production not matching local (read-only)"
 	@echo "  destroy         Tear down the deployed services"
 
 # --- Local development -------------------------------------------------------
@@ -322,25 +337,53 @@ deploy-rules:
 # per-uid rate limiting). The real network perimeter is Cloud Armor / an API
 # gateway, not IAM.
 deploy-backend:
+	@test -n "$(ALLOWLIST_VALUE)" || { echo "deploy-backend: $(ALLOWLIST_FILE) has no addresses" >&2; exit 1; }
 	@echo "Vendoring the artifact + catalog registry for the deployed image..."
 	mkdir -p backend/app/_vendor
 	cp data/artifact.json data/catalogs.json data/record_schemas.json data/record_catalogs.json backend/app/_vendor/
 	@echo "Exporting uv dependencies for Cloud Buildpacks..."
 	cd backend && uv export --frozen --no-dev -o requirements.txt
+	@mkdir -p .local
+	@echo "Recording the serving revision for rollback..."
+	@python3 scripts/check_allowlist_drift.py --print-serving \
+		--service $(CLOUD_RUN_SERVICE) --region $(CLOUD_RUN_REGION) --project $(PROJECT_ID) \
+		> .local/deploy-previous-revision 2>/dev/null || true
 	@echo "Deploying backend to Cloud Run..."
-	gcloud run deploy $(CLOUD_RUN_SERVICE) \
+	@gcloud run deploy $(CLOUD_RUN_SERVICE) \
 		--source backend/ \
 		--region $(CLOUD_RUN_REGION) \
 		--project $(PROJECT_ID) \
-		--allow-unauthenticated
+		--allow-unauthenticated \
+		--set-build-env-vars GOOGLE_PYTHON_VERSION=$(PYTHON_RUNTIME) \
+		--update-env-vars "ALLOWED_EMAILS=$(ALLOWLIST_VALUE)" \
+		$$(if gcloud secrets describe $(SECRET_NAME) --project $(PROJECT_ID) >/dev/null 2>&1; then echo "--set-secrets GEMINI_API_KEY=$(SECRET_NAME):latest"; fi)
+	@echo "Verifying the deployed allowlist..."
+	@python3 scripts/check_allowlist_drift.py \
+		--file $(ALLOWLIST_FILE) \
+		--service $(CLOUD_RUN_SERVICE) --region $(CLOUD_RUN_REGION) --project $(PROJECT_ID)
 
 deploy-frontend:
 	@test -z "$${VITE_API_BASE:-}" || { echo "deploy-frontend: VITE_API_BASE must stay unset; production is same-origin through Hosting rewrites" >&2; exit 1; }
+	@test -n "$${VITE_FIREBASE_API_KEY:-}" || { echo "deploy-frontend: VITE_FIREBASE_API_KEY is unset; the production bundle has no dev fallback" >&2; exit 1; }
+	@test -n "$${VITE_FIREBASE_AUTH_DOMAIN:-}" || { echo "deploy-frontend: VITE_FIREBASE_AUTH_DOMAIN is unset; the production bundle has no dev fallback" >&2; exit 1; }
+	@test -n "$${VITE_FIREBASE_PROJECT_ID:-}" || { echo "deploy-frontend: VITE_FIREBASE_PROJECT_ID is unset; the production bundle has no dev fallback" >&2; exit 1; }
 	@echo "Building frontend..."
 	cd frontend && npm run build
 	@if grep -rq "run\.app" frontend/dist/assets; then echo "deploy-frontend: bundle contains a Cloud Run origin; production must stay same-origin" >&2; exit 1; fi
 	@echo "Deploying frontend to Firebase Hosting..."
 	npx firebase deploy --only hosting --project $(PROJECT_ID)
+
+# Promotion is a data operation, deliberately separate from deploy: a deploy must
+# stay reproducible and must not depend on one machine's emulator state. Dry-run
+# by default; APPLY=1 writes. Never deletes a production document.
+promote:
+	@cd backend && PYTHONPATH=. uv run python scripts/promote_local_data.py \
+		--target-email $(TARGET_EMAIL) $(if $(TARGET_UID),--target-uid $(TARGET_UID),) \
+		$(if $(ONLY),--only $(ONLY),) $(if $(APPLY),--apply,)
+
+promote-status:
+	@cd backend && PYTHONPATH=. uv run python scripts/promote_local_data.py \
+		--target-email $(TARGET_EMAIL) $(if $(TARGET_UID),--target-uid $(TARGET_UID),) --status
 
 destroy:
 	@echo "Deleting Cloud Run service..."

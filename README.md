@@ -52,6 +52,8 @@ backend with Firebase auth and Firestore persistence.
 make local-dev   # Vite + Firebase emulators + uvicorn
 make dot         # generate docs/artifact_dag.dot (+ .svg when GraphViz is installed)
 make save-data   # snapshot emulator data (Firestore + Auth) to emulator-data/
+make promote     # dry-run: copy local emulator data to production (APPLY=1 writes)
+make promote-status # report documents in production that differ from local
 make check       # eslint/stylelint + ruff + tach
 make test        # frontend (node --test) + backend pytest
 make test-fuzz   # seeded water-solver invariant sweep (CASES=200 SEED=...)
@@ -132,6 +134,23 @@ case-insensitive). An unset or empty allowlist **fails closed**. `GET /session`
 is auth-only and reports `{uid, email, allowed}` so the app can show a blocked
 screen before signing the user out.
 
+`backend/allowlist.txt` is the production allowlist and the source of truth: one
+address per line. `make deploy-backend` serializes it into `ALLOWED_EMAILS` on
+every deploy and then compares the *serving* revision against the file, so a
+mismatch fails the deploy with a rollback command rather than locking everyone
+out silently. The running service reads the value once at import, so a change
+takes effect with the new revision.
+
+Local development is a separate scope on purpose: `scripts/local-dev.mjs` passes
+`ALLOWED_EMAILS=dev@localhost` to the backend. Sign in to the Auth emulator with
+that Google account. Do not add `dev@localhost` to the file, and do not union the
+file into local dev — signing in locally as a real address mints a new uid and
+shows an empty library.
+
+Ownership is keyed by Firebase **uid**, not by email: `leeb@lee-smith.org` owns
+the data, and `leebsmith@gmail.com` is allowlisted but sees its own (empty)
+`users/{uid}/…` tree.
+
 Verified tokens are cached in-process for up to 5 minutes (keyed by a SHA-256
 digest, never the raw token) to avoid a revocation lookup on every autosave;
 revocation is therefore eventual within that window. Cache misses always
@@ -144,6 +163,10 @@ Firebase console setup:
   Settings → **Authorized domains**.
 - Configure the OAuth consent screen (testing mode is fine for a small allowlist;
   external/published otherwise).
+- `make deploy-frontend` needs `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`
+  and `VITE_FIREBASE_PROJECT_ID` in the environment; the production bundle has no
+  dev fallback and the target refuses to build without them. Read the values from
+  `npx firebase apps:sdkconfig web <appId> --project dag-calculator`.
 
 `make local-dev` passes `ALLOWED_EMAILS=dev@localhost` to the backend; sign in to
 the Auth emulator with that Google account (or change the Makefile value).
@@ -169,8 +192,18 @@ Deployment notes:
   into `backend/app/_vendor/` before deploying (the Cloud Run source is
   `backend/`, so `data/` is otherwise absent). The backend logs the resolved
   artifact directory at startup.
-- Set the production allowlist on Cloud Run, e.g.
-  `gcloud run services update dag-calculator-backend --region us-east4 --update-env-vars ALLOWED_EMAILS=you@example.com`.
+- `GEMINI_API_KEY` is a Secret Manager secret (`gemini-api-key`) referenced by the
+  deploy; create it from the AI Studio key without putting it in argv or shell
+  history, and grant the Cloud Run runtime identity `secretmanager.secretAccessor`
+  on that secret. `:latest` resolves when an instance starts, so a new version
+  needs a restart or redeploy to reach running instances.
+- The key belongs to a personal Google account; the deployment project lives in a
+  Workspace org and holds only a copy. Rotation and billing happen on the personal
+  side, and org admins can read the secret.
+- Allowlist drift is checked after every deploy. To change access: edit
+  `backend/allowlist.txt`, deploy, and confirm the check reports a match. The
+  manual `gcloud run services update … --update-env-vars` form is the break-glass
+  path only — the next deploy overwrites it from the file.
 - `make deploy-rules` deploys `firestore.rules`; `make deploy` runs it before the
   backend and hosting, so the deployed rules never lag the file.
 - Batches live at `users/{uid}/batches/{id}`, frozen render input at
@@ -178,6 +211,30 @@ Deployment notes:
   `users/{uid}/catalog_items/{id}`. `firestore.rules` denies every client read and
   write: the browser is an Auth-only client and all Firestore access goes through
   the backend's Admin SDK, which bypasses rules.
+
+Local data promotion (`make promote`):
+
+- Local drafts live in the emulator under a uid the emulator invents; production
+  mints a different one, so data reaches it only by an explicit copy.
+- `make promote` is a **dry run**; `APPLY=1` writes. `ONLY=batches` narrows the
+  scope. `make promote-status` reports how many local documents differ from
+  production.
+- Promotion is one-way and additive: last-write-wins on stored timestamps, and a
+  document that exists only in production is never deleted. Records without a
+  timestamp are created only when missing.
+- The target uid is resolved by email at run time (`TARGET_EMAIL`, default
+  `leeb@lee-smith.org`); uids are opaque and project-scoped, so none is configured.
+  If the current credentials cannot read Firebase Auth users, sign in to
+  production and pass `TARGET_UID=<uid from /session>` instead. Promotion also
+  requires a working `gcloud`/ADC login and a first sign-in to production; it
+  stops and says so rather than inventing an account.
+- Each run writes `meta/promote_state` — the only non-`users/` collection,
+  deliberately — recording the counts and both uids.
+- Promotion is deliberately **not** part of `make deploy`: a deploy must stay
+  reproducible and must not depend on one machine's emulator state.
+- Local data survives only while `emulator-data/` holds both exports. Deleting the
+  Auth export while keeping the Firestore export mints a new uid and orphans the
+  library; snapshot them together with `make save-data`.
 
 ## Seeds & scraping
 

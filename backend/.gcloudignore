@@ -1,0 +1,8 @@
+# Cloud Run source deploys upload this directory; keep the build context small
+# and stop the local interpreter pin from constraining the buildpack runtime.
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.python-version

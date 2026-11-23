@@ -142,6 +142,27 @@ def test_an_upstream_failure_is_502(client, monkeypatch):
     assert response.json()["code"] == "IMPORT_UPSTREAM_FAILED"
 
 
+def test_exhausted_provider_credits_have_their_own_code(client, monkeypatch):
+    def exhausted(*_args, **_kwargs):
+        raise gemini.GeminiCreditsExhausted("the provider returned RESOURCE_EXHAUSTED")
+
+    monkeypatch.setattr(recipe_import, "extract_recipe_bytes", exhausted)
+    response = client.post("/imports", json=body())
+    assert response.status_code == 503
+    assert response.json()["code"] == "IMPORT_CREDITS_EXHAUSTED"
+    assert "BeerXML" in response.json()["message"]
+
+
+def test_a_rejected_provider_key_has_its_own_code(client, monkeypatch):
+    def rejected(*_args, **_kwargs):
+        raise gemini.GeminiKeyRejected("the provider returned PERMISSION_DENIED")
+
+    monkeypatch.setattr(recipe_import, "extract_recipe_bytes", rejected)
+    response = client.post("/imports", json=body())
+    assert response.status_code == 503
+    assert response.json()["code"] == "IMPORT_PROVIDER_KEY_REJECTED"
+
+
 def test_an_upload_that_is_not_a_pdf_is_422(client):
     response = client.post("/imports", json=body(content_base64=base64.b64encode(b"hello").decode()))
     assert response.status_code == 422

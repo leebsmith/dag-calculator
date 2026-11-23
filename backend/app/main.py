@@ -443,6 +443,27 @@ def _import_error(status: int, code: str, message: str, details: dict | None = N
     )
 
 
+def _gemini_failure(exc: Exception) -> JSONResponse:
+    """Map a provider failure to the narrowest surfaced code."""
+    if isinstance(exc, gemini.GeminiCreditsExhausted):
+        return _import_error(
+            503,
+            "IMPORT_CREDITS_EXHAUSTED",
+            "Recipe extraction is paused: the AI provider credits are exhausted. "
+            "BeerXML import and manual entry still work.",
+        )
+    if isinstance(exc, gemini.GeminiKeyRejected):
+        return _import_error(
+            503,
+            "IMPORT_PROVIDER_KEY_REJECTED",
+            "Recipe extraction is unavailable: the AI provider rejected the backend "
+            "key or its project. BeerXML import and manual entry still work.",
+        )
+    if isinstance(exc, gemini.GeminiUnavailable):
+        return _import_error(503, "IMPORT_NOT_CONFIGURED", str(exc))
+    return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
+
+
 @app.post("/imports", response_model=ImportRecord, status_code=201)
 def create_import(
     request: CreateImportRequest,
@@ -476,12 +497,10 @@ def create_import(
         return _import_error(422, "IMPORT_NO_RECIPE", str(exc))
     except recipe_import.ExtractionContractError as exc:
         return _import_error(422, "IMPORT_CONTRACT", str(exc))
-    except gemini.GeminiUnavailable as exc:
-        return _import_error(503, "IMPORT_NOT_CONFIGURED", str(exc))
+    except (gemini.GeminiError, gemini.GeminiUnavailable) as exc:
+        return _gemini_failure(exc)
     except PromptAssetError as exc:
         return _import_error(503, "IMPORT_ASSET", str(exc))
-    except gemini.GeminiError as exc:
-        return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
 
 
 @app.post("/imports/gapfill", response_model=Targets)
@@ -497,10 +516,8 @@ def gap_fill_import(payload: GapFillUpload, user: RateLimitedLlmUser):
         return filled
     except ImportPayloadError as exc:
         return _import_error(422, "IMPORT_PAYLOAD", str(exc))
-    except gemini.GeminiUnavailable as exc:
-        return _import_error(503, "IMPORT_NOT_CONFIGURED", str(exc))
-    except gemini.GeminiError as exc:
-        return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
+    except (gemini.GeminiError, gemini.GeminiUnavailable) as exc:
+        return _gemini_failure(exc)
     except PromptAssetError as exc:
         return _import_error(503, "IMPORT_ASSET", str(exc))
 
@@ -510,10 +527,8 @@ def match_import(request: MatchRequest, user: RateLimitedLlmUser):
     """Tie-break screened shortlists. Stateless: the client owns the catalogs."""
     try:
         return recipe_import.match_candidates(request)
-    except gemini.GeminiUnavailable as exc:
-        return _import_error(503, "IMPORT_NOT_CONFIGURED", str(exc))
-    except gemini.GeminiError as exc:
-        return _import_error(502, "IMPORT_UPSTREAM_FAILED", str(exc))
+    except (gemini.GeminiError, gemini.GeminiUnavailable) as exc:
+        return _gemini_failure(exc)
     except recipe_import.MatchContractError as exc:
         return _import_error(502, "IMPORT_MATCH_CONTRACT", str(exc))
     except PromptAssetError as exc:
