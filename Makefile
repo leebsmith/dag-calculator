@@ -10,10 +10,9 @@ ALLOWLIST_VALUE := $(shell sed -e 's/#.*//' -e 's/[[:space:]]//g' $(ALLOWLIST_FI
 SECRET_NAME     := gemini-api-key
 TARGET_EMAIL    ?= leeb@lee-smith.org
 
-# The buildpack runtime no longer offers 3.12 (local uses backend/.python-version,
-# which .gcloudignore keeps out of the build context). Pin the deployed runtime
-# explicitly so the build does not drift to the builder's newest Python.
-PYTHON_RUNTIME  := 3.13
+# The deployed image is `backend/Dockerfile`: Python 3.13 plus the pinned Typst
+# binary. The runtime version lives there, not in a buildpack variable, and
+# `backend/.gcloudignore` keeps the local virtualenv out of the build context.
 
 # Scrapers live in scripts/scrape/ (Python; deps isolated from the backend).
 SCRAPE_DIR  := scripts/scrape
@@ -364,7 +363,7 @@ deploy-backend:
 		--region $(CLOUD_RUN_REGION) \
 		--project $(PROJECT_ID) \
 		--allow-unauthenticated \
-		--set-build-env-vars GOOGLE_PYTHON_VERSION=$(PYTHON_RUNTIME) \
+		--clear-base-image \
 		--update-env-vars "ALLOWED_EMAILS=$(ALLOWLIST_VALUE)" \
 		$$(if gcloud secrets describe $(SECRET_NAME) --project $(PROJECT_ID) >/dev/null 2>&1; then echo "--set-secrets GEMINI_API_KEY=$(SECRET_NAME):latest"; fi)
 	@echo "Verifying the deployed allowlist..."

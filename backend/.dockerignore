@@ -1,0 +1,15 @@
+# Build context for backend/Dockerfile. Keep it aligned with .gcloudignore: the
+# image receives the app, the vendored artifacts, requirements.txt and nothing
+# from the developer's workspace.
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.tach/
+.python-version
+uv.lock
+scripts/
+Dockerfile
+.dockerignore
+.gcloudignore

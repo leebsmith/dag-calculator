@@ -192,6 +192,11 @@ Deployment notes:
   into `backend/app/_vendor/` before deploying (the Cloud Run source is
   `backend/`, so `data/` is otherwise absent). The backend logs the resolved
   artifact directory at startup.
+- The deployed image is [`backend/Dockerfile`](backend/Dockerfile), not a
+  buildpack: Python 3.13 installing the uv export, plus the pinned Typst release
+  named by `backend/app/templates/TYPST_VERSION`, verified by sha256 at build.
+  Report rendering returns `503` without that binary, so it is part of the image;
+  `backend/.gcloudignore` keeps `.venv/` out of the upload.
 - `GEMINI_API_KEY` is a Secret Manager secret (`gemini-api-key`) referenced by the
   deploy; create it from the AI Studio key without putting it in argv or shell
   history, and grant the Cloud Run runtime identity `secretmanager.secretAccessor`

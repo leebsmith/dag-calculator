@@ -1,8 +1,12 @@
-# Cloud Run source deploys upload this directory; keep the build context small
-# and stop the local interpreter pin from constraining the buildpack runtime.
+# Cloud Run source deploys upload this directory; keep the build context small.
+# The image pins its own interpreter (backend/Dockerfile), so the local pin and
+# the lock file do not belong in the upload.
 .venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+.tach/
 .python-version
+uv.lock
+scripts/

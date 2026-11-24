@@ -177,7 +177,10 @@ typed AST rather than markdown. The bundle is data, the templates are code: no
 user-supplied path or Typst source reaches the compiler, and `--root`
 confinement is what makes that a boundary. The binary is
 resolved on first use (`TYPST_BIN`, else `typst` on `PATH`) and its version must
-match `templates/TYPST_VERSION`, otherwise the route answers `503`.
+match `templates/TYPST_VERSION`, otherwise the route answers `503`. The deployed
+image installs exactly that release at build time
+(`backend/Dockerfile`), verifies its sha256 and sets `TYPST_BIN`, so the version
+gate passes there rather than answering `503`.
 
 | Route | Serves |
 |---|---|
