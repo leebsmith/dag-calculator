@@ -8,6 +8,10 @@
     "title": "Brewhouse"
   },
   {
+    "id": "equipment",
+    "title": "Equipment"
+  },
+  {
     "id": "batch-facts",
     "title": "Batch Facts"
   },

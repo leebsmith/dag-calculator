@@ -6,6 +6,7 @@
 #import "lib/format.typ": opt, short-id
 #import "sections/discussion.typ": present-discussion, render-discussion
 #import "sections/brewhouse.typ": present-brewhouse, render-brewhouse
+#import "sections/equipment.typ": present-equipment, render-equipment
 #import "sections/batch-facts.typ": present-batch-facts, render-batch-facts
 #import "sections/mash-rests.typ": present-mash-rests, render-mash-rests
 #import "sections/hops.typ": present-hops, render-hops
@@ -28,6 +29,7 @@
 #let sections = (
   (id: "discussion", title: "Discussion", present: present-discussion, render: render-discussion),
   (id: "brewhouse", title: "Brewhouse", present: present-brewhouse, render: render-brewhouse),
+  (id: "equipment", title: "Equipment", present: present-equipment, render: render-equipment),
   (id: "batch-facts", title: "Batch Facts", present: present-batch-facts, render: render-batch-facts),
   (id: "mash-rests", title: "Mash Rests", present: present-mash-rests, render: render-mash-rests),
   (id: "hops", title: "Hops", present: present-hops, render: render-hops),
@@ -136,15 +138,18 @@
   })
 
   // Identity appears once: Batch Basics carries equipment, water source and
-  // style, so the chrome only supplies them for a selection without that
-  // section. Repeating them here would duplicate the block.
-  let carries-identity = included.any(section => section.id == "batch-facts")
-  if not carries-identity {
-    let rows = (
-      ("Equipment", identity-name("equipment", "name")),
-      ("Water source", identity-name("water.source", "source_name")),
-      ("Style", identity-name("style", "name")),
-    )
+  // style, and the Equipment section carries the rig, so the chrome only
+  // supplies each for a selection that has no section of its own for it.
+  let included-id = id => included.any(section => section.id == id)
+  let rows = ()
+  if not included-id("batch-facts") and not included-id("equipment") {
+    rows.push(("Equipment", identity-name("equipment", "name")))
+  }
+  if not included-id("batch-facts") {
+    rows.push(("Water source", identity-name("water.source", "source_name")))
+    rows.push(("Style", identity-name("style", "name")))
+  }
+  if rows.len() > 0 {
     let present-rows = rows.filter(row => row.at(1) != none)
     if present-rows.len() > 0 {
       grid(

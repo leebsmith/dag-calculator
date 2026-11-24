@@ -33,6 +33,7 @@ pytestmark = pytest.mark.skipif(
 SECTION_IDS = (
     "discussion",
     "brewhouse",
+    "equipment",
     "batch-facts",
     "mash-rests",
     "hops",
@@ -1096,3 +1097,61 @@ def test_the_grist_attenuation_row_follows_the_state(shared_root: Path) -> None:
         root = stage_root(Path(tmp), bundle)
         assert probe(root, YEAST_GRIST_PROBE) is False
         render(root, "yeast")
+
+
+EQUIPMENT_PRESENCE_PROBE = (
+    '#import "sections/equipment.typ": present-equipment\n'
+    "#metadata(present-equipment()) <probe>\n"
+)
+
+EQUIPMENT_ROWS_PROBE = (
+    '#import "sections/equipment.typ": GROUPS, rows-with-values\n'
+    "#metadata(\n"
+    "  GROUPS.map(group => (\n"
+    "    title: group.title,\n"
+    "    rows: rows-with-values(group).map(row => row.at(0)),\n"
+    "  ))\n"
+    ") <probe>\n"
+)
+
+EQUIPMENT_RIG_PROBE = (
+    '#import "sections/equipment.typ": rig-line\n'
+    "#metadata(rig-line()) <probe>\n"
+)
+
+
+def test_equipment_prints_the_constants_the_rig_has(shared_root: Path) -> None:
+    assert probe(shared_root, EQUIPMENT_PRESENCE_PROBE) is True
+    assert probe(shared_root, EQUIPMENT_RIG_PROBE) == "HERMS 30L"
+
+    groups = probe(shared_root, EQUIPMENT_ROWS_PROBE)
+    assert [group["title"] for group in groups] == [
+        "Mash tun",
+        "Kettle",
+        "Hot liquor tank",
+        "Brewhouse",
+    ]
+    # The fixture's rig carries the losses the volume ledger reads; a constant it
+    # does not carry is omitted rather than printed as a dash.
+    assert groups[0]["rows"] == ["Dead space", "Transfer loss"]
+    assert groups[1]["rows"] == ["Dead space", "Transfer loss", "Trub"]
+    assert groups[2]["rows"] == []
+    assert groups[3]["rows"] == []
+
+
+def test_equipment_renders_alone_and_with_the_batch_facts(shared_root: Path) -> None:
+    # Batch Facts and the chrome both name the rig; the Equipment section is what
+    # supplies that name in its own selection.
+    assert probe(shared_root, EQUIPMENT_PRESENCE_PROBE) is True
+    render(shared_root, "equipment")
+    render(shared_root, "equipment,batch-facts")
+
+
+def test_a_rig_without_a_name_leaves_the_section_out() -> None:
+    bundle = fixture()
+    del bundle["formatted"]["equipment.name"]
+
+    with tempfile.TemporaryDirectory() as tmp:
+        root = stage_root(Path(tmp), bundle)
+        assert probe(root, EQUIPMENT_PRESENCE_PROBE) is False
+        render(root, "equipment")

@@ -43,6 +43,7 @@ BUNDLE = (
 SECTIONS = (
     "discussion",
     "brewhouse",
+    "equipment",
     "batch-facts",
     "mash-rests",
     "hops",
