@@ -236,6 +236,30 @@ Local data promotion (`make promote`):
   Auth export while keeping the Firestore export mints a new uid and orphans the
   library; snapshot them together with `make save-data`.
 
+### Promotion runbook
+
+1. `make local-dev` — promotion reads the **live** emulator, not `emulator-data/`;
+   the snapshot only supplies the source uid. Leave the stack up for step 2, which
+   needs it too.
+2. `make promote-status` — per-collection `create` / `update` / `skip` /
+   `prod-only` counts and the newest unpromoted timestamp. `ONLY=batches` narrows
+   the scope, and every step below takes the same variable.
+3. `make promote` — dry run; prints how many documents would be written.
+4. `make promote APPLY=1` — the write. Start narrow (`ONLY=batches`) when the
+   intent is to prove the list and the editor, then drop the variable for a full
+   mirror.
+5. Verify on production: sign in as `TARGET_EMAIL`, confirm the batch list, open
+   one batch (its cards and one card modal), then `make promote-status` again — it
+   should report `0 un-promoted document(s)`.
+6. `make clean` — snapshots and reclaims the eight ports.
+
+Each precondition fails loudly rather than guessing: exactly one `google.com`
+account in `emulator-data/auth_export/accounts.json` (its uid is the source; a
+password account elsewhere in the export is ignored), ADC from
+`gcloud auth application-default login`, `TARGET_EMAIL` present in
+`backend/allowlist.txt`, and a production account for that email that has signed
+in at least once.
+
 ## Seeds & scraping
 
 Reference catalogs are rebuilt in two stages:
