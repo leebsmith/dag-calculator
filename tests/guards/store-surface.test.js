@@ -22,13 +22,16 @@ const EXTERNAL = new Set(["auth"]);
 
 const FACTORIES = {
   setup: () => createSetupStore({}),
-  recipes: () => ({
-    ...createRecipesStore({
+  // Same composition as `main.js`: merge, never spread. `recipes` is the only
+  // store with getters (`rows`, `prerequisites`, `canCreateBatch`, …), and a
+  // spread would freeze each one at the value it had at boot.
+  recipes: () => {
+    const store = createRecipesStore({
       persistence: {},
       getSetup: () => ({ prerequisiteStatus: () => ({ ready: true, missing: [] }) }),
-    }),
-    ...reportPickerFieldActions(),
-  }),
+    });
+    return Object.assign(store, reportPickerFieldActions());
+  },
   brewSession: () =>
     createBrewSessionStore({ client: {}, loadBundle: async () => null }),
   imports: () =>
@@ -100,4 +103,41 @@ test("the guard actually reads the Batches and setup surfaces", () => {
   const files = new Set(references().map(({ file }) => file));
   assert.ok(files.has("frontend/src/partials/chooser.html"));
   assert.ok(files.has("frontend/src/partials/batch-setup.html"));
+});
+
+// Spreading a store into a new literal invokes each getter once and copies the
+// value, so `rows` froze at the empty array it had during boot and the landing
+// list never rendered a batch that `/batches` had returned.
+test("the composed recipes store keeps its getters live", () => {
+  const store = FACTORIES.recipes();
+
+  store.batches = [
+    { id: "b1", name: "One", status: "draft", trashed: false, updated_at: 2 },
+    { id: "b2", name: "Two", status: "frozen", trashed: false, updated_at: 1 },
+  ];
+
+  assert.equal(store.rows.length, 2, "rows must follow batches");
+  assert.equal(store.sortLabel, "Last modified");
+
+  store.scope = "frozen";
+  assert.equal(store.rows.length, 1);
+  assert.equal(store.rows[0].id, "b2");
+
+  store.sort = "title";
+  assert.equal(store.sortLabel, "Title", "sortLabel must follow sort");
+
+  store.scope = "trash";
+  assert.equal(store.emptyMessage, "Trash is empty.", "emptyMessage must follow scope");
+});
+
+test("no store is spread into a new object literal", () => {
+  const offenders = walk("frontend/src", [".js"])
+    .map(rel)
+    .filter((file) => /\.\.\.\s*(?:create\w+Store|Alpine\.store)\(/.test(read(file)));
+
+  assert.deepEqual(
+    offenders,
+    [],
+    "a store with getters was spread into a literal; merge with Object.assign instead"
+  );
 });

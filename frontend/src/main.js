@@ -225,24 +225,24 @@ Alpine.store("brewSession", createBrewSessionStore({
   },
 }));
 
-Alpine.store(
-  "recipes",
-  {
-    ...createRecipesStore({
-    persistence,
-    observability,
-    getSetup: () => Alpine.store("setup"),
-    anchor: anchorStyle,
-    download: downloadJSON,
-    downloadFile: downloadBlob,
-    openTab: openReportTab,
-    showTab: showReport,
-    closeTab: closeReportTab,
-      refreshImports: () => Alpine.store("imports").refresh(),
-    }),
-    ...reportPickerFieldActions(),
-  }
-);
+// Actions are merged onto the factory's object, never spread into a new one:
+// `recipes` exposes `rows`, `prerequisites`, `canCreateBatch`, `sortLabel` and
+// `emptyMessage` as getters, and a spread would invoke each once and freeze the
+// value it returned at boot (an empty `rows` that never follows `batches`).
+const recipesStore = createRecipesStore({
+  persistence,
+  observability,
+  getSetup: () => Alpine.store("setup"),
+  anchor: anchorStyle,
+  download: downloadJSON,
+  downloadFile: downloadBlob,
+  openTab: openReportTab,
+  showTab: showReport,
+  closeTab: closeReportTab,
+  refreshImports: () => Alpine.store("imports").refresh(),
+});
+Object.assign(recipesStore, reportPickerFieldActions());
+Alpine.store("recipes", recipesStore);
 
 // Mirror the persistence save-state into the reactive recipes store so the
 // editor badge re-renders when autosave transitions (idle/dirty/saving/...).
