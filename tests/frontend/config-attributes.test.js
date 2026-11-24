@@ -53,6 +53,20 @@ test("the element resolver reads the named member from the parent scope", () => 
   assert.equal(resolveConfigFromElement({ dataset: {}, parentElement: {} }, "schema"), null);
 });
 
+test("a declared attribute without a published Alpine handle fails loudly", () => {
+  const previous = globalThis.Alpine;
+  globalThis.Alpine = undefined;
+  try {
+    assert.throws(
+      () => resolveConfigFromElement(element("discussionFields"), "schema"),
+      /Alpine is not published/
+    );
+    assert.equal(resolveConfigFromElement({ dataset: {}, parentElement: {} }, "schema"), null);
+  } finally {
+    globalThis.Alpine = previous;
+  }
+});
+
 test("formBuilder takes an array schema from the data attribute", () => {
   const scope = {
     discussionFields: () => [{ id: "discussion", type: "text", label: "Discussion", modelKey: "x" }],
@@ -137,4 +151,18 @@ test("scopeAlias resolves a nested path and defaults findings to an array", () =
   withAlias({ findings: "nope" }, scope, (component) => {
     assert.deepEqual(component.findings, []);
   });
+});
+
+test("scopeAlias without a source never needs the Alpine handle", () => {
+  const previous = globalThis.Alpine;
+  globalThis.Alpine = undefined;
+  try {
+    const component = scopeAlias();
+    component.$el = { dataset: {}, parentElement: {} };
+    component.init();
+    assert.equal(component.origin, null);
+    assert.deepEqual(component.findings, []);
+  } finally {
+    globalThis.Alpine = previous;
+  }
 });

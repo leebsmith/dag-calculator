@@ -4,6 +4,21 @@
 // schema lives on the enclosing scope (an app member or a store member) and the
 // template names it: `x-data="formBuilder" data-schema="hopInspectorFields"`.
 // A dotted name may cross into `$store`, e.g. `$store.setup.batchIdentityFields`.
+//
+// Resolution needs Alpine's own scope handle. The module build does not publish
+// it, so `main.js` assigns `globalThis.Alpine` before `Alpine.start()`; a build
+// without that assignment fails here rather than falling back to defaults.
+
+export function alpineScope(element) {
+  if (!element) return null;
+  const alpine = globalThis.Alpine;
+  if (typeof alpine?.$data !== "function") {
+    throw new Error(
+      "configAttributes: Alpine is not published; main.js must assign globalThis.Alpine before start()"
+    );
+  }
+  return alpine.$data(element);
+}
 
 export function resolveNamedMember(scope, name) {
   const parts = String(name ?? "")
@@ -27,7 +42,7 @@ export function resolveNamedMember(scope, name) {
 export function resolveConfigFromElement(element, attribute) {
   const name = element?.dataset?.[attribute];
   if (!name || !element) return null;
-  const scope = globalThis.Alpine?.$data?.(element);
+  const scope = alpineScope(element);
   if (!scope) return null;
   return resolveNamedMember(scope, name);
 }

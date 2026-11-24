@@ -1,4 +1,4 @@
-import { resolveNamedMember, resolveReference } from "./configAttributes.js";
+import { alpineScope, resolveNamedMember, resolveReference } from "./configAttributes.js";
 
 // Aliases a value from the enclosing scope under a fixed name, so a shared
 // partial can bind one name. The CSP build cannot parse `x-data="{ delta: … }"`;
@@ -11,7 +11,7 @@ import { resolveNamedMember, resolveReference } from "./configAttributes.js";
 //   x-data="scopeAlias" data-findings="stepFindingItems"
 
 function scopeOf(element) {
-  return element ? globalThis.Alpine?.$data?.(element) : null;
+  return element ? alpineScope(element) : null;
 }
 
 export function scopeAlias() {
@@ -32,8 +32,9 @@ export function scopeAlias() {
     },
 
     resolve(source, argSource = "") {
+      if (!source) return null;
       const scope = scopeOf(this.$el);
-      if (!scope || !source) return null;
+      if (!scope) return null;
       if (!argSource) return resolveNamedMember(scope, source);
       const reference = resolveReference(scope, source);
       if (!reference) return null;

@@ -282,6 +282,11 @@ Alpine.data("tableConfig", tableConfig);
 Alpine.data("scopeAlias", scopeAlias);
 Alpine.data("modalShell", modalShell);
 
+// The module build does not publish itself. `configAttributes` resolves every
+// `data-shell` / `data-config` / `data-schema` name through `Alpine.$data`, so
+// the handle must exist before the first component initializes.
+globalThis.Alpine = Alpine;
+
 Alpine.data("stepCalculator", () => {
   // Wrap in Alpine's reactive proxy so the adapter's methods (which mutate
   // `this`) trigger re-renders, and so persistence mutates the same proxy.
