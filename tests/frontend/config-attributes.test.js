@@ -166,3 +166,22 @@ test("scopeAlias without a source never needs the Alpine handle", () => {
     globalThis.Alpine = previous;
   }
 });
+
+// `editor.html` binds `data-findings="findings"`, the same name as the getter
+// this component publishes. Resolving through the element's own scope found that
+// getter and recursed until the stack overflowed.
+test("scopeAlias resolves its sources through the enclosing scope", () => {
+  const parent = { marker: "parent scope" };
+  const own = { marker: "own binding" };
+  const aliasElement = { dataset: { findings: "marker" }, parentElement: parent };
+  const previous = globalThis.Alpine;
+  globalThis.Alpine = { $data: (target) => (target === parent ? parent : own) };
+  try {
+    const component = scopeAlias();
+    component.$el = aliasElement;
+    component.init();
+    assert.equal(component.findings, "parent scope");
+  } finally {
+    globalThis.Alpine = previous;
+  }
+});

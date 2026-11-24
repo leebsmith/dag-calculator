@@ -3,7 +3,9 @@ import { alpineScope, resolveNamedMember, resolveReference } from "./configAttri
 // Aliases a value from the enclosing scope under a fixed name, so a shared
 // partial can bind one name. The CSP build cannot parse `x-data="{ delta: … }"`;
 // this component reads its sources from data attributes and re-resolves them on
-// every read, so the parent's reactivity is preserved.
+// every read, so the parent's reactivity is preserved. Sources resolve through
+// the element's *parent* scope: the alias's own bindings must never be a source,
+// or a name like `findings` would resolve to the getter it is defining.
 //
 //   x-data="scopeAlias" data-origin="$store.imports.originOf"
 //                       data-origin-arg="$store.recipes.activeId"
@@ -11,7 +13,11 @@ import { alpineScope, resolveNamedMember, resolveReference } from "./configAttri
 //   x-data="scopeAlias" data-findings="stepFindingItems"
 
 function scopeOf(element) {
-  return element ? alpineScope(element) : null;
+  if (!element) return null;
+  // The alias's own bindings must never be a source. `editor.html` binds
+  // `data-findings="findings"`; resolving through the element itself found this
+  // component's `findings` getter and recursed until the stack overflowed.
+  return alpineScope(element.parentElement ?? element);
 }
 
 export function scopeAlias() {
