@@ -141,7 +141,7 @@ export function createStepApp(options = {}) {
     violationCount: 0,
     catalogRevision: 0,
     libraryRevision: 0,
-    fieldsBySlice: {},
+    fieldsBySlice: {}, stepGroups: {}, equipmentRig: "",
     fieldsById: {},
     relations: [],
     findings: [],

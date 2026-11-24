@@ -1,6 +1,7 @@
 // Step manifest: the authored workflow order. Each step declares its partial and
 // the artifact nodes / reference paths / collections it binds. No domain logic here.
 import { registry } from "./registry/index.js";
+import { equipmentFields, equipmentSections } from "./stepDisplay.js";
 
 export const steps = [
   {
@@ -17,16 +18,9 @@ export const steps = [
     title: "Equipment",
     subtitle: "Hardware constants from the batch's rig (fixed at creation)",
     partial: "./src/partials/step-card.html",
-    fields: [
-      "equipment.mash_tun_mass_kg",
-      "equipment.mash_tun_specific_heat",
-      "equipment.mash_heating_rate_c_per_min",
-      "equipment.min_lgr_l_per_kg",
-      "equipment.max_hlt_volume_l",
-      "equipment.nominal_boil_off_rate_l_per_hr",
-      "equipment.nominal_conversion_efficiency",
-      "equipment.shrinkage_pct",
-    ],
+    // Grouped on the card by vessel; `fields` stays flat for the guards.
+    sections: equipmentSections,
+    fields: equipmentFields,
   },
   {
     id: "style",

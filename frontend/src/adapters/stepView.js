@@ -9,6 +9,7 @@
 // mirror another card produced passes it explicitly at its own call site.
 
 import { createFindingFormatter, produce } from "../views/producer.js";
+import { stepFieldGroups } from "../views/stepDisplay.js";
 import { indexFields } from "../utils.js";
 import { requireObservability } from "../observability.js";
 import { dimensionOf } from "../views/registry/catalog.js";
@@ -75,6 +76,19 @@ export function createStepView({
       value = undefined;
     }
     return { value, dimension: dimensionOf(artifact, path) };
+  }
+
+  // The rig the equipment constants came from, shown above the grouped readouts.
+  // Identity fields resolve through the engine like any other path.
+  function rigLabel(engine) {
+    try {
+      const parts = [engine.resolve("equipment.name"), engine.resolve("equipment.description")]
+        .filter((part) => typeof part === "string" && part.trim() !== "");
+      return parts.length ? `Rig: ${parts.join(" — ")}` : "";
+    } catch (err) {
+      observability.reportError("stepView.rigLabel", err);
+      return "";
+    }
   }
 
   function readConstant(name) {
@@ -183,6 +197,10 @@ export function createStepView({
     app.fieldsBySlice = Object.fromEntries(
       steps.map((s) => [s.slice, all.filter((f) => f.slice === s.slice)])
     );
+    app.stepGroups = Object.fromEntries(
+      steps.map((step) => [step.slice, stepFieldGroups(step, app.fieldsBySlice[step.slice] ?? [])])
+    );
+    app.equipmentRig = rigLabel(engine);
     app.fieldsById = indexFields(all);
     app.relations = safe(() => engine.relationStates());
     app.findings = computeFindings(engine, app.relations);

@@ -452,27 +452,27 @@ _22 paths_
 | Path | Label | Kind | Dimension | Unit | Decimals | Options |
 |---|---|---|---|---|---|---|
 | `equipment.description` | Description | identity | — | — | — | — |
-| `equipment.grain_absorption_factor_l_per_kg` | Grain Absorption Factor L Per Kg | identity | mash_thickness | L_per_kg (L/kg) | 2 | — |
-| `equipment.hlt_coil_floor_l` | Hlt Coil Floor L | identity | volume | L | 1 | — |
-| `equipment.hlt_dead_space_l` | Hlt Dead Space L | identity | volume | L | 1 | — |
-| `equipment.hlt_transfer_loss_l` | Hlt Transfer Loss L | identity | volume | L | 1 | — |
+| `equipment.grain_absorption_factor_l_per_kg` | Grain absorption | identity | mash_thickness | L_per_kg (L/kg) | 2 | — |
+| `equipment.hlt_coil_floor_l` | HLT coil floor | identity | volume | L | 1 | — |
+| `equipment.hlt_dead_space_l` | HLT dead space | identity | volume | L | 1 | — |
+| `equipment.hlt_transfer_loss_l` | HLT transfer loss | identity | volume | L | 1 | — |
 | `equipment.id` | ID | identity | — | — | — | — |
 | `equipment.kettle_dead_space_l` | Kettle dead space | identity | volume | L | 1 | — |
-| `equipment.kettle_transfer_loss_l` | Kettle transfer | identity | volume | L | 1 | — |
+| `equipment.kettle_transfer_loss_l` | Kettle transfer loss | identity | volume | L | 1 | — |
 | `equipment.mash_dead_space_l` | Mash dead space | identity | volume | L | 1 | — |
 | `equipment.mash_heating_rate_c_per_min` | Mash ramp rate | identity | temperature_delta_per_time | dC_per_min (°C/min) | 2 | — |
 | `equipment.mash_transfer_loss_l` | Mash transfer loss | identity | volume | L | 1 | — |
 | `equipment.mash_tun_mass_kg` | Mash tun mass | identity | mass | kg | 1 | — |
 | `equipment.mash_tun_specific_heat` | Mash tun specific heat | identity | specific_heat | kcal_per_kg_degC (kcal/(kg·°C)) | 2 | — |
 | `equipment.max_hlt_volume_l` | Max HLT volume | identity | volume | L | 1 | — |
-| `equipment.max_kettle_volume_l` | Max Kettle Volume L | identity | volume | L | 1 | — |
-| `equipment.max_mash_tun_volume_l` | Max Mash Tun Volume L | identity | volume | L | 1 | — |
+| `equipment.max_kettle_volume_l` | Max kettle volume | identity | volume | L | 1 | — |
+| `equipment.max_mash_tun_volume_l` | Max mash tun volume | identity | volume | L | 1 | — |
 | `equipment.min_lgr_l_per_kg` | Minimum LGR | identity | mash_thickness | qt_per_lb (qt/lb) | 2 | — |
 | `equipment.name` | Name | identity | — | — | — | — |
 | `equipment.nominal_boil_off_rate_l_per_hr` | Nominal boil-off rate | identity | volume_per_time | L_per_hr (L/hr) | 1 | — |
 | `equipment.nominal_conversion_efficiency` | Nominal conversion efficiency | identity | percentage | pct (%) | 1 | — |
 | `equipment.shrinkage_pct` | Shrinkage | identity | percentage | pct (%) | 1 | — |
-| `equipment.trub_loss_l` | Trub | identity | volume | L | 1 | — |
+| `equipment.trub_loss_l` | Trub loss | identity | volume | L | 1 | — |
 
 ## Identity — style
 

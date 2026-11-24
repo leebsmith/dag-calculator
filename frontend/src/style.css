@@ -664,7 +664,8 @@ details[open] > summary::before {
 .modal-teleport-root,
 .modal-body-slot,
 .modal-overlay-slot,
-.form-field-control {
+.form-field-control,
+.step-field-group {
   display: contents;
 }
 
@@ -2411,6 +2412,32 @@ details[open] > summary::before {
 
 .group-header:first-child {
   margin-top: var(--space-0);
+}
+
+/* A sectioned step card lays its readouts out two per row. EXCEPTION: media
+   conditions cannot reference custom properties; 60rem is where two name/value
+   pairs fit side by side. */
+.step-field-group--grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4) var(--space-6);
+}
+
+@media (min-width: 60rem) {
+  .step-field-group--grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* In a paired row the unit belongs beside its label, not at the cell's far edge
+   where it reads as belonging to the neighbouring column. */
+.step-field-group--grid .field-label {
+  justify-content: flex-start;
+  gap: var(--space-2);
+}
+
+.step-field-group--grid .field-label > span:first-child {
+  margin-right: var(--space-0);
 }
 
 .group-header::after {

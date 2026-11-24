@@ -349,8 +349,32 @@
   "batch.yeast_id": {
     "label": "Yeast"
   },
+  "equipment.grain_absorption_factor_l_per_kg": {
+    "label": "Grain absorption"
+  },
+  "equipment.hlt_coil_floor_l": {
+    "label": "HLT coil floor"
+  },
+  "equipment.hlt_dead_space_l": {
+    "label": "HLT dead space"
+  },
+  "equipment.hlt_transfer_loss_l": {
+    "label": "HLT transfer loss"
+  },
+  "equipment.kettle_dead_space_l": {
+    "label": "Kettle dead space"
+  },
+  "equipment.kettle_transfer_loss_l": {
+    "label": "Kettle transfer loss"
+  },
+  "equipment.mash_dead_space_l": {
+    "label": "Mash dead space"
+  },
   "equipment.mash_heating_rate_c_per_min": {
     "label": "Mash ramp rate"
+  },
+  "equipment.mash_transfer_loss_l": {
+    "label": "Mash transfer loss"
   },
   "equipment.mash_tun_mass_kg": {
     "label": "Mash tun mass"
@@ -360,6 +384,12 @@
   },
   "equipment.max_hlt_volume_l": {
     "label": "Max HLT volume"
+  },
+  "equipment.max_kettle_volume_l": {
+    "label": "Max kettle volume"
+  },
+  "equipment.max_mash_tun_volume_l": {
+    "label": "Max mash tun volume"
   },
   "equipment.min_lgr_l_per_kg": {
     "label": "Minimum LGR",
@@ -373,6 +403,9 @@
   },
   "equipment.shrinkage_pct": {
     "label": "Shrinkage"
+  },
+  "equipment.trub_loss_l": {
+    "label": "Trub loss"
   },
   "fermenter.max_volume_l": {
     "label": "Maximum capacity"
