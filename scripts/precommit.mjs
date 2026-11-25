@@ -32,6 +32,12 @@ export const GENERATORS = [
     outputs: ["frontend/src/views/registry/generated.js"],
   },
   {
+    name: "surface manifest",
+    command: process.execPath,
+    args: ["scripts/emit-surface.mjs"],
+    outputs: ["frontend/src/views/registry/surface.generated.js"],
+  },
+  {
     name: "report bundle glossary",
     command: process.execPath,
     args: ["scripts/emit-report-bundle-glossary.mjs"],

@@ -3,7 +3,7 @@ title: Surface layer — impact, coverage, manifest, oracle
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: active (Stages 0–2 shipped; manifest, oracle and stage guard remain)
+status: active (Stages 0–3 shipped; oracle and stage guard remain)
 ---
 
 # Surface layer
@@ -233,6 +233,16 @@ family members are the artifact's members under that base at declaration time;
 the guard fails when the artifact gains or loses one. The water target namespace
 therefore includes its derived ratio sibling, not only the six ion roots.
 
+**A.5 — The manifest covers 335 paths, not 224 (2026-11-25).** Beyond the 133
+nodes and 91 boundary outputs, it carries every identity and selection schema
+field, because `describeField` already accepted those. `describeField` now reads
+the manifest and attaches the artifact node by `owner`, so callers are unchanged.
+
+**A.6 — The consumer guard skips the manifest (2026-11-25).** The generated
+manifest names every path by construction, so counting its strings as
+consumption made the twelve internal-boundary allowlist entries look stale. The
+guard reads every other registry file as before.
+
 ## Stage log
 
 - **2026-11-25 — Stage 0 closed.** D1–D4 accepted.
@@ -244,3 +254,10 @@ therefore includes its derived ratio sibling, not only the six ion roots.
   31 authored roots/choices, 13 families, and 12 internal boundary outputs.
   `tests/guards/surface-coverage.test.js` (4 tests: coverage, new-root mutation,
   family-drift mutation, resolution). `make check` and `make test` green.
+- **2026-11-25 — Stage 3 shipped.** `scripts/emit-surface.mjs` writes
+  `frontend/src/views/registry/surface.generated.js` (335 paths, 13 families) and
+  `describeField` reads it; the artifact node is attached by `owner`, so callers
+  are unchanged. `tests/guards/surface-manifest.test.js` (5 tests: emitter sync,
+  rule parity, node attachment, determinism, label coverage). Wired into
+  `make generate` and the pre-commit generators; the `projection.js` complexity
+  pin dropped 34 → 29. `make check` and `make test` green.

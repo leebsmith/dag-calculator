@@ -136,7 +136,7 @@ const GRAMMAR_COMPLEXITY = {
   "engine/ingredientPriors.js": 17,
   "engine/styleConformance.js": 18,
   "engine/validate.js": 21,
-  "views/producer/projection.js": 34,
+  "views/producer/projection.js": 29,
   "views/producer/scalar.js": 21,
   "views/producer/table.js": 17,
   "views/registry/catalog.js": 29,

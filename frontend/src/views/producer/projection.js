@@ -1,80 +1,26 @@
 // Static field projection: declares what fields exist for each step, their
 // controls, dimensions, options, and write targets. Pure and DOM-free.
 
-import { resolveReference } from "../../engine/paths.js";
 import { fromBase } from "../../engine/units.js";
 import { rendererFor } from "../renderers.js";
+import { surfaceManifest } from "../registry/surface.generated.js";
 import { UNIT_DIMENSIONS, UNIT_SYMBOLS, unitDecimals } from "../registry/units.js";
 import { unitSymbol } from "../../utils.js";
 
-function defaultControl(node) {
-  if (node.kind === "root" && node.dimension === "reference") return "selection-picker";
-  if (node.kind === "root") return "number";
-  if (node.kind === "choice") return "choice-select";
-  return "readout";
-}
-
 export function describeField(artifact, id) {
-  const node = artifact.nodes[id];
-  if (node) {
-    if (node.kind === "root" && node.dimension === "reference") {
-      return { kind: "reference", isInput: true, node, dimension: "reference", taxonomy: null };
-    }
-    if (node.kind === "derived") {
-      return {
-        kind: "derived",
-        isInput: false,
-        node,
-        dimension: node.output?.dimension ?? null,
-        taxonomy: node.output?.taxonomy ?? null,
-      };
-    }
-    return {
-      kind: node.kind,
-      isInput: node.kind === "root" || node.kind === "choice",
-      node,
-      dimension: node.dimension ?? null,
-      taxonomy: node.taxonomy ?? null,
-    };
-  }
-  const ref = resolveReference(artifact, id);
-  if (!ref) throw new Error(`Manifest references unknown node/field "${id}"`);
-  if (ref.kind === "identity") {
-    const schemaId = artifact.identity?.[ref.namespace];
-    const fieldSpec = artifact.primitive_schemas?.[schemaId]?.[ref.suffix[0]] ?? {};
-    return {
-      kind: "path",
-      isInput: false,
-      node: null,
-      dimension: fieldSpec.dimension ?? null,
-      taxonomy: fieldSpec.taxonomy ?? null,
-      identityNamespace: ref.namespace,
-    };
-  }
-  const owner = artifact.nodes[ref.nodeId];
-  const suffix = ref.suffix.join(".");
-  if (owner?.kind === "boundary") {
-    const spec = owner.outputs?.[suffix];
-    return {
-      kind: "path",
-      isInput: false,
-      node: owner,
-      dimension: spec?.dimension ?? null,
-      taxonomy: spec?.taxonomy ?? null,
-    };
-  }
-  if (owner?.kind === "selection") {
-    const fieldSpec = artifact.primitive_schemas[owner.output?.schema]?.[ref.suffix[0]] ?? {};
-    return {
-      kind: "path",
-      isInput: false,
-      node: owner,
-      dimension: fieldSpec.dimension ?? null,
-      taxonomy: fieldSpec.taxonomy ?? null,
-      selectionRef: owner.ref,
-    };
-  }
-  throw new Error(`Unsupported reference "${id}"`);
+  const entry = surfaceManifest.paths[id];
+  if (!entry) throw new Error(`Manifest references unknown node/field "${id}"`);
+  const field = {
+    kind: entry.kind,
+    isInput: entry.isInput,
+    control: entry.control,
+    node: entry.owner ? artifact.nodes[entry.owner] : null,
+    dimension: entry.dimension ?? null,
+    taxonomy: entry.taxonomy ?? null,
+  };
+  if (entry.identityNamespace) field.identityNamespace = entry.identityNamespace;
+  if (entry.selectionRef) field.selectionRef = entry.selectionRef;
+  return field;
 }
 
 function dimensionDefaultUnit(dimensionId) {
@@ -179,7 +125,7 @@ function fieldActivation(entry, info, meta, ctx) {
   }
   const role = (typeof entry === "object" && entry.role) || (info.isInput ? "input" : "readout");
   let control = (typeof entry === "object" && entry.control) || meta.control;
-  if (!control) control = info.isInput ? defaultControl(info.node) : "readout";
+  if (!control) control = info.control;
   return {
     active,
     role,

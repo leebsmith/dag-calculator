@@ -36,6 +36,8 @@ function collectStrings(value, out = new Set()) {
 function registrySourceStrings() {
   const out = new Set();
   for (const file of walk("frontend/src/views/registry", [".js"]).map(rel)) {
+    // The surface manifest lists every path by construction; it is not a consumer.
+    if (file.endsWith("surface.generated.js")) continue;
     for (const match of read(file).matchAll(/"([^"]*)"/g)) { if (match[1]) out.add(match[1]); }
   }
   return out;

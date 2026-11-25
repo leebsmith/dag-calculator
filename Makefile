@@ -236,6 +236,7 @@ generate:
 	node scripts/emit-artifact-inventory.mjs
 	node scripts/emit-ownership-index.mjs
 	node scripts/emit-registry.mjs
+	node scripts/emit-surface.mjs
 	node scripts/emit-report-bundle-glossary.mjs
 	node scripts/emit-report-sections.mjs
 	node scripts/emit-sources-manifest.mjs

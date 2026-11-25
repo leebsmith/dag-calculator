@@ -219,5 +219,41 @@
       "path": "solver.water.added_mineral_tds_ppm",
       "reason": "solver diagnostic; no card readout"
     }
-  ]
+  ],
+  "card_labelled": {
+    "batch.scale_pin": "style card pin selector",
+    "batch.target_og": "style card pin readout",
+    "batch.target_fg": "style card pin readout",
+    "mash.preset_id": "mash card preset selector",
+    "batch.yeast": "yeast picker selection",
+    "water.target_profile": "water card target preset selection",
+    "water.pinned_ions": "water card collection",
+    "solver.batch": "solver node; read through its outputs",
+    "solver.water": "solver node; read through its outputs",
+    "solver.hops": "solver node; read through its outputs",
+    "batch.boil_ibu_share": "hop card allocation readout",
+    "batch.whirlpool_ibu_share": "hop card allocation readout",
+    "batch.whirlpool_hot_ibu_share": "hop card allocation readout",
+    "batch.whirlpool_cool_ibu_share": "hop card allocation readout",
+    "batch.hop_boil_mass_share": "hop card allocation readout",
+    "batch.hop_hot_mass_share": "hop card allocation readout",
+    "batch.hop_cool_mass_share": "hop card allocation readout",
+    "batch.hop_realized_ibu": "hop card readout",
+    "batch.total_water_used": "volume ledger row",
+    "batch.surplus_sparge_capacity": "volume ledger row",
+    "batch.shrinkage_volume_l": "volume ledger row",
+    "batch.delta_v_evap": "volume ledger row",
+    "batch.late_addition_volume_l": "report-only readout",
+    "mash.heating_rate_c_per_min": "mash card schedule row",
+    "mash.enabled_min_temp_c": "mash card rest range",
+    "mash.enabled_max_temp_c": "mash card rest range",
+    "mash.ramp_time_min": "mash card schedule row",
+    "mash.sparge_phase_volume_l": "volume ledger row",
+    "water.route": "water card routing readout",
+    "batch.sugar_parts_total": "internal arithmetic; never displayed",
+    "grist.mcu": "internal arithmetic; never displayed",
+    "batch.s_late_add_request": "boundary wire input; never displayed",
+    "batch.sugar_share_request": "boundary wire input; never displayed",
+    "batch.sugar_fermentability_effective": "boundary wire input; never displayed"
+  }
 }
