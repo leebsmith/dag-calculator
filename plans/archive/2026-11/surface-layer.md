@@ -8,7 +8,7 @@ status: shipped (Stages 0–5; make verify green)
 
 # Surface layer
 
-> **See also:** [`surface-audit.md`](surface-audit.md) — the evidence this plan
+> **See also:** [`surface-audit.md`](../../surface-audit.md) — the evidence this plan
 > acts on. The audit's numbering (F1–F12) is referenced below.
 
 ## Goal

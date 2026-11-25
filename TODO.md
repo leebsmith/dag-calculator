@@ -32,6 +32,15 @@ tracks only what is outstanding.
 
 ## Later
 
+* **Delta visibility in the current UI (deferred, parked 2026-11-25)** — showing
+  which readouts moved after an edit and where they moved. Scoped against the
+  surface layer and deliberately not built: it is a feature with its own design
+  surface (settle timing across the debounced solve, display-precision diffing,
+  cause vs effect markers, and an elsewhere rail), and the one-home-per-value card
+  layout is the wrong place to design it. **Revisit when** the new UI exists and
+  can be designed around the deltas; the impact primitive is already validated
+  (`frontend/src/engine/impact.js`).
+
 * **Recipe language (TOML, hand-authored)** — a source a person writes and the app
   reads deterministically: ratios where the app authors parts, mass where it authors
   mass, targets plus a required scale pin, registry names resolved with a hard fail.
