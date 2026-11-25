@@ -3,7 +3,7 @@ title: Surface layer — impact, coverage, manifest, oracle
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: proposed
+status: active (Stage 0 accepted; Stage 1 shipped)
 ---
 
 # Surface layer
@@ -71,10 +71,13 @@ Record, in this file, before Stage 1:
   (`scripts/emit-surface.mjs` → a generated file), byte-guarded like
   `generated.js`; `describeField` reads it instead of re-deriving.
 
+**Status:** D1–D4 accepted 2026-11-25.
+
 **Exit criteria**
 
 - D1–D4 present in this file with `status: accepted`.
-- Every one of the 48 roots/choices has one of the four classes.
+- The four classes cover every one of the 48 roots/choices without a fifth class;
+  the assignments themselves land in Stage 2.
 - `plans/surface-audit.md` §6 table agreed without additions.
 
 ## Stage 1 — Impact query (engine only)
@@ -210,4 +213,25 @@ to the editorial step order. Report drift; never reorder.
 
 ## Amendments
 
-(none)
+**A.1 — Stage 1 ships the raw diff (2026-11-25).** `diffValuations` returns
+`{ path, before, after }`; display formatting stays in the producer until a
+consumer exists, per locked decision 6. The subset invariant does not need it.
+
+**A.2 — Impact is a module, not a calculator method (2026-11-25).** `dag.js` is at
+its `max-lines` ratchet, so the API is `createImpact(artifact, { adjacency,
+dependents })`, exported from the engine's index. A consumer reads the graph off
+the calculator and passes it.
+
+**A.3 — `dependents` is not the inverse of `adjacency` (2026-11-25).** Collection
+computed fields add read-side dependent edges with no matching adjacency edge
+(`batch.grain_moisture_fraction → grist.major_malts`). Impact relies on this; the
+stage guard (Stage 5) must derive from adjacency plus collection field inputs,
+not from `dependents`.
+
+## Stage log
+
+- **2026-11-25 — Stage 0 closed.** D1–D4 accepted.
+- **2026-11-25 — Stage 1 shipped.** `frontend/src/engine/impact.js` and
+  `tests/frontend/impact.test.js` (10 tests: edges, fan-out, isolation, identity
+  attribution, identity inputs, purity, unknown source, subset invariant, diff).
+  `make check` and `make test` green. Diff formatting deferred by A.1.
