@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "roots": {
+    "inherited": {
+      "batch.target_abv": "default reads style.abv_min",
+      "batch.target_og": "default reads style.og_min",
+      "batch.target_fg": "default reads style.fg_min",
+      "batch.target_ibu": "default reads style.ibu_min",
+      "batch.target_srm": "default reads style.srm_min",
+      "batch.v_ferm": "default reads fermenter.nominal_volume_l",
+      "batch.boil_off_rate_l_per_hr": "default reads equipment.nominal_boil_off_rate_l_per_hr",
+      "batch.conversion_efficiency": "default reads equipment.nominal_conversion_efficiency",
+      "batch.hlt_starting_volume_l": "default reads equipment.max_hlt_volume_l",
+      "water.target.calcium_ca": "default reads water.target_profile.calcium_ca",
+      "water.target.magnesium_mg": "default reads water.target_profile.magnesium_mg",
+      "water.target.sodium_na": "default reads water.target_profile.sodium_na",
+      "water.target.sulfate_so4": "default reads water.target_profile.sulfate_so4",
+      "water.target.chloride_cl": "default reads water.target_profile.chloride_cl",
+      "water.target.alkalinity_as_caco3": "default reads water.target_profile.alkalinity_as_caco3",
+      "water.calcium_floor_ppm": "default reads water.target_profile.calcium_floor_ppm",
+      "water.calcium_ceiling_ppm": "default reads water.target_profile.calcium_ceiling_ppm"
+    },
+    "authored": {
+      "batch.scale_pin": "taxonomy choice",
+      "batch.whirlpool_ibu_fraction": "literal default",
+      "batch.hop_allocation_mode": "taxonomy choice",
+      "batch.bract_floor_ratio": "literal default",
+      "batch.whirlpool_ambient_temp_c": "literal default",
+      "batch.whirlpool_cooling_time_constant_min": "literal default",
+      "batch.whirlpool_knockout_min": "literal default",
+      "batch.whirlpool_start_temp_c": "literal default",
+      "batch.cooling_curve_id": "literal default",
+      "batch.boil_time_min": "default constant constants.default_boil_time_min",
+      "batch.topology": "taxonomy choice",
+      "batch.mash_thickness_l_per_kg": "default constant constants.default_mash_thickness_l_per_kg",
+      "batch.runoff_ratio": "default constant constants.default_runoff_ratio",
+      "batch.sparge_water_temp_c": "default constant constants.default_sparge_water_temp_c",
+      "batch.yeast_id": "literal default",
+      "batch.attenuation_derate_points": "default constant constants.default_attenuation_derate_points",
+      "batch.grain_moisture_fraction": "default constant constants.default_grain_moisture_fraction",
+      "batch.late_addition_intent": "taxonomy choice",
+      "batch.sugar_extract_share": "literal default",
+      "batch.fermentation": "taxonomy choice",
+      "water.target_profile_id": "literal default",
+      "water.target_mash_ph": "default constant constants.default_target_mash_ph",
+      "water.salt_distribution": "taxonomy choice",
+      "water.acid_medium": "taxonomy choice",
+      "water.gypsum_form": "taxonomy choice",
+      "water.cacl2_form": "taxonomy choice",
+      "water.preferred_alkaline_agent": "taxonomy choice",
+      "mash.grain_temp_c": "default constant constants.default_grain_temp_c",
+      "mash.tun_initial_temp_c": "default constant constants.default_grain_temp_c",
+      "batch.checklist_level": "taxonomy choice",
+      "mash.preset_id": "taxonomy choice"
+    }
+  },
+  "families": [
+    {
+      "base": "equipment",
+      "members": "schema",
+      "reason": "immutable identity namespace (equipment profile)"
+    },
+    {
+      "base": "fermenter",
+      "members": "schema",
+      "reason": "immutable identity namespace (fermenter profile)"
+    },
+    {
+      "base": "style",
+      "members": "schema",
+      "reason": "immutable identity namespace (style envelope)"
+    },
+    {
+      "base": "water.source",
+      "members": "schema",
+      "reason": "immutable identity namespace (source water report)"
+    },
+    {
+      "base": "batch.yeast",
+      "members": "schema",
+      "reason": "selection component schema (yeast strain)"
+    },
+    {
+      "base": "water.target_profile",
+      "members": "schema",
+      "reason": "selection component schema (water target preset)"
+    },
+    {
+      "base": "water.target",
+      "members": [
+        "alkalinity_as_caco3",
+        "calcium_ca",
+        "chloride_cl",
+        "magnesium_mg",
+        "sodium_na",
+        "sulfate_chloride_ratio",
+        "sulfate_so4"
+      ],
+      "reason": "constructed roots set by the ion pins"
+    },
+    {
+      "base": "water.kettle_blend",
+      "members": [
+        "alkalinity_as_caco3",
+        "calcium_ca",
+        "chloride_cl",
+        "magnesium_mg",
+        "sodium_na",
+        "sulfate_chloride_ratio",
+        "sulfate_so4"
+      ],
+      "reason": "constructed derived nodes the water card reads by ion"
+    },
+    {
+      "base": "water.mash_adjustment",
+      "members": [
+        "alkalinity_as_caco3",
+        "calcium_ca",
+        "chloride_cl",
+        "magnesium_mg",
+        "sodium_na",
+        "sulfate_so4"
+      ],
+      "reason": "report-only net ion change; the UI computes its own delta"
+    },
+    {
+      "base": "solver.batch.hlt",
+      "members": [
+        "v_hlt_after_strike",
+        "v_hlt_debt",
+        "v_hlt_required",
+        "v_hlt_target",
+        "v_hlt_top_up",
+        "v_sparge_deliverable"
+      ],
+      "reason": "boundary output group the report prints and the water request reads"
+    },
+    {
+      "base": "solver.water.post_dose_mash_ions",
+      "members": [
+        "alkalinity_as_caco3",
+        "calcium_ca",
+        "chloride_cl",
+        "magnesium_mg",
+        "sodium_na",
+        "sulfate_so4"
+      ],
+      "reason": "boundary output group the water card reads by ion"
+    },
+    {
+      "base": "solver.water.post_dose_hlt_ions",
+      "members": [
+        "alkalinity_as_caco3",
+        "calcium_ca",
+        "chloride_cl",
+        "magnesium_mg",
+        "sodium_na",
+        "sulfate_so4"
+      ],
+      "reason": "boundary output group with no card readout"
+    },
+    {
+      "base": "solver.water.grist_buckets_kg",
+      "members": [
+        "ACID",
+        "BASE",
+        "CRYSTAL",
+        "ROASTED"
+      ],
+      "reason": "boundary diagnostic buckets with no card readout"
+    }
+  ],
+  "internal": [
+    {
+      "path": "solver.water.grist_buckets_kg.ACID",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.grist_buckets_kg.BASE",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.grist_buckets_kg.CRYSTAL",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.grist_buckets_kg.ROASTED",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.post_dose_hlt_ions.alkalinity_as_caco3",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.post_dose_hlt_ions.calcium_ca",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.post_dose_hlt_ions.chloride_cl",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.post_dose_hlt_ions.magnesium_mg",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.post_dose_hlt_ions.sodium_na",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.post_dose_hlt_ions.sulfate_so4",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.total_added_salt_mass_g",
+      "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.water.added_mineral_tds_ppm",
+      "reason": "solver diagnostic; no card readout"
+    }
+  ]
+}

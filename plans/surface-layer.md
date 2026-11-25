@@ -3,7 +3,7 @@ title: Surface layer — impact, coverage, manifest, oracle
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: active (Stage 0 accepted; Stage 1 shipped)
+status: active (Stages 0–2 shipped; manifest, oracle and stage guard remain)
 ---
 
 # Surface layer
@@ -228,6 +228,11 @@ computed fields add read-side dependent edges with no matching adjacency edge
 stage guard (Stage 5) must derive from adjacency plus collection field inputs,
 not from `dependents`.
 
+**A.4 — A family is a namespace snapshot, drift-checked (2026-11-25).** Explicit
+family members are the artifact's members under that base at declaration time;
+the guard fails when the artifact gains or loses one. The water target namespace
+therefore includes its derived ratio sibling, not only the six ion roots.
+
 ## Stage log
 
 - **2026-11-25 — Stage 0 closed.** D1–D4 accepted.
@@ -235,3 +240,7 @@ not from `dependents`.
   `tests/frontend/impact.test.js` (10 tests: edges, fan-out, isolation, identity
   attribution, identity inputs, purity, unknown source, subset invariant, diff).
   `make check` and `make test` green. Diff formatting deferred by A.1.
+- **2026-11-25 — Stage 2 shipped.** `data/surface.json` declares 17 inherited and
+  31 authored roots/choices, 13 families, and 12 internal boundary outputs.
+  `tests/guards/surface-coverage.test.js` (4 tests: coverage, new-root mutation,
+  family-drift mutation, resolution). `make check` and `make test` green.
