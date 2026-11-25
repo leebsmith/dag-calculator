@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "accepted": {
+    "batch.attenuation_above_cap@yeast": "attenuation preview: the yeast card shows the cap before the grist is authored",
+    "batch.sugar_extract_total@yeast": "sugar-extract preview before the grist is authored",
+    "grist.sugars_mass@fermentables": "sugar-mass preview; the solved mass arrives with the batch step",
+    "grist.total_mass@fermentables": "total-mass preview; the solved mass arrives with the batch step"
+  }
+}

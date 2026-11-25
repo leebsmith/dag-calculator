@@ -3,7 +3,7 @@ title: Surface layer — impact, coverage, manifest, oracle
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: active (Stages 0–4 shipped; stage guard remains)
+status: shipped (Stages 0–5; make verify green)
 ---
 
 # Surface layer
@@ -255,6 +255,13 @@ declared `internal`.
 declared named report table; the five named tables live in `data/report-parity.json`
 with a reason, and a stale entry fails.
 
+**A.9 — The stage guard checks prerequisites, not grouping (2026-11-25).** The
+invariant is: a readout downstream of a boundary may not appear before the step
+that owns that boundary's latest authored input. Identity fields count when a
+step owns them. Four previews are accepted with a reason in
+`data/stage-order.json`; hops and water are asserted to be siblings, never
+ordered against each other.
+
 ## Stage log
 
 - **2026-11-25 — Stage 0 closed.** D1–D4 accepted.
@@ -280,3 +287,8 @@ with a reason, and a stale entry fails.
   domain violation has a disposition. `data/report-parity.json` holds the one
   accepted gap and the five named-report-table reasons. `make check` and
   `make test` green.
+- **2026-11-25 — Stage 5 shipped; plan complete.** `tests/guards/stage-order.test.js`
+  (4 tests) derives each boundary's latest authored input and fails when a
+  downstream readout appears before it, with four accepted previews and a live
+  allowlist in `data/stage-order.json`. The boundary spine is asserted: batch,
+  then the parallel hops and water solves. `make verify` green.
