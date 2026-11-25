@@ -3,7 +3,7 @@ title: Surface layer — impact, coverage, manifest, oracle
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: active (Stages 0–3 shipped; oracle and stage guard remain)
+status: active (Stages 0–4 shipped; stage guard remains)
 ---
 
 # Surface layer
@@ -243,6 +243,18 @@ manifest names every path by construction, so counting its strings as
 consumption made the twelve internal-boundary allowlist entries look stale. The
 guard reads every other registry file as before.
 
+**A.7 — Reachability is declared surface, not manifest membership (2026-11-25).**
+Because the manifest lists all 335 paths, using it as the oracle's reachable set
+would make the check vacuous. The oracle's reachable set is steps + registry
+strings (excluding the generated manifest) + family members, minus the paths
+declared `internal`.
+
+**A.8 — Printed tables are checked by identity, not by column (2026-11-25).**
+`formatted_tables` carries the producer's display columns (`amount`, `ppg`,
+`color`, …), not schema fields. The oracle asserts each key is a collection or a
+declared named report table; the five named tables live in `data/report-parity.json`
+with a reason, and a stale entry fails.
+
 ## Stage log
 
 - **2026-11-25 — Stage 0 closed.** D1–D4 accepted.
@@ -261,3 +273,10 @@ guard reads every other registry file as before.
   rule parity, node attachment, determinism, label coverage). Wired into
   `make generate` and the pre-commit generators; the `projection.js` complexity
   pin dropped 34 → 29. `make check` and `make test` green.
+- **2026-11-25 — Stage 4 shipped.** `tests/guards/report-parity.test.js` (7 tests)
+  checks the committed bundle: every printed value is reachable or allowlisted,
+  the allowlist has no stale entry, printed tables name a collection or a declared
+  report table, summaries name a collection or `overall`, and every relation and
+  domain violation has a disposition. `data/report-parity.json` holds the one
+  accepted gap and the five named-report-table reasons. `make check` and
+  `make test` green.

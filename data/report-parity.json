@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "gaps": {
+    "batch.late_addition_volume_l": "report-only sugar-volume diagnostic; the flameout figure includes it and no card prints it"
+  },
+  "report_tables": {
+    "report.hop_strategy": "named report table carrying the raw markdown source",
+    "report.discussion": "named report table carrying the raw markdown source",
+    "report.fermentation_strategy": "named report table carrying the raw markdown source",
+    "report.grain_purchases": "named report table aggregating the buy list",
+    "report.hop_purchases": "named report table aggregating the hop buy list"
+  }
+}
