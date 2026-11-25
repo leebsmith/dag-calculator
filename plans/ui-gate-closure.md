@@ -3,7 +3,7 @@ title: UI gate closure — finish everything that is not design
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: proposed
+status: proposed (paused 2026-11-25 before Stage A; nothing started)
 ---
 
 # UI gate closure
