@@ -18,6 +18,11 @@ tracks only what is outstanding.
    keyboard traversal with batch actions; the editor's "Imported from…" panel
    landed (`plans/recipe-import.md` J.1/J.3).
 
+4. **Surface layer (enabling)** — the impact query, surface declarations and root
+   coverage, the manifest emitter, the report oracle, and the stage guard. Scoped
+   with per-stage exit criteria in `plans/surface-layer.md`; no user-visible
+   change.
+
 ## Before 1st printed recipe
 
 * Brew checklist (the staged-notes replacement) — Phase 1 shipped: the
