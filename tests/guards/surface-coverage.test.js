@@ -105,10 +105,14 @@ function failures(surface, source) {
   }
 
   const internal = new Set();
+  const cardLabelled = new Set(Object.keys(surface.card_labelled ?? {}));
   for (const entry of surface.internal ?? []) {
     if (!entry.reason) found.push(`internal "${entry.path}" has no reason`);
     if (!resolves(source, entry.path)) found.push(`internal "${entry.path}" does not resolve`);
     if (internal.has(entry.path)) found.push(`internal "${entry.path}" is declared twice`);
+    if (cardLabelled.has(entry.path)) {
+      found.push(`internal "${entry.path}" is also card-labelled`);
+    }
     internal.add(entry.path);
   }
 

@@ -251,3 +251,20 @@ same longest-prefix rule the DOT generator uses (node, then boundary output, the
 identity namespace; `constants.`/`functions.`/`row.` skipped). "Strict" means an
 exact path match; "family" means a declared shorter base. Both are reported because
 the difference is the finding (F7).
+
+## Addendum (2026-11-25)
+
+Recorded after the surface layer shipped; the body above is left as written.
+
+- **F6 withdrawn.** The six `water.mash_adjustment.*` nodes are final-minus-source;
+  the water card's `ionDelta` is post-dose-minus-target. Different quantities, so
+  the UI is not duplicating the node. They stay report-only by design.
+- **§B reduced to one accepted gap.** Six of the nine are family members read by
+  the water card; `equipment.name` and `style.name` are identity families. Only
+  `batch.late_addition_volume_l` is unreachable, and it is allowlisted with a
+  reason in `data/report-parity.json`.
+- **F12 closed.** The arithmetic-only nodes are now declared under `internal` in
+  `data/surface.json`, so no node is unsurfaced by accident.
+- **The layer is enforced.** `data/surface.json` holds the declarations, and four
+  guards hold them: coverage and mutation, manifest parity, the report oracle, and
+  the stage order.

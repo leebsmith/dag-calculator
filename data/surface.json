@@ -218,6 +218,54 @@
     {
       "path": "solver.water.added_mineral_tds_ppm",
       "reason": "solver diagnostic; no card readout"
+    },
+    {
+      "path": "solver.batch",
+      "reason": "solver node; the UI reads its outputs, never the node value"
+    },
+    {
+      "path": "solver.water",
+      "reason": "solver node; the UI reads its outputs, never the node value"
+    },
+    {
+      "path": "solver.hops",
+      "reason": "solver node; the UI reads its outputs, never the node value"
+    },
+    {
+      "path": "batch.late_addition_volume_l",
+      "reason": "report-only sugar-volume diagnostic; no card prints it"
+    },
+    {
+      "path": "mash.heating_rate_c_per_min",
+      "reason": "mash scheduling input; the card prints the resulting ramp, not the rate"
+    },
+    {
+      "path": "mash.enabled_min_temp_c",
+      "reason": "mash rest-range input; the card prints the resolved rests"
+    },
+    {
+      "path": "mash.enabled_max_temp_c",
+      "reason": "mash rest-range input; the card prints the resolved rests"
+    },
+    {
+      "path": "batch.sugar_parts_total",
+      "reason": "internal sugar arithmetic; never displayed"
+    },
+    {
+      "path": "grist.mcu",
+      "reason": "internal colour arithmetic; never displayed"
+    },
+    {
+      "path": "batch.s_late_add_request",
+      "reason": "boundary wire input; never displayed"
+    },
+    {
+      "path": "batch.sugar_share_request",
+      "reason": "boundary wire input; never displayed"
+    },
+    {
+      "path": "batch.sugar_fermentability_effective",
+      "reason": "boundary wire input; never displayed"
     }
   ],
   "card_labelled": {
@@ -228,9 +276,6 @@
     "batch.yeast": "yeast picker selection",
     "water.target_profile": "water card target preset selection",
     "water.pinned_ions": "water card collection",
-    "solver.batch": "solver node; read through its outputs",
-    "solver.water": "solver node; read through its outputs",
-    "solver.hops": "solver node; read through its outputs",
     "batch.boil_ibu_share": "hop card allocation readout",
     "batch.whirlpool_ibu_share": "hop card allocation readout",
     "batch.whirlpool_hot_ibu_share": "hop card allocation readout",
@@ -243,17 +288,8 @@
     "batch.surplus_sparge_capacity": "volume ledger row",
     "batch.shrinkage_volume_l": "volume ledger row",
     "batch.delta_v_evap": "volume ledger row",
-    "batch.late_addition_volume_l": "report-only readout",
-    "mash.heating_rate_c_per_min": "mash card schedule row",
-    "mash.enabled_min_temp_c": "mash card rest range",
-    "mash.enabled_max_temp_c": "mash card rest range",
     "mash.ramp_time_min": "mash card schedule row",
     "mash.sparge_phase_volume_l": "volume ledger row",
-    "water.route": "water card routing readout",
-    "batch.sugar_parts_total": "internal arithmetic; never displayed",
-    "grist.mcu": "internal arithmetic; never displayed",
-    "batch.s_late_add_request": "boundary wire input; never displayed",
-    "batch.sugar_share_request": "boundary wire input; never displayed",
-    "batch.sugar_fermentability_effective": "boundary wire input; never displayed"
+    "water.route": "water card routing readout"
   }
 }

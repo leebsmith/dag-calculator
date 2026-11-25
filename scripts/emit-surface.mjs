@@ -62,10 +62,11 @@ function rootFailures(artifact, surface) {
 
 function labelFailures(artifact, labels, surface) {
   const bases = (surface.families ?? []).map((family) => family.base);
+  const internal = new Set((surface.internal ?? []).map((entry) => entry.path));
   const failures = [];
   for (const id of Object.keys(artifact.nodes)) {
     const inFamily = bases.some((base) => id.startsWith(`${base}.`));
-    if (labels[id] || surface.card_labelled?.[id] || inFamily) continue;
+    if (labels[id] || surface.card_labelled?.[id] || inFamily || internal.has(id)) continue;
     failures.push(`unlabelled node "${id}"`);
   }
   return failures;

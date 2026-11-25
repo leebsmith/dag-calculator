@@ -131,11 +131,12 @@ test("the descriptor is deterministic", () => {
   assert.equal(surfaceManifest.schema_version, ARTIFACT.schema_version);
 });
 
-test("every node is labelled, card-labelled or inside a declared family", () => {
+test("every node is labelled, card-labelled, internal or inside a declared family", () => {
   const bases = SURFACE.families.map((family) => family.base);
+  const internal = new Set(SURFACE.internal.map((entry) => entry.path));
   const uncovered = Object.keys(ARTIFACT.nodes).filter((id) => {
     const inFamily = bases.some((base) => id.startsWith(`${base}.`));
-    return !LABELS[id] && !SURFACE.card_labelled?.[id] && !inFamily;
+    return !LABELS[id] && !SURFACE.card_labelled?.[id] && !inFamily && !internal.has(id);
   });
 
   assert.deepEqual(uncovered, []);
