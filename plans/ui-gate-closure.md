@@ -3,7 +3,7 @@ title: UI gate closure — finish everything that is not design
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: proposed (paused 2026-11-25 before Stage A; nothing started)
+status: active (Stage A shipped; oracle, renderer and ledger remain)
 ---
 
 # UI gate closure
@@ -151,3 +151,20 @@ A and B can run in parallel; C needs both.
 
 `make verify` green, all ten gate items checked in `docs/ui-contract.md`, and
 `docs/ui-readiness.md` naming design as the only open gate.
+
+## Amendments
+
+**A.1 — Stage A carries the wire appendix (2026-11-25).** Gate item 6 requires the
+boundary wire to be specified. The contract document therefore closes with a wire
+appendix (URLs, request keys, host transforms, response flattening) marked
+*specified, not generated*; no code generation is in scope.
+
+## Stage log
+
+- **2026-11-25 — Stage A shipped.** `docs/ui-contract.md` covers state, authoring,
+  solve and failure, identity and causality, and the wire appendix.
+  `data/authoring.json` records 60 actions (16 set, 17 override, 12 choose, 5
+  pick, 10 edit-table) and 5 pre-engine transforms.
+  `tests/guards/authoring-contract.test.js` (4 tests) enforces coverage,
+  action/constraint consistency, transform ownership, and mutation failure.
+  `make check` and `make test` green.

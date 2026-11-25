@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "transforms": {
+    "hamilton": {
+      "owner": "frontend/src/views/hamilton.js",
+      "when": "before the engine reads an authored parts pool: parts become pct and w_i"
+    },
+    "sugar-share": {
+      "owner": "frontend/src/views/producer/sugarAllocation.js",
+      "when": "before the engine reads the sugar budget: parts become a share of extract"
+    },
+    "prior-resolution": {
+      "owner": "frontend/src/engine/ingredientPriors.js",
+      "when": "on ingest: a missing yield or fermentability figure takes the category prior"
+    },
+    "mash-preset": {
+      "owner": "frontend/src/views/mash.js",
+      "when": "when a preset is applied: rest rows are replaced as one authored action"
+    },
+    "scale-pin": {
+      "owner": "frontend/src/views/styleTargetsLogic.js",
+      "when": "before a pin edit commits: the target is clamped to the feasible ray"
+    }
+  },
+  "actions": {
+    "batch.attenuation_derate_points": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0 && $value <= 0.25"
+    },
+    "batch.boil_hops": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [
+        "hamilton"
+      ],
+      "note": "rows conform to boil_hop_row"
+    },
+    "batch.boil_off_rate_l_per_hr": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value > 0"
+    },
+    "batch.boil_time_min": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value > 0"
+    },
+    "batch.bract_floor_ratio": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0"
+    },
+    "batch.brew_checklist": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [],
+      "note": "rows conform to brew_checklist_step"
+    },
+    "batch.checklist_level": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the checklist_level taxonomy"
+    },
+    "batch.conversion_efficiency": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value > 0 && $value <= 1"
+    },
+    "batch.cooling_curve_id": {
+      "action": "pick",
+      "constraint": "component",
+      "transform": [],
+      "note": "selects a component from the reference catalogue"
+    },
+    "batch.dry_hops": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [
+        "prior-resolution"
+      ],
+      "note": "rows conform to dry_hop_row"
+    },
+    "batch.fermentation": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the fermentation taxonomy"
+    },
+    "batch.grain_moisture_fraction": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0 && $value <= 1"
+    },
+    "batch.hlt_starting_volume_l": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "batch.hop_allocation_mode": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the hop_allocation_mode taxonomy"
+    },
+    "batch.late_addition_intent": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the late_addition_intent taxonomy"
+    },
+    "batch.mash_thickness_l_per_kg": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value > 0"
+    },
+    "batch.process_notes": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [],
+      "note": "rows conform to process_note_row"
+    },
+    "batch.runoff_ratio": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value > 0"
+    },
+    "batch.scale_pin": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [
+        "scale-pin"
+      ],
+      "note": "one of the scale_pin taxonomy"
+    },
+    "batch.sparge_water_temp_c": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0 && $value <= 100"
+    },
+    "batch.sugar_extract_share": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0 && $value <= 0.95"
+    },
+    "batch.sugars": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [
+        "hamilton",
+        "sugar-share",
+        "prior-resolution"
+      ],
+      "note": "rows conform to sugar_row"
+    },
+    "batch.target_abv": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value > 0"
+    },
+    "batch.target_fg": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value > 0"
+    },
+    "batch.target_ibu": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "batch.target_og": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value > 0"
+    },
+    "batch.target_srm": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "batch.topology": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the topology taxonomy"
+    },
+    "batch.v_ferm": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value > 0"
+    },
+    "batch.whirlpool_ambient_temp_c": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= -20 && $value <= 50"
+    },
+    "batch.whirlpool_cooling_time_constant_min": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value > 0"
+    },
+    "batch.whirlpool_hops": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [
+        "hamilton"
+      ],
+      "note": "rows conform to whirlpool_hop_row"
+    },
+    "batch.whirlpool_ibu_fraction": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0 && $value <= 1"
+    },
+    "batch.whirlpool_knockout_min": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0"
+    },
+    "batch.whirlpool_start_temp_c": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0 && $value <= 100"
+    },
+    "batch.yeast": {
+      "action": "pick",
+      "constraint": "component",
+      "transform": [],
+      "note": "read-only snapshot; the pick is carried by batch.yeast_id"
+    },
+    "batch.yeast_id": {
+      "action": "pick",
+      "constraint": "component",
+      "transform": [],
+      "note": "selects a component from the reference catalogue"
+    },
+    "grist.major_malts": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [
+        "hamilton",
+        "prior-resolution"
+      ],
+      "note": "rows conform to grist_row"
+    },
+    "grist.trace_malts": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [
+        "prior-resolution"
+      ],
+      "note": "rows conform to trace_malt_row"
+    },
+    "mash.grain_temp_c": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0"
+    },
+    "mash.preset_id": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [
+        "mash-preset"
+      ],
+      "note": "one of the mash_preset taxonomy"
+    },
+    "mash.rests": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [],
+      "note": "rows conform to mash_rest"
+    },
+    "mash.tun_initial_temp_c": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 0"
+    },
+    "water.acid_medium": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the acid_medium taxonomy"
+    },
+    "water.cacl2_form": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the cacl2_form taxonomy"
+    },
+    "water.calcium_ceiling_ppm": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "water.calcium_floor_ppm": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "water.gypsum_form": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the gypsum_form taxonomy"
+    },
+    "water.pinned_ions": {
+      "action": "edit-table",
+      "constraint": "schema",
+      "transform": [],
+      "note": "rows conform to water_pinned_ion"
+    },
+    "water.preferred_alkaline_agent": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the alkaline_agent taxonomy"
+    },
+    "water.salt_distribution": {
+      "action": "choose",
+      "constraint": "taxonomy",
+      "transform": [],
+      "note": "one of the salt_distribution taxonomy"
+    },
+    "water.target.alkalinity_as_caco3": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "water.target.calcium_ca": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "water.target.chloride_cl": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "water.target.magnesium_mg": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "water.target.sodium_na": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "water.target.sulfate_so4": {
+      "action": "override",
+      "constraint": "domain",
+      "transform": [],
+      "note": "inherits a default until overridden; domain $value >= 0"
+    },
+    "water.target_mash_ph": {
+      "action": "set",
+      "constraint": "domain",
+      "transform": [],
+      "note": "authored scalar; domain $value >= 4 && $value <= 7"
+    },
+    "water.target_profile": {
+      "action": "pick",
+      "constraint": "component",
+      "transform": [],
+      "note": "read-only snapshot; the pick is carried by water.target_profile_id"
+    },
+    "water.target_profile_id": {
+      "action": "pick",
+      "constraint": "component",
+      "transform": [],
+      "note": "selects a component from the reference catalogue"
+    }
+  }
+}
