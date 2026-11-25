@@ -18,6 +18,11 @@ tracks only what is outstanding.
    keyboard traversal with batch actions; the editor's "Imported from…" panel
    landed (`plans/recipe-import.md` J.1/J.3).
 
+4. **UI gate closure (enabling)** — write the UI contract (state, authoring
+   actions, solve and failure), broaden the report oracle to the states a screen
+   must render, and prove the contract with a reference renderer. Scoped in
+   `plans/ui-gate-closure.md`; after it, UI design is the only gate.
+
 ## Before 1st printed recipe
 
 * Brew checklist (the staged-notes replacement) — Phase 1 shipped: the
