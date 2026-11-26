@@ -44,6 +44,7 @@ update them when the surface declarations change.
 | Capability | Source | Shape |
 |---|---|---|
 | The contract | `docs/ui-contract.md` | state, authoring, solve, failure, identity, wire |
+| The arc | `docs/artifact-arc.md` | six stations, the mandated order, the implied order |
 | Values and dependencies | `frontend/src/engine/` | `get`, `setRoot`, `adjacency`, `dependents`, `topoOrder` |
 | Cause and effect | `frontend/src/engine/impact.js` | closure, boundary fan-out, identity attribution, valuation diff |
 | Field descriptors | `surface.generated.js` | kind, control, dimension, taxonomy, owner per path |
@@ -113,6 +114,7 @@ only how much of a build the model supplies.
     make test-guards
     node scripts/run-tests.mjs --files tests/frontend/impact.test.js
     node scripts/emit-surface.mjs
+    node scripts/emit-artifact-arc.mjs
     node scripts/derive-report-states.mjs
     node scripts/render-bundle.mjs
 

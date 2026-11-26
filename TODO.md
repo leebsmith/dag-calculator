@@ -18,10 +18,10 @@ tracks only what is outstanding.
    keyboard traversal with batch actions; the editor's "Imported from…" panel
    landed (`plans/recipe-import.md` J.1/J.3).
 
-4. **UI design — the only open gate** — the contract is `docs/ui-contract.md` and
-   the measured readiness is `docs/ui-readiness.md`; the gate-closure plan is
-   complete and archived. Grouping, copy, layout and delta presentation are the
-   design's own decisions.
+4. **UI design — the only open gate** — start from `docs/artifact-arc.md` for the
+   stations and the suggested order, `docs/ui-contract.md` for what may be
+   relied on, and `docs/ui-readiness.md` for the measured state. Grouping, copy,
+   layout and delta presentation are the design's own decisions.
 
 ## Before 1st printed recipe
 

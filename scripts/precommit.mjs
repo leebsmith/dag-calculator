@@ -38,6 +38,12 @@ export const GENERATORS = [
     outputs: ["frontend/src/views/registry/surface.generated.js"],
   },
   {
+    name: "artifact arc",
+    command: process.execPath,
+    args: ["scripts/emit-artifact-arc.mjs"],
+    outputs: ["docs/artifact-arc.md"],
+  },
+  {
     name: "report bundle glossary",
     command: process.execPath,
     args: ["scripts/emit-report-bundle-glossary.mjs"],

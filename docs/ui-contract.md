@@ -171,6 +171,10 @@ the stage guard), labels and prose, layout and density, navigation between
 principles, delta presentation, and which pins should be visible immediately. The
 step order is a starting point, not a requirement.
 
+A derived starting point exists: [`artifact-arc.md`](artifact-arc.md) reads the
+graph as six stations and states both the mandated order and the implied one.
+Grouping, copy and layout remain the design's own work.
+
 ## 7. What keeps this honest
 
 - `data/surface.json` and `tests/guards/surface-coverage.test.js` — every path has a home.
