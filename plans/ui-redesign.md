@@ -1,0 +1,255 @@
+---
+title: UI redesign — the wall, the panel and the drawer
+program: deterministic-dag-calculator
+target_repo: ~/Development/dag-calculator
+depends_on: [surface-audit]
+status: proposed
+---
+
+# UI redesign
+
+> **Sources:** [`docs/ui-contract.md`](../../docs/ui-contract.md) for what the UI may
+> rely on, [`docs/artifact-arc.md`](../../docs/artifact-arc.md) for the station
+> reading, [`docs/ui-readiness.md`](../../docs/ui-readiness.md) for the measured
+> state. This plan changes the shell and the presentation only; it changes no
+> model value, node or solver.
+
+## Goal
+
+Replace the gated step-card UI with a desktop workspace: a scrollable wall of
+decision fieldsets, a fixed panel of determinations, and a bottom drawer for the
+authored sidecars. Reauthor the CSS into its three tiers on the way.
+
+Success is density and visibility: at 1280×720 a reader sees at least two
+fieldsets and a dozen controls above the fold, with the outcome strip always in
+view; at 1920×1080 at least three fieldsets and eighteen controls.
+
+## Non-goals
+
+- No mobile layout. Desktop only; native scroll below the baseline.
+- No model, artifact, engine, solver or wire change.
+- No new values, no new readouts, no derived value moved into a legend.
+- No authoring-transform relocation; `data/authoring.json` is read, not changed.
+- No dual-shell runtime. The work lands on a branch; the switch is one commit.
+
+## Sources of truth for the design
+
+| Surface | Owns |
+|---|---|
+| `docs/ui-contract.md` | state, actions, solve statuses, failure vocabulary |
+| `docs/artifact-arc.md` | stations, the mandated order, the implied order |
+| `docs/ui-readiness.md` | what is ready and what is not |
+| `data/surface.json` | which paths exist, their class and families |
+| `data/authoring.json` | every authorable action and its constraint |
+| `frontend/src/views/steps.js` | the current field inventory to redistribute |
+
+## Locked decisions
+
+### Shell
+
+1. **Desktop 16:9.** Reference resolutions 1920×1080 and 1280×720; below 1280 the
+   app scrolls natively, with no tailored layout.
+2. **Full-bleed wall.** No centred content column and no fixed page width. The
+   panel is the only fixed width on the page.
+3. **No media queries** beyond the theme block; the wall flex-wraps instead.
+
+### Wall
+
+4. **Seven fieldsets, no Process.** Targets and scale; Yeast and fermentation;
+   Grist; Hops; Mash and sparge; Water; Boil and whirlpool. Process notes are a
+   drawer section, not a fieldset.
+5. **Width by role.** Narrow ≈ 22 rem (Targets, Yeast), regular ≈ 34 rem (Mash and
+   sparge, Boil and whirlpool), wide ≈ 46 rem (Grist, Hops, Water). Whole rem
+   units so rows pack additively; `flex-grow: 0`; ragged rows accepted.
+6. **Flat fieldsets.** 1 px border, legend on the border, 8–12 px padding, no
+   elevation. Elevation is reserved for the panel and modals.
+7. **Fields sized by role and never stretched.** A scalar is ~8–10 rem, selects and
+   short text ~12–16 rem, long text ~20–24 rem, a table or prose block takes the
+   row. Rows pack; nothing uses `flex: 1` to fill.
+8. **No reordering.** DOM order equals visual order; no dense packing.
+9. **No inline readouts**, with one exception: the scale pin's residual, which is
+   the field's own outcome.
+
+### Navigation and completeness
+
+10. **Sticky chips replace the stepper.** One chip per fieldset, title plus a
+    status dot; the active chip follows the scroll. The chips are the completeness
+    map.
+11. **Legend: title, disclosure, and “n defaulted” only when non-zero.** No
+    derived anchor values, ever.
+12. **Expanded on load.** Per-session collapse memory; no auto-collapse.
+
+### Panel
+
+13. **Fixed 320–360 px, full height, never scrolls.** Only one solver group
+    expands at a time; expanding another collapses the first.
+14. **Order:** status line; the six-cell strip; the context line; Batch;
+    Bitterness; Water; Findings.
+15. **Strip:** ABV, OG, FG, IBU, SRM, pH. The pinned quantity among ABV/OG/FG shows
+    a residual (`ABV −0.2`); the other two show absolutes.
+16. **Context line** under the strip: equipment and style inline, truncated with a
+    tooltip; a details popover reuses the report's Equipment and Brewhouse facts
+    (same paths, labels and order).
+17. **Read-only.** Nothing in the panel is editable.
+
+### Drawer and modals
+
+18. **Bottom dock over the wall only**, pushing the wall rather than overlaying
+    it; no backdrop; `clamp(18rem, 38vh, 28rem)`; state remembered per session.
+19. **One segmented pill** `[ Notes | Checklist ]` in the header; checklist segment
+    carries its progress badge; shortcuts `N` and `C`; Esc closes; focus returns.
+20. **Notes is one scroll of four peer markdown sections** — discussion, hop
+    strategy, fermentation strategy, process notes. No add-row editors.
+21. **Checklist is today's surface**, unchanged, reachable during brew day from
+    the frozen bundle.
+22. **Row editors remain centred modals:** 42 rem dialog, 72 rem workspace, the
+    workspace top-biased; same field roles inside; internal scroll allowed.
+
+### CSS
+
+23. **Keep the class vocabulary.** 304 selectors and 1,561 template usages stay;
+    the reauthor changes declarations and file structure, not names.
+24. **Three tiers made structural:** primitives, semantic tokens, components.
+    Components consume semantic tokens only.
+25. **Both themes.** Every new component is checked in light and dark.
+
+## Stage 0 — The screen map (no code)
+
+**Scope.** One data file, `data/fieldset-map.json`, assigning every id currently in
+the step manifest to exactly one home: a fieldset, the panel, the drawer, or
+“retired”. Every root, choice, collection and selection in `data/surface.json`
+appears once. The fieldset inventory in §Locked decisions is the target shape.
+
+**Exit criteria**
+
+- `node scripts/run-tests.mjs --files tests/guards/fieldset-map.test.js` passes:
+  coverage of every current step field and every authorable action, no duplicates,
+  no unknown ids.
+- The map names, for each fieldset, its width role and the fields it owns.
+- No open classification questions.
+
+## Stage 1 — CSS tiers (mechanical, no visual change)
+
+**Scope.** Split `tokens.css` into primitives and semantic tokens; extract
+component files from `style.css`; delete the two non-theme media queries; add the
+layout tokens (`--rail-w`, `--field-max`, `--control-h`, `--gutter`). No class
+renames, no visual change at the baseline.
+
+**Exit criteria**
+
+- `make check` green, with the CSS guards updated deliberately rather than
+  bypassed: contrast, vocabulary, classes, duplication, theme tokens, allowlist.
+- Component CSS references only semantic tokens (strict-value rule; exceptions
+  documented like the existing ones).
+- No media query remains except `prefers-color-scheme`.
+- Local visual check at 1920×1080 and 1280×720 is pixel-stable.
+
+## Stage 2 — Shell skeleton
+
+**Scope.** The app shell becomes header + chips + wall + panel. The current step
+card is rendered inside the wall as the only fieldset, to prove the grid and the
+density without moving any field.
+
+**Exit criteria**
+
+- At 1920×1080 and 1280×720: no horizontal scroll, the panel is fixed and full
+  height, the wall scrolls under the chip row.
+- The chip row lists one chip and follows the scroll.
+- Keyboard order follows the DOM; focus is visible.
+- `make check` and `make test` green.
+
+## Stage 3 — The seven fieldsets
+
+**Scope.** Redistribute the existing fields per the screen map into the seven
+fieldsets, reusing the current partials and field models. Readouts move to the
+panel groups; no field behaviour changes.
+
+**Exit criteria**
+
+- Every entry in the screen map is rendered exactly once, in its declared home.
+- The field index produced by the producer is unchanged for every editable field
+  (a parity test compares old and new field sets).
+- No fieldset shows a readout (except the scale pin residual).
+- `make test` green; the panel still shows placeholder groups.
+
+## Stage 4 — The panel
+
+**Scope.** Build the panel from the manifest descriptors and the engine: status
+line, six-cell strip with the pin rule, context line with the details popover, the
+three solver groups, and findings.
+
+**Exit criteria**
+
+- The six cells, the context line and every group path exist in the surface
+  manifest; no panel value is editable.
+- The context popover's path list equals the report's Equipment and Brewhouse
+  lists (a guard compares them).
+- Only one group expands at a time; the panel never scrolls at 720p.
+- Pending, blocked and error states render without inventing zero.
+- `make test` green.
+
+## Stage 5 — Drawer and modals
+
+**Scope.** The bottom drawer with the segmented pill, the Notes tabs over the four
+prose fields, the Checklist tab, shortcuts, and the modal sizing rules.
+
+**Exit criteria**
+
+- The drawer pushes the wall and never covers the panel.
+- Notes is one scroll with four sections; the checklist matches today's surface.
+- Opening a row editor from the wall keeps the focus trap; Esc and focus return
+  behave as now.
+- `make check`, `make test` green; include and ownership guards updated.
+
+## Stage 6 — Density and themes
+
+**Scope.** Apply the role widths, control heights and gaps; check every component
+in both themes; run the local visual harness against the baseline.
+
+**Exit criteria**
+
+- The density targets in §Goal are met at both resolutions.
+- The contrast guard covers every new pair in both themes.
+- `make test-visual BASE=<branch-point>` is reviewed locally.
+- No control falls below the 32 px desktop height.
+
+## Stage 7 — Retire the step shell
+
+**Scope.** Delete the stepper, the step-card shell and the CSS it owned; point the
+view at the wall; update docs and the readiness ledger.
+
+**Exit criteria**
+
+- No dead shell selectors or partials remain; the CSS guards are clean.
+- `docs/ui-readiness.md` records the new shell as built; `TODO.md` closes the
+  design item.
+- `make verify` green.
+- The branch merges; `main` stays shippable throughout.
+
+## Whole-plan exit
+
+- Density targets met at 1920×1080 and 1280×720.
+- No model, artifact, engine or solver change in the diff.
+- Both themes, all guards, `make verify` green.
+- The old shell gone; one shell, one navigation model.
+
+## Risks
+
+- **The template surface is large.** 1,561 class usages mean a shell change touches
+  many partials. Mitigation: keep names and field models; move containers only.
+- **Guards will resist.** Contrast, vocabulary, duplication, allowlist and
+  ownership all encode the old shell. Each stage updates them deliberately.
+- **Visual regressions are invisible to CI.** `make test-visual` is local; the
+  branch needs a manual pass at both resolutions.
+- **The panel can become a second wall.** Mitigation: fixed height, one expanded
+  group, drill-down instead of growth.
+- **Two shells briefly.** Mitigation: branch work, one switch commit, no runtime
+  flag.
+
+## Deferred
+
+- Authored summaries in legends (e.g., “4 malts”): revisit if the wall feels
+  anonymous.
+- A true popout panel (second window) with `BroadcastChannel` state sync.
+- Mobile: intentionally out of scope.
+- The pin label style for residuals: settle during Stage 4.
