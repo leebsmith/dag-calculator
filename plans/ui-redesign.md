@@ -43,6 +43,7 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
 | `data/authoring.json` | every authorable action and its constraint |
 | `frontend/src/views/steps.js` | the current field inventory to redistribute |
 | [`alpine-audit.md`](alpine-audit.md) | what the wall changes in Alpine, and the 2A/2B transition |
+| [`../mockups/ui-wall.html`](../mockups/ui-wall.html) | the visual reference for the shell, fieldsets, panel and drawer |
 
 ## Locked decisions
 
@@ -59,9 +60,11 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
 4. **Seven fieldsets, no Process.** Targets and scale; Yeast and fermentation;
    Grist; Hops; Mash and sparge; Water; Boil and whirlpool. Process notes are a
    drawer section, not a fieldset.
-5. **Width by role.** Narrow ≈ 22 rem (Targets, Yeast), regular ≈ 34 rem (Mash and
-   sparge, Boil and whirlpool), wide ≈ 46 rem (Grist, Hops, Water). Whole rem
-   units so rows pack additively; `flex-grow: 0`; ragged rows accepted.
+5. **Width by role.** Narrow 22 rem (Targets, Yeast), regular 26 rem (Mash and
+   sparge, Boil and whirlpool), wide 45 rem (Grist, Hops, Water). Whole rem units
+   chosen from the mockup so two regular fieldsets pair at 1280 and two wide ones
+   pair at 1920 once the scrollbar gutter is reserved; `flex-grow: 0`; ragged rows
+   accepted.
 6. **Flat fieldsets.** 1 px border, legend on the border, 8–12 px padding, no
    elevation. Elevation is reserved for the panel and modals.
 7. **Fields sized by role and never stretched.** A scalar is ~8–10 rem, selects and
