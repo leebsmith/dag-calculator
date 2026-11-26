@@ -3,7 +3,7 @@ title: UI gate closure — finish everything that is not design
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: active (Stages A–B shipped; renderer and ledger remain)
+status: active (Stages A–C shipped; the ledger remains)
 ---
 
 # UI gate closure
@@ -181,4 +181,10 @@ guards (`tests/frontend/batch-migrations.test.js` and the roots-only A4b case).
   byte-guarded against `scripts/derive-report-states.mjs`. The report oracle now
   iterates normal, draft and water-unavailable, with a per-path allowlist and a
   liveness check. Legacy draft stays with the migration guards (A.2).
+  `make check` and `make test` green.
+- **2026-11-26 — Stage C shipped.** `scripts/render-bundle.mjs` renders every
+  printed value from a bundle through the manifest and `data/labels.json`, with no
+  layout or invented copy; the accepted gap is rendered and named. Five guard
+  tests assert its coverage equals the oracle's input on all three states, that
+  every value is labelled, and that the CLI runs on each fixture.
   `make check` and `make test` green.
