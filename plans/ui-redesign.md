@@ -113,6 +113,35 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
     Components consume semantic tokens only.
 25. **Both themes.** Every new component is checked in light and dark.
 
+### Look
+
+26. **Spacing and type scales stay.** The existing spacing scale and type sizes are
+    retained. Discipline comes from role bands, not fewer tokens:
+    - controls: 4 / 8 / 12
+    - groups: 8 / 12 / 16 / 24
+    - layout: 16 / 24 / 32 / 48
+    - the micro steps (`--space-0-25`, `--space-0-5`, `--space-1-5`, `--space-5`)
+      never appear outside the token layer.
+27. **Three radii.** 6 px for controls, 16 px for containers and panels, the pill
+    for chips and badges. `--radius-md` and `--radius-lg` retire from use.
+28. **Flat by default.** Cards, fieldsets, the panel and the footer carry no
+    elevation; structure is a 1 px border and a surface tint. One raised shadow
+    for overlays (popover, menu, dialog). Focus is a ring, not a shadow.
+29. **Type roles.** 12 px is the floor for anything read as a value;
+    `--text-micro` (11 px) survives only for eyebrows, badges and table headers.
+    Body and inputs stay at 16 px; values sit at 14–16.
+30. **Status is status.** Danger, warning and success tokens appear only in
+    selectors that name a state (`status`, `badge`, `finding`, `violation`,
+    `error`, `warning`, `success`, `danger`, `invalid`). One accent for emphasis.
+31. **Surface hierarchy.** Page canvas grey, containers white, wells grey, raised
+    white plus the single shadow.
+32. **File roles.** Controls, groups, layout, overlays and utilities are separate
+    file families; a file's role decides its allowed bands.
+33. **The grammar is guarded.** `tests/guards/visual-grammar.test.js` enforces
+    rules 26–30 by file role. Its only exemption is `frontend/src/style.css`, the
+    legacy monolith; the exemption shrinks as that file is dismantled and must be
+    empty by the end of Stage 6. A stale exemption fails.
+
 ## Stage 0 — The screen map (no code)
 
 **Scope.** One data file, `data/fieldset-map.json`, assigning every id currently in
@@ -132,13 +161,18 @@ appears once. The fieldset inventory in §Locked decisions is the target shape.
 
 **Scope.** Split `tokens.css` into primitives and semantic tokens; extract
 component files from `style.css`; delete the two non-theme media queries; add the
-layout tokens (`--rail-w`, `--field-max`, `--control-h`, `--gutter`). No class
-renames, no visual change at the baseline.
+layout tokens (`--rail-w`, `--field-max`, `--control-h`, `--gutter`). Name the new
+files by role (`control-*`, `group-*`, `layout/*`, `overlay-*`, `utilities/*`) and
+add `tests/guards/visual-grammar.test.js` with `frontend/src/style.css` as its only
+exemption. No class renames, no visual change at the baseline.
 
 **Exit criteria**
 
 - `make check` green, with the CSS guards updated deliberately rather than
   bypassed: contrast, vocabulary, classes, duplication, theme tokens, allowlist.
+- `node scripts/run-tests.mjs --files tests/guards/visual-grammar.test.js` passes:
+  `frontend/src/style.css` is the only exempt file, every new file complies with
+  its role, and a stale exemption fails.
 - Component CSS references only semantic tokens (strict-value rule; exceptions
   documented like the existing ones).
 - No media query remains except `prefers-color-scheme`.
@@ -203,11 +237,17 @@ prose fields, the Checklist tab, shortcuts, and the modal sizing rules.
 
 ## Stage 6 — Density and themes
 
-**Scope.** Apply the role widths, control heights and gaps; check every component
-in both themes; run the local visual harness against the baseline.
+**Scope.** Apply the role bands, the three radii, flat containers, the type roles
+and status discipline; burn the visual-grammar exemption to nothing; check every
+component in both themes; run the local visual harness against the baseline.
 
 **Exit criteria**
 
+- `node scripts/run-tests.mjs --files tests/guards/visual-grammar.test.js` passes
+  with no violations and no exemptions.
+- The visible remaps are deliberate and listed in the commit: micro spacing steps
+  pulled into the bands, 8/12 px radii mapped to 6 or 16, container shadows
+  replaced by borders, and 11 px values raised to 12.
 - The density targets in §Goal are met at both resolutions.
 - The contrast guard covers every new pair in both themes.
 - `make test-visual BASE=<branch-point>` is reviewed locally.
@@ -230,6 +270,7 @@ view at the wall; update docs and the readiness ledger.
 
 - Density targets met at 1920×1080 and 1280×720.
 - No model, artifact, engine or solver change in the diff.
+- The visual-grammar guard is clean with no exemptions.
 - Both themes, all guards, `make verify` green.
 - The old shell gone; one shell, one navigation model.
 
@@ -243,6 +284,11 @@ view at the wall; update docs and the readiness ledger.
   branch needs a manual pass at both resolutions.
 - **The panel can become a second wall.** Mitigation: fixed height, one expanded
   group, drill-down instead of growth.
+- **The grammar lands visibly in Stage 6.** Micro spacing steps, 8/12 px radii,
+  container shadows and 11 px values are all remapped; the diff is visible even
+  though the model is untouched.
+- **File-role naming constrains the CSS split.** Rules must be grouped by control,
+  group, layout or overlay, not by their legacy section.
 - **Two shells briefly.** Mitigation: branch work, one switch commit, no runtime
   flag.
 
