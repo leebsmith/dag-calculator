@@ -3,13 +3,13 @@ title: UI gate closure — finish everything that is not design
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: active (Stages A–C shipped; the ledger remains)
+status: shipped (Stages A–D; make verify green)
 ---
 
 # UI gate closure
 
-> **See also:** [`docs/ui-readiness.md`](../../docs/ui-readiness.md) — the measured
-> state this plan closes, and [`surface-audit.md`](../surface-audit.md) — the
+> **See also:** [`docs/ui-readiness.md`](../../../docs/ui-readiness.md) — the measured
+> state this plan closes, and [`surface-audit.md`](../../surface-audit.md) — the
 > original evidence.
 
 ## Goal
@@ -188,3 +188,8 @@ guards (`tests/frontend/batch-migrations.test.js` and the roots-only A4b case).
   tests assert its coverage equals the oracle's input on all three states, that
   every value is labelled, and that the CLI runs on each fixture.
   `make check` and `make test` green.
+- **2026-11-26 — Stage D shipped; plan complete.** `docs/ui-readiness.md` now
+  separates design readiness (a yes) from build readiness (~90/80/65/55) and marks
+  the wire specified-not-generated. The renderer joins the free list and the
+  re-measure block. `TODO.md` names UI design as the only open gate. `make verify`
+  green.
