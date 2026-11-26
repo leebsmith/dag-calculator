@@ -3,7 +3,7 @@ title: UI gate closure — finish everything that is not design
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: active (Stage A shipped; oracle, renderer and ledger remain)
+status: active (Stages A–B shipped; renderer and ledger remain)
 ---
 
 # UI gate closure
@@ -159,6 +159,14 @@ boundary wire to be specified. The contract document therefore closes with a wir
 appendix (URLs, request keys, host transforms, response flattening) marked
 *specified, not generated*; no code generation is in scope.
 
+**A.2 — Stage B fixtures are oracle states, not bundles (2026-11-26).** Fabricating
+a full bundle would carry a fake content hash, so the two new states are committed
+as partial fixtures under `tests/conformance/fixtures/report-states/` with only the
+blocks the oracle reads plus the derivation note. They are re-derived from the
+normal bundle by `scripts/derive-report-states.mjs` and byte-guarded. The
+legacy-draft state is not a bundle state; it stays covered by the draft-migration
+guards (`tests/frontend/batch-migrations.test.js` and the roots-only A4b case).
+
 ## Stage log
 
 - **2026-11-25 — Stage A shipped.** `docs/ui-contract.md` covers state, authoring,
@@ -167,4 +175,10 @@ appendix (URLs, request keys, host transforms, response flattening) marked
   pick, 10 edit-table) and 5 pre-engine transforms.
   `tests/guards/authoring-contract.test.js` (4 tests) enforces coverage,
   action/constraint consistency, transform ownership, and mutation failure.
+  `make check` and `make test` green.
+- **2026-11-26 — Stage B shipped.** Two derived state fixtures
+  (`draft-before-solve` with 47 printed paths, `water-unavailable` with 127) are
+  byte-guarded against `scripts/derive-report-states.mjs`. The report oracle now
+  iterates normal, draft and water-unavailable, with a per-path allowlist and a
+  liveness check. Legacy draft stays with the migration guards (A.2).
   `make check` and `make test` green.

@@ -1,14 +1,31 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import { RELATION_FINDINGS } from "../../frontend/src/views/registry/findings.js";
 import { steps } from "../../frontend/src/views/steps.js";
 import { artifact, read, rel, walk } from "./util.js";
 
+const ROOT = new URL("../../", import.meta.url).pathname;
+const DERIVER = join(ROOT, "scripts", "derive-report-states.mjs");
 const ARTIFACT = artifact();
 const SURFACE = JSON.parse(read("data/surface.json"));
 const PARITY = JSON.parse(read("data/report-parity.json"));
-const BUNDLE = JSON.parse(read("tests/conformance/fixtures/report-bundle.json"));
+
+const STATES = [
+  { name: "normal", bundle: JSON.parse(read("tests/conformance/fixtures/report-bundle.json")) },
+  {
+    name: "draft",
+    bundle: JSON.parse(read("tests/conformance/fixtures/report-states/draft-before-solve.json")),
+  },
+  {
+    name: "water-unavailable",
+    bundle: JSON.parse(read("tests/conformance/fixtures/report-states/water-unavailable.json")),
+  },
+];
 
 function resolve(path) {
   if (ARTIFACT.nodes[path]) return true;
@@ -81,67 +98,110 @@ function domainDisposition(entry) {
   return `validation names unknown field "${entry.nodeId}.${entry.field}"`;
 }
 
+function printedPaths() {
+  return new Set(STATES.flatMap(({ bundle }) => Object.keys(bundle.formatted ?? {})));
+}
+
+function derivedStates() {
+  const directory = mkdtempSync(join(tmpdir(), "report-states-"));
+  try {
+    execFileSync(process.execPath, [DERIVER, "--out", directory], { cwd: ROOT, stdio: "pipe" });
+    return Object.fromEntries(
+      ["draft-before-solve", "water-unavailable"].map((name) => [
+        name,
+        readFileSync(join(directory, `${name}.json`), "utf8"),
+      ])
+    );
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
+test("every committed state fixture is in sync with its deriver", () => {
+  const states = derivedStates();
+  for (const [name, text] of Object.entries(states)) {
+    assert.equal(
+      read(`tests/conformance/fixtures/report-states/${name}.json`),
+      text,
+      `report-states/${name}.json is stale — run scripts/derive-report-states.mjs`
+    );
+  }
+});
+
 test("every printed value is reachable or allowlisted with a reason", () => {
   const reached = reachable();
   const allowlisted = PARITY.gaps ?? {};
-  const offenders = Object.keys(BUNDLE.formatted ?? {}).filter(
-    (path) => !reached.has(path) && !allowlisted[path]
-  );
+  const offenders = [];
+  for (const { name, bundle } of STATES) {
+    for (const path of Object.keys(bundle.formatted ?? {})) {
+      if (reached.has(path) || allowlisted[path]) continue;
+      offenders.push(`${name}: ${path}`);
+    }
+  }
   assert.deepEqual(offenders, [], `printed values with no surface:\n${offenders.join("\n")}`);
 });
 
 test("the allowlist has no stale or unexplained entries", () => {
   const reached = reachable();
-  const allowlisted = PARITY.gaps ?? {};
-  const formatted = new Set(Object.keys(BUNDLE.formatted ?? {}));
+  const printed = printedPaths();
   const failures = [];
-  for (const [path, reason] of Object.entries(allowlisted)) {
+  for (const [path, reason] of Object.entries(PARITY.gaps ?? {})) {
     if (reason.trim() === "") failures.push(`${path} has no reason`);
-    if (!formatted.has(path)) failures.push(`${path} is not printed by the bundle`);
+    if (!printed.has(path)) failures.push(`${path} is not printed by any state`);
     if (reached.has(path)) failures.push(`${path} is reachable; drop the entry`);
   }
   assert.deepEqual(failures, []);
 });
 
-const TABLES = PARITY.report_tables ?? {};
-
 test("every printed table names a collection or a declared report table", () => {
-  const offenders = Object.keys(BUNDLE.formatted_tables ?? {}).filter((id) => {
-    if (TABLES[id]) return false;
-    return ARTIFACT.nodes[id]?.kind !== "collection";
-  });
+  const tables = PARITY.report_tables ?? {};
+  const offenders = [];
+  for (const { name, bundle } of STATES) {
+    for (const id of Object.keys(bundle.formatted_tables ?? {})) {
+      if (tables[id]) continue;
+      if (ARTIFACT.nodes[id]?.kind !== "collection") offenders.push(`${name}: ${id}`);
+    }
+  }
   assert.deepEqual(offenders, []);
 });
 
 test("the report-table allowlist is live and explained", () => {
-  const printed = new Set(Object.keys(BUNDLE.formatted_tables ?? {}));
+  const printed = new Set(
+    STATES.flatMap(({ bundle }) => Object.keys(bundle.formatted_tables ?? {}))
+  );
   const failures = [];
-  for (const [id, reason] of Object.entries(TABLES)) {
+  for (const [id, reason] of Object.entries(PARITY.report_tables ?? {})) {
     if (reason.trim() === "") failures.push(`${id} has no reason`);
-    if (!printed.has(id)) failures.push(`${id} is not printed by the bundle`);
+    if (!printed.has(id)) failures.push(`${id} is not printed by any state`);
   }
   assert.deepEqual(failures, []);
 });
 
 test("every printed summary names a collection or the overall aggregate", () => {
-  const offenders = Object.keys(BUNDLE.formatted_summaries ?? {}).filter(
-    (id) => id !== "overall" && ARTIFACT.nodes[id]?.kind !== "collection"
-  );
+  const offenders = [];
+  for (const { name, bundle } of STATES) {
+    for (const id of Object.keys(bundle.formatted_summaries ?? {})) {
+      if (id === "overall" || ARTIFACT.nodes[id]?.kind === "collection") continue;
+      offenders.push(`${name}: ${id}`);
+    }
+  }
   assert.deepEqual(offenders, []);
 });
 
 test("every relation and domain violation has a disposition", () => {
   const failures = [];
-  for (const relation of BUNDLE.validation?.relations ?? []) {
-    if (!RELATION_FINDINGS[relation.id]) failures.push(`relation ${relation.id} has no finding`);
-  }
-  for (const entry of [
-    ...(BUNDLE.validation?.domains ?? []),
-    ...(BUNDLE.validation?.field_domains ?? []),
-    ...(BUNDLE.validation?.collection_domains ?? []),
-  ]) {
-    const failure = domainDisposition(entry);
-    if (failure) failures.push(failure);
+  for (const { name, bundle } of STATES) {
+    for (const relation of bundle.validation?.relations ?? []) {
+      if (!RELATION_FINDINGS[relation.id]) failures.push(`${name}: relation ${relation.id}`);
+    }
+    for (const entry of [
+      ...(bundle.validation?.domains ?? []),
+      ...(bundle.validation?.field_domains ?? []),
+      ...(bundle.validation?.collection_domains ?? []),
+    ]) {
+      const failure = domainDisposition(entry);
+      if (failure) failures.push(`${name}: ${failure}`);
+    }
   }
   assert.deepEqual(failures, []);
 });

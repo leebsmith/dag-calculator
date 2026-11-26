@@ -1,0 +1,362 @@
+{
+  "name": "draft-before-solve",
+  "derived_from": "tests/conformance/fixtures/report-bundle.json",
+  "description": "a draft before its first solve: authored roots, choices and identity only; no tables or boundary readouts",
+  "formatted": {
+    "equipment.name": {
+      "text": "HERMS 30L",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.yeast_id": {
+      "text": "us-05",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.fermentation": {
+      "text": "Ale",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.attenuation_derate_points": {
+      "text": "3.0 pts",
+      "number": "3.0",
+      "unit": "pts",
+      "base": null,
+      "dimension": null
+    },
+    "style.name": {
+      "text": "American Pale Ale",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "water.source.source_name": {
+      "text": "City tap",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "water.source.laboratory": {
+      "text": "Ward Labs",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "water.source.report_id": {
+      "text": "w-2026-01",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "water.source.calcium_ca": {
+      "text": "42.0 ppm",
+      "number": "42.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.source.magnesium_mg": {
+      "text": "8.0 ppm",
+      "number": "8.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.source.sodium_na": {
+      "text": "12.0 ppm",
+      "number": "12.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.source.sulfate_so4": {
+      "text": "20.0 ppm",
+      "number": "20.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.source.chloride_cl": {
+      "text": "15.0 ppm",
+      "number": "15.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.source.total_alkalinity_caco3": {
+      "text": "38.0 ppm",
+      "number": "38.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.target.calcium_ca": {
+      "text": "50.0 ppm",
+      "number": "50.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.target.magnesium_mg": {
+      "text": "10.0 ppm",
+      "number": "10.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.target.sodium_na": {
+      "text": "15.0 ppm",
+      "number": "15.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.target.sulfate_so4": {
+      "text": "100.0 ppm",
+      "number": "100.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.target.chloride_cl": {
+      "text": "60.0 ppm",
+      "number": "60.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.target.alkalinity_as_caco3": {
+      "text": "40.0 ppm",
+      "number": "40.0",
+      "unit": "ppm",
+      "base": null,
+      "dimension": null
+    },
+    "water.salt_distribution": {
+      "text": "Split — grist and HLT",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "water.gypsum_form": {
+      "text": "Dihydrate (CaSO₄·2H₂O)",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "water.cacl2_form": {
+      "text": "Dihydrate (CaCl₂·2H₂O)",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "water.acid_medium": {
+      "text": "88% lactic acid",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.target_abv": {
+      "text": "5.5%",
+      "number": "5.5",
+      "unit": "%",
+      "base": null,
+      "dimension": null
+    },
+    "batch.topology": {
+      "text": "Liquor-to-grist ratio",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.conversion_efficiency": {
+      "text": "90.0%",
+      "number": "90.0",
+      "unit": "%",
+      "base": null,
+      "dimension": null
+    },
+    "batch.mash_thickness_l_per_kg": {
+      "text": "3.0 L/kg",
+      "number": "3.0",
+      "unit": "L/kg",
+      "base": null,
+      "dimension": null
+    },
+    "batch.runoff_ratio": {
+      "text": "1.5",
+      "number": "1.5",
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.boil_time_min": {
+      "text": "60 min",
+      "number": "60",
+      "unit": "min",
+      "base": null,
+      "dimension": null
+    },
+    "batch.boil_off_rate_l_per_hr": {
+      "text": "3.0 L/hr",
+      "number": "3.0",
+      "unit": "L/hr",
+      "base": null,
+      "dimension": null
+    },
+    "batch.sparge_water_temp_c": {
+      "text": "76.0 °C",
+      "number": "76.0",
+      "unit": "°C",
+      "base": null,
+      "dimension": null
+    },
+    "batch.grain_moisture_fraction": {
+      "text": "4.0%",
+      "number": "4.0",
+      "unit": "%",
+      "base": null,
+      "dimension": null
+    },
+    "batch.hlt_starting_volume_l": {
+      "text": "30.0 L",
+      "number": "30.0",
+      "unit": "L",
+      "base": null,
+      "dimension": null
+    },
+    "batch.target_ibu": {
+      "text": "40.0 IBU",
+      "number": "40.0",
+      "unit": "IBU",
+      "base": null,
+      "dimension": null
+    },
+    "batch.hop_allocation_mode": {
+      "text": "Two pools (boil / whirlpool)",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.cooling_curve_id": {
+      "text": "Garage kettle",
+      "number": null,
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.whirlpool_ibu_fraction": {
+      "text": "25.0%",
+      "number": "25.0",
+      "unit": "%",
+      "base": null,
+      "dimension": null
+    },
+    "batch.whirlpool_ambient_temp_c": {
+      "text": "20.0 °C",
+      "number": "20.0",
+      "unit": "°C",
+      "base": null,
+      "dimension": null
+    },
+    "batch.whirlpool_cooling_time_constant_min": {
+      "text": "108.7 min",
+      "number": "108.7",
+      "unit": "min",
+      "base": null,
+      "dimension": null
+    },
+    "batch.bract_floor_ratio": {
+      "text": "0.625",
+      "number": "0.625",
+      "unit": null,
+      "base": null,
+      "dimension": null
+    },
+    "batch.v_ferm": {
+      "text": "20.0 L",
+      "number": "20.0",
+      "unit": "L",
+      "base": null,
+      "dimension": null
+    },
+    "equipment.mash_dead_space_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L",
+      "base": null,
+      "dimension": null
+    },
+    "equipment.mash_transfer_loss_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L",
+      "base": null,
+      "dimension": null
+    },
+    "equipment.kettle_dead_space_l": {
+      "text": "1.0 L",
+      "number": "1.0",
+      "unit": "L",
+      "base": null,
+      "dimension": null
+    },
+    "equipment.kettle_transfer_loss_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L",
+      "base": null,
+      "dimension": null
+    },
+    "equipment.trub_loss_l": {
+      "text": "0.5 L",
+      "number": "0.5",
+      "unit": "L",
+      "base": null,
+      "dimension": null
+    }
+  },
+  "formatted_tables": {},
+  "formatted_summaries": {
+    "overall": {
+      "color": {
+        "text": "31.7 °L",
+        "number": "31.7",
+        "unit": "°L",
+        "base": null,
+        "dimension": null
+      },
+      "extract_yield": {
+        "text": "77.6%",
+        "number": "77.6",
+        "unit": "%",
+        "base": null,
+        "dimension": null
+      },
+      "oil": null
+    }
+  },
+  "validation": {
+    "relations": [],
+    "domains": [],
+    "field_domains": [],
+    "collection_domains": []
+  }
+}
