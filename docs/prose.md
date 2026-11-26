@@ -98,7 +98,7 @@ syntax tree into a small AST and injects it into the report or session payload:
 - `report.hop_strategy` is one raw-markdown row; its `text` cell gains `blocks`.
 - `report.discussion` and `report.fermentation_strategy` are one raw-markdown
   row each; their `text` cells gain `blocks`.
-- Each `batch.process_notes.text` cell gains `blocks`.
+- `report.process_notes` is one raw-markdown row; its `text` cell gains `blocks`.
 - Each `batch.brew_checklist.note` cell gains `blocks`.
 - Live session step notes, skip reasons, and overall notes gain adjacent prose
   blocks.

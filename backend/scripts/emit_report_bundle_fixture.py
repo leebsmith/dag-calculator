@@ -217,7 +217,6 @@ RECORD = {
         "batch.boil_hops": BOIL_HOPS,
         "batch.whirlpool_hops": WHIRLPOOL_HOPS,
         "batch.dry_hops": DRY_HOPS,
-        "batch.process_notes": PROCESS_NOTES,
         "water.pinned_ions": [
             {"ion": "ca"},
             {"ion": "mg"},
@@ -1246,8 +1245,6 @@ PAYLOAD = FreezePayload(
             ),
             "batch.whirlpool_hops.notes": NodePresentation(label="Notes"),
             "batch.dry_hops": NodePresentation(label="Dry hops"),
-            "batch.process_notes": NodePresentation(label="Process notes"),
-            "batch.process_notes.text": NodePresentation(label="Note"),
             "batch.dry_hops.hop_id": NodePresentation(label="Hop ID"),
             "batch.dry_hops.variety": NodePresentation(label="Hop"),
             "batch.dry_hops.product_type": NodePresentation(
@@ -1713,8 +1710,8 @@ PAYLOAD = FreezePayload(
                 "detail": FormattedValue(text="—"),
             },
         ],
-        "batch.process_notes": [
-            {"note": FormattedValue(text=row["text"])} for row in PROCESS_NOTES
+        "report.process_notes": [
+            {"text": FormattedValue(text="\n\n".join(row["text"] for row in PROCESS_NOTES))}
         ],
         "report.hop_strategy": [
             {

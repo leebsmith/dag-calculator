@@ -12,7 +12,7 @@ import { resolveBoundarySeam } from "./boundarySeam.js";
 import { assertReferencePair, bootstrapIdentity, createReferenceCache } from "../store/referenceCache.js";
 import {
   dropSugarRowPct, materializeSelections,
-  migrateAttenuationDerate, migrateLegacyYeastCap,
+  migrateAttenuationDerate, migrateLegacyYeastCap, migrateProcessNotes,
   seedFermenterIdentity, seedIdentityResiduals, seedSugarShareParts,
 } from "../store/batchMigrations.js";
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
@@ -170,7 +170,6 @@ export function createStepApp(options = {}) {
     get boundaryBlockedMessage() {
       return Object.values(this.boundaryBlocked ?? {}).find(Boolean) ?? "";
     },
-
     get waterTelemetry() {
       return this.boundaryExtras?.["solver.water"] ?? null;
     },
@@ -194,10 +193,11 @@ export function createStepApp(options = {}) {
     // the current library and marked dirty so the next save persists it.
     async loadState(state) {
       this.inputDrafts = {};
-      Object.assign(this, proseFieldsFromState(state));
-      const legacyDerate = state?.roots?.["batch.attenuation_derate"];
-      const migratedChecklist = migrateChecklistCollections(state?.collections);
-      session.rebuild({ ...state, collections: migratedChecklist.collections });
+      const processNotes = migrateProcessNotes(state);
+      Object.assign(this, proseFieldsFromState(processNotes.state));
+      const legacyDerate = processNotes.state?.roots?.["batch.attenuation_derate"];
+      const migratedChecklist = migrateChecklistCollections(processNotes.state?.collections);
+      session.rebuild({ ...processNotes.state, collections: migratedChecklist.collections });
       const migratedDerate = this.migrateAttenuationDerate(legacyDerate);
       this.onBatchLoad?.();
       const migrated = dropLegacyDoughIn(session.engine);
@@ -209,8 +209,8 @@ export function createStepApp(options = {}) {
       const sugarParts = this.seedSugarShareParts();
       const changed = [
         seeded, materialized, synced, migrated, migratedWhirlpool, fermenter,
-        migratedChecklist.changed, migratedDerate, migrateLegacyYeastCap({ session }), sugarParts,
-        dropSugarRowPct({ engine: session.engine }),
+        migratedChecklist.changed, migratedDerate, processNotes.changed, sugarParts,
+        migrateLegacyYeastCap({ session }), dropSugarRowPct({ engine: session.engine }),
       ].some(Boolean);
       if (remote) await this.solveNow();
       else this.compute();

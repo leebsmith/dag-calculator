@@ -179,9 +179,9 @@ def test_enrich_bundle_injects_known_prose_cells_only() -> None:
             "report.hop_strategy": [{"text": {"text": "**strategy**"}}],
             "report.discussion": [{"text": {"text": "*discussion*"}}],
             "report.fermentation_strategy": [{"text": {"text": "**ferment**"}}],
-            "batch.process_notes": [
-                {"note": {"text": "*note*"}},
-                {"note": {"text": "—"}},
+            "report.process_notes": [
+                {"text": {"text": "*note*"}},
+                {"text": {"text": "—"}},
             ],
             "batch.brew_checklist": [{"note": {"text": "**check**"}}],
             "batch.boil_hops": [{"name": {"text": "Magnum"}}],
@@ -197,8 +197,8 @@ def test_enrich_bundle_injects_known_prose_cells_only() -> None:
     assert "blocks" in payload["formatted_tables"]["report.fermentation_strategy"][0][
         "text"
     ]
-    assert "blocks" in payload["formatted_tables"]["batch.process_notes"][0]["note"]
-    assert "blocks" not in payload["formatted_tables"]["batch.process_notes"][1]["note"]
+    assert "blocks" in payload["formatted_tables"]["report.process_notes"][0]["text"]
+    assert "blocks" not in payload["formatted_tables"]["report.process_notes"][1]["text"]
     assert "blocks" in payload["formatted_tables"]["batch.brew_checklist"][0]["note"]
     assert "blocks" not in payload["formatted_tables"]["batch.boil_hops"][0]["name"]
 

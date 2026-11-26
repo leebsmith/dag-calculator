@@ -34,7 +34,6 @@ export const surfaceManifest = {
   "batch.late_addition_intent": {"kind":"choice","isInput":true,"control":"choice-select","dimension":null,"taxonomy":"late_addition_intent","owner":"batch.late_addition_intent"},
   "batch.late_addition_volume_l": {"kind":"derived","isInput":false,"control":"readout","dimension":"volume","taxonomy":null,"owner":"batch.late_addition_volume_l"},
   "batch.mash_thickness_l_per_kg": {"kind":"root","isInput":true,"control":"number","dimension":"mash_thickness","taxonomy":null,"owner":"batch.mash_thickness_l_per_kg"},
-  "batch.process_notes": {"kind":"collection","isInput":false,"control":"readout","dimension":null,"taxonomy":null,"owner":"batch.process_notes"},
   "batch.realized_abv": {"kind":"derived","isInput":false,"control":"readout","dimension":"abv","taxonomy":null,"owner":"batch.realized_abv"},
   "batch.realized_fg": {"kind":"derived","isInput":false,"control":"readout","dimension":"gravity","taxonomy":null,"owner":"batch.realized_fg"},
   "batch.runnings_ratio": {"kind":"derived","isInput":false,"control":"readout","dimension":"dimensionless","taxonomy":null,"owner":"batch.runnings_ratio"},

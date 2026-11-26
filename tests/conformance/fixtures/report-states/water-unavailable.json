@@ -1411,26 +1411,6 @@
         }
       }
     ],
-    "batch.process_notes": [
-      {
-        "note": {
-          "text": "0.5 oz (14 g) lemon peel at flame-out",
-          "number": null,
-          "unit": null,
-          "base": null,
-          "dimension": null
-        }
-      },
-      {
-        "note": {
-          "text": "0.05 oz (1.5 g) fresh-grated ginger at flame-out",
-          "number": null,
-          "unit": null,
-          "base": null,
-          "dimension": null
-        }
-      }
-    ],
     "batch.brew_checklist": [
       {
         "kind": {

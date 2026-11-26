@@ -31,6 +31,8 @@ NAMED_REPORT_TABLES = frozenset(
         "report.hop_strategy",
         "report.discussion",
         "report.fermentation_strategy",
+        "report.process_notes",
+        "batch.process_notes",
         "report.hop_purchases",
         "report.grain_purchases",
     }

@@ -17,7 +17,7 @@ A draft is the editable state, versioned `schema_version` 4:
 | Key | Content |
 |---|---|
 | `identity` | the four sealed components: equipment, fermenter, water source, style |
-| `hop_strategy`, `discussion`, `fermentation_strategy` | authored prose |
+| `hop_strategy`, `discussion`, `fermentation_strategy`, `process_notes` | authored prose |
 | `roots` | root and choice values only — never derived, never collections |
 | `collections` | rows in each collection's item-schema shape, with computed fields materialized |
 | `selections` | copied-forward component snapshots, one per selection |
@@ -45,8 +45,8 @@ runs the committed migrations. A frozen batch is never migrated in place.
 
 ## 2. Authoring
 
-Every node a person can act on has exactly one declared action. There are sixty:
-16 `set`, 17 `override`, 12 `choose`, 5 `pick`, 10 `edit-table`.
+Every node a person can act on has exactly one declared action. There are fifty-nine:
+16 `set`, 17 `override`, 12 `choose`, 5 `pick`, 9 `edit-table`.
 
 | Action | Applies to | Constraint | Meaning |
 |---|---|---|---|

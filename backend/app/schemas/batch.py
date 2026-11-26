@@ -33,6 +33,7 @@ class DraftPayload(BaseModel):
     hop_strategy: Annotated[str, StringConstraints(max_length=4000)] = ""
     discussion: Annotated[str, StringConstraints(max_length=4000)] = ""
     fermentation_strategy: Annotated[str, StringConstraints(max_length=4000)] = ""
+    process_notes: Annotated[str, StringConstraints(max_length=4000)] = ""
     identity: dict[str, dict[str, Any]] = Field(default_factory=dict)
     roots: dict[str, Any] = Field(default_factory=dict)
     collections: dict[str, list[dict[str, Any]]] = Field(default_factory=dict)
@@ -114,6 +115,7 @@ class BatchRecord(BaseModel):
     hop_strategy: str = ""
     discussion: str = ""
     fermentation_strategy: str = ""
+    process_notes: str = ""
     status: str
     schema_version: int
     created_at: float

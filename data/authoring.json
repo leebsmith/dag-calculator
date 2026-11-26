@@ -123,12 +123,6 @@
       "transform": [],
       "note": "authored scalar; domain $value > 0"
     },
-    "batch.process_notes": {
-      "action": "edit-table",
-      "constraint": "schema",
-      "transform": [],
-      "note": "rows conform to process_note_row"
-    },
     "batch.runoff_ratio": {
       "action": "set",
       "constraint": "domain",

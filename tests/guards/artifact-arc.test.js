@@ -48,7 +48,7 @@ test("the editorial overrides land where the document says", () => {
   const members = membersByStation(ARTIFACT, assign(ARTIFACT, GRAPH));
 
   assert.deepEqual(members.treatment.sort(), ["solver.water", "water.pinned_ions", "water.route"]);
-  assert.deepEqual(members.alongside, ["batch.brew_checklist", "batch.process_notes"]);
+  assert.deepEqual(members.alongside, ["batch.brew_checklist"]);
   assert.ok(members.beer.includes("batch.realized_abv"));
   assert.ok(members.beer.includes("batch.realized_fg"));
   assert.ok(members.beer.includes("batch.attenuation_above_cap"));

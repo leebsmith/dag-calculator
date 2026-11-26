@@ -59,6 +59,24 @@ export function dropSugarRowPct({ engine }) {
   return true;
 }
 
+// Process notes were once a one-column collection; they are now a prose field
+// beside the discussion and the two strategies. Join any authored rows into the
+// field and drop the collection key so the draft stops carrying it.
+export function migrateProcessNotes(state) {
+  const rows = state?.collections?.["batch.process_notes"];
+  if (!Array.isArray(rows)) return { state, changed: false };
+  const collections = { ...(state.collections ?? {}) };
+  delete collections["batch.process_notes"];
+  const joined = rows
+    .map((row) => (typeof row?.text === "string" ? row.text.trim() : ""))
+    .filter((text) => text.length > 0)
+    .join("\n\n");
+  return {
+    state: { ...state, process_notes: state?.process_notes ?? joined, collections },
+    changed: true,
+  };
+}
+
 // Drafts saved before the derate became points stored a multiplier of the
 // strain maximum. Convert it once, using the selected strain's published
 // attenuation; the old root is dropped by the rebuild.

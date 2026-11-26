@@ -118,6 +118,7 @@ export function createSnapshotActions({
         hopStrategy: getView().hopStrategy ?? "",
         discussion: getView().discussion ?? "",
         fermentationStrategy: getView().fermentationStrategy ?? "",
+        processNotes: getView().processNotes ?? "",
       },
       observability.reportError
     );

@@ -273,7 +273,7 @@ def test_the_process_notes_section_renders(render_once) -> None:
 
 def test_process_notes_render_markdown() -> None:
     data = bundle_dict()
-    data["formatted_tables"]["batch.process_notes"][0]["note"]["text"] = (
+    data["formatted_tables"]["report.process_notes"][0]["text"]["text"] = (
         "**PROCESSBOLDSENTINEL** and *PROCESSITALICSENTINEL*"
     )
 
@@ -287,7 +287,7 @@ def test_process_notes_render_markdown() -> None:
 
 def test_process_notes_render_tables() -> None:
     data = bundle_dict()
-    data["formatted_tables"]["batch.process_notes"][0]["note"]["text"] = (
+    data["formatted_tables"]["report.process_notes"][0]["text"]["text"] = (
         "| Header One | Header Two |\n"
         "| --- | --- |\n"
         "| TableCellOne | TableCellTwo |"
@@ -300,6 +300,17 @@ def test_process_notes_render_tables() -> None:
     assert "TableCellOne" in text
     assert "TableCellTwo" in text
     assert "| --- |" not in text
+
+
+def test_a_legacy_process_notes_collection_still_renders() -> None:
+    data = bundle_dict()
+    del data["formatted_tables"]["report.process_notes"]
+    data["formatted_tables"]["batch.process_notes"] = [
+        {"note": {"text": "LEGACYPROCESSNOTESENTINEL"}}
+    ]
+
+    rendered = render(seal_bundle(data), parse_spec(sections="process"))
+    assert "LEGACYPROCESSNOTESENTINEL" in _pdf_text(rendered.data)
 
 
 def test_hop_strategy_renders_markdown() -> None:

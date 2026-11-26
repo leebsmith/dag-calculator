@@ -3,6 +3,7 @@ export function proseFieldsFromState(state) {
     hopStrategy: state?.hop_strategy,
     discussion: state?.discussion ?? "",
     fermentationStrategy: state?.fermentation_strategy ?? "",
+    processNotes: state?.process_notes ?? "",
   };
 }
 
@@ -16,6 +17,11 @@ export function createProseFields({ getView }) {
     fermentationStrategy: "",
     setFermentationStrategy(value) {
       getView().fermentationStrategy = typeof value === "string" ? value : "";
+      getView().notify();
+    },
+    processNotes: "",
+    setProcessNotes(value) {
+      getView().processNotes = typeof value === "string" ? value : "";
       getView().notify();
     },
     discussionFields() {
@@ -54,6 +60,24 @@ export function createProseFields({ getView }) {
         },
       ];
     },
+    processNotesFields() {
+      const app = this;
+      return [
+        {
+          id: "process-notes",
+          type: "textarea",
+          label: "Process notes",
+          rows: 12,
+          read: () => app.processNotes,
+          write: (value) => app.setProcessNotes(value),
+          commit: "change",
+          placeholder:
+            "Additions and notes the model does not calculate: peel, spices, water treatments, packaging quirks.",
+          attrs: { maxlength: 4000 },
+          hint: "Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.",
+        },
+      ];
+    },
   };
 }
 
@@ -66,6 +90,9 @@ export const KEYS = [
   "setDiscussion",
   "fermentationStrategy",
   "setFermentationStrategy",
+  "processNotes",
+  "setProcessNotes",
   "discussionFields",
   "fermentationStrategyFields",
+  "processNotesFields",
 ];

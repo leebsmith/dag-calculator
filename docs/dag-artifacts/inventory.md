@@ -79,7 +79,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `malt` | `category` (taxonomy malt_category), `color_lovibond` (dimension grain_color, domain "$value >= 0"), `family` (—), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain "$value >= 0 && $value <= 1"), `fermentability_method` (—), `fermentability_provenance` (—), `generic_description` (—), `id` (—), `maltster` (—), `moisture_fraction` (dimension percentage, domain "$value >= 0 && $value <= 1"), `name` (—), `notes` (—), `standard_malt` (—), `standard_name` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain "$value >= 0 && $value <= 1"), `yield_provenance` (—) |
 | `mash_rest` | `duration_min` (dimension time), `enabled` (type boolean), `rest_id` (taxonomy mash_rest), `use_temp_c` (dimension temperature) |
 | `mash_rest_definition` | `default_duration_min` (dimension time), `name` (—), `purpose` (—), `rest_id` (taxonomy mash_rest), `sequence` (dimension dimensionless, domain "$value >= 0"), `temp_max_c` (dimension temperature), `temp_min_c` (dimension temperature) |
-| `process_note_row` | `text` (—) |
 | `scale_preview_row` | `abv` (dimension abv), `fg` (dimension gravity), `og` (dimension gravity), `ok` (type boolean), `pin` (taxonomy scale_pin), `reason` (—), `sugar_extract_share` (dimension percentage) |
 | `style` | `abv_max` (dimension abv, domain "$value >= 0"), `abv_min` (dimension abv, domain "$value >= 0"), `appearance` (—), `aroma` (—), `category_id` (—), `category_name` (—), `characteristic_ingredients` (—), `comments` (—), `commercial_examples` (—), `entry_instructions` (—), `fg_max` (dimension gravity, domain "$value >= 0"), `fg_min` (dimension gravity, domain "$value >= 0"), `flavor` (—), `forked_from_id` (—), `forked_from_name` (—), `history` (—), `ibu_max` (dimension ibu, domain "$value >= 0"), `ibu_min` (dimension ibu, domain "$value >= 0"), `id` (—), `mouthfeel` (—), `name` (—), `og_max` (dimension gravity, domain "$value >= 0"), `og_min` (dimension gravity, domain "$value >= 0"), `overall_impression` (—), `srm_max` (dimension beer_color, domain "$value >= 0"), `srm_min` (dimension beer_color, domain "$value >= 0"), `style_comparison` (—), `tags` (—), `type` (taxonomy style_type) |
 | `sugar` | `color_lovibond` (dimension grain_color, domain "$value >= 0"), `fermentability_basis` (—), `fermentability_fraction` (dimension percentage, domain "$value >= 0 && $value <= 1"), `fermentability_method` (—), `fermentability_provenance` (—), `id` (—), `maltster` (—), `name` (—), `notes` (—), `yield_basis` (—), `yield_fraction` (dimension percentage, domain "$value >= 0 && $value <= 1"), `yield_provenance` (—) |
@@ -213,7 +212,6 @@ any artifact change: `node scripts/emit-artifact-inventory.mjs`.
 | `batch.late_addition_intent` | choice |
 | `batch.late_addition_volume_l` | derived |
 | `batch.mash_thickness_l_per_kg` | root |
-| `batch.process_notes` | collection |
 | `batch.realized_abv` | derived |
 | `batch.realized_fg` | derived |
 | `batch.runnings_ratio` | derived |

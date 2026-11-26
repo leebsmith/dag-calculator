@@ -1,29 +1,51 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
+import { migrateProcessNotes } from "../../frontend/src/store/batchMigrations.js";
 import { sharedTestApp } from "./appHelpers.js";
 
-function processField(app) {
-  return app.fieldsBySlice.process.find((field) => field.id === "batch.process_notes");
-}
-
-test("the process-notes add button waits for the last note to be written", async () => {
+test("the process step is a prose field, not a collection", async () => {
   const app = await sharedTestApp();
-  app.engine.setCollection("batch.process_notes", []);
-  app.compute();
 
-  assert.equal(app.collectionCanAdd(processField(app)), true);
-  assert.equal(app.collectionAddLabel(processField(app)), "Add note");
+  assert.deepEqual(app.fieldsBySlice.process, []);
+  assert.equal(app.processNotesFields()[0].id, "process-notes");
 
-  app.runCollectionAdd(processField(app));
-  app.compute();
+  app.setProcessNotes("0.5 oz (14 g) lemon peel at flame-out");
+  const rows = app.reportFormattedTables()["report.process_notes"];
 
-  assert.equal(app.collectionCanAdd(processField(app)), false);
-  assert.equal(app.collectionAddLabel(processField(app)), "Add another note");
+  assert.deepEqual(
+    rows.map((row) => row.text.text),
+    ["0.5 oz (14 g) lemon peel at flame-out"]
+  );
+});
 
-  app.editCell(processField(app), 0, "text", "A written note");
-  app.compute();
+test("legacy process-note rows join into the prose field", () => {
+  const { state, changed } = migrateProcessNotes({
+    roots: {},
+    collections: {
+      "batch.process_notes": [{ text: "one" }, { text: "   " }, { text: "two" }],
+    },
+  });
 
-  assert.equal(app.collectionCanAdd(processField(app)), true);
-  assert.equal(app.collectionAddLabel(processField(app)), "Add another note");
+  assert.equal(changed, true);
+  assert.equal(state.process_notes, "one\n\ntwo");
+  assert.ok(!("batch.process_notes" in state.collections));
+});
+
+test("an existing prose field wins over legacy rows", () => {
+  const { state } = migrateProcessNotes({
+    process_notes: "already written",
+    collections: { "batch.process_notes": [{ text: "old" }] },
+  });
+
+  assert.equal(state.process_notes, "already written");
+  assert.ok(!("batch.process_notes" in state.collections));
+});
+
+test("a draft without process notes is left alone", () => {
+  const input = { roots: {}, collections: {} };
+  const { state, changed } = migrateProcessNotes(input);
+
+  assert.equal(changed, false);
+  assert.equal(state, input);
 });

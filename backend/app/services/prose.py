@@ -26,11 +26,11 @@ MAX_NODES = 2_000
 MAX_DEPTH = 32
 MAX_TABLE_COLUMNS = 6
 MAX_TABLE_ROWS = 50
-
 _REPORT_TABLE_CELLS = {
     "report.hop_strategy": ("text",),
     "report.discussion": ("text",),
     "report.fermentation_strategy": ("text",),
+    "report.process_notes": ("text",),
     "batch.process_notes": ("note",),
     "batch.brew_checklist": ("note",),
 }

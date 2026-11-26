@@ -22,16 +22,16 @@ update them when the surface declarations change.
 
 | Measure | Value |
 |---|---|
-| Artifact nodes | 133 (36 root, 12 choice, 70 derived, 10 collection, 2 selection, 3 boundary) |
+| Artifact nodes | 132 (36 root, 12 choice, 70 derived, 9 collection, 2 selection, 3 boundary) |
 | Boundary outputs | 91 across 3 solvers |
 | Valid scalar paths (nodes + outputs) | 224 |
-| Manifest descriptors | 335 — every node, boundary output, identity field and selection field |
+| Manifest descriptors | 334 — every node, boundary output, identity field and selection field |
 | Roots/choices declared | 48 of 48 (17 inherited, 31 authored) |
-| Authoring actions declared | 60 (16 set, 17 override, 12 choose, 5 pick, 10 edit-table) |
+| Authoring actions declared | 59 (16 set, 17 override, 12 choose, 5 pick, 9 edit-table) |
 | Pre-engine transforms | 5 (Hamilton, sugar share, prior resolution, mash preset, scale pin) |
 | Families declared | 13 (4 identity, 2 selection, 7 constructed) |
 | Internal declarations | 24 (12 boundary diagnostics, 12 node internals) |
-| Labels | 226 entries; 79 of 133 nodes labelled; 22 card-labelled; every node has a home |
+| Labels | 224 entries; 78 of 132 nodes labelled; 22 card-labelled; every node has a home |
 | Printed values covered | every value in the three committed states (149 normal, 47 draft, 127 water-unavailable) |
 | Accepted gaps | 1 (`batch.late_addition_volume_l`, report-only) |
 | Relations dispositioned | 9 of 9 |

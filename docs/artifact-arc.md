@@ -14,7 +14,7 @@ A reading of the DAG for information architecture: the stations a batch passes t
 | 4 | Bitterness | 11 | how bitter, and where the bitterness comes from |
 | 5 | Treatment | 3 | what is added to the water, and by which route |
 | 6 | The beer | 18 | what the batch turned out to be |
-| — | Alongside the arc | 2 | what is written down, never solved |
+| — | Alongside the arc | 1 | what is written down, never solved |
 
 ### 1. Intent (57)
 | Group | Members |
@@ -54,11 +54,11 @@ A reading of the DAG for information architecture: the stations a batch passes t
 | fermentation outcome | `batch.attenuation_above_cap`, `batch.realized_abv`, `batch.realized_fg` |
 | chemistry and colour | `grist.finished_beer_srm`, `water.added_lactate_ppm`, `water.kettle_blend.alkalinity_as_caco3`, `water.kettle_blend.calcium_ca`, `water.kettle_blend.chloride_cl`, `water.kettle_blend.magnesium_mg`, `water.kettle_blend.sodium_na`, `water.kettle_blend.sulfate_chloride_ratio`, `water.kettle_blend.sulfate_so4`, `water.mash_adjustment.alkalinity_as_caco3`, `water.mash_adjustment.calcium_ca`, `water.mash_adjustment.chloride_cl`, `water.mash_adjustment.magnesium_mg`, `water.mash_adjustment.sodium_na`, `water.mash_adjustment.sulfate_so4` |
 
-### Alongside the arc (2)
+### Alongside the arc (1)
 | Group | Members |
 |---|---|
-| collections | `batch.brew_checklist`, `batch.process_notes` |
-| draft fields | `hop_strategy`, `discussion`, `fermentation_strategy` |
+| collections | `batch.brew_checklist` |
+| draft fields | `discussion`, `hop_strategy`, `fermentation_strategy`, `process_notes` |
 
 ## 2. The minimum mandated order
 
@@ -106,7 +106,7 @@ A node belongs to the latest station among its declared inputs. Solver nodes are
 | Override | Station | Why |
 |---|---|---|
 | `water.route`, `water.pinned_ions` | treatment | a treatment decision, not a bill |
-| `batch.process_notes`, `batch.brew_checklist` | alongside the arc | authored, never solved |
+| `batch.brew_checklist` | alongside the arc | authored, never solved |
 | `batch.realized_fg`, `batch.realized_abv`, `batch.attenuation_above_cap` | the beer | the fermentation outcome is the finish |
 
 The chemistry and colour results are pinned to the beer station by id: the kettle blend and mash adjustment ions, added lactate, and finished beer SRM.

@@ -139,7 +139,7 @@ export const INSTALLERS = [
       "modal-whirlpool-cooling-ceiling.html",
     ],
   },
-  { name: "proseFields", modules: PROSE_FIELDS, keys: proseFieldsKeys, partials: ["step-discussion.html", "fermentation-strategy-section.html"] },
+  { name: "proseFields", modules: PROSE_FIELDS, keys: proseFieldsKeys, partials: ["step-discussion.html", "step-process.html", "fermentation-strategy-section.html"] },
   {
     name: "lateAdditions",
     modules: LATE_ADDITIONS_AND_CATALOG,

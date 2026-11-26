@@ -17,7 +17,6 @@ import { DRY_HOP_NODES as D } from "../registry/dry-hops.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { BREW_DAY_NODES as B } from "../registry/brew-day.js";
 import { MASH_NODES as M } from "../registry/mash.js";
-import { PROCESS_NODES as P } from "../registry/process.js";
 import { buildChecklistTable } from "./checklist/table.js";
 import { cellLabel, formatCell } from "./cell.js";
 import { restLabel } from "./mashRows.js";
@@ -142,13 +141,6 @@ function checklistTable(artifact, catalog, engine, reportError) {
   });
 }
 
-function processNoteRows(engine) {
-  return (engine.get(P.collection) ?? [])
-    .map((row) => String(row?.text ?? "").trim())
-    .filter((text) => text.length > 0)
-    .map((text) => ({ note: { text } }));
-}
-
 function mashRestRows(artifact, catalog, engine) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
@@ -271,11 +263,11 @@ export function buildReportTables(artifact, catalog, engine, prose = {}, reportE
     [H.whirlpoolCollection]: hopRows(artifact, catalog, engine, "whirlpool", reportError),
     [D.collection]: dryHopRows(artifact, catalog, engine),
     [B.steps]: checklistTable(artifact, catalog, engine, reportError),
-    [P.collection]: processNoteRows(engine),
     ...purchases,
     "report.hop_strategy": proseRows(prose.hopStrategy),
     "report.discussion": proseRows(prose.discussion),
     "report.fermentation_strategy": proseRows(prose.fermentationStrategy),
+    "report.process_notes": proseRows(prose.processNotes),
   };
 }
 

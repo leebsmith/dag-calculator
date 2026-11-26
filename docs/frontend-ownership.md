@@ -4,9 +4,9 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **852** (587 enumerable, 265 hidden)
+- Declared members: **855** (590 enumerable, 265 hidden)
 - Installers: **23**
-- Card partials: **21**
+- Card partials: **22**
 - Installers reading another installer's key: **14 of 23**
 - Cross-owner keys declared in `SHARED`: **51**
 
@@ -28,7 +28,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js`, `frontend/src/adapters/cards/style/targetFields.js` | 50 | 1 | 11 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/hopAllocation.js`, `frontend/src/adapters/cards/hopEditorFields.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 174 | 4 | 21 |
-| `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 6 | 2 | 1 |
+| `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 9 | 3 | 1 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 68 | 2 | 20 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/traceEditor.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 49 | 2 | 20 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 56 | 2 | 18 |

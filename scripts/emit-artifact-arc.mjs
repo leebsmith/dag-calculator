@@ -45,7 +45,7 @@ const STATIONS = [
 const RANK = Object.fromEntries(STATIONS.map((station, index) => [station.key, index]));
 
 const TREATMENT = new Set(["water.route", "water.pinned_ions"]);
-const ALONGSIDE = new Set(["batch.process_notes", "batch.brew_checklist"]);
+const ALONGSIDE = new Set(["batch.brew_checklist"]);
 const FERMENTATION = new Set([
   "batch.realized_fg",
   "batch.realized_abv",
@@ -54,7 +54,7 @@ const FERMENTATION = new Set([
 const CHEMISTRY =
   /^(water\.kettle_blend\.|water\.mash_adjustment\.|water\.added_lactate_ppm$|grist\.finished_beer_srm$)/;
 
-const PROSE_FIELDS = ["hop_strategy", "discussion", "fermentation_strategy"];
+const PROSE_FIELDS = ["discussion", "hop_strategy", "fermentation_strategy", "process_notes"];
 const TREATMENT_OUTPUTS = ["prescription", "mash_additions", "sparge_additions"];
 
 function readArtifact() {
@@ -268,7 +268,7 @@ function derivation() {
     "| Override | Station | Why |",
     "|---|---|---|",
     "| `water.route`, `water.pinned_ions` | treatment | a treatment decision, not a bill |",
-    "| `batch.process_notes`, `batch.brew_checklist` | alongside the arc | authored, never solved |",
+    "| `batch.brew_checklist` | alongside the arc | authored, never solved |",
     "| `batch.realized_fg`, `batch.realized_abv`, `batch.attenuation_above_cap` | the beer | the fermentation outcome is the finish |",
     "",
     "The chemistry and colour results are pinned to the beer station by id: the kettle blend and mash adjustment ions, added lactate, and finished beer SRM.",

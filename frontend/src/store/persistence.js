@@ -27,13 +27,13 @@ function assertSupported(record) {
     );
   }
 }
-
 function loadStatePayload(record) {
   return {
     ...(record.identity ? { identity: record.identity } : {}),
     hop_strategy: record.hop_strategy ?? "",
     discussion: record.discussion ?? "",
     fermentation_strategy: record.fermentation_strategy ?? "",
+    process_notes: record.process_notes ?? "",
     roots: record.roots,
     collections: record.collections,
     selections: record.selections ?? {},
