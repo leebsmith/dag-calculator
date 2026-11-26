@@ -42,6 +42,7 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
 | `data/surface.json` | which paths exist, their class and families |
 | `data/authoring.json` | every authorable action and its constraint |
 | `frontend/src/views/steps.js` | the current field inventory to redistribute |
+| [`alpine-audit.md`](alpine-audit.md) | what the wall changes in Alpine, and the 2A/2B transition |
 
 ## Locked decisions
 
@@ -178,18 +179,33 @@ exemption. No class renames, no visual change at the baseline.
 - No media query remains except `prefers-color-scheme`.
 - Local visual check at 1920×1080 and 1280×720 is pixel-stable.
 
-## Stage 2 — Shell skeleton
+## Stage 2 — Alpine transition and shell
 
-**Scope.** The app shell becomes header + chips + wall + panel. The current step
-card is rendered inside the wall as the only fieldset, to prove the grid and the
-density without moving any field.
+The coupling and the risks are mapped in [`alpine-audit.md`](alpine-audit.md); this
+stage follows its 2A/2B split.
+
+**2A — Decouple the partials (no visual change).** Introduce a fieldset scope and
+replace every `activeStep` read in the step partials with the scoped fieldset.
+Keep the one-at-a-time shell. Add a guard: no step partial references the global
+active step.
+
+**2B — Multi-mount.** Render every current step partial inside the wall; keep the
+stepper for now; measure the audit's §7 list: DOM nodes, mount time, modal
+initialization, duplicate ids, console errors, read-only disablement, focus and
+teleports. The panel is a shell placeholder at this point.
 
 **Exit criteria**
 
+- 2A: the single-step shell is unchanged, the no-`activeStep` guard passes, and
+  `make test` is green.
+- 2B: all partials mounted; no duplicate static ids; no Alpine expression errors;
+  modals open and close from any fieldset; the read-only wrapper covers the wall.
+- The audit's §7 measurements are recorded, with a gap list for Stage 3.
 - At 1920×1080 and 1280×720: no horizontal scroll, the panel is fixed and full
   height, the wall scrolls under the chip row.
-- The chip row lists one chip and follows the scroll.
+- The chip row lists the current steps and follows the scroll.
 - Keyboard order follows the DOM; focus is visible.
+- The guards named in the audit are updated in the same commit.
 - `make check` and `make test` green.
 
 ## Stage 3 — The seven fieldsets
@@ -256,11 +272,16 @@ component in both themes; run the local visual harness against the baseline.
 ## Stage 7 — Retire the step shell
 
 **Scope.** Delete the stepper, the step-card shell and the CSS it owned; point the
-view at the wall; update docs and the readiness ledger.
+view at the wall; update docs and the readiness ledger. Retire the navigation
+state the audit names: `navigation.js` (`syncNav`, `selectStep`, `resetToStep`,
+`resetToDiscussion`, `next`, `prev`, `keyNav`), ui.activeIndex, ui.highwater,
+`stepperSteps`, `navDir`/`navClass`. `resetToDiscussion` becomes “scroll the wall
+to the top”; `stepStatus` survives as the chips' completeness input.
 
 **Exit criteria**
 
-- No dead shell selectors or partials remain; the CSS guards are clean.
+- No dead shell selectors, partials or navigation state remain; the CSS guards are
+  clean and the `activeStep` guard is green.
 - `docs/ui-readiness.md` records the new shell as built; `TODO.md` closes the
   design item.
 - `make verify` green.
@@ -289,6 +310,9 @@ view at the wall; update docs and the readiness ledger.
   though the model is untouched.
 - **File-role naming constrains the CSS split.** Rules must be grouped by control,
   group, layout or overlay, not by their legacy section.
+- **Modal weight under multi-mount.** Ten modal shells mount with the wall; if the
+  audit's 2B measurement shows it costs too much, mount a modal lazily on first
+  open.
 - **Two shells briefly.** Mitigation: branch work, one switch commit, no runtime
   flag.
 
