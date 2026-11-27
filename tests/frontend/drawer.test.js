@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createDrawerActions } from "../../frontend/src/adapters/drawer.js";
+import { createDrawerActions, notePreview } from "../../frontend/src/adapters/drawer.js";
 
 function install({ activeElement = null } = {}) {
   const view = {};
@@ -86,4 +86,15 @@ test("an unknown tab is ignored", () => {
   const { view } = install();
   view.openDrawer("nowhere");
   assert.equal(view.drawerOpen, false);
+});
+
+test("a note preview is one line of prose or the word Empty", () => {
+  assert.equal(notePreview(""), "Empty");
+  assert.equal(notePreview("   \n  "), "Empty");
+  assert.equal(notePreview("## Heading\n\nSome **bold** text."), "Heading Some bold text.");
+  assert.equal(notePreview("dry-hop the pale ale"), "dry-hop the pale ale");
+  assert.equal(notePreview("- one\n- two"), "one two");
+  const long = "x".repeat(120);
+  assert.equal(notePreview(long).length, 80);
+  assert.ok(notePreview(long).endsWith("…"));
 });

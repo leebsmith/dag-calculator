@@ -42,3 +42,11 @@ test("the drawer renders the four notes schemas and the checklist surface", () =
   assert.match(trigger, /@click="toggleDrawer\('checklist'\)"/);
   assert.match(trigger, /:aria-expanded=/);
 });
+
+test("the notes are four collapsed summaries with one markdown hint", () => {
+  const markup = read(DRAWER);
+  assert.equal((markup.match(/<details class="notes-disclosure" name="drawer-notes">/g) ?? []).length, 4);
+  assert.equal((markup.match(/x-text="drawerPreview\(/g) ?? []).length, 4);
+  assert.equal((markup.match(/Markdown supported/g) ?? []).length, 1);
+  assert.doesNotMatch(markup, /class="section-header"/);
+});

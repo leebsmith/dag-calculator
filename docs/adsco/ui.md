@@ -460,7 +460,10 @@ The editor's chrome is one band: the menu bar and the chip row share a single
 `border-default` bottom edge, so the scroll region starts under a boundary at the
 2:1 tier rather than a divider. The sidecar trigger (`[ Notes | Checklist ]`)
 sits at the right end of the chip row and toggles the drawer; the drawer header
-carries only the active tab's title and a Close. The footer is a flush bar — no
+carries only the active tab's title and a Close. Notes is four collapsed
+disclosures sharing one accordion name, each summarising its prose in a single
+line and opening to the one textarea that edits it; the markdown hint appears
+once, above the list. The footer is a flush bar — no
 radius, `surface-default`, a single top boundary in `border-default` — so the page
 bottom reads as content, gap, boundary, bar.
 

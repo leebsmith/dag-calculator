@@ -5,6 +5,20 @@
 import { drawerTabs } from "../views/drawer.js";
 
 const EDITABLE = "input, select, textarea, [contenteditable]";
+const PREVIEW_MAX = 80;
+
+/** One line of prose for a collapsed notes section. */
+export function notePreview(value) {
+  const text = String(value ?? "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/^\s*(#{1,6}|>|[-*+])\s*/gm, "")
+    .replace(/[*_`]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text === "") return "Empty";
+  return text.length > PREVIEW_MAX ? `${text.slice(0, PREVIEW_MAX - 1)}…` : text;
+}
 
 export function createDrawerActions({
   getView,
@@ -68,6 +82,9 @@ export function createDrawerActions({
     closeDrawer,
     toggleDrawer,
     drawerKey,
+    drawerPreview(value) {
+      return notePreview(value);
+    },
     get drawerTitle() {
       const active = tabs.find((entry) => entry.id === getView().drawerTab);
       return active?.title ?? "";
@@ -89,5 +106,6 @@ export const KEYS = [
   "toggleDrawer",
   "drawerKey",
   "drawerTitle",
+  "drawerPreview",
   "drawerProgress",
 ];

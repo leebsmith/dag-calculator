@@ -31,6 +31,7 @@ export function createProseFields({ getView }) {
           id: "discussion",
           type: "textarea",
           label: "Discussion",
+          labelClass: "visually-hidden",
           rows: 12,
           read: () => app.discussion,
           write: (value) => app.setDiscussion(value),
@@ -38,7 +39,6 @@ export function createProseFields({ getView }) {
           placeholder:
             "Where this recipe came from, what you changed, and what you were aiming for.",
           attrs: { maxlength: 4000 },
-          hint: "Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.",
         },
       ];
     },
@@ -48,7 +48,8 @@ export function createProseFields({ getView }) {
         {
           id: "fermentation-strategy",
           type: "textarea",
-          label: "Strategy",
+          label: "Fermentation strategy",
+          labelClass: "visually-hidden",
           rows: 5,
           read: () => app.fermentationStrategy,
           write: (value) => app.setFermentationStrategy(value),
@@ -56,7 +57,6 @@ export function createProseFields({ getView }) {
           placeholder:
             "Pitch rate and starter, oxygenation, temperature schedule, and the character you want from the strain.",
           attrs: { maxlength: 4000 },
-          hint: "Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.",
         },
       ];
     },
@@ -67,6 +67,7 @@ export function createProseFields({ getView }) {
           id: "process-notes",
           type: "textarea",
           label: "Process notes",
+          labelClass: "visually-hidden",
           rows: 12,
           read: () => app.processNotes,
           write: (value) => app.setProcessNotes(value),
@@ -74,7 +75,6 @@ export function createProseFields({ getView }) {
           placeholder:
             "Additions and notes the model does not calculate: peel, spices, water treatments, packaging quirks.",
           attrs: { maxlength: 4000 },
-          hint: "Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.",
         },
       ];
     },

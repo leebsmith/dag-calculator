@@ -279,6 +279,15 @@
         ".panel-cell-value"
       ],
       "reason": "Coincidental emphasis text; the drawer title and a panel cell value are independent."
+    },
+    {
+      "context": "",
+      "declarations": "display: flex; flex-direction: column; gap: var(--space-3)",
+      "selectors": [
+        ".inspector-form",
+        ".notes-list"
+      ],
+      "reason": "Two independent vertical stacks that happen to share the same rhythm."
     }
   ],
   "classes": []

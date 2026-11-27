@@ -180,7 +180,8 @@ test("container blocks use their contract element", () => {
             tag.ancestors.some(
               (ancestor) =>
                 (ancestor.name === "button" && ancestor.classes.includes("section-toggle")) ||
-                (ancestor.name === "div" && ancestor.classes.includes("section-header"))
+                (ancestor.name === "div" && ancestor.classes.includes("section-header")) ||
+                ancestor.name === "summary"
             );
           if (!heading && !inlineHeader) {
             failures.push(`${file}:${tag.line}: region-title must be a heading or a span inside section-toggle`);

@@ -54,7 +54,7 @@ only what the surface manifest declares and writes only through authored roots.
 | Seven fieldsets, declared blocks | `frontend/src/views/fieldsets.js` | `fieldset-coverage` proves one home per path and no readout inside a fieldset; `fieldset-parity` freezes the producer's field index |
 | Chip row and scroll spy | `frontend/src/adapters/wall.js`, `wall-chips.html` | `wall-mount` (one partial per fieldset, no duplicate literal id) and the wall's unit tests |
 | Determination panel | `frontend/src/views/panel.js` + `panelView.js` | `panel-coverage`: every rendered path is panel-homed, in the surface manifest, read-only, and the details popover equals the report's Equipment and Brewhouse lists |
-| Drawer | `frontend/src/adapters/drawer.js`, `views/drawer.js` | `drawer-coverage`: the four prose sections are the drawer-homed fields; N/C/Esc and the focus return are unit-tested |
+| Drawer | `frontend/src/adapters/drawer.js`, `views/drawer.js` | `drawer-coverage`: the four prose sections are the drawer-homed fields, collapsed one at a time with a one-line preview and a single markdown hint; the chrome pill, N/C/Esc and the focus return are covered |
 | Role stylesheets | `frontend/src/styles/` (`utilities`, `layout`, `components/control-*`, `group-*`, `overlay-*`) | `visual-grammar`: every rule carries a role, its spacing band, one of three radii, the 12px floor and state-only status colour; `stylesheet-links` proves the page links every sheet in token-first order, so a rule written to disk always reaches the browser |
 | Retired shell | — | `retired-shell` fails on any read of the old step cursor or its navigation |
 

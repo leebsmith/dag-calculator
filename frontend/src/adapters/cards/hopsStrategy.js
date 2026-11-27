@@ -11,7 +11,8 @@ export function createHopStrategy({ getView }) {
         {
           id: "hop-strategy",
           type: "textarea",
-          label: "Strategy",
+          label: "Hop strategy",
+          labelClass: "visually-hidden",
           rows: 4,
           read: () => app.hopStrategy,
           write: (value) => app.setHopStrategy(value),
@@ -19,7 +20,6 @@ export function createHopStrategy({ getView }) {
           placeholder:
             "What the hops are for: the split, the product choices, the weight ratio, the sensory objective.",
           attrs: { maxlength: 4000 },
-          hint: "Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs.",
         },
       ];
     },

@@ -5,46 +5,63 @@
   </header>
 
   <div class="wall-drawer-body">
-    <div x-show="drawerTab === 'notes'" role="tabpanel" aria-label="Notes">
-      <section class="card-section" x-data="formBuilder" data-schema="discussionFields">
-        <div class="section-header">
+    <div x-show="drawerTab === 'notes'" role="tabpanel" aria-label="Notes" class="notes-list">
+      <p class="form-hint">
+        Markdown supported: paragraphs, lists, tables, emphasis, links, and code.
+        Blank lines separate paragraphs.
+      </p>
+
+      <details class="notes-disclosure" name="drawer-notes">
+        <summary>
           <span class="region-title">Discussion</span>
+          <span class="notes-preview" x-text="drawerPreview(discussion)"></span>
+        </summary>
+        <div class="notes-body" x-data="formBuilder" data-schema="discussionFields">
+          <load src="src/partials/ui-form-fields.html" />
+          <template x-for="issue in proseIssues(discussion)" :key="issue.code">
+            <p class="form-hint text-warning" x-text="issue.message"></p>
+          </template>
         </div>
-        <load src="src/partials/ui-form-fields.html" />
-        <template x-for="issue in proseIssues(discussion)" :key="issue.code">
-          <p class="form-hint text-warning" x-text="issue.message"></p>
-        </template>
-      </section>
+      </details>
 
-      <section class="card-section" x-data="formBuilder" data-schema="hopStrategyFields">
-        <div class="section-header">
+      <details class="notes-disclosure" name="drawer-notes">
+        <summary>
           <span class="region-title">Hop strategy</span>
+          <span class="notes-preview" x-text="drawerPreview(hopStrategy)"></span>
+        </summary>
+        <div class="notes-body" x-data="formBuilder" data-schema="hopStrategyFields">
+          <load src="src/partials/ui-form-fields.html" />
+          <template x-for="issue in proseIssues(hopStrategy)" :key="issue.code">
+            <p class="form-hint text-warning" x-text="issue.message"></p>
+          </template>
         </div>
-        <load src="src/partials/ui-form-fields.html" />
-        <template x-for="issue in proseIssues(hopStrategy)" :key="issue.code">
-          <p class="form-hint text-warning" x-text="issue.message"></p>
-        </template>
-      </section>
+      </details>
 
-      <section class="card-section" x-data="formBuilder" data-schema="fermentationStrategyFields">
-        <div class="section-header">
+      <details class="notes-disclosure" name="drawer-notes">
+        <summary>
           <span class="region-title">Fermentation strategy</span>
+          <span class="notes-preview" x-text="drawerPreview(fermentationStrategy)"></span>
+        </summary>
+        <div class="notes-body" x-data="formBuilder" data-schema="fermentationStrategyFields">
+          <load src="src/partials/ui-form-fields.html" />
+          <template x-for="issue in proseIssues(fermentationStrategy)" :key="issue.code">
+            <p class="form-hint text-warning" x-text="issue.message"></p>
+          </template>
         </div>
-        <load src="src/partials/ui-form-fields.html" />
-        <template x-for="issue in proseIssues(fermentationStrategy)" :key="issue.code">
-          <p class="form-hint text-warning" x-text="issue.message"></p>
-        </template>
-      </section>
+      </details>
 
-      <section class="card-section" x-data="formBuilder" data-schema="processNotesFields">
-        <div class="section-header">
+      <details class="notes-disclosure" name="drawer-notes">
+        <summary>
           <span class="region-title">Process notes</span>
+          <span class="notes-preview" x-text="drawerPreview(processNotes)"></span>
+        </summary>
+        <div class="notes-body" x-data="formBuilder" data-schema="processNotesFields">
+          <load src="src/partials/ui-form-fields.html" />
+          <template x-for="issue in proseIssues(processNotes)" :key="issue.code">
+            <p class="form-hint text-warning" x-text="issue.message"></p>
+          </template>
         </div>
-        <load src="src/partials/ui-form-fields.html" />
-        <template x-for="issue in proseIssues(processNotes)" :key="issue.code">
-          <p class="form-hint text-warning" x-text="issue.message"></p>
-        </template>
-      </section>
+      </details>
     </div>
 
     <div x-show="drawerTab === 'checklist'" role="tabpanel" aria-label="Checklist">
