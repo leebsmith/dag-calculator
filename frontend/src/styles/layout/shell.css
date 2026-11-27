@@ -16,6 +16,15 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+/* The content column holds one visible view at a time; the always-mounted modal
+   wrappers are zero-height children, so a gap here only pushed the view down. */
+.app-content {
+  gap: var(--space-0);
+}
+
+.stage {
   gap: var(--space-6);
 }
 

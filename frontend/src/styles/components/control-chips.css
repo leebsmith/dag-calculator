@@ -1,7 +1,7 @@
 /* Control role: the chip row that drives the wall. */
 
 .wall-chip {
-  height: var(--size-control-h);
+  height: var(--size-control-h-sm);
   padding: 0 var(--space-3);
   font-family: inherit;
   font-size: var(--text-xs);
