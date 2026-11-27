@@ -4,17 +4,17 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **862** (597 enumerable, 265 hidden)
+- Declared members: **861** (596 enumerable, 265 hidden)
 - Installers: **24**
-- Card partials: **24**
-- Installers reading another installer's key: **16 of 24**
+- Card partials: **25**
+- Installers reading another installer's key: **17 of 24**
 - Cross-owner keys declared in `SHARED`: **52**
 
 ## Installers
 
 | installer | modules | members | card partials | foreign reads |
 |---|---|---|---|---|
-| `wall` | `frontend/src/adapters/wall.js` | 6 | 1 | 0 |
+| `wall` | `frontend/src/adapters/wall.js` | 7 | 2 | 3 |
 | `drawer` | `frontend/src/adapters/drawer.js` | 8 | 1 | 2 |
 | `fieldActions` | `frontend/src/adapters/fieldActions.js` | 33 | 4 | 5 |
 | `proseValidation` | `frontend/src/adapters/proseValidation.js`, `frontend/src/markdown/validate.js` | 1 | 1 | 2 |
@@ -36,7 +36,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `mash` | `frontend/src/adapters/cards/mash.js`, `frontend/src/adapters/cards/mashGetters.js` | 53 | 2 | 4 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 15 | 1 | 1 |
 | `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 57 | 2 | 13 |
-| `water` | `frontend/src/adapters/cards/water.js`, `frontend/src/adapters/cards/waterCardActions.js` | 30 | 1 | 6 |
+| `water` | `frontend/src/adapters/cards/water.js`, `frontend/src/adapters/cards/waterCardActions.js` | 28 | 2 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 2 | 0 | 0 |
 
 ## Cross-owner reads
@@ -61,13 +61,13 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `draftNodeId` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `draftOpen` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
 | `draftRows` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog editors bind the shared draft grid |
-| `edit` | `fieldActions` | `hop`, `lateAdditions`, `water` | shared field verbs: the card partials bind the one editing surface |
+| `edit` | `fieldActions` | `hop`, `lateAdditions`, `water`, `wall` | shared field verbs: the card partials bind the one editing surface |
 | `editNumberInput` | `fieldActions` | `lateAdditions`, `mash` | shared field verbs: the card partials bind the one editing surface |
 | `gristTableConfig` | `tableConfigs` | `malt`, `traceMalts` | the fermentables partial binds the shared grain-bill table config |
 | `hopStrategy` | `hop` | `proseFields`, `proseValidation`, `drawer` | the Notes drawer edits the hop card's strategy prose |
 | `hopStrategyFields` | `hop` | `proseFields`, `proseValidation`, `drawer` | the Notes drawer renders the hop card's strategy field |
-| `inputDraft` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
-| `inputKey` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
+| `inputDraft` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water`, `wall` | shared text-input draft: every card edits a field through the one input map |
+| `inputKey` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water`, `wall` | shared text-input draft: every card edits a field through the one input map |
 | `maltCategories` | `malt` | `traceMalts` | the trace-malt editor lists the malt card's categories |
 | `normalizeHopMassPool` | `fieldActions` | `hop` | the hop card re-normalizes the one-pool mass shares after an edit; the rule lives with the authoring normalizers |
 | `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |

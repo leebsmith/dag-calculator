@@ -237,14 +237,12 @@ export function refreshWaterCard(app, ctx) {
 
 export const KEYS = [
   "waterSummary",
-  "waterDetailsOpen",
   "waterPlan",
   "waterTreatmentFields",
   "waterPrescription",
   "waterVerdict",
   "waterDetails",
   "waterWarningCount",
-  "toggleWaterDetails",
   "waterTargetOptions",
   "waterTargetOptionsState",
   "waterTargetProfileId", "waterPlanFields",

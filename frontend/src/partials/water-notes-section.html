@@ -1,0 +1,5 @@
+<template x-if="group.id === 'water'">
+  <template x-for="note in waterSummary.notes" :key="note">
+    <p class="panel-note--warning" x-text="note"></p>
+  </template>
+</template>

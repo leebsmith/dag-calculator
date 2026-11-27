@@ -56,8 +56,6 @@ function initialState() {
       warningLabel: "0 warnings",
     },
 
-    waterDetailsOpen: false,
-
     waterPlan: {
       source: {},
       target: {},
@@ -103,11 +101,6 @@ function initialState() {
 
 function detailsActions({ getView }) {
   return {
-    toggleWaterDetails() {
-      const view = getView();
-      view.waterDetailsOpen = !view.waterDetailsOpen;
-    },
-
     waterInstruction(stepId) {
       const summary = getView().waterSummary;
       if (stepId === "dough-in") return summary.instructionDoughIn ?? "";

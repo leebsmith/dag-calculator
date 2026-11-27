@@ -97,6 +97,11 @@ test("the rig facts are read-only identity paths", () => {
   assert.deepEqual(editable, []);
 });
 
+test("each group is addressable for a wall hand-off", () => {
+  assert.match(read(PANEL), /:data-panel-group="group\.id"/);
+  assert.match(read(PANEL), /water-notes-section\.html/);
+});
+
 test("the groups are one exclusive accordion", () => {
   const names = [...read(PANEL).matchAll(/<details class="panel-group"[^>]*name="([^"]+)"/g)].map(
     (match) => match[1]

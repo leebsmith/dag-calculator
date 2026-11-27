@@ -52,7 +52,7 @@
 
   <div class="panel-groups">
     <template x-for="group in panel.groups" :key="group.id">
-      <details class="panel-group" name="panel-groups">
+      <details class="panel-group" name="panel-groups" :data-panel-group="group.id">
         <summary>
           <span x-text="group.title"></span>
           <span class="panel-group-meta tabular-nums" x-text="group.meta"></span>
@@ -67,6 +67,7 @@
             </template>
           </ul>
         </template>
+        <load src="src/partials/water-notes-section.html" />
         <template x-if="!group.findings">
           <dl class="panel-facts-list">
             <template x-for="row in group.rows" :key="row.path">

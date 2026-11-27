@@ -34,9 +34,11 @@ function focusable(log, name) {
   };
 }
 
-function install({ sections, schedule = (fn) => fn } = {}) {
+function install({ sections, panels = {}, schedule = (fn) => fn } = {}) {
   const documentRef = {
     querySelector(selector) {
+      const panel = /\[data-panel-group="([^"]+)"\]/.exec(selector)?.[1];
+      if (panel) return panels[panel] ?? null;
       const id = /\[data-fieldset="([^"]+)"\]/.exec(selector)?.[1];
       return sections[id] ?? null;
     },
@@ -170,4 +172,30 @@ test("the last chip wins at the bottom of the scroll region", () => {
 
   actions.wallScrolled({ currentTarget: wall });
   assert.equal(view.activeChipId, "grist");
+});
+
+test("the panel hand-off opens the named group, scrolls it and focuses its summary", () => {
+  const log = [];
+  const summary = focusable(log, "summary");
+  const group = {
+    open: false,
+    scrolled: [],
+    scrollIntoView(options) {
+      this.scrolled.push(options);
+    },
+    querySelector: () => summary,
+  };
+  const { actions } = install({ sections: {}, panels: { water: group } });
+
+  actions.openPanelGroup("water");
+
+  assert.equal(group.open, true);
+  assert.deepEqual(group.scrolled, [{ block: "nearest" }]);
+  assert.equal(summary.tabIndex, -1);
+  assert.deepEqual(log, [["summary", { preventScroll: true }]]);
+});
+
+test("an unknown panel group is a no-op", () => {
+  const { actions } = install({ sections: {} });
+  assert.doesNotThrow(() => actions.openPanelGroup("nowhere"));
 });

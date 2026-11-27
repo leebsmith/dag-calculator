@@ -160,7 +160,7 @@
   },
   "batch.hop_allocation_mode": {
     "label": "Hop allocation",
-    "hint": "Split the IBU target into a boil and a whirlpool pool, or author one pool where each charge's share is a proportion of the boil + whirlpool mass.",
+    "hint": "Two IBU pools (boil, whirlpool), or one hot-side pool by mass.",
     "optionLabels": {
       "ibu_split": "Two pools (boil / whirlpool)",
       "mass_pool": "One pool (boil + whirlpool)"
@@ -202,11 +202,11 @@
   },
   "batch.sparge_water_temp_c": {
     "label": "Sparge water temperature",
-    "hint": "Target HLT temperature for the second underlet. Display only \u2014 heating and cooling are not modelled, so this never changes the solve."
+    "hint": "Target HLT temperature for the second underlet. Display only."
   },
   "batch.sugar_extract_share": {
     "label": "Sugar share",
-    "hint": "Sugar extract as a share of total post-boil extract; the solver evaluates it per candidate gravity."
+    "hint": "Sugar extract as a share of post-boil extract."
   },
   "batch.sugar_extract_total": {
     "label": "Late-addition extract",
@@ -263,7 +263,7 @@
   },
   "batch.v_ferm": {
     "label": "Fermenter volume",
-    "hint": "Cold packaged volume into the fermenter. The solver reverses kettle losses and boil-off to derive V_pre_boil."
+    "hint": "Cold packaged volume; the solver derives the pre-boil volume."
   },
   "batch.whirlpool_ambient_temp_c": {
     "label": "Whirlpool ambient",
@@ -760,11 +760,11 @@
   },
   "water.calcium_floor_ppm": {
     "label": "Calcium minimum",
-    "hint": "A guardrail, not a target: the dose adds calcium until the finished mash reaches this minimum, relaxed and reported in Details when the pinned objectives leave no room."
+    "hint": "Calcium guardrail: dosing continues until this minimum."
   },
   "water.calcium_ceiling_ppm": {
     "label": "Calcium maximum",
-    "hint": "The upper half of the calcium band: the dose prefers gypsum up to this ceiling and falls back on Epsom salt beyond it, so magnesium only rises when the ceiling leaves no other route to the sulfate target."
+    "hint": "Upper calcium bound; beyond it the dose uses Epsom salt."
   },
   "water.gypsum_form": {
     "label": "Gypsum form",
@@ -790,7 +790,7 @@
   },
   "water.target_mash_ph": {
     "label": "Mash pH objective",
-    "hint": "Always corrected: the grist receives the acid or alkali that lands this pH. No ion objective is required."
+    "hint": "Always corrected; the dose lands this mash pH."
   },
   "water.target_profile.alkalinity_as_caco3": {
     "label": "Alkalinity (as CaCO3)"

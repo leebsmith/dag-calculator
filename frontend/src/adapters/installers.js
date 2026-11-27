@@ -85,7 +85,7 @@ const WATER = [
 ];
 const STYLE_PARTIALS = ["wall-targets.html"];
 export const INSTALLERS = [
-  { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys, partials: ["wall-chips.html"] },
+  { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys, partials: ["wall-chips.html", "wall-water.html"] },
   { name: "drawer", modules: ["frontend/src/adapters/drawer.js"], keys: drawerKeys, partials: ["wall-drawer.html"] },
   { name: "fieldActions", modules: ["frontend/src/adapters/fieldActions.js"], keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "wall-panel.html"] },
   { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys, partials: ["wall-drawer.html"] },
@@ -156,7 +156,7 @@ export const INSTALLERS = [
   { name: "mash", modules: MASH, keys: mashKeys, partials: ["wall-mash.html", "mash-rests-modal.html"] },
   { name: "brewDay", modules: BREW_DAY, keys: brewDayKeys, partials: ["step-brew-day.html"] },
   { name: "dryHops", modules: DRY_HOPS_AND_CATALOG, keys: dryHopKeys, partials: ["hops-dry-section.html", "modal-dry-hop-editor.html"] },
-  { name: "water", modules: WATER, keys: waterKeys, partials: ["wall-water.html"] },
+  { name: "water", modules: WATER, keys: waterKeys, partials: ["wall-water.html", "water-notes-section.html"] },
   { name: "modalFocus", modules: ["frontend/src/adapters/modalFocus.js"], keys: modalFocusKeys },
 ];
 // Cross-owner reads, baselined by Phase 1 of
@@ -266,7 +266,7 @@ export const SHARED = [
   },
   {
     key: "edit",
-    owners: ["hop", "lateAdditions", "water"],
+    owners: ["hop", "lateAdditions", "water", "wall"],
     reason: "shared field verbs: the card partials bind the one editing surface",
   },
   {
@@ -276,12 +276,12 @@ export const SHARED = [
   },
   {
     key: "inputDraft",
-    owners: ["lateAdditions", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water"],
+    owners: ["lateAdditions", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water", "wall"],
     reason: "shared text-input draft: every card edits a field through the one input map",
   },
   {
     key: "inputKey",
-    owners: ["lateAdditions", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water"],
+    owners: ["lateAdditions", "mash", "styleConformance", "styleDeclaration", "styleNavigator", "styleTargets", "water", "wall"],
     reason: "shared text-input draft: every card edits a field through the one input map",
   },
   {

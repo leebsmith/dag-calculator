@@ -21,6 +21,28 @@ export function nearestChip(ids, tops, { top, atEnd = false }) {
   return current;
 }
 
+function focusEntry(section) {
+  let target = section.querySelector?.(CONTROL) ?? null;
+  if (!target) {
+    target = section.querySelector?.(HEADING) ?? null;
+    if (target) target.tabIndex = -1;
+  }
+  target?.focus?.({ preventScroll: true });
+}
+
+/** Open one determination group and move focus to its summary. */
+export function focusPanelGroup(documentRef, id) {
+  const group = documentRef?.querySelector?.(`[data-panel-group="${id}"]`) ?? null;
+  if (!group) return;
+  group.open = true;
+  group.scrollIntoView?.({ block: "nearest" });
+  const summary = group.querySelector?.("summary") ?? null;
+  if (summary) {
+    summary.tabIndex = -1;
+    summary.focus?.({ preventScroll: true });
+  }
+}
+
 export function createWallActions({
   fieldsets,
   getView,
@@ -35,15 +57,6 @@ export function createWallActions({
 
   function sectionOf(id) {
     return documentRef?.querySelector?.(`[data-fieldset="${id}"]`) ?? null;
-  }
-
-  function focusEntry(section) {
-    let target = section.querySelector?.(CONTROL) ?? null;
-    if (!target) {
-      target = section.querySelector?.(HEADING) ?? null;
-      if (target) target.tabIndex = -1;
-    }
-    target?.focus?.({ preventScroll: true });
   }
 
   function selectFieldset(id) {
@@ -63,6 +76,10 @@ export function createWallActions({
     }, LANDING_MS);
 
     focusEntry(section);
+  }
+
+  function openPanelGroup(id) {
+    focusPanelGroup(documentRef, id);
   }
 
   function resetWall() {
@@ -98,6 +115,7 @@ export function createWallActions({
     selectFieldset,
     wallScrolled,
     resetWall,
+    openPanelGroup,
   };
 }
 
@@ -108,4 +126,5 @@ export const KEYS = [
   "selectFieldset",
   "wallScrolled",
   "resetWall",
+  "openPanelGroup",
 ];

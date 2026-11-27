@@ -181,6 +181,11 @@
   color: var(--sys-text-primary);
 }
 
+.panel-note--warning {
+  font-size: var(--text-xs);
+  color: var(--sys-color-warning-text);
+}
+
 .panel-findings {
   display: flex;
   flex-direction: column;

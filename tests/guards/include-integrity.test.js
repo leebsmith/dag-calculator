@@ -29,6 +29,7 @@ const EXTRA_PARTIALS = [
   "./src/partials/wall-panel.html",
   "./src/partials/wall-drawer.html",
   "./src/partials/wall-chips.html",
+  "./src/partials/water-notes-section.html",
   "./src/partials/step-brew-day.html",
 ];
 

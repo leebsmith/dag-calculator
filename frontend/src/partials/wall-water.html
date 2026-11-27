@@ -96,7 +96,7 @@
         type="button"
         class="btn-link text-warning text-xs"
         x-show="waterWarningCount > 0"
-        @click="toggleWaterDetails()"
+        @click="openPanelGroup('water')"
         x-text="waterSummary.warningLabel + ' — view details'"
       ></button>
     </section>
