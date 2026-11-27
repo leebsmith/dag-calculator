@@ -182,12 +182,17 @@ appears once. The fieldset inventory in §Locked decisions is the target shape.
 
 ## Stage 1 — CSS tiers (mechanical, no visual change)
 
-**Scope.** Split `tokens.css` into primitives and semantic tokens; extract
-component files from `style.css`; delete the two non-theme media queries; add the
-layout tokens (`--width-rail`, `--width-field-max`, `--size-control-h`, `--space-gutter`). Name the new
-files by role (`control-*`, `group-*`, `layout/*`, `overlay-*`, `utilities/*`) and
-add `tests/guards/visual-grammar.test.js` with `frontend/src/style.css` as its only
-exemption. No class renames, no visual change at the baseline.
+**Scope.** Split `tokens.css` into primitives and semantic tokens; add the layout
+tokens (`--width-rail`, `--width-field-max`, `--size-control-h`, `--space-gutter`);
+establish the role file names (`control-*`, `group-*`, `layout/*`, `overlay-*`,
+`utilities/*`) and add `tests/guards/visual-grammar.test.js` with
+`frontend/src/style.css` as its only exemption.
+
+Component extraction is deferred to Stage 6: extracting now would put the old rules
+under the grammar guard, which they cannot pass until the visible remap. The two
+style queries are classified rather than deleted: the reduced-motion query stays,
+and the `min-width: 60rem` step-field breakpoint goes with the step shell in Stage 7.
+No class renames, no visual change at the baseline.
 
 **Exit criteria**
 
