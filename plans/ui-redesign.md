@@ -206,15 +206,22 @@ exemption. No class renames, no visual change at the baseline.
 The coupling and the risks are mapped in [`alpine-audit.md`](alpine-audit.md); this
 stage follows its 2A/2B split.
 
-**2A — Decouple the partials (no visual change).** Introduce a fieldset scope and
-replace every `activeStep` read in the step partials with the scoped fieldset.
-Keep the one-at-a-time shell. Add a guard: no step partial references the global
-active step.
+**2A — Decouple the partials (no visual change).** The shell exposes a fieldset
+manifest (`views/fieldsets.js`) and renders one entry through
+`x-for="fieldset in [fieldsets[activeIndex]]"`. Partials read the `fieldset` x-for
+alias — id, slice, title, subtitle, width, groups, fields — instead of the global
+`activeStep`. Keep the one-at-a-time shell. Add a guard: no step partial references
+the global active step.
 
 **2B — Multi-mount.** Render every current step partial inside the wall; keep the
 stepper for now; measure the audit's §7 list: DOM nodes, mount time, modal
 initialization, duplicate ids, console errors, read-only disablement, focus and
 teleports. The panel is a shell placeholder at this point.
+
+**Budget.** The mounted wall adds at most 2.5× the single-card DOM node count, and
+boot-to-interactive grows by at most 300 ms over the single-card baseline on the
+local box, with no long task over 50 ms. If the modal shells are the cost, mount a
+modal lazily on first open and record the choice.
 
 **Exit criteria**
 
@@ -222,7 +229,8 @@ teleports. The panel is a shell placeholder at this point.
   `make test` is green.
 - 2B: all partials mounted; no duplicate static ids; no Alpine expression errors;
   modals open and close from any fieldset; the read-only wrapper covers the wall.
-- The audit's §7 measurements are recorded, with a gap list for Stage 3.
+- The audit's §7 measurements are recorded against the budget, with a gap list for
+  Stage 3.
 - At 1920×1080 and 1280×720: no horizontal scroll, the panel is fixed and full
   height, the wall scrolls under the chip row.
 - The chip row lists the current steps and follows the scroll.
@@ -245,6 +253,8 @@ changes.
 - Every entry in the screen map is rendered exactly once, in its declared home.
 - The field index produced by the producer is unchanged for every editable field
   (a parity test compares old and new field sets).
+- `views/fieldsets.js` is authoritative: the coverage guard reads it, and
+  `data/fieldset-map.json` has no remaining readers (Stage 8 deletes it).
 - No fieldset shows a readout (except the scale pin residual and the band-slider
   readouts).
 - The fermentation-space plot is read-only and opens from the Targets controls.
@@ -295,6 +305,8 @@ component in both themes; run the local visual harness against the baseline.
 - The density targets in §Goal are met at both resolutions.
 - The contrast guard covers every new pair in both themes.
 - `make test-visual BASE=<branch-point>` is reviewed locally.
+- The wall matches `mockups/ui-wall.html` at 1920×1080 and 1280×720; every
+  deviation is listed in the commit with a reason.
 - No control falls below the 32 px desktop height.
 
 ## Stage 7 — Retire the step shell
@@ -304,7 +316,8 @@ view at the wall; update docs and the readiness ledger. Retire the navigation
 state the audit names: `navigation.js` (`syncNav`, `selectStep`, `resetToStep`,
 `resetToDiscussion`, `next`, `prev`, `keyNav`), ui.activeIndex, ui.highwater,
 `stepperSteps`, `navDir`/`navClass`. `resetToDiscussion` becomes “scroll the wall
-to the top”; `stepStatus` survives as the chips' completeness input.
+to the top”; `stepStatus` survives as the chips' completeness input. Stage 8 is
+the documentary and archive close-out.
 
 **Exit criteria**
 
@@ -315,6 +328,53 @@ to the top”; `stepStatus` survives as the chips' completeness input.
 - `make verify` green.
 - The branch merges; `main` stays shippable throughout.
 
+## Stage 8 — Retire and archive
+
+**Scope.** Remove the transition scaffolding, update the living docs and archive
+the record. No behaviour changes.
+
+**Code removal**
+
+- `frontend/src/partials/stepper.html`
+- `frontend/src/adapters/navigation.js` and its installer entry and keys
+- `frontend/src/views/steps.js` and `stepDisplay.js`; `views/fieldsets.js` is the
+  only manifest
+- `frontend/src/partials/step-card.html`, once every fieldset has its container
+- the step, stepper, step-row, step-slot and step-card CSS that no class uses
+- `stepStatus` survives for the chips; every other navigation member is gone
+
+**Docs to update**
+
+- `docs/adding-a-node.md`: fieldset manifest, not a step manifest
+- `docs/ui-contract.md` §6: link the built shell instead of the open question
+- `docs/ui-readiness.md`: scorecard records the shell as built
+- `docs/adsco/ui.md`: reconcile the card/step container terms with fieldsets
+- `TODO.md`: close the design item
+- `make generate` refreshes `docs/frontend-ownership.md`
+
+**Archive or delete**
+
+- move `plans/ui-redesign.md` and `plans/alpine-audit.md` to
+  `plans/archive/<completion-month>/`
+- delete `data/fieldset-map.json`; the coverage guard now reads the fieldset
+  manifest
+- delete `mockups/ui-wall.html` (or move it to a frozen design archive) and remove
+  every reference
+- leave `plans/surface-audit.md` in place as the model-surface record
+
+**Exit criteria**
+
+- `rg "activeStep|activeIndex|highwater|stepperSteps|navDir|navClass" frontend/src`
+  returns nothing.
+- No living doc or partial describes the old shell; references survive only under
+  `docs/historical/` and `plans/archive/`.
+- `views/fieldsets.js` is the single manifest; its coverage guard passes; the
+  fieldset map file is gone.
+- No reference to `mockups/ui-wall.html` remains.
+- `plans/archive/<completion-month>/` holds the plan and audit, and
+  `tests/guards/archive-layout.test.js` passes.
+- `make verify` green; the branch has merged and `main` is shippable.
+
 ## Whole-plan exit
 
 - Density targets met at 1920×1080 and 1280×720.
@@ -322,6 +382,8 @@ to the top”; `stepStatus` survives as the chips' completeness input.
 - The visual-grammar guard is clean with no exemptions.
 - Both themes, all guards, `make verify` green.
 - The old shell gone; one shell, one navigation model.
+- The fieldset map and mockup are removed, the plan and audit archived, and the
+  living docs updated.
 
 ## Risks
 
