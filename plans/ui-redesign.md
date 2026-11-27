@@ -78,8 +78,10 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
 ### Navigation and completeness
 
 10. **Sticky chips replace the stepper.** One chip per fieldset, title plus a
-    status dot; the active chip follows the scroll. The chips are the completeness
-    map.
+    status dot; the active chip follows the scroll and focus. The chips are the
+    completeness map. Activating a chip expands the fieldset, scrolls it to the top
+    and focuses its first editable control, falling back to the legend when the
+    fieldset is read-only — a scroll alone is not navigation.
 11. **Legend: title, disclosure, and “n defaulted” only when non-zero.** No
     derived anchor values, ever.
 12. **Expanded on load.** Per-session collapse memory; no auto-collapse.
@@ -224,6 +226,8 @@ teleports. The panel is a shell placeholder at this point.
 - At 1920×1080 and 1280×720: no horizontal scroll, the panel is fixed and full
   height, the wall scrolls under the chip row.
 - The chip row lists the current steps and follows the scroll.
+- Activating a chip scrolls and focuses the first editable control; a read-only
+  fieldset focuses its legend, with a visible landing cue.
 - Keyboard order follows the DOM; focus is visible.
 - The guards named in the audit are updated in the same commit.
 - `make check` and `make test` green.

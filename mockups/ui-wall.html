@@ -96,6 +96,7 @@
   }
   .fs {
     position: relative;
+    scroll-margin-top: var(--s2);
     border: 1px solid var(--border); border-radius: var(--container);
     background: var(--surface); padding: var(--s3) var(--s4) var(--s4);
     margin: 0; min-inline-size: 0;
@@ -108,6 +109,15 @@
   .field--span2 { grid-column: span 2; }
   .fs legend { display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s2); font-size: var(--text-sm); font-weight: 600; color: var(--ink); }
   .fs legend .count { font-size: 11px; font-weight: 400; color: var(--muted); }
+  .fs.is-target { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .fs legend:focus-visible,
+  .chip:focus-visible,
+  .mini-seg button:focus-visible,
+  .unit:focus-visible,
+  .space-link:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
   .fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: var(--s2) var(--s3); }
   .field { display: flex; flex-direction: column; gap: var(--s1); min-width: 0; }
   .field--full { grid-column: 1 / -1; }
@@ -334,6 +344,7 @@
                 </tbody>
                 <caption>5.0 kg grist · 0.50 kg sugar · 73.7% brewhouse efficiency</caption>
               </table>
+              <button class="space-link" type="button">Add malt</button>
             </div>
           </div>
         </fieldset>
@@ -575,19 +586,55 @@
     chips.forEach((chip) => chip.setAttribute("aria-current", String(chip.dataset.target === id)));
   }
 
+  function firstControl(section) {
+    const control = section.querySelector(
+      'input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [role="tab"]:not([disabled])'
+    );
+    if (control) return control;
+    return section.querySelector("button:not([disabled])");
+  }
+
+  let suppressSpyUntil = 0;
+
+  function focusSection(id) {
+    const section = document.getElementById(id);
+    if (!section) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    section.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    suppressSpyUntil = performance.now() + 700;
+    section.classList.add("is-target");
+    window.setTimeout(() => section.classList.remove("is-target"), 1200);
+    const legend = section.querySelector("legend");
+    if (legend) legend.tabIndex = -1;
+    const control = firstControl(section);
+    if (control) control.focus({ preventScroll: true });
+    else if (legend) legend.focus({ preventScroll: true });
+    setActiveChip(id);
+  }
+
   chips.forEach((chip) => {
-    chip.addEventListener("click", () => {
-      document.getElementById(chip.dataset.target).scrollIntoView({ behavior: "smooth", block: "start" });
-      setActiveChip(chip.dataset.target);
-    });
+    chip.addEventListener("click", () => focusSection(chip.dataset.target));
   });
 
+  if (location.hash.startsWith("#focus-")) focusSection(location.hash.slice(7));
+
   wall.addEventListener("scroll", () => {
+    if (performance.now() < suppressSpyUntil) return;
+    if (wall.scrollTop + wall.clientHeight >= wall.scrollHeight - 2) {
+      setActiveChip(sections[sections.length - 1].id);
+      return;
+    }
+    const wallTop = wall.getBoundingClientRect().top + 40;
     let current = sections[0];
     for (const section of sections) {
-      if (section.offsetTop - wall.offsetTop <= wall.scrollTop + 40) current = section;
+      if (section.getBoundingClientRect().top <= wallTop) current = section;
     }
     if (current) setActiveChip(current.id);
+  });
+
+  document.addEventListener("focusin", (event) => {
+    const section = event.target.closest(".fs");
+    if (section) setActiveChip(section.id);
   });
 
   document.querySelectorAll(".group").forEach((group) => {
