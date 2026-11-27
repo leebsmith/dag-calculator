@@ -1,11 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { steps } from "../../frontend/src/views/steps.js";
+import { fieldsets } from "../../frontend/src/views/fieldsets.js";
 import { ROOT, read, existsSync, join } from "./util.js";
 
-// A7: every <load src> include exists and corresponds to a manifest step partial
-// (bidirectional — no orphan includes, no undeclared steps). Steps may share a
-// single generic partial, so comparison is over the unique sets. Non-step
+// A7: every <load src> include exists and corresponds to a fieldset partial
+// (bidirectional — no orphan includes, no undeclared fieldsets). Non-wall
 // includes (e.g. the app-level library surface) are allowlisted explicitly.
 const EXTRA_PARTIALS = [
   "./src/partials/action-error.html",
@@ -50,10 +49,10 @@ test("A7: include integrity", () => {
   }
 
   const norm = (p) => p.replace(/^\.\//, "");
-  const declared = [...new Set(steps.map((s) => s.partial)), ...EXTRA_PARTIALS].map(norm);
+  const declared = [...new Set(fieldsets.map((f) => f.partial)), ...EXTRA_PARTIALS].map(norm);
   assert.deepEqual(
     [...new Set(srcs.map(norm))].sort(),
     [...declared].sort(),
-    "app-level <load> includes must match the step manifest partials"
+    "app-level <load> includes must match the fieldset manifest partials"
   );
 });

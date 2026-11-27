@@ -260,7 +260,8 @@ changes.
 - The field index produced by the producer is unchanged for every editable field
   (a parity test compares old and new field sets).
 - `views/fieldsets.js` is authoritative: the coverage guard reads it, and
-  `data/fieldset-map.json` has no remaining readers (Stage 8 deletes it).
+  the map now lives in `views/fieldsets.js`, and `data/fieldset-map.json` was
+  deleted with its guard.
 - No fieldset shows a readout (except the scale pin residual and the band-slider
   readouts).
 - The fermentation-space plot is read-only and opens from the Targets controls.
@@ -364,7 +365,7 @@ the record. No behaviour changes.
 
 - move `plans/ui-redesign.md` and `plans/alpine-audit.md` to
   `plans/archive/<completion-month>/`
-- delete `data/fieldset-map.json`; the coverage guard now reads the fieldset
+- the coverage guard reads the fieldset
   manifest
 - delete `mockups/ui-wall.html` (or move it to a frozen design archive) and remove
   every reference

@@ -1,16 +1,361 @@
-// Fieldset manifest: the wall's authored regions in reading order, with the
-// partial that renders each one. Stage 2 carries the current steps one-to-one so
-// the step partials can bind to a scoped fieldset; Stage 3 regroups these into the
-// seven decision fieldsets declared in data/fieldset-map.json.
-import { steps } from "./steps.js";
+// Fieldset manifest: the wall's seven authored regions in reading order. Each
+// fieldset declares the blocks it renders, and each block the field ids it owns,
+// so the coverage guard can prove every authorable path has exactly one home.
+// `panel` (determinations), `drawer` (prose and checklist) and `retired` carry
+// the paths that are not authored on the wall.
 
-export const fieldsets = steps.map((step, index) => ({
-  id: step.id,
-  index,
-  slice: step.slice,
-  title: step.title,
-  subtitle: step.subtitle,
-  width: "regular",
-  partial: step.partial,
-  fields: step.fields ?? [],
-}));
+export const fieldsets = [
+  {
+    id: "targets",
+    title: "Targets & scale",
+    subtitle: "Pin the scale, set the targets, read the bands",
+    width: "full",
+    partial: "./src/partials/wall-targets.html",
+    blocks: [
+      {
+        id: "pin",
+        title: null,
+        render: "pin",
+        fields: ["batch.scale_pin"],
+      },
+      {
+        id: "target",
+        title: "Target",
+        render: "target",
+        fields: ["batch.target_abv", "batch.target_og", "batch.target_fg"],
+      },
+      {
+        id: "volume",
+        title: null,
+        render: "fields",
+        fields: ["batch.v_ferm"],
+      },
+      {
+        id: "bands",
+        title: "Bands",
+        render: "bands",
+        fields: ["batch.target_ibu", "batch.target_srm"],
+      },
+    ],
+  },
+  {
+    id: "yeast",
+    title: "Yeast & fermentation",
+    subtitle: "Strain, attenuation and the fermentation target",
+    width: "narrow",
+    partial: "./src/partials/wall-yeast.html",
+    blocks: [
+      {
+        id: "strain",
+        title: "Strain",
+        render: "picker",
+        fields: ["batch.yeast", "batch.yeast_id"],
+      },
+      {
+        id: "fermentation",
+        title: "Fermentation",
+        render: "fields",
+        fields: ["batch.fermentation", "batch.attenuation_derate_points"],
+      },
+    ],
+  },
+  {
+    id: "grist",
+    title: "Grist",
+    subtitle: "Malts by parts, trace malts by mass, sugars by dose",
+    width: "wide",
+    partial: "./src/partials/wall-grist.html",
+    blocks: [
+      {
+        id: "major",
+        title: "Major grist",
+        render: "collection",
+        fields: ["grist.major_malts"],
+      },
+      {
+        id: "trace",
+        title: "Trace malts",
+        render: "collection",
+        fields: ["grist.trace_malts"],
+      },
+      {
+        id: "sugars",
+        title: "Sugars",
+        render: "collection",
+        fields: ["batch.sugars"],
+      },
+      {
+        id: "moisture",
+        title: "Grain moisture",
+        render: "fields",
+        fields: ["batch.grain_moisture_fraction"],
+      },
+      {
+        id: "intent",
+        title: "Sugar intent",
+        render: "fields",
+        fields: ["batch.late_addition_intent", "batch.sugar_extract_share"],
+      },
+    ],
+  },
+  {
+    id: "hops",
+    title: "Hops",
+    subtitle: "Boil, whirlpool and dry hops by share",
+    width: "wide",
+    partial: "./src/partials/wall-hops.html",
+    blocks: [
+      {
+        id: "boil",
+        title: "Boil hops",
+        render: "collection",
+        fields: ["batch.boil_hops"],
+      },
+      {
+        id: "whirlpool",
+        title: "Whirlpool hops",
+        render: "collection",
+        fields: ["batch.whirlpool_hops"],
+      },
+      {
+        id: "dry",
+        title: "Dry hops",
+        render: "collection",
+        fields: ["batch.dry_hops"],
+      },
+      {
+        id: "targets",
+        title: "Stage targets",
+        render: "fields",
+        fields: ["batch.hop_allocation_mode", "batch.whirlpool_ibu_fraction"],
+      },
+    ],
+  },
+  {
+    id: "mash",
+    title: "Mash & sparge",
+    subtitle: "Rests, liquor and the sparge",
+    width: "regular",
+    partial: "./src/partials/wall-mash.html",
+    blocks: [
+      {
+        id: "profile",
+        title: "Profile",
+        render: "preset",
+        fields: ["mash.preset_id"],
+      },
+      {
+        id: "liquor",
+        title: "Liquor",
+        render: "fields",
+        fields: ["batch.topology", "batch.mash_thickness_l_per_kg", "batch.runoff_ratio", "batch.hlt_starting_volume_l", "batch.sparge_water_temp_c"],
+      },
+      {
+        id: "temps",
+        title: "Temperatures",
+        render: "fields",
+        fields: ["mash.grain_temp_c", "mash.tun_initial_temp_c"],
+      },
+      {
+        id: "rests",
+        title: "Rests",
+        render: "collection",
+        fields: ["mash.rests"],
+      },
+    ],
+  },
+  {
+    id: "water",
+    title: "Water",
+    subtitle: "Target profile, ions, salts and acid",
+    width: "wide",
+    partial: "./src/partials/wall-water.html",
+    blocks: [
+      {
+        id: "profile",
+        title: "Target profile",
+        render: "picker",
+        fields: ["water.target_profile", "water.target_profile_id"],
+      },
+      {
+        id: "targets",
+        title: "Ion targets",
+        render: "ions",
+        fields: ["water.target.calcium_ca", "water.target.magnesium_mg", "water.target.sodium_na", "water.target.sulfate_so4", "water.target.chloride_cl", "water.target.alkalinity_as_caco3", "water.target_mash_ph"],
+      },
+      {
+        id: "pinned",
+        title: "Pinned ions",
+        render: "ions",
+        fields: ["water.pinned_ions"],
+      },
+      {
+        id: "salts",
+        title: "Salts & acid",
+        render: "fields",
+        fields: ["water.salt_distribution", "water.gypsum_form", "water.cacl2_form", "water.acid_medium", "water.preferred_alkaline_agent", "water.calcium_floor_ppm", "water.calcium_ceiling_ppm"],
+      },
+    ],
+  },
+  {
+    id: "boil",
+    title: "Boil & whirlpool",
+    subtitle: "Boil intensity, whirlpool cooling and knockout",
+    width: "regular",
+    partial: "./src/partials/wall-boil.html",
+    blocks: [
+      {
+        id: "boil",
+        title: "Boil",
+        render: "fields",
+        fields: ["batch.boil_time_min", "batch.boil_off_rate_l_per_hr"],
+      },
+      {
+        id: "whirlpool",
+        title: "Whirlpool",
+        render: "fields",
+        fields: ["batch.whirlpool_start_temp_c", "batch.whirlpool_ambient_temp_c", "batch.whirlpool_cooling_time_constant_min", "batch.whirlpool_knockout_min", "batch.cooling_curve_id"],
+      },
+    ],
+  },
+];
+
+export const panel = [
+  "batch.attenuation_above_cap",
+  "batch.boil_target_ibu",
+  "batch.bract_floor_kg",
+  "batch.bract_shortfall_kg",
+  "batch.delta_v_evap",
+  "batch.extract_loss_conversion",
+  "batch.extract_loss_kettle",
+  "batch.extract_loss_mash",
+  "batch.hop_boil_mass_share",
+  "batch.hop_cool_mass_share",
+  "batch.hop_hot_mass_share",
+  "batch.hop_realized_ibu",
+  "batch.realized_abv",
+  "batch.realized_fg",
+  "batch.runnings_ratio",
+  "batch.s_late_add",
+  "batch.shrinkage_volume_l",
+  "batch.sparge_salted_volume",
+  "batch.sugar_extract_total",
+  "batch.surplus_sparge_capacity",
+  "batch.total_water_used",
+  "batch.whirlpool_target_ibu",
+  "batch.yeast.alcohol_tolerance",
+  "batch.yeast.attenuation_cap_pct",
+  "batch.yeast.flocculation",
+  "batch.yeast_cap",
+  "equipment.grain_absorption_factor_l_per_kg",
+  "equipment.hlt_coil_floor_l",
+  "equipment.hlt_dead_space_l",
+  "equipment.hlt_transfer_loss_l",
+  "equipment.kettle_dead_space_l",
+  "equipment.kettle_transfer_loss_l",
+  "equipment.mash_dead_space_l",
+  "equipment.mash_heating_rate_c_per_min",
+  "equipment.mash_transfer_loss_l",
+  "equipment.mash_tun_mass_kg",
+  "equipment.mash_tun_specific_heat",
+  "equipment.max_hlt_volume_l",
+  "equipment.max_kettle_volume_l",
+  "equipment.max_mash_tun_volume_l",
+  "equipment.min_lgr_l_per_kg",
+  "equipment.nominal_boil_off_rate_l_per_hr",
+  "equipment.nominal_conversion_efficiency",
+  "equipment.shrinkage_pct",
+  "equipment.trub_loss_l",
+  "grist.finished_beer_srm",
+  "grist.sugars_mass",
+  "grist.total_mass",
+  "grist.trace_malts_mass",
+  "grist.weighted_yield_fraction",
+  "mash.dough_in_target_temp_c",
+  "mash.mash_phase_volume_l",
+  "mash.strike_water_temp_base_c",
+  "mash.strike_water_temp_c",
+  "mash.strike_water_tun_offset_c",
+  "mash.total_time_min",
+  "solver.batch.apparent_attenuation",
+  "solver.batch.brewhouse_efficiency",
+  "solver.batch.cascade.s_run1",
+  "solver.batch.cascade.s_run2",
+  "solver.batch.cascade.sg_pre_boil",
+  "solver.batch.cascade.v_absorption",
+  "solver.batch.cascade.v_mc",
+  "solver.batch.cascade.v_post_boil",
+  "solver.batch.cascade.v_run1",
+  "solver.batch.cascade.v_run2",
+  "solver.batch.cascade.v_sol",
+  "solver.batch.cascade.v_sparge",
+  "solver.batch.cascade.v_strike",
+  "solver.batch.extract.s_converted",
+  "solver.batch.extract.s_fermenter",
+  "solver.batch.extract.s_kettle",
+  "solver.batch.extract.s_potential",
+  "solver.batch.grist_attenuation",
+  "solver.batch.hlt.v_hlt_top_up",
+  "solver.batch.hlt.v_sparge_deliverable",
+  "solver.batch.m_grist",
+  "solver.batch.mash_thickness_l_per_kg",
+  "solver.batch.real_attenuation",
+  "solver.batch.s_post_boil_target",
+  "solver.batch.sg_post_boil",
+  "solver.batch.v_pre_boil",
+  "solver.water.mash_additions.acid_l",
+  "solver.water.mash_additions.baking_soda_kg",
+  "solver.water.mash_additions.cacl2_kg",
+  "solver.water.mash_additions.chalk_kg",
+  "solver.water.mash_additions.epsom_kg",
+  "solver.water.mash_additions.gypsum_kg",
+  "solver.water.mash_additions.nacl_kg",
+  "solver.water.mash_additions.pickling_lime_kg",
+  "solver.water.prescription.mash_ph_status",
+  "solver.water.prescription.predicted_mash_ph",
+  "solver.water.prescription.residual_hlt_water_l",
+  "solver.water.sparge_additions.acid_l",
+  "solver.water.sparge_additions.baking_soda_kg",
+  "solver.water.sparge_additions.cacl2_kg",
+  "solver.water.sparge_additions.chalk_kg",
+  "solver.water.sparge_additions.epsom_kg",
+  "solver.water.sparge_additions.gypsum_kg",
+  "solver.water.sparge_additions.nacl_kg",
+  "solver.water.sparge_additions.pickling_lime_kg",
+  "style.abv_max",
+  "style.abv_min",
+  "style.fg_max",
+  "style.fg_min",
+  "style.ibu_max",
+  "style.ibu_min",
+  "style.og_max",
+  "style.og_min",
+  "style.srm_max",
+  "style.srm_min",
+];
+
+export const drawer = [
+  "batch.brew_checklist",
+  "batch.checklist_level",
+  "discussion",
+  "fermentation_strategy",
+  "hop_strategy",
+  "process_notes",
+];
+
+export const retired = {
+  "batch.conversion_efficiency": "inherited from the equipment profile; no wall affordance in the first cut",
+  "batch.bract_floor_ratio": "the solver defaults the bract floor; no wall affordance in the first cut",
+};
+
+const home = {};
+for (const fieldset of fieldsets) {
+  for (const block of fieldset.blocks) {
+    for (const id of block.fields) home[id] = fieldset.id;
+  }
+}
+for (const id of panel) home[id] = "panel";
+for (const id of drawer) home[id] = "drawer";
+for (const id of Object.keys(retired)) home[id] = "retired";
+
+export const homes = Object.freeze(home);

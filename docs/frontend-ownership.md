@@ -6,7 +6,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 
 - Declared members: **860** (595 enumerable, 265 hidden)
 - Installers: **24**
-- Card partials: **22**
+- Card partials: **26**
 - Installers reading another installer's key: **14 of 24**
 - Cross-owner keys declared in `SHARED`: **51**
 
@@ -16,7 +16,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 |---|---|---|---|---|
 | `navigation` | `frontend/src/adapters/navigation.js` | 7 | 0 | 0 |
 | `wall` | `frontend/src/adapters/wall.js` | 5 | 0 | 0 |
-| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 33 | 1 | 5 |
+| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 33 | 4 | 5 |
 | `proseValidation` | `frontend/src/adapters/proseValidation.js`, `frontend/src/markdown/validate.js` | 1 | 0 | 0 |
 | `tableConfigs` | `frontend/src/adapters/tableConfigs.js` | 4 | 0 | 0 |
 | `draftEditor` | `frontend/src/adapters/draftEditor.js` | 79 | 0 | 0 |
@@ -24,10 +24,10 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `snapshot` | `frontend/src/store/snapshot.js` | 7 | 0 | 0 |
 | `libraryUi` | `frontend/src/adapters/libraryUi.js`, `frontend/src/adapters/libraryFields.js`, `frontend/src/adapters/libraryListEditor.js`, `frontend/src/adapters/libraryComposition.js` | 65 | 0 | 0 |
 | `yeast` | `frontend/src/adapters/cards/yeast.js` | 51 | 2 | 0 |
-| `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 7 | 1 | 3 |
-| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 1 | 6 |
-| `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js`, `frontend/src/adapters/cards/style/targetFields.js` | 50 | 1 | 11 |
-| `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 1 | 3 |
+| `styleDeclaration` | `frontend/src/adapters/cards/style/declaration.js` | 7 | 2 | 3 |
+| `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 2 | 6 |
+| `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js`, `frontend/src/adapters/cards/style/targetFields.js` | 50 | 2 | 11 |
+| `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 2 | 3 |
 | `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/hopAllocation.js`, `frontend/src/adapters/cards/hopEditorFields.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 174 | 4 | 21 |
 | `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 9 | 3 | 1 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 68 | 2 | 20 |

@@ -5,6 +5,19 @@
   </div>
 
   <div class="card-body">
+    <section class="card-section">
+      <div class="card-section-header">
+        <h3 class="eyebrow">Grain moisture</h3>
+      </div>
+      <div class="wall-fields">
+        <template x-for="block in fieldsetBlocks['grist']" :key="block.id">
+          <template x-if="block.id === 'moisture'">
+            <load src="src/partials/wall-block.html" />
+          </template>
+        </template>
+      </div>
+    </section>
+
     <section class="card-section card-section--collapsible">
       <div class="section-header">
         <button

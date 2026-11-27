@@ -9,7 +9,7 @@ import assert from "node:assert/strict";
 import { withFreshApp } from "./appHelpers.js";
 import { read } from "../guards/util.js";
 
-const CARD = read("frontend/src/partials/step-fermentables.html");
+const CARD = read("frontend/src/partials/wall-grist.html");
 const SUGAR_SECTION = read("frontend/src/partials/fermentables-sugar-section.html");
 
 const billMass = (app) => app.maltMassField.value + app.traceMassField.value + app.sugarMassField.value;

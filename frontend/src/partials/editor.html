@@ -136,35 +136,26 @@
                           :class="fmt.classWhen(landingFieldset === fieldset.id, 'is-landing')"
                           :data-fieldset="fieldset.id"
                         >
-                          <template x-if="fieldset.id === 'discussion'">
-                            <load src="src/partials/step-discussion.html" />
-                          </template>
-                          <template x-if="fieldset.id === 'process'">
-                            <load src="src/partials/step-process.html" />
-                          </template>
-                          <template x-if="fieldset.id === 'style'">
-                            <load src="src/partials/step-style.html" />
+                          <template x-if="fieldset.id === 'targets'">
+                            <load src="src/partials/wall-targets.html" />
                           </template>
                           <template x-if="fieldset.id === 'yeast'">
-                            <load src="src/partials/step-yeast.html" />
+                            <load src="src/partials/wall-yeast.html" />
                           </template>
-                          <template x-if="fieldset.id === 'fermentables'">
-                            <load src="src/partials/step-fermentables.html" />
+                          <template x-if="fieldset.id === 'grist'">
+                            <load src="src/partials/wall-grist.html" />
                           </template>
                           <template x-if="fieldset.id === 'hops'">
-                            <load src="src/partials/step-hops.html" />
+                            <load src="src/partials/wall-hops.html" />
                           </template>
                           <template x-if="fieldset.id === 'mash'">
-                            <load src="src/partials/step-mash.html" />
+                            <load src="src/partials/wall-mash.html" />
                           </template>
                           <template x-if="fieldset.id === 'water'">
-                            <load src="src/partials/step-water.html" />
+                            <load src="src/partials/wall-water.html" />
                           </template>
-                          <template x-if="fieldset.id === 'brew-day'">
-                            <load src="src/partials/step-brew-day.html" />
-                          </template>
-                          <template x-if="fieldset.id !== 'discussion' && fieldset.id !== 'process' && fieldset.id !== 'yeast' && fieldset.id !== 'style' && fieldset.id !== 'fermentables' && fieldset.id !== 'hops' && fieldset.id !== 'mash' && fieldset.id !== 'water' && fieldset.id !== 'brew-day'">
-                            <load src="src/partials/step-card.html" />
+                          <template x-if="fieldset.id === 'boil'">
+                            <load src="src/partials/wall-boil.html" />
                           </template>
                         </section>
                       </template>

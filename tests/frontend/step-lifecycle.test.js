@@ -100,7 +100,8 @@ test("loadState opens the editor on the discussion step", async () => {
     roots: ENVELOPE,
   });
 
-  assert.equal(app.fieldsets[app.activeIndex].id, "discussion");
+  assert.equal(app.activeIndex, 0);
+  assert.equal(app.activeChipId, "targets");
   assert.ok(app.highwater >= 0);
 });
 
@@ -111,10 +112,11 @@ test("a second loadState returns to discussion even from a later step", async ()
 
   await app.loadState(state);
   for (let i = 0; i < app.steps.length; i++) app.next();
-  assert.equal(app.fieldsets[app.activeIndex].id, "brew-day");
+  assert.equal(app.activeIndex, app.steps.length - 1);
 
   await app.loadState(state);
-  assert.equal(app.fieldsets[app.activeIndex].id, "discussion");
+  assert.equal(app.activeIndex, 0);
+  assert.equal(app.activeChipId, "targets");
 });
 
 test("loadState rebinds the mash card to the loaded rest collection", withFreshApp(async (app) => {

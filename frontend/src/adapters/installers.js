@@ -88,11 +88,11 @@ const WATER = [
   "frontend/src/adapters/cards/water.js",
   "frontend/src/adapters/cards/waterCardActions.js",
 ];
-const STYLE_PARTIALS = ["step-style.html"];
+const STYLE_PARTIALS = ["wall-targets.html", "step-style.html"];
 export const INSTALLERS = [
   { name: "navigation", modules: NAVIGATION, keys: navigationKeys },
   { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys },
-  { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["step-card.html"] },
+  { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "step-card.html"] },
   { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys },
   {
     name: "tableConfigs",
@@ -107,7 +107,7 @@ export const INSTALLERS = [
     name: "yeast",
     modules: YEAST,
     keys: yeastKeys,
-    partials: ["step-yeast.html", "modal-yeast-picker.html"],
+    partials: ["wall-yeast.html", "modal-yeast-picker.html"],
   },
   {
     name: "styleDeclaration",
@@ -133,7 +133,7 @@ export const INSTALLERS = [
     modules: HOP_AND_CATALOG,
     keys: [...hopKeys, ...hopStrategyKeys],
     partials: [
-      "step-hops.html",
+      "wall-hops.html",
       "modal-hop-editor.html",
       "modal-whirlpool-hop-editor.html",
       "modal-whirlpool-cooling-ceiling.html",
@@ -150,18 +150,18 @@ export const INSTALLERS = [
     name: "traceMalts",
     modules: TRACE_MALTS_AND_CATALOG,
     keys: traceMaltsKeys,
-    partials: ["step-fermentables.html", "modal-trace-malt-editor.html"],
+    partials: ["wall-grist.html", "modal-trace-malt-editor.html"],
   },
   {
     name: "malt",
     modules: MALT_AND_CATALOG,
     keys: maltKeys,
-    partials: ["step-fermentables.html", "modal-malt-editor.html"],
+    partials: ["wall-grist.html", "modal-malt-editor.html"],
   },
-  { name: "mash", modules: MASH, keys: mashKeys, partials: ["step-mash.html", "mash-rests-modal.html"] },
+  { name: "mash", modules: MASH, keys: mashKeys, partials: ["wall-mash.html", "mash-rests-modal.html"] },
   { name: "brewDay", modules: BREW_DAY, keys: brewDayKeys, partials: ["step-brew-day.html"] },
   { name: "dryHops", modules: DRY_HOPS_AND_CATALOG, keys: dryHopKeys, partials: ["hops-dry-section.html", "modal-dry-hop-editor.html"] },
-  { name: "water", modules: WATER, keys: waterKeys, partials: ["step-water.html"] },
+  { name: "water", modules: WATER, keys: waterKeys, partials: ["wall-water.html"] },
   { name: "modalFocus", modules: ["frontend/src/adapters/modalFocus.js"], keys: modalFocusKeys },
 ];
 // Cross-owner reads, baselined by Phase 1 of

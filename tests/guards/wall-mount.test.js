@@ -46,17 +46,11 @@ function duplicateIds(mounted) {
 test("every fieldset mounts its partial once, with its includes resolved", () => {
   const mounted = mounts();
   assert.equal(mounted.length, fieldsets.length);
+  const partials = mounted.map(({ files }) => [...files][0]);
+  assert.equal(new Set(partials).size, partials.length, "two fieldsets mount the same partial");
   for (const { id, files } of mounted) {
-    assert.ok(files.size > 0, `"${id}" mounts nothing`);
+    assert.ok(files.size > 1, `"${id}" mounts nothing but its own partial`);
   }
-  const shared = mounts().filter(({ files }) =>
-    files.has("frontend/src/partials/step-card.html")
-  );
-  assert.deepEqual(
-    shared.map(({ id }) => id),
-    ["equipment", "batch"],
-    "the shared step card is the only partial two fieldsets mount"
-  );
 });
 
 test("the mounted wall has no duplicate literal id", () => {

@@ -19,7 +19,7 @@ const MEMBER_READ = /\b(?:this|app)\.([A-Za-z_$][\w$]*)/g;
 // Card factories reach the live app through the injected `getView`; the local
 // `view` name is only trusted inside `cards/`, where every module is a card.
 const CARD_VIEW_READ = /\b(?:view|getView\(\))\.([A-Za-z_$][\w$]*)/g;
-const CARD_PARTIAL = /^(?:step-.*|modal-.*|.*-section|mash-rests-modal)\.html$/;
+const CARD_PARTIAL = /^(?:wall-.*|step-.*|modal-.*|.*-section|mash-rests-modal)\.html$/;
 
 function read(path) {
   return readFileSync(ROOT + path, "utf8");

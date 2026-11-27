@@ -9,6 +9,7 @@
 // mirror another card produced passes it explicitly at its own call site.
 
 import { createFindingFormatter, produce } from "../views/producer.js";
+import { fieldsets } from "../views/fieldsets.js";
 import { stepFieldGroups } from "../views/stepDisplay.js";
 import { indexFields } from "../utils.js";
 import { requireObservability } from "../observability.js";
@@ -202,6 +203,17 @@ export function createStepView({
     );
     app.equipmentRig = rigLabel(engine);
     app.fieldsById = indexFields(all);
+    app.fieldsetBlocks = Object.fromEntries(
+      fieldsets.map((fieldset) => [
+        fieldset.id,
+        fieldset.blocks.map((block) => ({
+          id: block.id,
+          title: block.title,
+          render: block.render,
+          fields: block.fields.map((id) => app.fieldsById[id]).filter(Boolean),
+        })),
+      ])
+    );
     app.relations = safe(() => engine.relationStates());
     app.findings = computeFindings(engine, app.relations);
     app.findingsById = Object.fromEntries(

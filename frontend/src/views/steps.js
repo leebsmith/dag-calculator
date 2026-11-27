@@ -47,7 +47,7 @@ export const steps = [
     slice: "yeast",
     title: "Yeast Selection",
     subtitle: "Choose a strain; the solver uses its attenuation cap",
-    partial: "./src/partials/step-yeast.html",
+    partial: "./src/partials/wall-yeast.html",
     fields: [
       "batch.yeast_id",
       "batch.attenuation_derate_points",
@@ -66,7 +66,7 @@ export const steps = [
     slice: "fermentables",
     title: "Fermentables",
     subtitle: "Grist by parts, trace malts by mass, sugars by dose or share",
-    partial: "./src/partials/step-fermentables.html",
+    partial: "./src/partials/wall-grist.html",
     fields: [
       {
         collection: "grist.major_malts",
@@ -264,7 +264,7 @@ export const steps = [
     slice: "hops",
     title: "Hops",
     subtitle: "Boil and whirlpool by share; dry hops by schedule",
-    partial: "./src/partials/step-hops.html",
+    partial: "./src/partials/wall-hops.html",
     fields: [
       {
         collection: "batch.boil_hops",
@@ -307,7 +307,7 @@ export const steps = [
     slice: "mash",
     title: "Mash Profile",
     subtitle: "Rest schedule, strike water temperature & fermentability",
-    partial: "./src/partials/step-mash.html",
+    partial: "./src/partials/wall-mash.html",
     fields: [
       "mash.grain_temp_c",
       "mash.tun_initial_temp_c",
@@ -324,7 +324,7 @@ export const steps = [
     slice: "water",
     title: "Water Chemistry",
     subtitle: "Source water is fixed at creation; the targets are yours",
-    partial: "./src/partials/step-water.html",
+    partial: "./src/partials/wall-water.html",
     fields: [
       "water.target_profile_id",
       "water.calcium_floor_ppm",

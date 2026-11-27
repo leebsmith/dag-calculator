@@ -1,0 +1,10 @@
+<div class="step-field-group" :class="fmt.classWhen(block.grid, 'step-field-group--grid')">
+  <template x-if="block.title">
+    <div class="group-header">
+      <h3 class="group-title" x-text="block.title"></h3>
+    </div>
+  </template>
+  <template x-for="f in block.fields" :key="f.id">
+    <load src="src/partials/wall-field.html" />
+  </template>
+</div>
