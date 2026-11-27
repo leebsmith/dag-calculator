@@ -72,7 +72,6 @@ test("next advances, raises the highwater, and records the direction", () => {
 
   assert.equal(ui.activeIndex, 1);
   assert.equal(ui.highwater, 1);
-  assert.equal(app.navDir, "next");
   assert.deepEqual(
     app.stepperSteps.map((step) => step.state),
     ["completed", "active", "pending"]
@@ -93,7 +92,6 @@ test("prev moves back and stops at the first step", () => {
 
   app.prev();
   assert.equal(ui.activeIndex, 0);
-  assert.equal(app.navDir, "prev");
 
   app.prev();
   assert.equal(ui.activeIndex, 0);
@@ -142,7 +140,6 @@ test("resetToStep sets activeIndex, raises highwater, and syncs nav", () => {
   assert.equal(ui.highwater, 1);
   assert.equal(app.activeIndex, 1);
   assert.equal(app.activeIndex, 1);
-  assert.equal(app.navDir, null);
 
   app.resetToStep(2);
   assert.equal(ui.activeIndex, 2);

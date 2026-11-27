@@ -1693,13 +1693,51 @@ details[open] > summary::before {
   min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--width-rail);
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: var(--space-4);
 }
 
 .wall-scroll {
+  grid-column: 1;
+  grid-row: 1;
   min-height: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
+}
+
+.wall-drawer {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- EXCEPTION: the drawer's viewport-relative ceiling, a component-tuned geometry */
+  max-height: clamp(18rem, 38vh, 28rem);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--sys-surface-default);
+  border: 1px solid var(--sys-border-default);
+  border-radius: var(--radius-xl);
+}
+
+.wall-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.wall-drawer-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.wall-drawer-badge {
+  font-size: var(--text-micro);
+  font-weight: var(--font-weight-medium);
+  color: var(--sys-text-muted);
 }
 
 .wall-fieldsets {
@@ -1739,6 +1777,8 @@ details[open] > summary::before {
 }
 
 .wall-panel {
+  grid-column: 2;
+  grid-row: 1 / -1;
   min-height: 0;
   overflow: hidden;
   display: flex;

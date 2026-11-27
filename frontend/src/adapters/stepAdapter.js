@@ -50,6 +50,7 @@ import { createDraftEditor } from "./draftEditor.js";
 import { createUnitActions } from "./unitActions.js";
 import { createNavigationActions } from "./navigation.js";
 import { createWallActions } from "./wall.js";
+import { createDrawerActions } from "./drawer.js";
 import { createModalFocusManager } from "./modalFocus.js";
 import { createStepView } from "./stepView.js";
 import { assertNoCollisions, BASE_KEYS, composeLayers, installerSurfaceGaps } from "./contract.js";
@@ -131,15 +132,13 @@ export function createStepApp(options = {}) {
     highwater: ui.highwater,
     stepperSteps: [],
     readOnly: false,
-    navDir: null, // "next" | "prev" — retired step transition, deleted with the stepper
     stepStatus: attribution.initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
     unitGroups: UNIT_GROUPS,
     unitMode: ui.unitMode,
     unitsOpen: false,
     violationCount: 0,
-    catalogRevision: 0,
-    libraryRevision: 0,
+    catalogRevision: 0, libraryRevision: 0,
     fieldsBySlice: {}, stepGroups: {}, equipmentRig: "",
     fieldsById: {},
     relations: [],
@@ -362,6 +361,7 @@ export function createStepApp(options = {}) {
     { dialogFocus: modalFocus.dialogFocus, focusAndSelect: modalFocus.focusAndSelect },
     createNavigationActions({ ui, steps, isEditorActive: options.isEditorActive, getView }),
     createWallActions({ fieldsets, getView }),
+    createDrawerActions({ getView, observability, isEditorActive: options.isEditorActive }),
     createFieldActions({ ...core, observability, refToSelectionMap: attribution.refToSelectionMap }),
     createProseValidation({ observability }),
     createDraftEditor({ ...core, ui, observability }),

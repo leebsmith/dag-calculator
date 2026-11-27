@@ -13,6 +13,7 @@
 
 import { KEYS as navigationKeys } from "./navigation.js";
 import { KEYS as wallKeys } from "./wall.js";
+import { KEYS as drawerKeys } from "./drawer.js";
 import { KEYS as fieldActionsKeys } from "./fieldActions.js";
 import { KEYS as proseValidationKeys } from "./proseValidation.js";
 import { KEYS as draftEditorKeys } from "./draftEditor.js";
@@ -37,10 +38,6 @@ import { KEYS as dryHopKeys } from "./cards/dry-hops.js";
 import { KEYS as waterKeys } from "./cards/water.js";
 import { KEYS as tableConfigKeys, SHARED as tableConfigShared } from "./tableConfigs.js";
 const NAVIGATION = ["frontend/src/adapters/navigation.js"];
-const FIELD_ACTIONS = ["frontend/src/adapters/fieldActions.js"];
-const DRAFT_EDITOR = ["frontend/src/adapters/draftEditor.js"];
-const UNIT_ACTIONS = ["frontend/src/adapters/unitActions.js"];
-const SNAPSHOT = ["frontend/src/store/snapshot.js"];
 const LIBRARY_UI = [
   "frontend/src/adapters/libraryUi.js",
   "frontend/src/adapters/libraryFields.js",
@@ -92,16 +89,17 @@ const STYLE_PARTIALS = ["wall-targets.html", "step-style.html"];
 export const INSTALLERS = [
   { name: "navigation", modules: NAVIGATION, keys: navigationKeys },
   { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys },
-  { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "wall-panel.html", "step-card.html"] },
-  { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys },
+  { name: "drawer", modules: ["frontend/src/adapters/drawer.js"], keys: drawerKeys, partials: ["wall-drawer.html"] },
+  { name: "fieldActions", modules: ["frontend/src/adapters/fieldActions.js"], keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "wall-panel.html", "step-card.html"] },
+  { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys, partials: ["wall-drawer.html"] },
   {
     name: "tableConfigs",
     modules: ["frontend/src/adapters/tableConfigs.js"],
     keys: tableConfigKeys,
   },
-  { name: "draftEditor", modules: DRAFT_EDITOR, keys: draftEditorKeys },
-  { name: "unitActions", modules: UNIT_ACTIONS, keys: unitActionsKeys },
-  { name: "snapshot", modules: SNAPSHOT, keys: snapshotKeys },
+  { name: "draftEditor", modules: ["frontend/src/adapters/draftEditor.js"], keys: draftEditorKeys },
+  { name: "unitActions", modules: ["frontend/src/adapters/unitActions.js"], keys: unitActionsKeys },
+  { name: "snapshot", modules: ["frontend/src/store/snapshot.js"], keys: snapshotKeys },
   { name: "libraryUi", modules: LIBRARY_UI, keys: libraryUiKeys },
   {
     name: "yeast",
@@ -139,7 +137,7 @@ export const INSTALLERS = [
       "modal-whirlpool-cooling-ceiling.html",
     ],
   },
-  { name: "proseFields", modules: PROSE_FIELDS, keys: proseFieldsKeys, partials: ["step-discussion.html", "step-process.html", "fermentation-strategy-section.html"] },
+  { name: "proseFields", modules: PROSE_FIELDS, keys: proseFieldsKeys, partials: ["wall-drawer.html"] },
   {
     name: "lateAdditions",
     modules: LATE_ADDITIONS_AND_CATALOG,
@@ -188,10 +186,12 @@ export const SHARED = [
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],
     reason: "the catalog draft mixin delegates to the shared draft editor lifecycle",
   },
+  { key: "hopStrategy", owners: ["proseFields", "proseValidation", "drawer"], reason: "the Notes drawer edits the hop card's strategy prose" },
+  { key: "hopStrategyFields", owners: ["proseFields", "proseValidation", "drawer"], reason: "the Notes drawer renders the hop card's strategy field" },
   {
     key: "proseIssues",
-    owners: ["hop", "proseFields", "fieldActions", "brewDay"],
-    reason: "the hop, discussion, fermentation-strategy, process-note, and brew-day cards bind the shared markdown validator",
+    owners: ["fieldActions", "brewDay"],
+    reason: "the drawer, hop, discussion, fermentation-strategy, process-note, and brew-day surfaces bind the shared markdown validator",
   },
   {
     key: "clearInputDraft",

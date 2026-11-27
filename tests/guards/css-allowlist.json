@@ -118,7 +118,8 @@
       "declarations": "align-items: center; display: flex; gap: var(--space-3); justify-content: space-between",
       "selectors": [
         ".unit-row",
-        ".landing-section-bar"
+        ".landing-section-bar",
+        ".wall-drawer-header"
       ],
       "reason": "Coincidental row layout; unit row and landing section bar are unrelated."
     },

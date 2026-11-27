@@ -28,6 +28,8 @@ const EXTRA_PARTIALS = [
   "./src/partials/ui-form-field-control.html",
   "./src/partials/ui-theme-control.html",
   "./src/partials/wall-panel.html",
+  "./src/partials/wall-drawer.html",
+  "./src/partials/step-brew-day.html",
 ];
 
 // App-level files that may declare <load src>: index.html plus the allowlisted

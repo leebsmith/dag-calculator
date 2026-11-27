@@ -4,11 +4,11 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **860** (595 enumerable, 265 hidden)
-- Installers: **24**
-- Card partials: **27**
-- Installers reading another installer's key: **14 of 24**
-- Cross-owner keys declared in `SHARED`: **51**
+- Declared members: **868** (603 enumerable, 265 hidden)
+- Installers: **25**
+- Card partials: **25**
+- Installers reading another installer's key: **16 of 25**
+- Cross-owner keys declared in `SHARED`: **53**
 
 ## Installers
 
@@ -16,8 +16,9 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 |---|---|---|---|---|
 | `navigation` | `frontend/src/adapters/navigation.js` | 7 | 0 | 0 |
 | `wall` | `frontend/src/adapters/wall.js` | 5 | 0 | 0 |
+| `drawer` | `frontend/src/adapters/drawer.js` | 8 | 1 | 2 |
 | `fieldActions` | `frontend/src/adapters/fieldActions.js` | 33 | 5 | 5 |
-| `proseValidation` | `frontend/src/adapters/proseValidation.js`, `frontend/src/markdown/validate.js` | 1 | 0 | 0 |
+| `proseValidation` | `frontend/src/adapters/proseValidation.js`, `frontend/src/markdown/validate.js` | 1 | 1 | 2 |
 | `tableConfigs` | `frontend/src/adapters/tableConfigs.js` | 4 | 0 | 0 |
 | `draftEditor` | `frontend/src/adapters/draftEditor.js` | 79 | 0 | 0 |
 | `unitActions` | `frontend/src/adapters/unitActions.js` | 6 | 0 | 0 |
@@ -28,8 +29,8 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `styleNavigator` | `frontend/src/adapters/cards/style/navigator.js` | 28 | 2 | 6 |
 | `styleTargets` | `frontend/src/adapters/cards/style/targets.js`, `frontend/src/adapters/cards/style/styleTargetGetters.js`, `frontend/src/adapters/cards/style/targetFields.js` | 50 | 2 | 11 |
 | `styleConformance` | `frontend/src/adapters/cards/style/conformance.js` | 4 | 2 | 3 |
-| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/hopAllocation.js`, `frontend/src/adapters/cards/hopEditorFields.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 174 | 4 | 21 |
-| `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 9 | 3 | 1 |
+| `hop` | `frontend/src/adapters/cards/hops.js`, `frontend/src/adapters/cards/hopGetters.js`, `frontend/src/adapters/cards/hopsCoolingCurve.js`, `frontend/src/adapters/cards/hopsStrategy.js`, `frontend/src/adapters/cards/hopAllocation.js`, `frontend/src/adapters/cards/hopEditorFields.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 174 | 4 | 20 |
+| `proseFields` | `frontend/src/adapters/cards/proseFields.js` | 9 | 1 | 2 |
 | `lateAdditions` | `frontend/src/adapters/cards/late-additions.js`, `frontend/src/adapters/cards/lateAdditionGetters.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 68 | 2 | 20 |
 | `traceMalts` | `frontend/src/adapters/cards/trace-malts.js`, `frontend/src/adapters/cards/traceEditor.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 49 | 2 | 20 |
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 56 | 2 | 18 |
@@ -64,6 +65,8 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `edit` | `fieldActions` | `hop`, `lateAdditions`, `water` | shared field verbs: the card partials bind the one editing surface |
 | `editNumberInput` | `fieldActions` | `lateAdditions`, `mash` | shared field verbs: the card partials bind the one editing surface |
 | `gristTableConfig` | `tableConfigs` | `malt`, `traceMalts` | the fermentables partial binds the shared grain-bill table config |
+| `hopStrategy` | `hop` | `proseFields`, `proseValidation`, `drawer` | the Notes drawer edits the hop card's strategy prose |
+| `hopStrategyFields` | `hop` | `proseFields`, `proseValidation`, `drawer` | the Notes drawer renders the hop card's strategy field |
 | `inputDraft` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `inputKey` | `fieldActions` | `lateAdditions`, `mash`, `styleConformance`, `styleDeclaration`, `styleNavigator`, `styleTargets`, `water` | shared text-input draft: every card edits a field through the one input map |
 | `maltCategories` | `malt` | `traceMalts` | the trace-malt editor lists the malt card's categories |
@@ -71,7 +74,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `openDraft` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `openLibrary` | `libraryUi` | `hop` | the whirlpool picker links to the cooling-curve library tab |
 | `patchDraftRow` | `draftEditor` | `hop`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
-| `proseIssues` | `proseValidation` | `hop`, `proseFields`, `fieldActions`, `brewDay` | the hop, discussion, fermentation-strategy, process-note, and brew-day cards bind the shared markdown validator |
+| `proseIssues` | `proseValidation` | `fieldActions`, `brewDay` | the drawer, hop, discussion, fermentation-strategy, process-note, and brew-day surfaces bind the shared markdown validator |
 | `removeDraftRow` | `draftEditor` | `hop`, `lateAdditions`, `malt`, `traceMalts`, `dryHops` | the catalog draft mixin delegates to the shared draft editor lifecycle |
 | `resetField` | `fieldActions` | `styleTargets` | shared field verbs: the card partials bind the one editing surface |
 | `resetScaleTarget` | `styleTargets` | `styleNavigator` | the style navigator reads the target selection the target card owns |

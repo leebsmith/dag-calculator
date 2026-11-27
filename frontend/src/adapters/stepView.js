@@ -225,7 +225,7 @@ export function createStepView({
       .filter(Boolean);
     const readPanel = (path) => {
       try {
-        return engine.get(path) ?? null;
+        return engine.resolve(path) ?? null;
       } catch (err) {
         observability.reportError("stepView.panel", err);
         return null;

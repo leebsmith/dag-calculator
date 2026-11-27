@@ -36,7 +36,6 @@ export function createNavigationActions({
     const target = index >= 0 && index < steps.length ? index : 0;
     ui.activeIndex = target;
     ui.highwater = Math.max(ui.highwater, target);
-    getView().navDir = null;
     syncNav();
   }
 
@@ -47,7 +46,6 @@ export function createNavigationActions({
   function next() {
     const index = Math.min(ui.activeIndex + 1, steps.length - 1);
     if (index === ui.activeIndex) return;
-    getView().navDir = "next";
     ui.activeIndex = index;
     ui.highwater = Math.max(ui.highwater, ui.activeIndex);
     syncNav();
@@ -56,7 +54,6 @@ export function createNavigationActions({
   function prev() {
     const index = Math.max(ui.activeIndex - 1, 0);
     if (index === ui.activeIndex) return;
-    getView().navDir = "prev";
     ui.activeIndex = index;
     syncNav();
   }

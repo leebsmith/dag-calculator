@@ -1,0 +1,72 @@
+<section class="wall-drawer" x-show="drawerOpen" aria-label="Notes and checklist">
+  <header class="wall-drawer-header">
+    <div class="segmented" role="tablist" aria-label="Sidecars">
+      <button
+        type="button"
+        class="segmented-item"
+        role="tab"
+        :aria-selected="drawerTab === 'notes' ? 'true' : 'false'"
+        @click="openDrawer('notes')"
+      >Notes</button>
+      <button
+        type="button"
+        class="segmented-item"
+        role="tab"
+        :aria-selected="drawerTab === 'checklist' ? 'true' : 'false'"
+        @click="openDrawer('checklist')"
+      >
+        <span>Checklist</span>
+        <span class="wall-drawer-badge" x-text="drawerProgress"></span>
+      </button>
+    </div>
+    <button type="button" class="btn-link text-xs" @click="closeDrawer()">Close</button>
+  </header>
+
+  <div class="wall-drawer-body">
+    <div x-show="drawerTab === 'notes'" role="tabpanel" aria-label="Notes">
+      <section class="card-section" x-data="formBuilder" data-schema="discussionFields">
+        <div class="section-header">
+          <span class="region-title">Discussion</span>
+        </div>
+        <load src="src/partials/ui-form-fields.html" />
+        <template x-for="issue in proseIssues(discussion)" :key="issue.code">
+          <p class="form-hint text-warning" x-text="issue.message"></p>
+        </template>
+      </section>
+
+      <section class="card-section" x-data="formBuilder" data-schema="hopStrategyFields">
+        <div class="section-header">
+          <span class="region-title">Hop strategy</span>
+        </div>
+        <load src="src/partials/ui-form-fields.html" />
+        <template x-for="issue in proseIssues(hopStrategy)" :key="issue.code">
+          <p class="form-hint text-warning" x-text="issue.message"></p>
+        </template>
+      </section>
+
+      <section class="card-section" x-data="formBuilder" data-schema="fermentationStrategyFields">
+        <div class="section-header">
+          <span class="region-title">Fermentation strategy</span>
+        </div>
+        <load src="src/partials/ui-form-fields.html" />
+        <template x-for="issue in proseIssues(fermentationStrategy)" :key="issue.code">
+          <p class="form-hint text-warning" x-text="issue.message"></p>
+        </template>
+      </section>
+
+      <section class="card-section" x-data="formBuilder" data-schema="processNotesFields">
+        <div class="section-header">
+          <span class="region-title">Process notes</span>
+        </div>
+        <load src="src/partials/ui-form-fields.html" />
+        <template x-for="issue in proseIssues(processNotes)" :key="issue.code">
+          <p class="form-hint text-warning" x-text="issue.message"></p>
+        </template>
+      </section>
+    </div>
+
+    <div x-show="drawerTab === 'checklist'" role="tabpanel" aria-label="Checklist">
+      <load src="src/partials/step-brew-day.html" />
+    </div>
+  </div>
+</section>

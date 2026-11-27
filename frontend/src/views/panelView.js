@@ -5,6 +5,7 @@
 
 import { strip, context, groups } from "./panel.js";
 import { dimensionOf } from "./registry/catalog.js";
+import { surfaceManifest } from "./registry/surface.generated.js";
 
 const DASH = "—";
 const PIN_TARGETS = {
@@ -14,6 +15,7 @@ const PIN_TARGETS = {
 };
 
 function display(read, format, artifact, path) {
+  if (!surfaceManifest.paths[path]) return DASH;
   const value = read(path);
   if (value === null) return DASH;
   if (typeof value === "string") return value === "" ? DASH : value;

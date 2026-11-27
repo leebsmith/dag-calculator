@@ -9,7 +9,6 @@ export const steps = [
     slice: "discussion",
     title: "Discussion",
     subtitle: "Origin, substitutions, and why this recipe looks the way it does",
-    partial: "./src/partials/step-discussion.html",
     fields: [],
   },
   {
@@ -299,7 +298,6 @@ export const steps = [
     slice: "process",
     title: "Process notes",
     subtitle: "Additions and notes the model does not calculate",
-    partial: "./src/partials/step-process.html",
     fields: [],
   },
   {
