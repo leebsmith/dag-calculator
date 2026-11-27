@@ -238,8 +238,7 @@
       "declarations": "display: flex; flex-direction: column; flex: 1; gap: var(--space-6); min-height: 0",
       "selectors": [
         ".import-view",
-        ".chooser",
-        ".editor"
+        ".chooser"
       ],
       "reason": "Top-level view shell contract: each fills the app content and owns one scroll region."
     },
