@@ -154,6 +154,7 @@
       "declarations": "color: var(--sys-text-secondary)",
       "selectors": [
         ".form-input.is-seeded, .form-select.is-seeded",
+        ".panel-fact dt",
         ".finding-message",
         ".text-secondary"
       ],

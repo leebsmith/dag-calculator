@@ -1,0 +1,116 @@
+// The panel is a read-only surface with three contracts: every panel-homed path
+// appears exactly once across the strip, the context popover and the groups; every
+// one of those paths exists in the generated surface manifest; and the details
+// popover is the report's Equipment and Brewhouse list — same paths, labels and
+// order — so the two surfaces cannot drift apart.
+
+import test from "node:test";
+import assert from "node:assert/strict";
+
+import { panel } from "../../frontend/src/views/fieldsets.js";
+import { context, groups, panelPaths, strip } from "../../frontend/src/views/panel.js";
+import { surfaceManifest } from "../../frontend/src/views/registry/surface.generated.js";
+import { read } from "./util.js";
+
+const PANEL = "frontend/src/partials/wall-panel.html";
+const EQUIPMENT_TYP = "backend/app/templates/sections/equipment.typ";
+const BREWHOUSE_TYP = "backend/app/templates/sections/brewhouse.typ";
+
+function pairs(text) {
+  return [...text.matchAll(/\(\s*"([^"]+)",\s*"([a-z_]+\.[a-z0-9_.]+)"/g)].map((match) => ({
+    label: match[1],
+    path: match[2],
+  }));
+}
+
+function brewhouseRows() {
+  const text = read(BREWHOUSE_TYP);
+  const constraint = text.slice(text.indexOf("let constraint-rows = ("), text.indexOf("let scale-pin"));
+  const explicit = text.slice(text.indexOf(") + constraint-rows + ("));
+  return [...pairs(constraint), ...pairs(explicit)];
+}
+
+function typGroups(file) {
+  const text = read(file);
+  const found = [];
+  for (const match of text.matchAll(/title:\s*"([^"]+)",\s*rows:\s*\(([\s\S]*?)\n\s*\),/g)) {
+    const rows = [...match[2].matchAll(/\(\s*"([^"]+)",\s*"(equipment\.[a-z0-9_.]+)"/g)].map((row) => ({
+      label: row[1],
+      path: row[2],
+    }));
+    found.push({ title: match[1], rows });
+  }
+  return found;
+}
+
+test("every rendered panel path is declared once, read-only, and homed to the panel", () => {
+  const declared = new Set(panelPaths);
+  assert.equal(declared.size, panelPaths.length, "a panel path is declared twice");
+
+  const missing = panelPaths.filter((path) => !surfaceManifest.paths[path]);
+  assert.deepEqual(missing, [], "panel paths missing from the surface manifest");
+
+  const editable = panelPaths.filter((path) => surfaceManifest.paths[path]?.isInput !== false);
+  assert.deepEqual(editable, [], "a panel path is editable");
+
+  const stripPaths = strip.map((cell) => cell.path);
+  const equipment = context.equipment.flatMap((group) => group.rows.map((row) => row.path));
+  const groupPaths = groups.flatMap((group) => (group.rows ?? []).map((row) => row.path));
+  const unhomed = [...stripPaths, ...equipment, ...groupPaths].filter(
+    (path) => !panel.includes(path)
+  );
+  assert.deepEqual(unhomed, [], "a rendered determination is not homed to the panel");
+});
+
+test("the strip is the six outcome cells, each a readout", () => {
+  assert.deepEqual(
+    strip.map((cell) => cell.id),
+    ["abv", "og", "fg", "ibu", "srm", "ph"]
+  );
+  for (const cell of strip) {
+    assert.equal(surfaceManifest.paths[cell.path]?.isInput, false, `${cell.path} is editable`);
+  }
+});
+
+test("the details popover is the report's Equipment list", () => {
+  const report = typGroups(EQUIPMENT_TYP).map(({ title, rows }) => ({ title, rows }));
+  assert.deepEqual(
+    context.equipment.map(({ title, rows }) => ({ title, rows })),
+    report
+  );
+});
+
+test("the details popover is the report's Brewhouse list", () => {
+  assert.deepEqual(context.brewhouse, brewhouseRows());
+});
+
+test("the panel surface is read-only", () => {
+  const markup = read(PANEL);
+  for (const pattern of [/<input\b/, /<select\b/, /<textarea\b/, /@click=/, /@input=/, /@change=/]) {
+    assert.doesNotMatch(markup, pattern, `wall-panel.html is editable: ${pattern}`);
+  }
+});
+
+test("the rig facts are read-only identity paths", () => {
+  const equipment = context.equipment.flatMap((group) => group.rows.map((row) => row.path));
+  const editable = equipment.filter((path) => surfaceManifest.paths[path]?.isInput !== false);
+  assert.deepEqual(editable, []);
+});
+
+test("the groups are one exclusive accordion", () => {
+  const names = [...read(PANEL).matchAll(/<details class="panel-group"[^>]*name="([^"]+)"/g)].map(
+    (match) => match[1]
+  );
+  assert.deepEqual(names, ["panel-groups"]);
+});
+
+test("the groups keep their declared shape", () => {
+  assert.deepEqual(
+    groups.map((group) => group.id),
+    ["batch", "bitterness", "water", "style", "findings"]
+  );
+  for (const group of groups) {
+    if (group.findings || group.computed) continue;
+    assert.ok(group.rows.length > 0, `${group.id} has no rows`);
+  }
+});

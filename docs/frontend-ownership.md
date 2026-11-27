@@ -6,7 +6,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 
 - Declared members: **860** (595 enumerable, 265 hidden)
 - Installers: **24**
-- Card partials: **26**
+- Card partials: **27**
 - Installers reading another installer's key: **14 of 24**
 - Cross-owner keys declared in `SHARED`: **51**
 
@@ -16,7 +16,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 |---|---|---|---|---|
 | `navigation` | `frontend/src/adapters/navigation.js` | 7 | 0 | 0 |
 | `wall` | `frontend/src/adapters/wall.js` | 5 | 0 | 0 |
-| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 33 | 4 | 5 |
+| `fieldActions` | `frontend/src/adapters/fieldActions.js` | 33 | 5 | 5 |
 | `proseValidation` | `frontend/src/adapters/proseValidation.js`, `frontend/src/markdown/validate.js` | 1 | 0 | 0 |
 | `tableConfigs` | `frontend/src/adapters/tableConfigs.js` | 4 | 0 | 0 |
 | `draftEditor` | `frontend/src/adapters/draftEditor.js` | 79 | 0 | 0 |

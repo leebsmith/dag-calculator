@@ -92,7 +92,7 @@ const STYLE_PARTIALS = ["wall-targets.html", "step-style.html"];
 export const INSTALLERS = [
   { name: "navigation", modules: NAVIGATION, keys: navigationKeys },
   { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys },
-  { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "step-card.html"] },
+  { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "wall-panel.html", "step-card.html"] },
   { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys },
   {
     name: "tableConfigs",

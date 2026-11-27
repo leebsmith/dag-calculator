@@ -1,0 +1,85 @@
+<aside class="wall-panel" aria-label="Determinations">
+  <div class="panel-status">
+    <span
+      class="status-dot"
+      :class="'status-dot-' + (panel.status.tone === 'ok' ? 'success' : panel.status.tone === 'error' ? 'error' : 'warning')"
+    ></span>
+    <span x-text="panel.status.text"></span>
+  </div>
+
+  <div class="panel-strip">
+    <template x-for="cell in panel.cells" :key="cell.id">
+      <div class="panel-cell">
+        <span class="panel-cell-label" x-text="cell.label"></span>
+        <span class="panel-cell-value tabular-nums" x-text="cell.display"></span>
+        <span class="panel-cell-sub" x-text="cell.sub"></span>
+      </div>
+    </template>
+  </div>
+
+  <div class="panel-context">
+    <span class="panel-context-line" x-text="panel.context.line || 'No rig, style or water source yet'"></span>
+    <details class="panel-popover">
+      <summary class="panel-more">Details</summary>
+      <div class="panel-popover-body">
+        <template x-for="group in panel.context.equipment" :key="group.id">
+          <section class="panel-facts">
+            <h3 class="eyebrow" x-text="group.title"></h3>
+            <dl>
+              <template x-for="row in group.rows" :key="row.path">
+                <div class="panel-fact">
+                  <dt x-text="row.label"></dt>
+                  <dd class="tabular-nums" x-text="row.display"></dd>
+                </div>
+              </template>
+            </dl>
+          </section>
+        </template>
+        <section class="panel-facts">
+          <h3 class="eyebrow">Process</h3>
+          <dl>
+            <template x-for="row in panel.context.brewhouse" :key="row.path">
+              <div class="panel-fact">
+                <dt x-text="row.label"></dt>
+                <dd class="tabular-nums" x-text="row.display"></dd>
+              </div>
+            </template>
+          </dl>
+        </section>
+      </div>
+    </details>
+  </div>
+
+  <div class="panel-groups">
+    <template x-for="group in panel.groups" :key="group.id">
+      <details class="panel-group" name="panel-groups">
+        <summary>
+          <span x-text="group.title"></span>
+          <span class="panel-group-meta tabular-nums" x-text="group.meta"></span>
+        </summary>
+        <template x-if="group.findings">
+          <ul class="panel-findings">
+            <template x-for="finding in panel.findings" :key="finding.id">
+              <li class="panel-finding">
+                <span class="font-medium" x-text="finding.label"></span>
+                <span class="text-muted" x-text="finding.message"></span>
+              </li>
+            </template>
+          </ul>
+        </template>
+        <template x-if="!group.findings">
+          <dl class="panel-facts-list">
+            <template x-for="row in group.rows" :key="row.path">
+              <div class="panel-fact">
+                <dt x-text="row.label"></dt>
+                <dd class="tabular-nums" x-text="row.display"></dd>
+              </div>
+            </template>
+          </dl>
+        </template>
+        <p class="form-hint" x-show="!group.findings && group.rows.length === 0">No determinations yet.</p>
+        <p class="form-hint" x-show="group.findings && panel.findings.length === 0">No findings.</p>
+      </details>
+    </template>
+  </div>
+</aside>

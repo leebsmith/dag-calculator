@@ -10,6 +10,7 @@
 
 import { createFindingFormatter, produce } from "../views/producer.js";
 import { fieldsets } from "../views/fieldsets.js";
+import { buildPanel } from "../views/panelView.js";
 import { stepFieldGroups } from "../views/stepDisplay.js";
 import { indexFields } from "../utils.js";
 import { requireObservability } from "../observability.js";
@@ -222,6 +223,24 @@ export function createStepView({
     app.stepFindingItems = (app.stepStatus?.[app.fieldsets?.[app.activeIndex]?.slice]?.relations ?? [])
       .map((relation) => app.findingsById[relation.id])
       .filter(Boolean);
+    const readPanel = (path) => {
+      try {
+        return engine.get(path) ?? null;
+      } catch (err) {
+        observability.reportError("stepView.panel", err);
+        return null;
+      }
+    };
+    app.panel = buildPanel({
+      artifact,
+      read: readPanel,
+      format: createFindingFormatter(artifact, engine, ui),
+      conformance: app.conformanceSummary ?? null,
+      findings: app.findings,
+      boundaryError: app.boundaryError ?? null,
+      boundaryPending: app.boundaryPending === true,
+      boundaryStatuses: app.boundaryStatuses ?? {},
+    });
     app.pinFindingAvailable =
       app.boundaryStatuses?.["solver.batch"] === "ok" && topology === "runoff_ratio";
     app.domains = safe(() => engine.domainStates());
