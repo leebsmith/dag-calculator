@@ -18,12 +18,13 @@ tracks only what is outstanding.
    keyboard traversal with batch actions; the editor's "Imported from…" panel
    landed (`plans/recipe-import.md` J.1/J.3).
 
-4. **UI design — the only open gate** — the contract is `docs/ui-contract.md`, the
-   measured readiness is `docs/ui-readiness.md`, and the stations are in
-   `docs/artifact-arc.md`. The redesign is scoped in `plans/ui-redesign.md`:
-   a wall of seven decision fieldsets, a fixed determination panel, and a
-   sidecar drawer. Grouping, copy, layout and delta presentation remain the
-   design's own decisions.
+4. **UI design — shipped, with the review pass open** — the wall of seven
+   fieldsets, the fixed determination panel and the sidecar drawer are built; the
+   contract is `docs/ui-contract.md`, the measured readiness is
+   `docs/ui-readiness.md`, the UI model is `docs/adsco/ui.md`, and the decision
+   record is archived at `plans/archive/2026-11/ui-redesign.md`. What remains is
+   the both-theme visual review and the copy/grouping polish it turns up; delta
+   presentation stays parked below.
 
 ## Before 1st printed recipe
 

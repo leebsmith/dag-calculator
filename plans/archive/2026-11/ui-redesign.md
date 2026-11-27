@@ -3,7 +3,7 @@ title: UI redesign — the wall, the panel and the drawer
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
 depends_on: [surface-audit]
-status: proposed
+status: completed
 ---
 
 # UI redesign
@@ -43,7 +43,7 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
 | `data/authoring.json` | every authorable action and its constraint |
 | `frontend/src/views/steps.js` | the current field inventory to redistribute |
 | [`alpine-audit.md`](alpine-audit.md) | what the wall changes in Alpine, and the 2A/2B transition |
-| [`../mockups/ui-wall.html`](../mockups/ui-wall.html) | the visual reference for the shell, fieldsets, panel and drawer |
+| `mockups/ui-wall.html` | the visual reference; deleted at completion |
 
 ## Locked decisions
 

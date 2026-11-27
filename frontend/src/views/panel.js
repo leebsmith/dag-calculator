@@ -82,6 +82,8 @@ export const groups = [
       { path: "solver.batch.v_pre_boil", label: "Pre-boil volume" },
       { path: "batch.total_water_used", label: "Total water used" },
       { path: "batch.sugar_extract_total", label: "Late sugar extract" },
+      { path: "batch.yeast_cap", label: "Yeast attenuation cap" },
+      { path: "batch.attenuation_above_cap", label: "Above malt cap" },
     ],
   },
   {

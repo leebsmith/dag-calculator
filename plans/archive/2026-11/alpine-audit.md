@@ -2,7 +2,7 @@
 title: Alpine audit — what the wall changes and what it does not
 program: deterministic-dag-calculator
 target_repo: ~/Development/dag-calculator
-status: complete (audit); transition adopted in `ui-redesign.md`
+status: completed
 ---
 
 # Alpine audit

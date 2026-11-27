@@ -23,41 +23,38 @@ No "Solve" button. The live DAG recomputes on every edit, debounced through
 `boundaryRunner`. Invalid/incomplete states surface as live warnings and a
 pending/error boundary status, never a blocked submit.
 
-### Card readouts are refresh-time snapshots
+### Readouts are refresh-time snapshots
 
 Alpine only tracks dependencies it can see, and the engine is not reactive. A
 getter that reads the engine registers nothing, so a template bound to it
-freezes at its first render. Every card readout derived from the engine is
-therefore a **mirror**: the card's `refresh*` function assigns a plain property,
+freezes at its first render. Every readout derived from the engine — a fieldset
+or a panel determination — is therefore a **mirror**: the surface's `refresh*`
+function assigns a plain property,
 and the getter returns that property. Never bind a partial to a live engine
 read. `tests/guards/engine-read-mirrors.test.js` enforces this; the allowlisted
 getters read the engine behind a value every refresh reassigns — the sugar
 readouts behind `fieldsBySlice`/`draftRows`, the cooling-curve picker's value
 behind `libraryRevision`.
 
-## Card layout
+## Fieldset layout
 
-The water card is four labelled regions, in this order:
+The Water fieldset is the decision surface: the source report picker, the
+objective preset picker, the calcium band (minimum and maximum), the mash pH
+objective, the objective-vs-actual grid, the pinned ions and the salt/acid
+practice. The band and the mash-pH objective carry a `seed` badge while their
+value is inherited and a `↺` reset once it has been authored.
 
-1. **Water plan** — source report picker, objective preset picker, calcium band
-   (minimum and maximum), mash pH objective, the objective-vs-actual grid, route
-   line, kettle ratio, the
-   mash-pH line (before → after plus the resolved correction at each
-   destination), and actionable warnings. This is the primary decision surface.
-   The band and the mash-pH objective carry a `seed` badge while their value is
-   inherited and a `↺` reset once it has been authored.
-2. **Practice** — salt distribution, acid medium, gypsum and CaCl₂ forms, and
-   the alkaline agent.
-3. **Prescription** — dosing volume, residual HLT, nonzero mash/sparge additions,
-   dosing-basis footnote, and destinations. A nonzero sparge acid dose carries the
-   note `Sparge acid prescribed to keep sparge pH ≤ 5.80`; this is a prescription
-   fact, not a warning, because the card assumes the plan is followed.
-4. **Details** — collapsed full telemetry log, ratio basis, not-modelled caveat,
-   and abnormal boundary status.
+The prescription (dosing volume, residual HLT, nonzero mash/sparge additions and
+the destination basis) and the details (telemetry log, ratio basis, not-modelled
+caveat, abnormal boundary status) are **panel determinations**: the Water group
+holds the pH, status, residual, salted-sparge volume and the principal additions,
+and the report carries the full log. A nonzero sparge acid dose still carries the
+note `Sparge acid prescribed to keep sparge pH ≤ 5.80` in the report.
 
 The source report picker carries identity only; source ions render solely in the
-grid's Source column. Predicted pH/status lives in the Water plan and is not
-repeated. The warning badge counts WARNING + ERROR telemetry entries and opens
+grid's Source column. Predicted pH/status is a Water group determination and is
+not repeated in the fieldset. The warning badge counts WARNING + ERROR telemetry
+entries and opens
 Details; INFO and NOTE entries remain in the full log.
 
 ### Precision
@@ -198,9 +195,9 @@ is unchanged; the conformance layer still sees the computed gravity.
 
 ### Attenuation readouts
 
-The Style card shows the realized **Apparent attenuation** only. The cap,
-derate and above-cap diagnosis belong to the Yeast card, so the Style card does
-not duplicate them.
+The wall shows the yeast derate on the Yeast fieldset; the solved cap and the
+above-cap diagnosis are Batch determinations in the panel, so the Yeast fieldset
+does not duplicate them.
 
 The artifact still carries `batch.attenuation_above_cap` — `max(0, blend AA −
 malt cap)`, null when the cap holds. The report prints it as **Above malt cap**;
@@ -208,11 +205,13 @@ the only cause is uncapped sugar extract.
 
 ### Yeast strain and batch attenuation
 
-The Yeast card has three layers. The selected strain carries its name,
+The Yeast fieldset has two layers. The selected strain carries its name,
 manufacturer, form, flocculation, temperature band and `mine`/STA1/POF badges,
 plus the published attenuation band; **Change yeast…** opens the picker. The
-batch attenuation panel carries the solved target cap `batch.yeast_cap`, the
-published band, the realized apparent attenuation, the binding constraint, and
+batch attenuation row carries the derate; the solved target cap
+`batch.yeast_cap`, the realized apparent attenuation and the above-cap diagnosis
+are Batch determinations, and the report carries the published band, the binding
+constraint and
 the above-cap row with its inferred cause. A collapsible **Strain details**
 holds form, flocculation, tolerance, temperature, recipes, source and notes, and
 a second disclosure explains the attenuation model.
@@ -225,7 +224,7 @@ follows the percentage unit menu. Every strain, ranged or point-only, uses the
 same numeric derate input. The published high end is the cap; the derate moves
 below it. The binding readout names `grist-limited`, `yeast cap` or `sugar`.
 
-The picker is a modal, opened from the card. It owns the catalog: one compact
+The picker is a modal, opened from the Yeast fieldset. It owns the catalog: one compact
 filter strip with name search (and the notes toggle), manufacturer, attenuation
 tier, tri-state STA1 tier and POF tier. Filters reset when it opens, so a
 narrowing from the last visit cannot hide the catalog; the list shows 50 rows
@@ -266,8 +265,8 @@ not implicit rewrites.
 
 ### Hop allocation mode
 
-The hop bill has two authoring modes, chosen in the Style card beside `Target
-IBU` and stored on the batch as `batch.hop_allocation_mode`. The mode is a
+The hop bill has two authoring modes, chosen in the Hops fieldset beside the
+stage targets and stored on the batch as `batch.hop_allocation_mode`. The mode is a
 batch root, so it travels in the record, the import projection and the frozen
 report.
 
@@ -281,11 +280,11 @@ one pool the parts normalize across both tables with the Hamilton rule, so a
 share typed in the boil table moves the whirlpool percentages too, and the
 table footer reports the share of the boil + whirlpool pool rather than a per-table total.
 
-The hops card shows a **Stage Allocation** strip in both modes: boil, hot
-whirlpool and cool whirlpool, each with its mass share, mass, IBU and IBU share,
-then the boil + whirlpool total. The strip is the same three masses either way;
-what changes is which split was authored. A boil + whirlpool row with no share adds no mass
-and is counted in a hint rather than guessed at.
+The Bitterness group in the panel shows the stage totals in both modes: the boil
+and whirlpool IBU targets, the hot and cool mass shares, the realized IBU and the
+bract floor with its shortfall. The masses are the same three either way; what
+changes is which split was authored. A boil + whirlpool row with no share adds no
+mass and is counted in a hint rather than guessed at.
 
 Switching from two pools to one seeds `mass_parts` from the batch's current
 solved masses, so the grams do not jump — those masses already summed to the
@@ -295,17 +294,17 @@ chooses the other.
 
 ### Bract floor
 
-The hops card shows a **boil + whirlpool bract** line whenever the bill carries lupulin:
-bract mass, lupulin mass, the floor and the ratio. The line is muted while the
-floor holds and warning-styled when it is short; a shortfall names the T-90 to
-add and the lupulin that would have to be converted instead. It is advisory and
-never rewrites the bill. A bill with no lupulin shows nothing. The ratio
-`batch.bract_floor_ratio` is a YCH benchmark held in the model, not a card
-control; the report prints the same composition in its overall-hops block.
+The Bitterness group shows the **bract floor** and its shortfall whenever the bill
+carries lupulin: a shortfall names the T-90 to add and the lupulin that would have
+to be converted instead. It is advisory and never rewrites the bill. A bill with
+no lupulin shows nothing. The ratio `batch.bract_floor_ratio` is a YCH benchmark
+held in the model with no wall control; the report prints the same composition in
+its overall-hops block.
 
-### Fermentation space (Style card)
+### Fermentation space (Targets fieldset)
 
-The Style card plots the batch in the extract plane: `x = OE`, `y = AE`. The
+The Targets fieldset plots the batch in the extract plane from a read-only
+popover: `x = OE`, `y = AE`. The
 plotted plane follows the gravity unit control: with **Plato** selected the axes
 are the extract plane (linear in °P); with **SG** selected they are the gravity
 plane (linear in SG). The geometry is always computed in °P and projected once,
@@ -337,7 +336,7 @@ their labels say so, and the integer contours are labelled where they cross the
 plane. The ABV pin label takes the contour sample farthest from the batch
 marker, so the dot never sits inside the text.
 
-Card-level figures (the plot, the vitals range, the target input, the
+Fieldset-level figures (the plot, the vitals range, the target input, the
 conformance rows) follow the menu's dimension pick. A per-field unit override
 stays on its envelope row and does not move them.
 
@@ -349,7 +348,7 @@ the level.
 
 ### Scale pin and preview matrix
 
-The Sugars section of the Fermentables card carries a collapsible **Pin preview**
+The Sugars section of the Grist fieldset carries a collapsible **Pin preview**
 when sugar is authored. It shows one row per scale pin — ABV, OG, FG — with the
 realized OG, FG and ABV at that pin's persisted target:
 
@@ -362,9 +361,9 @@ realized OG, FG and ABV at that pin's persisted target:
 The active row is the batch; the other two are hypothetical previews. Cells are
 green inside the style envelope, red outside, and neutral without an envelope.
 One backend preview call returns all three rows when sugar is authored; no-sugar
-batches skip the preview solves. Previews are read-only. The pin selector and
-active target live on the Style card; the panel only shows the table and names
-the composition representation.
+batches skip the preview solves. Previews are read-only. The pin selector and the active target live in the
+Targets fieldset; the table names the composition representation and is the one
+readout the wall keeps beside its authoring table.
 
 The **Extract share** column is the sugar extract each row actually holds. In
 share mode it is the authored fraction, identical in every row. In dose mode the
@@ -376,8 +375,8 @@ sugar table's display unit.
 
 The panel starts collapsed, expands on request, and collapses when no sugar
 contributes. The section keeps its “Configure Sugars” button.
-The Style card owns the pin selector, active target, style reset, and the
-pin-aware graph; the sugar panel never edits them, so the pin remains
+The Targets fieldset owns the pin selector, the active target, the style reset
+and the pin-aware graph; the sugar preview never edits them, so the pin remains
 reachable for batches with no sugar.
 
 Style conflicts are warnings, never freeze gates. The retired Belgian knob was
@@ -434,14 +433,17 @@ would be unstyled. `segmented-control` is a `div` when it filters within a view
 and a `nav` when it switches views (the import stages); the element follows the
 navigation role, not the class.
 
-The page card uses `surface-default` and is the only level with a shadow. A
-boxed region uses `surface-subtle`, which reads as a panel inside the card in
-both modes. Every boxed boundary uses `border-default`; `border-subtle` is
-reserved for row dividers and table cell rules, so a boundary never reads as a
-divider. A summary strip inside a boxed region uses `surface-elevated` so it
-stays distinct from the tinted section; a detail panel keeps its border as the
-cue. Section headers and card-section headers carry a bottom rule in
-`border-default`; the group rule behind a `group-title` uses the same token.
+Containers are flat: the page card, the boxed region, the sheet, the wall panel
+and the drawer carry a 1 px boundary and no elevation. The only raised shadow is
+the overlay's (the modal shell, the sheet backdrop's dialog, the unit popover),
+and the focus ring has its own shadow token. A boxed region uses `surface-subtle`,
+which reads as a panel inside the card in both modes. Every boxed boundary uses
+`border-default`; `border-subtle` is reserved for row dividers and table cell
+rules, so a boundary never reads as a divider. A summary strip inside a boxed
+region uses `surface-elevated` so it stays distinct from the tinted section; a
+detail panel keeps its border as the cue. Section headers and card-section
+headers carry a bottom rule in `border-default`; the group rule behind a
+`group-title` uses the same token.
 
 The contrast target is 2:1 for a boundary against its surface and 1.1:1 for a
 divider. The surface separation target is L* 3 for a section against the card
@@ -454,12 +456,14 @@ an inline `details` (`yeast-more`, `yeast-row-details`, `map-search`) is a
 summary row with a chevron and no box. Both use the same chevron as
 `section-toggle`.
 
-The page card, the boxed region, the unboxed region and the sheet are the four
-structural levels; `sheet` is the only one that is centred rather than placed in
-the document flow. Distinct elevation roles keep their own names:
-`catalog-item-card`, `detail-panel`, and the modal drawer classes. A new
-container name must be added to the registry and the approved set in the guard;
-the guard fails on an unregistered container or a changed recipe.
+The page card, the boxed region, the unboxed region, the sheet, the wall panel
+and the drawer are the structural levels; `sheet` is the only one that is centred
+rather than placed in the document flow. The wall's surfaces are `wall-panel`
+(fixed, spanning the workspace's two rows) and `wall-drawer` (the bottom sidecar,
+which pushes the wall rather than covering the panel). Distinct roles keep their
+own names: `catalog-item-card`, `detail-panel`, and the modal drawer classes. A
+new container name must be added to the registry and the approved set in the
+guard; the guard fails on an unregistered container or a changed recipe.
 
 ## Color theme
 

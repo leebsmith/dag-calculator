@@ -17,6 +17,10 @@ update them when the surface declarations change.
 - **Build: still work.** A read-only client is nearly done; a live one must
   implement the boundary wire (now specified); an authoring one must also own the
   pre-engine transforms.
+- **Shipped shell: the wall.** The first client of this model is now the desktop
+  workspace: seven authored fieldsets, a fixed determination panel and a bottom
+  drawer. It is described below and in `docs/adsco/ui.md`; the decision record is
+  archived at `plans/archive/2026-11/ui-redesign.md`.
 
 ## The measures
 
@@ -37,7 +41,26 @@ update them when the surface declarations change.
 | Relations dispositioned | 9 of 9 |
 | Boundary wire mappings | 73 implemented (30 batch, 13 hops, 30 water); specified, not generated |
 | Reference renderer | reproduces every printed value from a bundle through the manifest |
-| Step order | checked against the solve spine; 4 accepted previews |
+| Station order | checked against the solve spine; 4 accepted previews |
+
+## The shipped shell
+
+The workspace is a fixed-width panel of determinations beside a ragged wall of
+seven authored fieldsets, over a drawer of prose and the brew checklist. It reads
+only what the surface manifest declares and writes only through authored roots.
+
+| Part | Contract | What holds it |
+|---|---|---|
+| Seven fieldsets, declared blocks | `frontend/src/views/fieldsets.js` | `fieldset-coverage` proves one home per path and no readout inside a fieldset; `fieldset-parity` freezes the producer's field index |
+| Chip row and scroll spy | `frontend/src/adapters/wall.js`, `wall-chips.html` | `wall-mount` (one partial per fieldset, no duplicate literal id) and the wall's unit tests |
+| Determination panel | `frontend/src/views/panel.js` + `panelView.js` | `panel-coverage`: every rendered path is panel-homed, in the surface manifest, read-only, and the details popover equals the report's Equipment and Brewhouse lists |
+| Drawer | `frontend/src/adapters/drawer.js`, `views/drawer.js` | `drawer-coverage`: the four prose sections are the drawer-homed fields; N/C/Esc and the focus return are unit-tested |
+| Role stylesheets | `frontend/src/styles/` (`utilities`, `layout`, `components/control-*`, `group-*`, `overlay-*`) | `visual-grammar`: every structural rule carries a role, its spacing band, one of three radii, the 12px floor and state-only status colour |
+| Retired shell | — | `retired-shell` fails on any read of the old step cursor or its navigation |
+
+One documented exception to "no readout in a fieldset": the Grist fieldset keeps
+the sugar **pin preview** table beside its authoring table, because it previews
+the three scale pins the author is choosing between.
 
 ## What a new client gets for free
 
