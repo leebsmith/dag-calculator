@@ -126,10 +126,9 @@
       "declarations": "align-items: center; display: flex; gap: var(--space-3); justify-content: space-between",
       "selectors": [
         ".unit-row",
-        ".landing-section-bar",
-        ".wall-drawer-header"
+        ".landing-section-bar"
       ],
-      "reason": "A label/action split row repeated by three independent surfaces."
+      "reason": "A label/action split row repeated by two independent surfaces."
     },
     {
       "context": "",
@@ -267,9 +266,10 @@
       "declarations": "margin-left: auto",
       "selectors": [
         ".finding-action",
+        ".wall-drawer-header > .btn-link",
         ".wall-chrome-trigger"
       ],
-      "reason": "Both push themselves to the end of a row; the finding action and the drawer trigger are unrelated."
+      "reason": "Three controls push themselves to the end of their row."
     },
     {
       "context": "",
@@ -288,6 +288,24 @@
         ".notes-list"
       ],
       "reason": "Two independent vertical stacks that happen to share the same rhythm."
+    },
+    {
+      "context": "",
+      "declarations": "color: var(--sys-text-muted); flex: 1; font-size: var(--text-xs); min-width: 0",
+      "selectors": [
+        ".wall-drawer-hint",
+        ".notes-preview"
+      ],
+      "reason": "Both are one-line muted captions that truncate; they sit in the same header/list pattern."
+    },
+    {
+      "context": "",
+      "declarations": "align-items: center; display: flex; gap: var(--space-3)",
+      "selectors": [
+        ".menu-actions",
+        ".wall-drawer-header"
+      ],
+      "reason": "Two independent single-line headers that share the row rhythm."
     }
   ],
   "classes": []

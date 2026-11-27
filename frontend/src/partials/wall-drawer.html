@@ -1,20 +1,20 @@
 <section class="wall-drawer" id="wall-drawer" x-show="drawerOpen" aria-label="Notes and checklist">
   <header class="wall-drawer-header">
     <h2 class="wall-drawer-title" x-text="drawerTitle"></h2>
+    <span
+      class="wall-drawer-hint truncate"
+      x-show="drawerTab === 'notes'"
+      title="Markdown supported: paragraphs, lists, tables, emphasis, links, and code. Blank lines separate paragraphs."
+    >Markdown supported: paragraphs, lists, tables, emphasis, links, and code.</span>
     <button type="button" class="btn-link text-xs" @click="closeDrawer()">Close</button>
   </header>
 
   <div class="wall-drawer-body">
     <div x-show="drawerTab === 'notes'" role="tabpanel" aria-label="Notes" class="notes-list">
-      <p class="form-hint">
-        Markdown supported: paragraphs, lists, tables, emphasis, links, and code.
-        Blank lines separate paragraphs.
-      </p>
-
       <details class="notes-disclosure" name="drawer-notes">
         <summary>
           <span class="region-title">Discussion</span>
-          <span class="notes-preview" x-text="drawerPreview(discussion)"></span>
+          <span class="notes-preview truncate" x-text="drawerPreview(discussion)"></span>
         </summary>
         <div class="notes-body" x-data="formBuilder" data-schema="discussionFields">
           <load src="src/partials/ui-form-fields.html" />
@@ -27,7 +27,7 @@
       <details class="notes-disclosure" name="drawer-notes">
         <summary>
           <span class="region-title">Hop strategy</span>
-          <span class="notes-preview" x-text="drawerPreview(hopStrategy)"></span>
+          <span class="notes-preview truncate" x-text="drawerPreview(hopStrategy)"></span>
         </summary>
         <div class="notes-body" x-data="formBuilder" data-schema="hopStrategyFields">
           <load src="src/partials/ui-form-fields.html" />
@@ -40,7 +40,7 @@
       <details class="notes-disclosure" name="drawer-notes">
         <summary>
           <span class="region-title">Fermentation strategy</span>
-          <span class="notes-preview" x-text="drawerPreview(fermentationStrategy)"></span>
+          <span class="notes-preview truncate" x-text="drawerPreview(fermentationStrategy)"></span>
         </summary>
         <div class="notes-body" x-data="formBuilder" data-schema="fermentationStrategyFields">
           <load src="src/partials/ui-form-fields.html" />
@@ -53,7 +53,7 @@
       <details class="notes-disclosure" name="drawer-notes">
         <summary>
           <span class="region-title">Process notes</span>
-          <span class="notes-preview" x-text="drawerPreview(processNotes)"></span>
+          <span class="notes-preview truncate" x-text="drawerPreview(processNotes)"></span>
         </summary>
         <div class="notes-body" x-data="formBuilder" data-schema="processNotesFields">
           <load src="src/partials/ui-form-fields.html" />

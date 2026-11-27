@@ -47,6 +47,7 @@ test("the notes are four collapsed summaries with one markdown hint", () => {
   const markup = read(DRAWER);
   assert.equal((markup.match(/<details class="notes-disclosure" name="drawer-notes">/g) ?? []).length, 4);
   assert.equal((markup.match(/x-text="drawerPreview\(/g) ?? []).length, 4);
-  assert.equal((markup.match(/Markdown supported/g) ?? []).length, 1);
+  assert.equal((markup.match(/wall-drawer-hint/g) ?? []).length, 1);
+  assert.ok(markup.indexOf("wall-drawer-hint") < markup.indexOf("notes-disclosure"), "the hint lives in the header");
   assert.doesNotMatch(markup, /class="section-header"/);
 });
