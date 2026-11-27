@@ -162,7 +162,7 @@ export function compareSnapshots(before, after) {
 function materializeBase(ref, dir) {
   const archive = execFileSync(
     "git",
-    ["archive", "--format=tar", ref, "frontend/src"],
+    ["archive", "--format=tar", ref, "frontend/src", "frontend/index.html"],
     { maxBuffer: 64 * 1024 * 1024 }
   );
   const result = spawnSync("tar", ["-x", "-C", dir], { input: archive });
@@ -197,18 +197,19 @@ async function captureScreenshot(browser, fixture, theme, width, target) {
   }
 }
 
+// The page's own link order is the cascade contract: read the stylesheets the
+// document references (tokens are injected separately) rather than a copy of the
+// list, so this tool cannot drift from index.html.
 function readStyles(dir) {
-  const roles = [
-    "styles/utilities/text.css",
-    "styles/layout/base.css",
-    "styles/layout/shell.css",
-    "styles/layout/wall.css",
-    "styles/components/group-chrome.css",
-    "styles/components/group-wall.css",
-    "styles/components/control-chips.css",
-    "styles/components/overlay-chrome.css",
-  ].map((file) => path.join(dir, "frontend/src", file));
-  return roles
+  const index = path.join(dir, "frontend/index.html");
+  const hrefs = fs.existsSync(index)
+    ? [...fs.readFileSync(index, "utf8").matchAll(/<link\s+rel="stylesheet"\s+href="([^"]+)"/g)].map(
+        (match) => match[1]
+      )
+    : [];
+  return hrefs
+    .filter((href) => href.startsWith("/src/styles/") && !href.includes("/styles/tokens/"))
+    .map((href) => path.join(dir, "frontend", href.replace(/^\//, "")))
     .filter((file) => fs.existsSync(file))
     .map((file) => fs.readFileSync(file, "utf8"))
     .join("\n");

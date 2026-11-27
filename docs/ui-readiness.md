@@ -55,7 +55,7 @@ only what the surface manifest declares and writes only through authored roots.
 | Chip row and scroll spy | `frontend/src/adapters/wall.js`, `wall-chips.html` | `wall-mount` (one partial per fieldset, no duplicate literal id) and the wall's unit tests |
 | Determination panel | `frontend/src/views/panel.js` + `panelView.js` | `panel-coverage`: every rendered path is panel-homed, in the surface manifest, read-only, and the details popover equals the report's Equipment and Brewhouse lists |
 | Drawer | `frontend/src/adapters/drawer.js`, `views/drawer.js` | `drawer-coverage`: the four prose sections are the drawer-homed fields; N/C/Esc and the focus return are unit-tested |
-| Role stylesheets | `frontend/src/styles/` (`utilities`, `layout`, `components/control-*`, `group-*`, `overlay-*`) | `visual-grammar`: every structural rule carries a role, its spacing band, one of three radii, the 12px floor and state-only status colour |
+| Role stylesheets | `frontend/src/styles/` (`utilities`, `layout`, `components/control-*`, `group-*`, `overlay-*`) | `visual-grammar`: every rule carries a role, its spacing band, one of three radii, the 12px floor and state-only status colour; `stylesheet-links` proves the page links every sheet in token-first order, so a rule written to disk always reaches the browser |
 | Retired shell | — | `retired-shell` fails on any read of the old step cursor or its navigation |
 
 One documented exception to "no readout in a fieldset": the Grist fieldset keeps
