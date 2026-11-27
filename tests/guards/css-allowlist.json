@@ -12,8 +12,8 @@
         ".btn:focus-visible, .btn-link:focus-visible, .btn-action-icon:focus-visible",
         ".landing-title:focus-visible, .landing-kebab:focus-visible",
         ".section-toggle:focus-visible",
-        ".stepper-btn:focus-visible",
-        ".segmented-item:focus-visible"
+        ".segmented-item:focus-visible",
+        ".wall-chip:focus-visible"
       ],
       "reason": "Shared focus-ring recipe; selectors differ by component."
     },
@@ -23,10 +23,9 @@
       "selectors": [
         ".btn-link:hover:not(:disabled)",
         ".btn-close:hover",
-        ".stepper-btn.completed",
         ".text-primary"
       ],
-      "reason": "Coincidental text-primary colour; button hover, the completed step and the utility are independent."
+      "reason": "Coincidental text-primary colour; button hover, the close control and the utility are independent."
     },
     {
       "context": "",
@@ -136,10 +135,9 @@
       "declarations": "background-color: var(--sys-surface-hover)",
       "selectors": [
         ".data-table--list tbody tr:hover",
-        ".landing-menu-item:hover",
-        ".stepper-btn.completed:hover"
+        ".landing-menu-item:hover"
       ],
-      "reason": "Shared hover surface recipe for interactive rows and the completed stepper step."
+      "reason": "Shared hover surface recipe for interactive rows and the landing menu."
     },
     {
       "context": "",
@@ -258,10 +256,9 @@
       "declarations": "display: none",
       "selectors": [
         "[x-cloak]",
-        "details > summary::-webkit-details-marker",
-        ".stepper::-webkit-scrollbar"
+        "details > summary::-webkit-details-marker"
       ],
-      "reason": "Coincidental hidden rendering: the Alpine cloak, the native disclosure marker, and the hidden stepper scrollbar are unrelated."
+      "reason": "Coincidental hidden rendering: the Alpine cloak and the native disclosure marker are unrelated."
     }
   ],
   "classes": []

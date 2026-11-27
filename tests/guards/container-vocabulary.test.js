@@ -21,6 +21,7 @@ const APPROVED = new Set([
   "sheet--signin",
   "catalog-item-card",
   "detail-panel",
+  "wall-panel",
 ]);
 
 const SECTION_BLOCKS = new Set([

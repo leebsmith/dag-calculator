@@ -126,34 +126,16 @@
 
                 <load src="src/partials/action-error.html" />
 
-                <!-- Step body: a definite-width nav rail + the active step card. -->
-                <div class="step-body">
-                  <nav class="step-rail" aria-label="Step navigation">
-                    <button
-                      type="button"
-                      class="step-rail-btn"
-                      @click="prev()"
-                      :disabled="activeIndex === 0"
-                      aria-label="Previous step"
-                    >
-                      ▲
-                    </button>
-                    <button
-                      type="button"
-                      class="step-rail-btn"
-                      @click="next()"
-                      :disabled="activeIndex === steps.length - 1"
-                      aria-label="Next step"
-                    >
-                      ▼
-                    </button>
-                  </nav>
-
-                  <div class="step-viewport">
-                    <fieldset class="readonly-field" :disabled="$store.recipes.readOnly">
-                      <div class="step-row">
-                        <template x-for="fieldset in [fieldsets[activeIndex]]" :key="fieldset.id">
-                        <div class="step-slot" :class="navClass">
+                <!-- Wall: one scroll region over every current fieldset, panel pinned. -->
+                <div class="wall-workspace">
+                  <div class="wall-scroll" @scroll="wallScrolled($event)">
+                    <fieldset class="readonly-field wall-fieldsets" :disabled="$store.recipes.readOnly">
+                      <template x-for="fieldset in fieldsets" :key="fieldset.id">
+                        <section
+                          class="wall-fieldset"
+                          :class="fmt.classWhen(landingFieldset === fieldset.id, 'is-landing')"
+                          :data-fieldset="fieldset.id"
+                        >
                           <template x-if="fieldset.id === 'discussion'">
                             <load src="src/partials/step-discussion.html" />
                           </template>
@@ -184,11 +166,16 @@
                           <template x-if="fieldset.id !== 'discussion' && fieldset.id !== 'process' && fieldset.id !== 'yeast' && fieldset.id !== 'style' && fieldset.id !== 'fermentables' && fieldset.id !== 'hops' && fieldset.id !== 'mash' && fieldset.id !== 'water' && fieldset.id !== 'brew-day'">
                             <load src="src/partials/step-card.html" />
                           </template>
-                          </div>
-                        </template>
-                      </div>
+                        </section>
+                      </template>
                     </fieldset>
                   </div>
+
+                  <aside class="wall-panel" aria-label="Determinations">
+                    <p class="wall-panel-placeholder">
+                      The determination panel arrives with its groups; this shell only holds the place.
+                    </p>
+                  </aside>
                 </div>
               </div>
 

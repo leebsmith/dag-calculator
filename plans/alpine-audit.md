@@ -97,8 +97,10 @@ one-at-a-time shell. Add a guard: no step partial references `activeStep`.
 Exit: single-step shell unchanged, `make test` green, guard green.
 
 **2B — Multi-mount (the technical spike).** Render every current step partial as a
-fieldset in the wall. Keep the stepper for now. Measure DOM nodes, mount time,
-modal initialization, duplicate ids and focus.
+fieldset in the wall. The stepper partial becomes the chip row: the file and its
+`<load>` survive until Stage 7, while the nav state (`stepperSteps`) stays mounted
+but unbound. Measure DOM nodes, mount time, modal initialization, duplicate ids and
+focus.
 Exit: all partials mounted, no duplicate static ids, no console expression
 errors, modals open and close, the read-only wrapper disables the whole wall, and
 a measured budget for the Stage 3 regrouping.
@@ -122,6 +124,25 @@ and Stage 7 removes the navigation state:
 | Console expression errors | `template-scope` and null-safety under more subtrees |
 | Read-only disablement | one wrapper vs per-fieldset |
 | Focus/teleport | the first modal opened from any fieldset |
+
+**2B results (static markup + styles, headless Chrome at 1920×1080 and 1280×720).**
+
+| Measure | Result |
+|---|---|
+| Literal ids across the mounted wall | 24, none duplicated (`tests/guards/wall-mount.test.js`) |
+| Read-only disablement | one wrapper disables all 24 controls; none while editable |
+| No horizontal scroll | 0 px overflow at both sizes |
+| Panel | pinned at the workspace top, full height (832 px / 472 px) |
+| Scroll ownership | the wall scrolls; `.stage` reports no overflow of its own |
+| Chips | the row sits above the wall and never scrolls with it |
+
+Not measured here, because the headless harness cannot sign in and open a solved
+batch: mounted DOM node count, Alpine init time, dynamic duplicate ids, console
+errors under a live solve, and focus/teleport through a modal. Procedure on a
+signed-in box: open `make local-dev`, open a batch, then read
+`document.querySelectorAll("*").length` for the wall and for one fieldset, the
+`performance` delta across `Alpine.start()`, and the console log. These stay in
+the Stage 3 gap list until taken.
 
 ## 8. Risks
 

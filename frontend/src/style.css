@@ -1246,7 +1246,7 @@ details[open] > summary::before {
 }
 
 /* ==========================================================================
-   9. App Shell (menu bar / stepper / step row / sticky footer)
+   9. App Shell (menu bar / wall / sticky footer)
    ========================================================================== */
 
 .app-shell {
@@ -1258,20 +1258,14 @@ details[open] > summary::before {
   gap: var(--space-5);
 }
 
-.app-content {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
 
-/* The only scroll region: chrome (header/stepper/footer) stays pinned. */
+/* The view stack and the wall's stage: each owns the scroll region below it, so
+   chrome (header/chips/footer) stays pinned. */
+.app-content,
 .stage {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
@@ -1672,17 +1666,6 @@ details[open] > summary::before {
   outline: none;
 }
 
-.step-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-5);
-}
-
-/* Wrapper for the injected step partial. */
-.step-slot {
-  display: block;
-}
-
 .card {
   height: 100%;
   background-color: var(--sys-surface-default);
@@ -1707,57 +1690,54 @@ details[open] > summary::before {
   box-shadow: var(--sys-shadow-md);
 }
 
-/* --- Step body: a nav rail + the active step card --- */
+/* --- Wall: one scroll region over the fieldset column, the panel pinned --- */
 
-.step-body {
+.wall-workspace {
   flex: 1;
   min-height: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--width-rail);
   gap: var(--space-4);
 }
 
-.step-rail {
-  flex: none;
+.wall-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.wall-fieldsets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+.wall-fieldset {
+  min-inline-size: 0;
+  scroll-margin-top: var(--space-2);
+}
+
+.wall-fieldset.is-landing > .card {
+  outline: 2px solid var(--sys-color-action-primary);
+  outline-offset: 2px;
+}
+
+.wall-panel {
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-}
-
-.step-rail-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 var(--space-3);
-  font-family: inherit;
-  font-size: var(--text-lg);
-  color: var(--sys-text-secondary);
+  padding: var(--space-4);
   background-color: var(--sys-surface-default);
   border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--sys-shadow-sm);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast);
+  border-radius: var(--radius-xl);
 }
 
-.step-rail-btn:hover:not(:disabled) {
-  background-color: var(--sys-surface-hover);
-  border-color: var(--sys-color-action-primary);
-  color: var(--sys-text-primary);
-}
-
-.step-rail-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.step-viewport {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+.wall-panel-placeholder {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--sys-text-muted);
 }
 
 .readonly-field {
@@ -1773,113 +1753,46 @@ details[open] > summary::before {
 
 /* --- Stepper: menu-bar progress and completed-step navigation --- */
 
-.stepper {
+/* --- Wall chips: the scroll cursor for the fieldset column --- */
+
+.wall-chips {
   flex: none;
   display: flex;
-  overflow-x: auto;
-  scrollbar-width: none;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
-.stepper::-webkit-scrollbar {
-  display: none;
-}
-
-.stepper-list {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-width: max-content;
-  margin: 0 auto;
-  padding: 0 var(--space-2);
-  list-style: none;
-}
-
-.stepper-item {
-  display: flex;
-  align-items: center;
-}
-
-.stepper-item + .stepper-item::before {
-  content: "/";
-  margin: 0 var(--space-1);
+.wall-chip {
+  height: var(--size-control-h);
+  padding: 0 var(--space-3);
+  font-family: inherit;
   font-size: var(--text-xs);
   color: var(--sys-text-secondary);
-}
-
-.stepper-btn {
-  padding: var(--space-2) var(--space-3);
-  font-family: inherit;
-  font-size: var(--text-sm);
-  color: var(--sys-text-secondary);
-  background-color: transparent;
-  border: none;
-  border-radius: var(--radius-lg);
+  background-color: var(--sys-surface-default);
+  border: 1px solid var(--sys-border-default);
+  border-radius: var(--radius-full);
   cursor: pointer;
   transition:
     background-color var(--transition-fast),
+    border-color var(--transition-fast),
     color var(--transition-fast);
 }
 
-.stepper-btn.active {
-  background-color: var(--sys-surface-hover);
-  color: var(--sys-color-action-subtle-text);
-  font-weight: var(--font-weight-semibold);
-  cursor: default;
-}
-
-.stepper-btn.completed {
+.wall-chip:hover {
+  border-color: var(--sys-border-strong);
   color: var(--sys-text-primary);
 }
 
-.stepper-btn.completed:hover {
-  background-color: var(--sys-surface-hover);
+.wall-chip[aria-current="true"] {
+  background-color: var(--sys-color-action-subtle);
+  border-color: var(--sys-color-action-primary);
+  color: var(--sys-color-action-subtle-text);
+  font-weight: var(--font-weight-semibold);
 }
 
-.stepper-btn.pending {
-  color: var(--sys-text-secondary);
-  cursor: not-allowed;
-}
-
-.stepper-btn:focus-visible {
+.wall-chip:focus-visible {
   outline: 2px solid var(--sys-border-focus);
   outline-offset: 2px;
-}
-
-/* Step-card entry: going forward ("next") the card rises from below; going
-   back ("prev") it drops from above. The active card is keyed by step id, so
-   the animation replays on each step change (and not on edits within a step). */
-@keyframes step-enter-down {
-  from {
-    opacity: 0;
-    transform: translateY(1.5rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes step-enter-up {
-  from {
-    opacity: 0;
-    transform: translateY(-1.5rem);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* No fill mode: the resting state must carry no `transform`, or `.step-slot`
-   becomes a containing block for the fixed-position editors rendered inside it. */
-.step-enter-down {
-  animation: step-enter-down var(--transition-slow);
-}
-
-.step-enter-up {
-  animation: step-enter-up var(--transition-slow);
 }
 
 .footer-violations {
@@ -2478,8 +2391,6 @@ details[open] > summary::before {
     transition: none;
   }
 
-  .step-enter-down,
-  .step-enter-up,
   .spinner {
     animation: none;
   }

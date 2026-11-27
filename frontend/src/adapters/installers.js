@@ -12,6 +12,7 @@
 // a partial bind its owners' members and nothing else without a `SHARED` entry.
 
 import { KEYS as navigationKeys } from "./navigation.js";
+import { KEYS as wallKeys } from "./wall.js";
 import { KEYS as fieldActionsKeys } from "./fieldActions.js";
 import { KEYS as proseValidationKeys } from "./proseValidation.js";
 import { KEYS as draftEditorKeys } from "./draftEditor.js";
@@ -87,16 +88,15 @@ const WATER = [
   "frontend/src/adapters/cards/water.js",
   "frontend/src/adapters/cards/waterCardActions.js",
 ];
-const MODAL_FOCUS = ["frontend/src/adapters/modalFocus.js"];
-const TABLE_CONFIGS = ["frontend/src/adapters/tableConfigs.js"];
 const STYLE_PARTIALS = ["step-style.html"];
 export const INSTALLERS = [
   { name: "navigation", modules: NAVIGATION, keys: navigationKeys },
+  { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys },
   { name: "fieldActions", modules: FIELD_ACTIONS, keys: fieldActionsKeys, partials: ["step-card.html"] },
   { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys },
   {
     name: "tableConfigs",
-    modules: TABLE_CONFIGS,
+    modules: ["frontend/src/adapters/tableConfigs.js"],
     keys: tableConfigKeys,
   },
   { name: "draftEditor", modules: DRAFT_EDITOR, keys: draftEditorKeys },
@@ -162,7 +162,7 @@ export const INSTALLERS = [
   { name: "brewDay", modules: BREW_DAY, keys: brewDayKeys, partials: ["step-brew-day.html"] },
   { name: "dryHops", modules: DRY_HOPS_AND_CATALOG, keys: dryHopKeys, partials: ["hops-dry-section.html", "modal-dry-hop-editor.html"] },
   { name: "water", modules: WATER, keys: waterKeys, partials: ["step-water.html"] },
-  { name: "modalFocus", modules: MODAL_FOCUS, keys: modalFocusKeys },
+  { name: "modalFocus", modules: ["frontend/src/adapters/modalFocus.js"], keys: modalFocusKeys },
 ];
 // Cross-owner reads, baselined by Phase 1 of
 // `plans/archive/2026-10/alpine-maintainability-and-module-linting.md`. `owners` lists the

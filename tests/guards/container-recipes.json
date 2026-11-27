@@ -257,6 +257,19 @@
       ]
     },
     {
+      "selector": ".wall-panel",
+      "declarations": [
+        "background-color: var(--sys-surface-default)",
+        "border-radius: var(--radius-xl)",
+        "border: 1px solid var(--sys-border-default)",
+        "display: flex",
+        "flex-direction: column",
+        "gap: var(--space-3)",
+        "min-height: 0",
+        "padding: var(--space-4)"
+      ]
+    },
+    {
       "selector": ".data-table-container",
       "declarations": [
         "background-color: var(--sys-surface-default)",

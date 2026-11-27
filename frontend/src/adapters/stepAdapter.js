@@ -49,6 +49,7 @@ import { createProseValidation } from "./proseValidation.js";
 import { createDraftEditor } from "./draftEditor.js";
 import { createUnitActions } from "./unitActions.js";
 import { createNavigationActions } from "./navigation.js";
+import { createWallActions } from "./wall.js";
 import { createModalFocusManager } from "./modalFocus.js";
 import { createStepView } from "./stepView.js";
 import { assertNoCollisions, BASE_KEYS, composeLayers, installerSurfaceGaps } from "./contract.js";
@@ -130,7 +131,7 @@ export function createStepApp(options = {}) {
     highwater: ui.highwater,
     stepperSteps: [],
     readOnly: false,
-    navDir: null, // "next" | "prev" — drives the step-card entry animation
+    navDir: null, // "next" | "prev" — retired step transition, deleted with the stepper
     stepStatus: attribution.initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
     unitGroups: UNIT_GROUPS,
@@ -174,12 +175,6 @@ export function createStepApp(options = {}) {
 
     // Entry animation class for the active card, keyed by nav direction. Empty
     // until the first navigation so the initial card doesn't animate.
-    get navClass() {
-      if (this.navDir === "next") return "step-enter-down";
-      if (this.navDir === "prev") return "step-enter-up";
-      return "";
-    },
-
     notify() {
       this.onChange?.();
     },
@@ -366,6 +361,7 @@ export function createStepApp(options = {}) {
     baseApp,
     { dialogFocus: modalFocus.dialogFocus, focusAndSelect: modalFocus.focusAndSelect },
     createNavigationActions({ ui, steps, isEditorActive: options.isEditorActive, getView }),
+    createWallActions({ fieldsets, getView }),
     createFieldActions({ ...core, observability, refToSelectionMap: attribution.refToSelectionMap }),
     createProseValidation({ observability }),
     createDraftEditor({ ...core, ui, observability }),
