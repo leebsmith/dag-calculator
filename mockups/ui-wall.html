@@ -95,6 +95,7 @@
     gap: var(--s4); padding: 0 var(--s1) var(--s4) 0; scrollbar-gutter: stable;
   }
   .fs {
+    position: relative;
     border: 1px solid var(--border); border-radius: var(--container);
     background: var(--surface); padding: var(--s3) var(--s4) var(--s4);
     margin: 0; min-inline-size: 0;
@@ -102,6 +103,9 @@
   .fs--narrow { width: 22rem; }
   .fs--regular { width: 26rem; }
   .fs--wide { width: 45rem; }
+  .fs--full { width: 100%; }
+  .fs--full .fields { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .field--span2 { grid-column: span 2; }
   .fs legend { display: flex; align-items: center; gap: var(--s2); padding: 0 var(--s2); font-size: var(--text-sm); font-weight: 600; color: var(--ink); }
   .fs legend .count { font-size: 11px; font-weight: 400; color: var(--muted); }
   .fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: var(--s2) var(--s3); }
@@ -114,7 +118,32 @@
     background: var(--surface); font-size: var(--text-sm);
   }
   .control:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .pin-note { margin: var(--s3) 0 0; font-size: var(--text-xs); color: var(--muted); }
+  .pin-note { margin: 0; font-size: var(--text-xs); color: var(--muted); }
+  .label-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
+  .label-row label { font-size: var(--text-xs); color: var(--muted); }
+  .unit {
+    display: inline-flex; align-items: center; height: 16px; padding: 0 6px;
+    border: 1px solid var(--border); border-radius: var(--pill);
+    background: var(--well); color: var(--muted); font-size: 11px; cursor: pointer;
+  }
+  .unit--set { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .readout { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .slider input[type="range"] { width: 100%; height: 24px; margin: 0; accent-color: var(--accent); }
+  .space-link { margin-top: var(--s3); padding: 0; border: 0; background: transparent; color: var(--accent); font-size: var(--text-xs); cursor: pointer; }
+  .space-pop {
+    position: absolute; top: calc(100% - var(--s4)); left: var(--s4); z-index: 20;
+    width: 340px; padding: var(--s3); background: var(--surface);
+    border: 1px solid var(--border-strong); border-radius: var(--container);
+    box-shadow: 0 8px 24px rgb(15 23 42 / 12%);
+  }
+  .space-pop .note { margin: var(--s2) 0 0; }
+  .plot { width: 100%; height: auto; display: block; }
+  .plot .frame { fill: var(--well); stroke: var(--border); }
+  .plot .region { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1; }
+  .plot .band { fill: var(--border); opacity: .7; }
+  .plot .locus { fill: none; stroke: var(--muted); stroke-dasharray: 3 3; }
+  .plot .pin { fill: var(--accent); }
+  .plot text { fill: var(--muted); font-size: 9px; }
   .delta { font-weight: 600; }
   .delta--up { color: var(--success); }
   .delta--down { color: var(--danger); }
@@ -238,10 +267,10 @@
 
     <div class="workspace">
       <main class="wall" id="wall">
-        <fieldset class="fs fs--narrow" id="targets">
-          <legend>Targets &amp; scale <span class="count">4 set</span></legend>
+        <fieldset class="fs fs--full" id="targets">
+          <legend>Targets &amp; scale <span class="count">5 set · 2 bands</span></legend>
           <div class="fields">
-            <div class="field field--full">
+            <div class="field">
               <label>Scale pin</label>
               <div class="mini-seg" role="tablist" aria-label="Scale pin">
                 <button type="button" role="tab" aria-selected="true">ABV</button>
@@ -252,9 +281,35 @@
             <div class="field"><label for="t-abv">Target ABV</label><input class="control" id="t-abv" value="5.5%"></div>
             <div class="field"><label for="t-ibu">Target IBU</label><input class="control" id="t-ibu" value="40.0 IBU"></div>
             <div class="field"><label for="t-srm">Target SRM</label><input class="control" id="t-srm" value="6.0 SRM"></div>
-            <div class="field"><label for="t-vol">Batch volume</label><input class="control" id="t-vol" value="20.0 L"></div>
+            <div class="field">
+              <div class="label-row"><label for="t-vol">Batch volume</label><button class="unit unit--set" type="button" title="Change unit">L</button></div>
+              <input class="control" id="t-vol" value="20.0">
+            </div>
+            <div class="field field--span2 slider">
+              <div class="label-row"><label for="t-ibu-range">Bitterness</label><span class="readout">40.0 IBU</span></div>
+              <input id="t-ibu-range" type="range" min="30" max="50" step="1" value="40">
+            </div>
+            <div class="field field--span2 slider">
+              <div class="label-row"><label for="t-srm-range">Colour</label><span class="readout">6.0 SRM</span></div>
+              <input id="t-srm-range" type="range" min="5" max="14" step="1" value="6">
+            </div>
+            <div class="field">
+              <span class="pin-note">Pinned · realized 5.6% <span class="delta delta--up">+0.1</span></span>
+              <button class="space-link" type="button" id="space-btn" aria-expanded="false">Fermentation space</button>
+            </div>
           </div>
-          <p class="pin-note">Pinned · realized 5.6% <span class="delta delta--up">+0.1</span></p>
+          <div class="space-pop" id="space-pop" hidden>
+            <svg class="plot" viewBox="0 0 300 170" role="img" aria-label="Feasible fermentation space">
+              <rect class="frame" x="28" y="8" width="260" height="136" rx="3"/>
+              <polygon class="region" points="48,130 250,120 262,40 90,28"/>
+              <rect class="band" x="72" y="54" width="178" height="18"/>
+              <path class="locus" d="M48 130 C120 110 190 80 262 40"/>
+              <circle class="pin" cx="170" cy="88" r="4"/>
+              <text x="10" y="84" transform="rotate(-90 10 84)">AE</text>
+              <text x="148" y="162">OE</text>
+            </svg>
+            <p class="note">Original 13.6 °P · apparent 3.1 °P · pin inside the style band.</p>
+          </div>
         </fieldset>
 
         <fieldset class="fs fs--narrow" id="yeast">
@@ -337,9 +392,15 @@
         <fieldset class="fs fs--regular" id="mash">
           <legend>Mash &amp; sparge <span class="count">3 set</span></legend>
           <div class="fields">
-            <div class="field"><label for="m-lgr">Liquor-to-grist</label><input class="control" id="m-lgr" value="3.0 L/kg"></div>
+            <div class="field">
+              <div class="label-row"><label for="m-lgr">Liquor-to-grist</label><button class="unit unit--set" type="button" title="Change unit">L/kg</button></div>
+              <input class="control" id="m-lgr" value="3.0">
+            </div>
             <div class="field"><label for="m-r">Runnings ratio</label><input class="control" id="m-r" value="0.46"></div>
-            <div class="field"><label for="m-sparge">Sparge temp</label><input class="control" id="m-sparge" value="76.0 °C"></div>
+            <div class="field">
+              <div class="label-row"><label for="m-sparge">Sparge temp</label><button class="unit unit--set" type="button" title="Change unit">°C</button></div>
+              <input class="control" id="m-sparge" value="76.0">
+            </div>
             <div class="field field--full">
               <table class="table">
                 <thead><tr><th>Rest</th><th class="num">Temp</th><th class="num">Time</th></tr></thead>
@@ -356,8 +417,14 @@
         <fieldset class="fs fs--regular" id="boil">
           <legend>Boil &amp; whirlpool <span class="count">5 set</span></legend>
           <div class="fields">
-            <div class="field"><label for="b-time">Boil time</label><input class="control" id="b-time" value="60 min"></div>
-            <div class="field"><label for="b-off">Boil-off rate</label><input class="control" id="b-off" value="3.0 L/hr"></div>
+            <div class="field">
+              <div class="label-row"><label for="b-time">Boil time</label><button class="unit unit--set" type="button" title="Change unit">min</button></div>
+              <input class="control" id="b-time" value="60">
+            </div>
+            <div class="field">
+              <div class="label-row"><label for="b-off">Boil-off rate</label><button class="unit unit--set" type="button" title="Change unit">L/hr</button></div>
+              <input class="control" id="b-off" value="3.0">
+            </div>
             <div class="field"><label for="b-knock">Knockout</label><input class="control" id="b-knock" value="20 min"></div>
             <div class="field"><label for="b-start">Whirlpool start</label><input class="control" id="b-start" value="95.0 °C"></div>
             <div class="field"><label for="b-amb">Ambient</label><input class="control" id="b-amb" value="20.0 °C"></div>
@@ -428,6 +495,17 @@
               <dt>Sodium</dt><dd>15 ppm</dd>
               <dt>Alkalinity</dt><dd>35 ppm</dd>
               <dt>Sulfate : chloride</dt><dd>1.67</dd>
+            </dl>
+          </details>
+          <details class="group">
+            <summary>Style</summary>
+            <dl>
+              <dt>SAI</dt><dd>92.4</dd>
+              <dt>Original gravity</dt><dd>within</dd>
+              <dt>Final gravity</dt><dd>within</dd>
+              <dt>ABV</dt><dd>+0.1</dd>
+              <dt>Colour</dt><dd>in band</dd>
+              <dt>Bitterness</dt><dd>at target</dd>
             </dl>
           </details>
           <details class="group">
@@ -560,6 +638,8 @@
       page.classList.remove("drawer-open");
       document.getElementById("ctx-pop").hidden = true;
       document.getElementById("ctx-btn").setAttribute("aria-expanded", "false");
+      spacePop.hidden = true;
+      spaceButton.setAttribute("aria-expanded", "false");
     }
   });
 
@@ -574,11 +654,24 @@
       ctxPop.hidden = true;
       ctxButton.setAttribute("aria-expanded", "false");
     }
+    if (!spacePop.hidden && !spacePop.contains(event.target) && event.target !== spaceButton) {
+      spacePop.hidden = true;
+      spaceButton.setAttribute("aria-expanded", "false");
+    }
   });
 
   if (location.hash === "#notes" || location.hash === "#checklist") {
     toggleDrawer(location.hash.slice(1));
   }
+
+  const spaceButton = document.getElementById("space-btn");
+  const spacePop = document.getElementById("space-pop");
+  function toggleSpace() {
+    spacePop.hidden = !spacePop.hidden;
+    spaceButton.setAttribute("aria-expanded", String(!spacePop.hidden));
+  }
+  spaceButton.addEventListener("click", toggleSpace);
+  if (location.hash === "#space") spacePop.hidden = false;
 
   const demo = document.getElementById("demo-state");
   const status = document.getElementById("status");

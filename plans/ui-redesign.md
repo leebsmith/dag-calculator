@@ -60,19 +60,20 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
 4. **Seven fieldsets, no Process.** Targets and scale; Yeast and fermentation;
    Grist; Hops; Mash and sparge; Water; Boil and whirlpool. Process notes are a
    drawer section, not a fieldset.
-5. **Width by role.** Narrow 22 rem (Targets, Yeast), regular 26 rem (Mash and
-   sparge, Boil and whirlpool), wide 45 rem (Grist, Hops, Water). Whole rem units
-   chosen from the mockup so two regular fieldsets pair at 1280 and two wide ones
-   pair at 1920 once the scrollbar gutter is reserved; `flex-grow: 0`; ragged rows
-   accepted.
+5. **Width by role.** Full (Targets and scale), narrow 22 rem (Yeast), regular
+   26 rem (Mash and sparge, Boil and whirlpool), wide 45 rem (Grist, Hops, Water).
+   Targets is a full-width intent bar because it carries the pin, the targets, the
+   two band sliders and the fermentation-space popover. Whole rem units are chosen
+   from the mockup so two regular fieldsets pair at 1280 and two wide ones pair at
+   1920 once the scrollbar gutter is reserved; `flex-grow: 0`; ragged rows accepted.
 6. **Flat fieldsets.** 1 px border, legend on the border, 8–12 px padding, no
    elevation. Elevation is reserved for the panel and modals.
 7. **Fields sized by role and never stretched.** A scalar is ~8–10 rem, selects and
    short text ~12–16 rem, long text ~20–24 rem, a table or prose block takes the
    row. Rows pack; nothing uses `flex: 1` to fill.
 8. **No reordering.** DOM order equals visual order; no dense packing.
-9. **No inline readouts**, with one exception: the scale pin's residual, which is
-   the field's own outcome.
+9. **No inline readouts**, with two exceptions, both the field's own value: the
+   scale pin's residual and the band sliders' exact readout.
 
 ### Navigation and completeness
 
@@ -88,7 +89,9 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
 13. **Fixed 320–360 px, full height, never scrolls.** Only one solver group
     expands at a time; expanding another collapses the first.
 14. **Order:** status line; the six-cell strip; the context line; Batch;
-    Bitterness; Water; Findings.
+    Bitterness; Water; Style; Findings. Style carries the SAI and the dimension
+    statuses; the fermentation space is a popover from the Targets controls, not a
+    panel group.
 15. **Strip:** ABV, OG, FG, IBU, SRM, pH. The pinned quantity among ABV/OG/FG shows
     a residual (`ABV −0.2`); the other two show absolutes.
 16. **Context line** under the strip: equipment and style inline, truncated with a
@@ -145,6 +148,20 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
     rules 26–30 by file role. Its only exemption is `frontend/src/style.css`, the
     legacy monolith; the exemption shrinks as that file is dismantled and must be
     empty by the end of Stage 6. A stale exemption fails.
+
+### Controls
+
+34. **Unit pills.** A toggleable editable number shows a small unit pill in its
+    label row; the global Units menu sets the per-dimension default. Values are
+    bare where a pill names the unit; readouts carry the unit in their formatted
+    text and have no pill.
+35. **Sliders only on declared bands.** IBU and SRM use a slider plus an exact
+    readout, in the Targets bar. The scale pin stays a segmented choice plus a free
+    number; free values (L:G, runoff, volume, temperatures) never get a slider and
+    are never silently clamped.
+36. **The fermentation space is a navigator, not a decision.** It is a read-only
+    popover from the Targets controls — feasible region, style band, locus and pin
+    — with no click-to-set, so the wall stays the only authoring surface.
 
 ## Stage 0 — The screen map (no code)
 
@@ -214,27 +231,31 @@ teleports. The panel is a shell placeholder at this point.
 ## Stage 3 — The seven fieldsets
 
 **Scope.** Redistribute the existing fields per the screen map into the seven
-fieldsets, reusing the current partials and field models. Readouts move to the
-panel groups; no field behaviour changes.
+fieldsets, reusing the current partials and field models. Targets becomes the
+full-width intent bar: pin, targets, volume, the two band sliders and the
+fermentation-space popover. Readouts move to the panel groups; no field behaviour
+changes.
 
 **Exit criteria**
 
 - Every entry in the screen map is rendered exactly once, in its declared home.
 - The field index produced by the producer is unchanged for every editable field
   (a parity test compares old and new field sets).
-- No fieldset shows a readout (except the scale pin residual).
+- No fieldset shows a readout (except the scale pin residual and the band-slider
+  readouts).
+- The fermentation-space plot is read-only and opens from the Targets controls.
 - `make test` green; the panel still shows placeholder groups.
 
 ## Stage 4 — The panel
 
 **Scope.** Build the panel from the manifest descriptors and the engine: status
 line, six-cell strip with the pin rule, context line with the details popover, the
-three solver groups, and findings.
+three solver groups, the style group and findings.
 
 **Exit criteria**
 
-- The six cells, the context line and every group path exist in the surface
-  manifest; no panel value is editable.
+- The six cells, the context line, the style group and every group path exist in
+  the surface manifest; no panel value is editable.
 - The context popover's path list equals the report's Equipment and Brewhouse
   lists (a guard compares them).
 - Only one group expands at a time; the panel never scrolls at 720p.
@@ -313,6 +334,10 @@ to the top”; `stepStatus` survives as the chips' completeness input.
   though the model is untouched.
 - **File-role naming constrains the CSS split.** Rules must be grouped by control,
   group, layout or overlay, not by their legacy section.
+- **Ragged rows at 1280.** Wide fieldsets occupy a row alone and the narrow Yeast
+  card can be orphaned beside them; the empty space is canvas, not card interior,
+  and is accepted for now. Revisit by folding yeast into the intent bar if it
+  reads badly.
 - **Modal weight under multi-mount.** Ten modal shells mount with the wall; if the
   audit's 2B measurement shows it costs too much, mount a modal lazily on first
   open.
