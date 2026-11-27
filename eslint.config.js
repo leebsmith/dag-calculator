@@ -192,10 +192,10 @@ const FUNCTION_LINE_PINS = {
 
 const FILE_LINE_PINS = {
   "adapters/cards/hops.js": 382,
-  "adapters/installers.js": 401,
+  "adapters/installers.js": 397,
   "adapters/cards/late-additions.js": 296,
   "adapters/cards/water.js": 268,
-  "adapters/stepAdapter.js": 446,
+  "adapters/stepAdapter.js": 437,
   "views/producer/stylePlot.js": 193,
   "views/hopsLogic.js": 403,
   "engine/dag.js": 366,

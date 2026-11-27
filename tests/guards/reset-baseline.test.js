@@ -66,7 +66,7 @@ function mutate(app) {
   app.clearYeastSelection();
   app.setUnit("temperature", "degF");
   app.toggleFieldUnit(app.fieldsBySlice.mash.find((field) => field.id === "mash.grain_temp_c"));
-  app.next();
+  app.selectFieldset("boil");
   app.compute();
 }
 

@@ -1,30 +1,29 @@
-// Every scalar a step card renders needs a label in `data/labels.json`
-// (generated into `views/registry/generated.js`); without one the card prints
-// the raw dotted path. Collections and readout tables are excluded: their labels
-// come from the column/row definitions, not from a field id.
+// Every scalar the wall renders needs a label in `data/labels.json` (generated
+// into `views/registry/generated.js`); without one the row prints the raw dotted
+// path. Collections render through their table definitions and are exempt.
 //
-// Sectioned steps also declare their display groups; the union of the groups
-// must be the step's field list, so a field cannot be added to one and forgotten
+// Sectioned steps (equipment) also declare display groups; the union of the
+// groups must be the field list, so a field cannot be added to one and forgotten
 // in the other.
 
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { registry, steps } from "../../frontend/src/views/steps.js";
+import { registry } from "../../frontend/src/views/registry/index.js";
+import { steps } from "../../frontend/src/views/steps.js";
+import { fieldsets } from "../../frontend/src/views/fieldsets.js";
 
-const SHARED_CARD = "./src/partials/step-card.html";
+const AUTHORABLE = new Set(["root", "choice"]);
 
-function scalarIds(step) {
-  return step.fields
-    .map((field) => (typeof field === "string" ? field : field.id))
-    .filter(Boolean);
-}
-
-test("every scalar the shared step card renders has a registry label", () => {
+test("every authored wall scalar has a registry label", () => {
   const missing = [];
-  for (const step of steps.filter((candidate) => candidate.partial === SHARED_CARD)) {
-    for (const id of scalarIds(step)) {
-      if (!registry[id]?.label) missing.push(`${step.id}: ${id}`);
+  for (const fieldset of fieldsets) {
+    for (const block of fieldset.blocks) {
+      if (block.render !== "fields") continue;
+      for (const id of block.fields) {
+        if (!AUTHORABLE.has(registry[id]?.kind)) continue;
+        if (!registry[id]?.label) missing.push(`${fieldset.id}/${block.id}: ${id}`);
+      }
     }
   }
 

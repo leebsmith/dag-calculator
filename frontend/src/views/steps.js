@@ -16,7 +16,6 @@ export const steps = [
     slice: "equipment",
     title: "Equipment",
     subtitle: "Hardware constants from the batch's rig (fixed at creation)",
-    partial: "./src/partials/step-card.html",
     // Grouped on the card by vessel; `fields` stays flat for the guards.
     sections: equipmentSections,
     fields: equipmentFields,
@@ -26,7 +25,6 @@ export const steps = [
     slice: "style",
     title: "Style",
     subtitle: "Sealed at batch creation; tune the fermentation target and color/bitterness here",
-    partial: "./src/partials/step-style.html",
     fields: [
       "batch.fermentation",
       "style.og_min",
@@ -46,7 +44,6 @@ export const steps = [
     slice: "yeast",
     title: "Yeast Selection",
     subtitle: "Choose a strain; the solver uses its attenuation cap",
-    partial: "./src/partials/wall-yeast.html",
     fields: [
       "batch.yeast_id",
       "batch.attenuation_derate_points",
@@ -65,7 +62,6 @@ export const steps = [
     slice: "fermentables",
     title: "Fermentables",
     subtitle: "Grist by parts, trace malts by mass, sugars by dose or share",
-    partial: "./src/partials/wall-grist.html",
     fields: [
       {
         collection: "grist.major_malts",
@@ -106,7 +102,6 @@ export const steps = [
     slice: "batch",
     title: "Batch Sparge",
     subtitle: "Batch-sparge targets and solver inputs",
-    partial: "./src/partials/step-card.html",
     fields: [
       { id: "batch.target_abv", control: "readout" },
       "batch.v_ferm",
@@ -263,7 +258,6 @@ export const steps = [
     slice: "hops",
     title: "Hops",
     subtitle: "Boil and whirlpool by share; dry hops by schedule",
-    partial: "./src/partials/wall-hops.html",
     fields: [
       {
         collection: "batch.boil_hops",
@@ -305,7 +299,6 @@ export const steps = [
     slice: "mash",
     title: "Mash Profile",
     subtitle: "Rest schedule, strike water temperature & fermentability",
-    partial: "./src/partials/wall-mash.html",
     fields: [
       "mash.grain_temp_c",
       "mash.tun_initial_temp_c",
@@ -322,7 +315,6 @@ export const steps = [
     slice: "water",
     title: "Water Chemistry",
     subtitle: "Source water is fixed at creation; the targets are yours",
-    partial: "./src/partials/wall-water.html",
     fields: [
       "water.target_profile_id",
       "water.calcium_floor_ppm",
@@ -360,7 +352,6 @@ export const steps = [
     slice: "brew-day",
     title: "Brew Checklist",
     subtitle: "Pre-brew, brew day and post-brew, generated from the solve",
-    partial: "./src/partials/step-brew-day.html",
     fields: ["batch.checklist_level", { collection: "batch.brew_checklist" }],
   },
 ];

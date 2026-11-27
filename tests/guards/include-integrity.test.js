@@ -14,7 +14,6 @@ const EXTRA_PARTIALS = [
   "./src/partials/editor.html",
   "./src/partials/findings.html",
   "./src/partials/report-picker.html",
-  "./src/partials/stepper.html",
   "./src/partials/brew-session.html",
   "./src/partials/import.html",
   "./src/partials/import-transcribe.html",
@@ -29,6 +28,7 @@ const EXTRA_PARTIALS = [
   "./src/partials/ui-theme-control.html",
   "./src/partials/wall-panel.html",
   "./src/partials/wall-drawer.html",
+  "./src/partials/wall-chips.html",
   "./src/partials/step-brew-day.html",
 ];
 

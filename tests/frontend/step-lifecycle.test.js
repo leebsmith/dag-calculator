@@ -90,32 +90,28 @@ test("scheduled solves and status writes target the reactive binding", async () 
   assert.equal(proxy.boundaryError, null);
 });
 
-test("loadState opens the editor on the discussion step", async () => {
+test("loadState opens the wall at the top", async () => {
   const app = createTestApp();
   await app.boot();
-  assert.equal(app.activeIndex, 0);
 
   await app.loadState({
     identity: { equipment: {}, "water.source": {}, style: STYLE },
     roots: ENVELOPE,
   });
 
-  assert.equal(app.activeIndex, 0);
   assert.equal(app.activeChipId, "targets");
-  assert.ok(app.highwater >= 0);
 });
 
-test("a second loadState returns to discussion even from a later step", async () => {
+test("a second loadState returns the wall to the top", async () => {
   const app = createTestApp();
   await app.boot();
   const state = { identity: { equipment: {}, "water.source": {}, style: STYLE }, roots: ENVELOPE };
 
   await app.loadState(state);
-  for (let i = 0; i < app.steps.length; i++) app.next();
-  assert.equal(app.activeIndex, app.steps.length - 1);
+  app.selectFieldset("boil");
+  assert.equal(app.activeChipId, "boil");
 
   await app.loadState(state);
-  assert.equal(app.activeIndex, 0);
   assert.equal(app.activeChipId, "targets");
 });
 

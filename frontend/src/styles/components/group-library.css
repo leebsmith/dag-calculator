@@ -787,13 +787,6 @@ details[open] > summary::before {
   margin-block: var(--space-0);
 }
 
-.target-cards {
-  display: grid;
-  /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- EXCEPTION: auto-fit track threshold is component-tuned geometry, not a system size */
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-3);
-}
-
 .target-slider {
   width: 100%;
   accent-color: var(--sys-color-action-primary);
@@ -935,14 +928,14 @@ details[open] > summary::before {
   gap: var(--space-6);
 }
 
-.step-grid-2col {
+.wall-grid-2col {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-4);
 }
 
 @container (min-width: 600px) {
-  .step-grid-2col {
+  .wall-grid-2col {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -959,24 +952,19 @@ details[open] > summary::before {
   margin-top: var(--space-0);
 }
 
-.step-field-group--grid {
+.wall-field-group--grid {
   display: grid;
-  grid-template-columns: 1fr;
+  /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- EXCEPTION: auto-fill track threshold is component-tuned geometry, not a system size */
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
   gap: var(--space-4) var(--space-6);
 }
 
-@media (min-width: 60rem) {
-  .step-field-group--grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.step-field-group--grid .field-label {
+.wall-field-group--grid .field-label {
   justify-content: flex-start;
   gap: var(--space-2);
 }
 
-.step-field-group--grid .field-label > span:first-child {
+.wall-field-group--grid .field-label > span:first-child {
   margin-right: var(--space-0);
 }
 

@@ -52,11 +52,9 @@ export function createWallActions({
     view.activeChipId = id;
     const section = sectionOf(id);
     if (!section) return;
-
     const reduce = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
     section.scrollIntoView?.({ behavior: reduce ? "auto" : "smooth", block: "start" });
     suppressedUntil = now() + SPY_SUPPRESSION_MS;
-
     view.landingFieldset = id;
     if (landingTimer) clearTimeout(landingTimer);
     landingTimer = schedule(() => {
@@ -67,11 +65,19 @@ export function createWallActions({
     focusEntry(section);
   }
 
+  function resetWall() {
+    const view = getView();
+    view.activeChipId = ids[0] ?? null;
+    view.landingFieldset = null;
+    suppressedUntil = 0;
+    const wall = documentRef?.querySelector?.(".wall-scroll") ?? null;
+    if (wall && "scrollTop" in wall) wall.scrollTop = 0;
+  }
+
   function wallScrolled(event) {
     if (now() < suppressedUntil) return;
     const wall = event?.currentTarget ?? event?.target;
     if (!wall || typeof wall.getBoundingClientRect !== "function") return;
-
     const present = ids
       .map((id) => [id, sectionOf(id)])
       .filter(([, section]) => section !== null);
@@ -91,7 +97,15 @@ export function createWallActions({
     landingFieldset: null,
     selectFieldset,
     wallScrolled,
+    resetWall,
   };
 }
 
-export const KEYS = ["wallChips", "activeChipId", "landingFieldset", "selectFieldset", "wallScrolled"];
+export const KEYS = [
+  "wallChips",
+  "activeChipId",
+  "landingFieldset",
+  "selectFieldset",
+  "wallScrolled",
+  "resetWall",
+];

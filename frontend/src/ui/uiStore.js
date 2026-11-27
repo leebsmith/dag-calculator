@@ -1,9 +1,7 @@
-// Ephemeral UI state — never domain values. Holds view concerns only:
-// active step and unit mode (per dimension).
+// Ephemeral UI state — never domain values. The wall owns its own scroll and
+// chip cursor; this store carries only the per-dimension unit preference.
 export function createUiStore() {
   return {
-    activeIndex: 0, // current step cursor (index into the step manifest)
-    highwater: 0, // furthest step reached (index into the step manifest)
     unitMode: {}, // dimension id -> preferred unit id (display only)
   };
 }

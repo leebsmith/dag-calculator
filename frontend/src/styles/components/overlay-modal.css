@@ -76,7 +76,7 @@
 .modal-body-slot,
 .modal-overlay-slot,
 .form-field-control,
-.step-field-group {
+.wall-field-group {
   display: contents;
 }
 

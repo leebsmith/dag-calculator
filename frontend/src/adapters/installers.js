@@ -11,7 +11,6 @@
 // `partials` is the card partials the installer owns: the ownership guard lets
 // a partial bind its owners' members and nothing else without a `SHARED` entry.
 
-import { KEYS as navigationKeys } from "./navigation.js";
 import { KEYS as wallKeys } from "./wall.js";
 import { KEYS as drawerKeys } from "./drawer.js";
 import { KEYS as fieldActionsKeys } from "./fieldActions.js";
@@ -37,7 +36,6 @@ import { KEYS as brewDayKeys } from "./cards/brew-day.js";
 import { KEYS as dryHopKeys } from "./cards/dry-hops.js";
 import { KEYS as waterKeys } from "./cards/water.js";
 import { KEYS as tableConfigKeys, SHARED as tableConfigShared } from "./tableConfigs.js";
-const NAVIGATION = ["frontend/src/adapters/navigation.js"];
 const LIBRARY_UI = [
   "frontend/src/adapters/libraryUi.js",
   "frontend/src/adapters/libraryFields.js",
@@ -85,12 +83,11 @@ const WATER = [
   "frontend/src/adapters/cards/water.js",
   "frontend/src/adapters/cards/waterCardActions.js",
 ];
-const STYLE_PARTIALS = ["wall-targets.html", "step-style.html"];
+const STYLE_PARTIALS = ["wall-targets.html"];
 export const INSTALLERS = [
-  { name: "navigation", modules: NAVIGATION, keys: navigationKeys },
-  { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys },
+  { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys, partials: ["wall-chips.html"] },
   { name: "drawer", modules: ["frontend/src/adapters/drawer.js"], keys: drawerKeys, partials: ["wall-drawer.html"] },
-  { name: "fieldActions", modules: ["frontend/src/adapters/fieldActions.js"], keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "wall-panel.html", "step-card.html"] },
+  { name: "fieldActions", modules: ["frontend/src/adapters/fieldActions.js"], keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "wall-panel.html"] },
   { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys, partials: ["wall-drawer.html"] },
   {
     name: "tableConfigs",
@@ -180,7 +177,6 @@ export const SHARED = [
     owners: ["styleTargets"],
     reason: "the pin input and its readouts print the gravity unit the navigator's plot uses",
   },
-  { key: "setHopAllocationMode", owners: ["styleDeclaration", "styleNavigator", "styleTargets", "styleConformance"], reason: "the style card's mode select drives the hop allocation root" },
   {
     key: "addDraftRow",
     owners: ["hop", "lateAdditions", "malt", "traceMalts", "dryHops"],

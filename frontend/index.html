@@ -34,10 +34,6 @@
     <main
       class="app-shell"
       x-data="stepCalculator"
-      @keydown.arrow-up.window="keyNav('prev', $event)"
-      @keydown.arrow-down.window="keyNav('next', $event)"
-      @keydown.page-up.window="keyNav('prev', $event)"
-      @keydown.page-down.window="keyNav('next', $event)"
       @keydown.window="drawerKey($event)"
     >
       <section class="sheet sheet--signin" x-show="!$store.auth.user && !$store.auth.loading">

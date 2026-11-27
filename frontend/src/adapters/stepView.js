@@ -220,7 +220,8 @@ export function createStepView({
     app.findingsById = Object.fromEntries(
       app.findings.map((finding) => [finding.id, finding])
     );
-    app.stepFindingItems = (app.stepStatus?.[app.fieldsets?.[app.activeIndex]?.slice]?.relations ?? [])
+    const active = app.fieldsets?.find((fieldset) => fieldset.id === app.activeChipId);
+    app.stepFindingItems = (app.stepStatus?.[active?.slice]?.relations ?? [])
       .map((relation) => app.findingsById[relation.id])
       .filter(Boolean);
     const readPanel = (path) => {

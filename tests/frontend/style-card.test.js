@@ -293,7 +293,7 @@ test("the style card keeps the blend AA and no longer duplicates the cap or lift
   assert.equal("attenuationSugarLift" in app, false);
 
   const html = readFileSync(
-    new URL("../../frontend/src/partials/step-style.html", import.meta.url),
+    new URL("../../frontend/src/partials/wall-targets.html", import.meta.url),
     "utf8"
   );
   assert.equal(html.includes("Malt attenuation cap"), false);

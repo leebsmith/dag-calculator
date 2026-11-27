@@ -48,7 +48,6 @@ import { createFieldActions } from "./fieldActions.js";
 import { createProseValidation } from "./proseValidation.js";
 import { createDraftEditor } from "./draftEditor.js";
 import { createUnitActions } from "./unitActions.js";
-import { createNavigationActions } from "./navigation.js";
 import { createWallActions } from "./wall.js";
 import { createDrawerActions } from "./drawer.js";
 import { createModalFocusManager } from "./modalFocus.js";
@@ -128,9 +127,6 @@ export function createStepApp(options = {}) {
     steps,
     fieldsets,
     fmt,
-    activeIndex: ui.activeIndex,
-    highwater: ui.highwater,
-    stepperSteps: [],
     readOnly: false,
     stepStatus: attribution.initialStepStatus,
     unitDimensions: UNIT_DIMENSIONS,
@@ -172,8 +168,6 @@ export function createStepApp(options = {}) {
       return this.boundaryExtras?.["solver.water"] ?? null;
     },
 
-    // Entry animation class for the active card, keyed by nav direction. Empty
-    // until the first navigation so the initial card doesn't animate.
     notify() {
       this.onChange?.();
     },
@@ -207,7 +201,7 @@ export function createStepApp(options = {}) {
       if (remote) await this.solveNow();
       else this.compute();
       if (changed) this.notify();
-      this.resetToDiscussion();
+      this.resetWall();
     },
 
     // A saved batch can author a positive sugar share while every row's parts
@@ -332,7 +326,7 @@ export function createStepApp(options = {}) {
         .refresh()
         .then(() => this.refreshLibraryItems())
         .catch((err) => observability.reportError("stepAdapter.libraryRefresh", err));
-      this.syncNav();
+      this.resetWall();
     },
 
     // Reset to the pristine auth-scoped baseline (sign-out). The runner discards
@@ -345,9 +339,7 @@ export function createStepApp(options = {}) {
       this.setReadOnly(false);
       runner.reset();
       session.reset(baselineRoots);
-      ui.activeIndex = 0;
-      ui.highwater = 0;
-      this.syncNav();
+      this.resetWall();
       if (!remote) this.compute();
     },
   };
@@ -359,7 +351,6 @@ export function createStepApp(options = {}) {
   const app = composeLayers(
     baseApp,
     { dialogFocus: modalFocus.dialogFocus, focusAndSelect: modalFocus.focusAndSelect },
-    createNavigationActions({ ui, steps, isEditorActive: options.isEditorActive, getView }),
     createWallActions({ fieldsets, getView }),
     createDrawerActions({ getView, observability, isEditorActive: options.isEditorActive }),
     createFieldActions({ ...core, observability, refToSelectionMap: attribution.refToSelectionMap }),

@@ -199,8 +199,8 @@ const setupStore = createSetupStore({
     recipes.scope = "all";
     recipes.view = "editor";
     recipes.syncActive();
-    // A new batch starts at the discussion card.
-    appHandle.current?.resetToDiscussion();
+    // A new batch starts at the top of the wall.
+    appHandle.current?.resetWall();
   },
 });
 
