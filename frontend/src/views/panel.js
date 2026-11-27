@@ -102,7 +102,7 @@ export const groups = [
     id: "water",
     title: "Water",
     rows: [
-      { path: "solver.water.prescription.mash_ph_status", label: "pH status" },
+      { path: "solver.water.prescription.mash_ph_status", label: "pH status", case: "sentence" },
       { path: "solver.water.prescription.residual_hlt_water_l", label: "Treated liquor left" },
       { path: "batch.sparge_salted_volume", label: "Salted sparge volume" },
       { path: "solver.water.mash_additions.gypsum_kg", label: "Mash gypsum", unit: "g" },

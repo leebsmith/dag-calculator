@@ -14,11 +14,16 @@ const PIN_TARGETS = {
   fg: "batch.target_fg",
 };
 
-function display(read, format, artifact, path, unit) {
+const sentence = (value) => value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+
+function display(read, format, artifact, path, { unit, casing } = {}) {
   if (!surfaceManifest.paths[path]) return DASH;
   const value = read(path);
   if (value === null) return DASH;
-  if (typeof value === "string") return value === "" ? DASH : value;
+  if (typeof value === "string") {
+    if (value === "") return DASH;
+    return casing === "sentence" ? sentence(value) : value;
+  }
   return format({ value, dimension: dimensionOf(artifact, path), unit });
 }
 
@@ -30,7 +35,7 @@ function rowsOf(read, format, artifact, declared) {
     rows.push({
       path: row.path,
       label: row.label,
-      display: display(read, format, artifact, row.path, row.unit),
+      display: display(read, format, artifact, row.path, { unit: row.unit, casing: row.case }),
     });
   }
   return rows;

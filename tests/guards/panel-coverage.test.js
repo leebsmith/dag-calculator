@@ -10,7 +10,9 @@ import assert from "node:assert/strict";
 import { panel } from "../../frontend/src/views/fieldsets.js";
 import { context, groups, panelPaths, strip } from "../../frontend/src/views/panel.js";
 import { surfaceManifest } from "../../frontend/src/views/registry/surface.generated.js";
-import { read } from "./util.js";
+import { artifact, read } from "./util.js";
+import { dimensionOf } from "../../frontend/src/views/registry/catalog.js";
+import { UNIT_DIMENSIONS } from "../../frontend/src/views/registry/units.js";
 
 const PANEL = "frontend/src/partials/wall-panel.html";
 const EQUIPMENT_TYP = "backend/app/templates/sections/equipment.typ";
@@ -107,6 +109,23 @@ test("the groups are one exclusive accordion", () => {
     (match) => match[1]
   );
   assert.deepEqual(names, ["panel-groups"]);
+});
+
+test("every water addition declares a small unit its dimension has", () => {
+  const water = groups.find((group) => group.id === "water");
+  const additions = water.rows.filter((row) => /additions\..*_(kg|l)$/.test(row.path));
+  assert.equal(additions.length, 4, "a water addition row is missing from the group");
+
+  for (const row of additions) {
+    const expected = row.path.endsWith("_kg") ? "g" : "ml";
+    assert.equal(row.unit, expected, `${row.path} must display in ${expected}`);
+    const dimension = dimensionOf(artifact(), row.path);
+    const dim = UNIT_DIMENSIONS.find((entry) => entry.id === dimension);
+    assert.ok(
+      dim?.units.some(([id]) => id === row.unit),
+      `${row.path} has no "${row.unit}" in dimension "${dimension}"`
+    );
+  }
 });
 
 test("dose rows carry their small unit", () => {

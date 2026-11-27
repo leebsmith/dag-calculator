@@ -23,7 +23,7 @@ test("a unit the dimension does not have is ignored", () => {
 
 test("the water group lists nonzero doses in grams and millilitres", () => {
   const doses = {
-    "solver.water.prescription.mash_ph_status": "optimal",
+    "solver.water.prescription.mash_ph_status": "OPTIMAL",
     "solver.water.prescription.residual_hlt_water_l": 25,
     "batch.sparge_salted_volume": 40,
     "solver.water.mash_additions.gypsum_kg": 0.00907,
@@ -41,6 +41,7 @@ test("the water group lists nonzero doses in grams and millilitres", () => {
 
   assert.equal(rows["Mash gypsum"], "9.1 g");
   assert.equal(rows["Mash acid"], "0.4 mL");
+  assert.equal(rows["pH status"], "Optimal");
   assert.equal("Mash calcium chloride" in rows, false, "a zero dose is not listed");
   assert.equal("Sparge acid" in rows, false, "a zero dose is not listed");
 });
