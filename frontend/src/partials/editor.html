@@ -133,7 +133,7 @@
                       <template x-for="fieldset in fieldsets" :key="fieldset.id">
                         <section
                           class="wall-fieldset"
-                          :class="fmt.classWhen(landingFieldset === fieldset.id, 'is-landing')"
+                          :class="(landingFieldset === fieldset.id ? 'is-landing ' : '') + 'wall-fieldset--' + fieldset.width"
                           :data-fieldset="fieldset.id"
                         >
                           <template x-if="fieldset.id === 'targets'">

@@ -2,7 +2,8 @@
   "$comment": "CSS drift allowlist. One entry per duplicate declaration group or unreferenced class. Every entry needs a reason; add a phase when cleanup is planned. Remove the entry in the commit that resolves it. The guards fail on stale entries.",
   "safelistPrefixes": [
     "sev-",
-    "finding-"
+    "finding-",
+    "wall-fieldset--"
   ],
   "duplicateGroups": [
     {
@@ -170,15 +171,6 @@
     },
     {
       "context": "",
-      "declarations": "accent-color: var(--sys-color-action-primary)",
-      "selectors": [
-        ".brew-day-step-toggle input[type=\"checkbox\"]",
-        ".mash-rest-toggle input[type=\"checkbox\"]"
-      ],
-      "reason": "Shared checkbox accent recipe; toggle contexts differ."
-    },
-    {
-      "context": "",
       "declarations": "color: var(--sys-text-primary); font-size: var(--text-lg); font-weight: var(--font-weight-semibold); margin: var(--space-0)",
       "selectors": [
         ".card-title",
@@ -219,7 +211,7 @@
       "context": "",
       "declarations": "align-items: baseline; display: flex; flex-wrap: wrap; gap: var(--space-2)",
       "selectors": [
-        ".attenuation-summary-line, .attenuation-readout",
+        ".attenuation-summary-line",
         ".map-row-main"
       ],
       "reason": "Coincidental wrap row; the attenuation figures and a map row are unrelated."

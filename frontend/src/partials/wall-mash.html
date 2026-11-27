@@ -40,81 +40,6 @@
         </button>
       </div>
 
-      <div class="data-table-container">
-        <table class="data-table data-table--editor">
-          <thead>
-            <tr>
-              <th>Rest</th>
-              <th>Range (<span x-text="temperatureUnit"></span>)</th>
-              <th>Purpose</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-for="rest in canonicalMashRests" :key="rest.rest_id">
-              <tr>
-                <td>
-                  <label class="mash-rest-toggle">
-                    <input
-                      type="checkbox"
-                      :checked="rest.enabled"
-                      @change="toggleMashRest(rest.rest_id, $event.target.checked)"
-                    />
-                    <span x-text="rest.name"></span>
-                  </label>
-                </td>
-                <td class="text-xs text-muted tabular-nums" x-text="fmt.displayOrDash(restTempRangeDisplay(rest.rest_id))"></td>
-                <td class="text-xs text-muted" x-text="rest.purpose"></td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Mash summary + metric strip -->
-    <section class="card-section">
-      <div class="card-section-header">
-        <h3 class="eyebrow">Mash Summary</h3>
-      </div>
-
-      <p class="form-hint">
-        Dough-in target
-        <span class="tabular-nums" x-text="doughInDisplay || '—'"></span>
-        <span x-text="temperatureUnit"></span>
-      </p>
-
-      <div class="data-table-container">
-        <table class="data-table data-table--editor">
-          <thead>
-            <tr>
-              <th>Rest</th>
-              <th>Use Temp (<span x-text="temperatureUnit"></span>)</th>
-              <th>Duration</th>
-              <th>Purpose</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template x-for="rest in enabledMashRests" :key="rest.rest_id">
-              <tr>
-                <td x-text="restName(rest.rest_id)"></td>
-                <td class="tabular-nums">
-                  <span x-text="restUseTempDisplay(rest) || '—'"></span>
-                </td>
-                <td class="tabular-nums">
-                  <template x-if="rest.duration_min != null">
-                    <span x-text="rest.duration_min + ' min'"></span>
-                  </template>
-                  <template x-if="rest.duration_min == null">
-                    <span class="text-muted">—</span>
-                  </template>
-                </td>
-                <td class="text-xs text-muted" x-text="restPurpose(rest.rest_id)"></td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
-
       <p class="form-hint" :class="mashLgrBelowFloor ? 'text-warning' : 'text-muted'" x-text="mashLgrSummary"></p>
 
       <div class="metric-strip">
@@ -148,28 +73,6 @@
           </div>
         </div>
 
-        <div class="metric-cell">
-          <span class="metric-cell-label">Strike Water Temp</span>
-          <div class="metric-cell-value-wrap">
-            <span class="metric-cell-val" x-text="strikeWaterTempDisplay() || '—'"></span>
-            <span class="metric-cell-unit" x-text="mashField('mash.strike_water_temp_c').unit"></span>
-          </div>
-          <template x-if="fmt.isPositiveNumber(mashField('mash.strike_water_tun_offset_c').value)">
-            <span
-              class="text-xs text-muted"
-              x-text="'incl. tun ' + fmt.formatQuantity(mashField('mash.strike_water_tun_offset_c'), { dash: '' })"
-            ></span>
-          </template>
-        </div>
-
-        <div class="metric-cell">
-          <span class="metric-cell-label">Total Mash Time</span>
-          <div class="metric-cell-value-wrap">
-            <span class="metric-cell-val" x-text="totalMashTimeDisplay"></span>
-            <span class="metric-cell-unit">min</span>
-          </div>
-          <span class="text-xs text-muted" x-show="rampTimeMin > 0" x-text="mashTimeSummary"></span>
-        </div>
       </div>
     </section>
 

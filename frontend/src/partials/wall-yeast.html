@@ -65,10 +65,6 @@
       <div class="card-section-header">
         <div>
           <h3 class="eyebrow">Batch attenuation</h3>
-          <p class="form-hint">
-            Target cap
-            <span class="tabular-nums" x-text="fmt.formatPercent(attenuationCapValue)"></span>
-          </p>
         </div>
         <div class="card-section-actions">
           <div class="row-actions">
@@ -86,27 +82,6 @@
             <span class="text-xs text-muted">pts derate</span>
           </div>
         </div>
-      </div>
-
-      <div class="attenuation-readout">
-        <div>
-          <span class="field-label">Published</span>
-          <span class="tabular-nums" x-text="selectedYeastPublished"></span>
-        </div>
-        <div>
-          <span class="field-label">Realized</span>
-          <span class="tabular-nums" x-text="fmt.formatPercent(attenuationRealizedValue)"></span>
-        </div>
-        <div>
-          <span class="field-label">Binding</span>
-          <span x-text="attenuationBinding"></span>
-        </div>
-      </div>
-
-      <div class="attenuation-above" x-show="attenuationAboveCap">
-        <span class="status-badge status-badge-info text-nano">above malt cap</span>
-        <span class="tabular-nums" x-text="attenuationAboveCapLabel"></span>
-        <span class="text-xs text-muted" x-text="attenuationAboveCapCause"></span>
       </div>
 
     </section>

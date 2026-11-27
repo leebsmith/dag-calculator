@@ -139,6 +139,9 @@
      ======================================================================== */
 
   --width-rail: 22.5rem;
+  --width-fieldset-narrow: 22rem;
+  --width-fieldset-regular: 26rem;
+  --width-fieldset-wide: 45rem;
   --width-field-max: 14rem;
   --size-control-h: 2rem;
   --space-gutter: 1rem;

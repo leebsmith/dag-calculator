@@ -51,15 +51,6 @@
           <span aria-hidden="true">≈</span> converted from apparent attenuation at 12 °P.
         </p>
 
-        <div class="summary-strip" x-show="gristRows.length > 0">
-          <div class="summary-strip-item">
-            <span class="text-xs text-muted">Weighted extract yield</span>
-            <span
-              class="text-base font-bold tabular-nums"
-              x-text="fmt.formatQuantity(maltWeightedYield)"
-            ></span>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -95,24 +86,6 @@
     </section>
 
     <load src="src/partials/fermentables-sugar-section.html" />
-
-    <div class="summary-strip summary-strip--total">
-      <div class="summary-strip-item">
-        <span class="text-xs text-muted">Total bill mass (grist + trace + sugars)</span>
-        <span
-          class="text-base font-bold tabular-nums"
-          x-text="fmt.formatQuantity(gristTotalMassField)"
-        ></span>
-      </div>
-      <div class="summary-strip-item">
-        <span class="text-xs text-muted">Beer color (whole bill)</span>
-        <span
-          class="text-base font-bold tabular-nums"
-          x-text="fmt.formatQuantity(beerColorField)"
-        ></span>
-      </div>
-    </div>
-  </div>
 
   <load src="src/partials/modal-malt-editor.html" />
   <load src="src/partials/modal-trace-malt-editor.html" />

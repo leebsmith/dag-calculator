@@ -77,9 +77,9 @@ test("the colour stays the Batch step's field, not this card's", withFreshApp((a
   assert.equal(app.beerColorField.label, "Beer color");
 }));
 
-test("the roll-up labels name their scope and no section strip claims beer color", () => {
-  assert.match(CARD, /Total bill mass \(grist \+ trace \+ sugars\)/);
-  assert.match(CARD, /Beer color \(whole bill\)/);
+test("the wall shows no bill roll-up and no section strip claims beer color", () => {
+  assert.doesNotMatch(CARD, /Total bill mass/);
+  assert.doesNotMatch(CARD, /Beer color \(whole bill\)/);
   assert.doesNotMatch(CARD, /Weighted (?:grist|trace|sugar) color/);
 
   assert.match(SUGAR_SECTION, /class="section-meta" x-text="sugarSectionMeta"/);
