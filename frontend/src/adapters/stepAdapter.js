@@ -11,9 +11,8 @@ import { createSession } from "./session.js";
 import { resolveBoundarySeam } from "./boundarySeam.js";
 import { assertReferencePair, bootstrapIdentity, createReferenceCache } from "../store/referenceCache.js";
 import {
-  dropSugarRowPct, materializeSelections,
-  migrateAttenuationDerate, migrateLegacyYeastCap, migrateProcessNotes,
-  seedFermenterIdentity, seedIdentityResiduals, seedSugarShareParts,
+  dropSugarRowPct, materializeSelections, migrateAttenuationDerate, migrateLegacyYeastCap,
+  migrateProcessNotes, seedFermenterIdentity, seedIdentityResiduals, seedSugarShareParts,
 } from "../store/batchMigrations.js";
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
 import { dropLegacyDoughIn, migrateWhirlpoolCoordinates } from "./legacyMigrations.js";
@@ -36,13 +35,12 @@ import { createDryHopLayers } from "./cards/dry-hops.js";
 import { createWaterLayers } from "./cards/water.js";
 import { createTableConfigs } from "./tableConfigs.js";
 import {
-  catalogChromeLayer,
-  createCatalogChrome,
-  createCatalogRegistry,
+  catalogChromeLayer, createCatalogChrome, createCatalogRegistry,
 } from "./cards/catalogChrome.js";
 import { createLibraryLayers } from "./libraryUi.js";
 import { createHopFormatters } from "../views/hopsLogic.js";
 import { registry, steps } from "../views/steps.js";
+import { fieldsets } from "../views/fieldsets.js";
 import { UNIT_DIMENSIONS, UNIT_GROUPS } from "../views/registry/units.js";
 import { createBoundaryRunner } from "./boundaryRunner.js";
 import { createFieldAttribution } from "./fieldAttribution.js";
@@ -126,10 +124,10 @@ export function createStepApp(options = {}) {
     library,
     observability,
     steps,
+    fieldsets,
     fmt,
     activeIndex: ui.activeIndex,
     highwater: ui.highwater,
-    activeStep: steps[ui.activeIndex],
     stepperSteps: [],
     readOnly: false,
     navDir: null, // "next" | "prev" — drives the step-card entry animation

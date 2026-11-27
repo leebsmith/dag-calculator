@@ -195,7 +195,7 @@ const FILE_LINE_PINS = {
   "adapters/installers.js": 401,
   "adapters/cards/late-additions.js": 296,
   "adapters/cards/water.js": 268,
-  "adapters/stepAdapter.js": 452,
+  "adapters/stepAdapter.js": 450,
   "views/producer/stylePlot.js": 193,
   "views/hopsLogic.js": 403,
   "engine/dag.js": 366,

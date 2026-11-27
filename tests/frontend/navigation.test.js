@@ -24,11 +24,10 @@ function setup({ activeIndex = 0, highwater = 1, isEditorActive } = {}) {
 }
 
 test("syncNav mirrors the ui store onto the stepper", () => {
-  const { app, steps } = setup({ activeIndex: 1, highwater: 1 });
+  const { app } = setup({ activeIndex: 1, highwater: 1 });
 
   assert.equal(app.activeIndex, 1);
   assert.equal(app.highwater, 1);
-  assert.equal(app.activeStep, steps[1]);
   assert.deepEqual(app.stepperSteps, [
     { id: "a", index: 0, title: "Alpha", state: "completed", disabled: false, ariaCurrent: null },
     { id: "b", index: 1, title: "Beta", state: "active", disabled: false, ariaCurrent: "step" },
@@ -54,7 +53,7 @@ test("selectStep moves within the unlocked range", () => {
 
   app.selectStep(2);
   assert.equal(ui.activeIndex, 2);
-  assert.equal(app.activeStep.id, "c");
+  assert.equal(app.activeIndex, 2);
 
   app.selectStep(0);
   assert.equal(ui.activeIndex, 0);
@@ -142,14 +141,14 @@ test("resetToStep sets activeIndex, raises highwater, and syncs nav", () => {
   assert.equal(ui.activeIndex, 1);
   assert.equal(ui.highwater, 1);
   assert.equal(app.activeIndex, 1);
-  assert.equal(app.activeStep.id, "b");
+  assert.equal(app.activeIndex, 1);
   assert.equal(app.navDir, null);
 
   app.resetToStep(2);
   assert.equal(ui.activeIndex, 2);
   assert.equal(ui.highwater, 2);
   assert.equal(app.activeIndex, 2);
-  assert.equal(app.activeStep.id, "c");
+  assert.equal(app.activeIndex, 2);
 });
 
 test("resetToDiscussion selects the discussion step", () => {
@@ -162,5 +161,5 @@ test("resetToDiscussion selects the discussion step", () => {
   app.resetToDiscussion();
   assert.equal(ui.activeIndex, 0);
   assert.equal(ui.highwater, 2);
-  assert.equal(app.activeStep.id, "discussion");
+  assert.equal(app.activeIndex, 0);
 });

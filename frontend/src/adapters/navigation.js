@@ -12,7 +12,6 @@ export function createNavigationActions({
     const view = getView();
     view.activeIndex = ui.activeIndex;
     view.highwater = ui.highwater;
-    view.activeStep = steps[ui.activeIndex];
     view.stepperSteps = steps.map((step, index) => {
       const current = index === ui.activeIndex;
       const reached = index <= ui.highwater;

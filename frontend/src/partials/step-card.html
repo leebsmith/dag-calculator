@@ -1,15 +1,15 @@
 <section class="card">
   <div class="card-header">
-    <h2 class="card-title" x-text="activeStep.title"></h2>
-    <p class="card-subtitle" x-show="activeStep.subtitle" x-text="activeStep.subtitle"></p>
+    <h2 class="card-title" x-text="fieldset.title"></h2>
+    <p class="card-subtitle" x-show="fieldset.subtitle" x-text="fieldset.subtitle"></p>
     <p
       class="card-subtitle"
-      x-show="activeStep.id === 'equipment' && equipmentRig"
+      x-show="fieldset.id === 'equipment' && equipmentRig"
       x-text="equipmentRig"
     ></p>
   </div>
 
-  <template x-for="group in stepGroups[activeStep.slice]" :key="group.id">
+  <template x-for="group in stepGroups[fieldset.slice]" :key="group.id">
     <div class="step-field-group" :class="fmt.classWhen(group.grid, 'step-field-group--grid')">
       <template x-if="group.title">
         <div class="group-header">
@@ -268,11 +268,11 @@
     </div>
   </template>
 
-  <template x-for="a in (activeStep.actions || [])" :key="a.id">
+  <template x-for="a in (fieldset.actions || [])" :key="a.id">
     <button
       type="button"
       class="btn-outline"
-      x-show="fmt.someFieldHasGate(fieldsBySlice[activeStep.slice], a.gate)"
+      x-show="fmt.someFieldHasGate(fieldsBySlice[fieldset.slice], a.gate)"
       @click="runAction(a)"
       x-text="a.label"
     ></button>

@@ -207,7 +207,7 @@ export function createStepView({
     app.findingsById = Object.fromEntries(
       app.findings.map((finding) => [finding.id, finding])
     );
-    app.stepFindingItems = (app.stepStatus?.[app.activeStep?.slice]?.relations ?? [])
+    app.stepFindingItems = (app.stepStatus?.[app.fieldsets?.[app.activeIndex]?.slice]?.relations ?? [])
       .map((relation) => app.findingsById[relation.id])
       .filter(Boolean);
     app.pinFindingAvailable =

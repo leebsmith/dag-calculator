@@ -152,36 +152,36 @@
                   <div class="step-viewport">
                     <fieldset class="readonly-field" :disabled="$store.recipes.readOnly">
                       <div class="step-row">
-                        <template x-for="step in [activeStep]" :key="step.id">
+                        <template x-for="fieldset in [fieldsets[activeIndex]]" :key="fieldset.id">
                         <div class="step-slot" :class="navClass">
-                          <template x-if="step.id === 'discussion'">
+                          <template x-if="fieldset.id === 'discussion'">
                             <load src="src/partials/step-discussion.html" />
                           </template>
-                          <template x-if="step.id === 'process'">
+                          <template x-if="fieldset.id === 'process'">
                             <load src="src/partials/step-process.html" />
                           </template>
-                          <template x-if="step.id === 'style'">
+                          <template x-if="fieldset.id === 'style'">
                             <load src="src/partials/step-style.html" />
                           </template>
-                          <template x-if="step.id === 'yeast'">
+                          <template x-if="fieldset.id === 'yeast'">
                             <load src="src/partials/step-yeast.html" />
                           </template>
-                          <template x-if="step.id === 'fermentables'">
+                          <template x-if="fieldset.id === 'fermentables'">
                             <load src="src/partials/step-fermentables.html" />
                           </template>
-                          <template x-if="step.id === 'hops'">
+                          <template x-if="fieldset.id === 'hops'">
                             <load src="src/partials/step-hops.html" />
                           </template>
-                          <template x-if="step.id === 'mash'">
+                          <template x-if="fieldset.id === 'mash'">
                             <load src="src/partials/step-mash.html" />
                           </template>
-                          <template x-if="step.id === 'water'">
+                          <template x-if="fieldset.id === 'water'">
                             <load src="src/partials/step-water.html" />
                           </template>
-                          <template x-if="step.id === 'brew-day'">
+                          <template x-if="fieldset.id === 'brew-day'">
                             <load src="src/partials/step-brew-day.html" />
                           </template>
-                          <template x-if="step.id !== 'discussion' && step.id !== 'process' && step.id !== 'yeast' && step.id !== 'style' && step.id !== 'fermentables' && step.id !== 'hops' && step.id !== 'mash' && step.id !== 'water' && step.id !== 'brew-day'">
+                          <template x-if="fieldset.id !== 'discussion' && fieldset.id !== 'process' && fieldset.id !== 'yeast' && fieldset.id !== 'style' && fieldset.id !== 'fermentables' && fieldset.id !== 'hops' && fieldset.id !== 'mash' && fieldset.id !== 'water' && fieldset.id !== 'brew-day'">
                             <load src="src/partials/step-card.html" />
                           </template>
                           </div>
