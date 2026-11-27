@@ -169,7 +169,6 @@ function materializeBase(ref, dir) {
   if (result.status !== 0) throw new Error(`could not extract ${ref}`);
   return {
     dir,
-    style: path.join(dir, "frontend/src/style.css"),
     partials: path.join(dir, "frontend/src/partials"),
   };
 }
@@ -199,7 +198,6 @@ async function captureScreenshot(browser, fixture, theme, width, target) {
 }
 
 function readStyles(dir) {
-  const base = path.join(dir, "frontend/src/style.css");
   const roles = [
     "styles/utilities/text.css",
     "styles/layout/base.css",
@@ -210,7 +208,8 @@ function readStyles(dir) {
     "styles/components/control-chips.css",
     "styles/components/overlay-chrome.css",
   ].map((file) => path.join(dir, "frontend/src", file));
-  return [base, ...roles.filter((file) => fs.existsSync(file))]
+  return roles
+    .filter((file) => fs.existsSync(file))
     .map((file) => fs.readFileSync(file, "utf8"))
     .join("\n");
 }
@@ -326,7 +325,6 @@ async function main() {
     const before = materializeBase(options.base, baseDir);
     const after = {
       dir: repo,
-      style: path.join(repo, "frontend/src/style.css"),
       partials: path.join(repo, "frontend/src/partials"),
     };
     browser = await openBrowser();

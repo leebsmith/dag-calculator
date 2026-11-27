@@ -1,136 +1,12 @@
-/**
- * Legacy component sheet: being split into role files under styles/ —
- * utilities/*, layout/* and components/control-*, group-*, overlay-*.
- * Rules still here are the visual-grammar burn-down; tokens remain the only
- * source of values.
- */
-
-/* ==========================================================================
-   2. Buttons & Interactive Controls
-   ========================================================================== */
-
-:is(.btn, .btn-primary, .btn-secondary, .btn-outline) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1-5);
-  font-family: inherit;
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--line-height-tight);
-  padding: var(--space-1-5) var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-transparent);
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color var(--transition-fast), background-image var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
-  user-select: none;
-  min-height: var(--target-min-micro);
-}
-
-.btn-sm {
-  gap: var(--space-1);
-  font-size: var(--text-micro);
-  padding: var(--space-1) var(--space-2);
-  min-height: var(--target-min-micro);
-}
-
-.btn:focus-visible,
-.btn-link:focus-visible,
-.btn-action-icon:focus-visible {
-  outline: 2px solid var(--sys-border-focus);
-  outline-offset: 2px;
-}
-
-:is(.btn, .btn-primary, .btn-secondary, .btn-outline):disabled,
-:is(.btn, .btn-primary, .btn-secondary, .btn-outline)[disabled],
-:is(.btn, .btn-primary, .btn-secondary, .btn-outline)[aria-disabled="true"] {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.btn-primary {
-  background-color: var(--sys-color-action-primary);
-  color: var(--sys-text-on-action);
-  border-color: var(--sys-color-action-primary);
-  box-shadow: var(--sys-shadow-sm);
-}
-
-.btn-secondary {
-  background-color: var(--sys-surface-subtle);
-  color: var(--sys-text-secondary);
-  border-color: var(--sys-border-subtle);
-}
-
-.btn:hover:not(:disabled),
-.btn-primary:hover:not(:disabled),
-.btn-secondary:hover:not(:disabled),
-.btn-outline:hover:not(:disabled),
-.btn-action-icon:hover:not(:disabled),
-.split-pill-unit:hover,
-.split-pill-lock:hover,
-.segmented-item:hover:not(:disabled) {
-  background-image:
-    linear-gradient(var(--md-sys-state-hover), var(--md-sys-state-hover));
-}
-
-.btn:active:not(:disabled),
-.btn-primary:active:not(:disabled),
-.btn-secondary:active:not(:disabled),
-.btn-outline:active:not(:disabled),
-.btn-action-icon:active:not(:disabled),
-.split-pill-unit:active,
-.split-pill-lock:active,
-.segmented-item:active:not(:disabled) {
-  background-image:
-    linear-gradient(var(--md-sys-state-pressed), var(--md-sys-state-pressed));
-}
-
-.btn-outline {
-  background-color: var(--sys-surface-default);
-  color: var(--sys-text-secondary);
-  border-color: var(--sys-border-default);
-  box-shadow: var(--sys-shadow-sm);
-}
-
-.btn.is-active {
-  background-color: var(--sys-surface-selected);
-  border-color: var(--sys-border-selected);
-  color: var(--sys-color-action-subtle-text);
-}
-
-.btn-link {
-  background-color: var(--color-transparent);
-  border-color: var(--color-transparent);
-  color: var(--sys-text-muted);
-  padding: var(--space-1) var(--space-2);
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.btn-link:hover:not(:disabled) {
-  color: var(--sys-text-primary);
-}
-
-/* A disclosure one level below a card section: chevron plus the underlined
-   link affordance, for panels that open inside a section body. */
-.detail-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-}
+/* Group role: cards, alerts, tables, pickers and report layout. */
 
 .detail-panel {
   margin-top: var(--space-2);
   padding: var(--space-3) var(--space-4);
   background-color: var(--sys-surface-subtle);
   border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
 }
-
-/* --- Disclosures --- */
 
 details > summary {
   list-style: none;
@@ -153,239 +29,12 @@ details[open] > summary::before {
   transform: rotate(90deg);
 }
 
-.btn-close {
-  background-color: var(--color-transparent);
-  border: none;
-  color: var(--sys-text-muted);
-  font-size: var(--text-sm);
-  cursor: pointer;
-  padding: var(--space-1);
-  border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: var(--line-height-none);
-}
-
-.btn-close:hover {
-  color: var(--sys-text-primary);
-}
-
-.btn-action-icon {
-  background-color: var(--color-transparent);
-  border: none;
-  color: var(--sys-text-secondary);
-  font-size: var(--text-xs);
-  cursor: pointer;
-  padding: var(--space-1) var(--space-1-5);
-  border-radius: var(--radius-sm);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: var(--line-height-none);
-  transition: background-color var(--transition-fast), color var(--transition-fast);
-}
-
-.btn-action-danger:hover {
-  background-color: var(--sys-color-danger-subtle);
-  color: var(--sys-color-danger-accent);
-}
-
-/* ==========================================================================
-   3. Form Controls
-   ========================================================================== */
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1-5);
-}
-
-.checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1-5);
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-}
-
-.checkbox-group legend {
-  padding: 0;
-}
-
-.form-label, .field-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-1);
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-medium);
-  color: var(--sys-text-secondary);
-}
-
-.form-label > span:first-child, .field-label > span:first-child {
-  margin-right: auto;
-}
-
-.unit-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-0-5) var(--space-1-5);
-  border-radius: var(--radius-sm);
-  background-color: var(--sys-surface-subtle);
-  border: 1px solid var(--sys-border-subtle);
-  font-family: var(--font-mono);
-  font-size: var(--text-micro);
-  color: var(--sys-text-primary);
-  cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
-  user-select: none;
-}
-
-.unit-badge:hover {
-  background-color: var(--sys-color-action-subtle-hover);
-  border-color: var(--sys-color-action-primary);
-  color: var(--sys-color-action-primary);
-}
-
-.unit-badge-customized::after {
-  content: "";
-  display: inline-block;
-  width: var(--space-1);
-  height: var(--space-1);
-  border-radius: var(--radius-circle);
-  background-color: var(--sys-color-warning-accent);
-  margin-left: var(--space-0-25);
-}
-
-.seed-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-0-25) var(--space-1);
-  border-radius: var(--radius-sm);
-  background-color: var(--sys-color-action-subtle);
-  color: var(--sys-color-action-subtle-text);
-  font-size: var(--text-micro);
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: var(--text-tracking-wide);
-}
-
-.seed-reset {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--sys-text-secondary);
-  font-size: var(--text-sm);
-  cursor: pointer;
-}
-
-.seed-reset:hover {
-  color: var(--sys-color-action-primary);
-}
-
-.form-input.is-seeded,
-.form-select.is-seeded {
-  color: var(--sys-text-secondary);
-}
-
-.form-input {
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--text-base);
-  font-family: inherit;
-  font-weight: var(--font-weight-semibold);
-  font-variant-numeric: tabular-nums;
-  color: var(--sys-text-primary);
-  background-color: var(--sys-surface-default);
-  border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-md);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-/* Calculated/readout values: same emphasis as editable values (semibold,
-   primary), so data reads above the muted field labels. */
-.field-value {
-  display: block;
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-semibold);
-  font-variant-numeric: tabular-nums;
-  color: var(--sys-text-primary);
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--sys-border-focus);
-  box-shadow: var(--sys-shadow-focus);
-}
-
-.form-input.is-invalid {
-  border-color: var(--sys-color-danger-border);
-}
-
 .collection-readout {
   display: block;
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-sm);
   color: var(--sys-text-secondary);
 }
-
-.form-input:disabled,
-.form-input[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.form-select {
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--text-sm);
-  font-family: inherit;
-  color: var(--sys-text-primary);
-  background-color: var(--sys-surface-default);
-  border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-md);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.form-select:focus {
-  outline: none;
-  border-color: var(--sys-border-focus);
-  box-shadow: var(--sys-shadow-focus);
-}
-
-.form-select:disabled,
-.form-select[disabled] {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.form-hint {
-  display: block;
-  font-size: var(--text-xs);
-  color: var(--sys-text-muted);
-  line-height: var(--line-height-snug);
-}
-
-.form-checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-sm);
-  color: var(--sys-text-primary);
-}
-
-/* ==========================================================================
-   4. Cards & Containers
-   ========================================================================== */
 
 .card-title {
   font-size: var(--text-lg);
@@ -394,8 +43,6 @@ details[open] > summary::before {
   margin: var(--space-0);
 }
 
-/* Title + subtitle sit tight; the card's gap then separates the header from the
-   fields (instead of a uniform gap adding a row before the content). */
 .card-header {
   display: flex;
   flex-direction: column;
@@ -408,10 +55,6 @@ details[open] > summary::before {
   margin: var(--space-0) var(--space-0) var(--space-4) var(--space-0);
   line-height: var(--line-height-snug);
 }
-
-/* ==========================================================================
-   5. Alerts & Notifications
-   ========================================================================== */
 
 .alert {
   border-radius: var(--radius-xl);
@@ -457,74 +100,6 @@ details[open] > summary::before {
   display: inline-block;
 }
 
-/* ==========================================================================
-   6. Status Badges & Indicators
-   ========================================================================== */
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1-5);
-  font-size: var(--text-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-.status-badge-success {
-  color: var(--sys-color-success-text);
-}
-
-.status-badge-info {
-  color: var(--sys-color-info-text);
-}
-
-.status-dot {
-  width: var(--space-2);
-  height: var(--space-2);
-  border-radius: var(--radius-full);
-  display: inline-block;
-}
-
-.status-dot-success {
-  background-color: var(--sys-color-success-accent);
-}
-
-.status-dot-warning {
-  background-color: var(--sys-color-warning-accent);
-}
-
-.status-dot-error {
-  background-color: var(--sys-color-danger-accent);
-}
-
-/* ==========================================================================
-   7. Modal
-   ========================================================================== */
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-modal-backdrop);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
-  background-color: var(--sys-surface-overlay);
-  backdrop-filter: var(--sys-backdrop-blur);
-}
-
-.modal-dialog {
-  background-color: var(--sys-surface-elevated);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--sys-shadow-xl);
-  max-width: var(--container-modal-dialog);
-  width: 100%;
-  padding: var(--space-6);
-  border: 1px solid var(--sys-border-subtle);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
 .report-picker-actions {
   display: flex;
   flex-wrap: wrap;
@@ -533,33 +108,13 @@ details[open] > summary::before {
   gap: var(--space-2);
 }
 
-.form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-/* ==========================================================================
-   7b. Grain bill editor (workspace modal + catalog / inspector drawers)
-   ========================================================================== */
-
-.modal-dialog-workspace {
-  position: relative;
-  max-width: var(--container-modal-workspace, 72rem);
-  height: var(--size-modal-workspace-height);
-  padding: var(--space-0);
-  gap: var(--space-0);
-  overflow: hidden;
-}
-
 .summary-strip {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-6);
   margin-top: var(--space-4);
   padding: var(--space-4);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   background-color: var(--sys-surface-subtle);
 }
 
@@ -571,169 +126,6 @@ details[open] > summary::before {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-}
-
-.modal-workspace-header {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-6);
-  border-bottom: 1px solid var(--sys-border-subtle);
-  background-color: var(--sys-surface-subtle);
-}
-
-.modal-workspace-header-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.modal-workspace-title {
-  margin: var(--space-0);
-  font-size: var(--text-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--sys-text-primary);
-}
-
-.modal-workspace-header-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.modal-workspace-body {
-  position: relative;
-  display: flex;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-}
-
-.modal-teleport-root,
-.modal-body-slot,
-.modal-overlay-slot,
-.form-field-control,
-.step-field-group {
-  display: contents;
-}
-
-.modal-workspace-main {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-6);
-  overflow-y: auto;
-}
-
-.modal-drawer-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-scrim);
-  background-color: var(--sys-surface-scrim);
-  backdrop-filter: var(--sys-backdrop-blur-subtle);
-  cursor: pointer;
-}
-
-.modal-workspace-drawer {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: var(--z-drawer);
-  display: flex;
-  flex-direction: column;
-  width: var(--container-drawer-workspace);
-  max-width: 100%;
-  overflow: hidden;
-  background-color: var(--sys-surface-elevated);
-  border-left: 1px solid var(--sys-border-subtle);
-  box-shadow: var(--sys-shadow-xl);
-}
-
-.modal-drawer-enter,
-.modal-drawer-leave {
-  transition: transform var(--transition-drawer);
-}
-
-.modal-drawer-enter-start,
-.modal-drawer-leave-end {
-  transform: translateX(100%);
-}
-
-.modal-drawer-enter-end,
-.modal-drawer-leave-start {
-  transform: translateX(0);
-}
-
-.modal-confirm-layer {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-modal);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-4);
-  background-color: var(--sys-surface-scrim);
-  backdrop-filter: var(--sys-backdrop-blur-subtle);
-}
-
-.modal-confirm {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  width: 100%;
-  max-width: var(--container-modal-dialog);
-  padding: var(--space-5);
-  background-color: var(--sys-surface-elevated);
-  border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--sys-shadow-xl);
-}
-
-.modal-confirm-title {
-  margin: var(--space-0);
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--sys-text-primary);
-}
-
-.modal-confirm-body {
-  margin: var(--space-0);
-  font-size: var(--text-sm);
-  color: var(--sys-text-secondary);
-}
-
-.modal-confirm-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-2);
-}
-
-.modal-drawer-header {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--sys-border-subtle);
-  background-color: var(--sys-surface-subtle);
-}
-
-.modal-drawer-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  overflow-y: auto;
-}
-
-.modal-drawer-body-pinned {
-  overflow: hidden;
 }
 
 .catalog-pane-content {
@@ -765,7 +157,7 @@ details[open] > summary::before {
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   background-color: var(--sys-surface-default);
   transition: border-color var(--transition-fast), background-color var(--transition-fast);
 }
@@ -783,7 +175,7 @@ details[open] > summary::before {
 
 .catalog-item-meta {
   margin-top: var(--space-0-5);
-  font-size: var(--text-micro);
+  font-size: var(--text-xs);
   color: var(--sys-text-secondary);
 }
 
@@ -811,110 +203,6 @@ details[open] > summary::before {
   padding-bottom: var(--space-2);
   margin-bottom: var(--space-2);
   border-bottom: 1px solid var(--sys-border-subtle);
-}
-
-.segmented-control {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.segmented-control--tight {
-  gap: var(--space-1);
-}
-
-.segmented-control--pills {
-  margin-block: var(--space-3);
-}
-
-.segmented-control--spaced {
-  margin-bottom: var(--space-3);
-}
-
-.segmented-control--inset {
-  padding-inline: var(--space-2);
-}
-
-.segmented-item {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  font-family: inherit;
-  font-weight: var(--font-weight-medium);
-  line-height: var(--line-height-tight);
-  border: 1px solid var(--color-transparent);
-  cursor: pointer;
-  text-decoration: none;
-  user-select: none;
-  transition:
-    background-color var(--transition-fast),
-    background-image var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast);
-}
-
-.segmented-item:focus-visible {
-  outline: 2px solid var(--sys-border-focus);
-  outline-offset: 2px;
-}
-
-.segmented-item:disabled,
-.segmented-item[disabled] {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.segmented-item--button {
-  padding: var(--space-1) var(--space-2);
-  min-height: var(--target-min-micro);
-  font-size: var(--text-micro);
-  color: var(--sys-text-secondary);
-  background-color: var(--sys-surface-default);
-  border-color: var(--sys-border-default);
-  border-radius: var(--radius-md);
-  box-shadow: var(--sys-shadow-sm);
-}
-
-.segmented-item--pill {
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--text-xs);
-  color: var(--sys-text-secondary);
-  background-color: var(--sys-surface-subtle);
-  border-color: var(--sys-border-subtle);
-  border-radius: var(--radius-full);
-}
-
-.segmented-item--chip {
-  padding: var(--space-0-5) var(--space-2);
-  font-size: var(--text-xs);
-  background-color: var(--sys-surface-default);
-  border-color: var(--sys-border-default);
-  border-radius: var(--radius-full);
-}
-
-.segmented-item.is-active {
-  background-color: var(--sys-color-action-subtle);
-  border-color: var(--sys-border-selected);
-}
-
-.segmented-item.is-active.segmented-item--solid {
-  color: var(--sys-text-on-action);
-  background-color: var(--sys-color-action-primary);
-  border-color: var(--sys-color-action-primary);
-}
-
-.segmented-item--chip.is-deleted {
-  border-color: var(--sys-color-danger-border);
-  color: var(--sys-color-danger-text);
-  text-decoration: line-through;
-}
-
-.segmented-item--chip.is-proposed {
-  border-style: dashed;
-  border-color: var(--sys-color-action-primary);
 }
 
 .inspector-form {
@@ -984,7 +272,7 @@ details[open] > summary::before {
 .table-alpha-stock {
   display: block;
   white-space: nowrap;
-  font-size: var(--text-micro);
+  font-size: var(--text-xs);
 }
 
 .table-input-cell {
@@ -1005,7 +293,7 @@ details[open] > summary::before {
   align-items: stretch;
   overflow: hidden;
   border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   background-color: var(--sys-surface-subtle);
 }
 
@@ -1019,7 +307,7 @@ details[open] > summary::before {
   background-color: transparent;
   color: var(--sys-text-secondary);
   font-family: var(--font-mono);
-  font-size: var(--text-micro);
+  font-size: var(--text-xs);
   line-height: var(--line-height-none);
   cursor: pointer;
 }
@@ -1034,15 +322,10 @@ details[open] > summary::before {
   outline-offset: -2px;
 }
 
-/* ==========================================================================
-   8. Data Tables
-   ========================================================================== */
-
-/* Shared panel */
 .data-table-container {
   overflow-x: auto;
   border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   background-color: var(--sys-surface-default);
 }
 
@@ -1061,7 +344,6 @@ details[open] > summary::before {
   z-index: var(--z-sticky);
 }
 
-/* Base table */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -1095,7 +377,6 @@ details[open] > summary::before {
   background-color: var(--sys-surface-selected);
 }
 
-/* Editor/data grid */
 .data-table--editor thead {
   background-color: var(--sys-surface-subtle);
   color: var(--sys-text-secondary);
@@ -1119,7 +400,6 @@ details[open] > summary::before {
   font-size: var(--text-xs);
 }
 
-/* Dense editor */
 .data-table--dense th,
 .data-table--dense td {
   padding: var(--space-2) var(--space-3);
@@ -1133,7 +413,6 @@ details[open] > summary::before {
   text-align: left;
 }
 
-/* Fixed-column contract */
 .data-table--fixed {
   table-layout: fixed;
   width: 100%;
@@ -1157,7 +436,6 @@ details[open] > summary::before {
   min-width: 0;
 }
 
-/* Landing/list table */
 .data-table--list {
   min-width: var(--size-content-md);
 }
@@ -1195,28 +473,18 @@ details[open] > summary::before {
   min-width: 0;
 }
 
-/* ==========================================================================
-   9b. Recipe Landing
-   ========================================================================== */
-
 .landing,
 .landing-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
-
-
-
 
 .landing-title:focus-visible,
 .landing-kebab:focus-visible {
   outline: 2px solid var(--sys-border-focus);
   outline-offset: 2px;
 }
-
-
-
 
 .landing-section-bar {
   display: flex;
@@ -1232,14 +500,11 @@ details[open] > summary::before {
   font-size: var(--text-lg);
 }
 
-
 .landing-library {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
-
-
 
 .landing-title {
   display: flex;
@@ -1272,7 +537,7 @@ details[open] > summary::before {
   width: 100%;
   padding: var(--space-1) var(--space-2);
   border: 1px solid var(--sys-border-focus);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xl);
   background-color: var(--sys-surface-default);
   color: var(--sys-text-primary);
   font-family: inherit;
@@ -1282,7 +547,7 @@ details[open] > summary::before {
 .landing-kebab {
   padding: var(--space-1) var(--space-2);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   background-color: transparent;
   color: var(--sys-text-muted);
   font-size: var(--text-base);
@@ -1298,9 +563,9 @@ details[open] > summary::before {
 
 .landing-empty {
   margin: var(--space-0);
-  padding: var(--space-5);
+  padding: var(--space-6);
   border: 1px dashed var(--sys-border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   color: var(--sys-text-muted);
   font-size: var(--text-sm);
   text-align: center;
@@ -1316,16 +581,15 @@ details[open] > summary::before {
   gap: var(--space-0-5);
   padding: var(--space-1);
   border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   background-color: var(--sys-surface-elevated);
-  box-shadow: var(--sys-shadow-lg);
 }
 
 .landing-menu-item {
   width: 100%;
   padding: var(--space-2) var(--space-3);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   background-color: transparent;
   color: var(--sys-text-primary);
   font-family: inherit;
@@ -1342,8 +606,6 @@ details[open] > summary::before {
   background-color: var(--sys-surface-selected);
   color: var(--sys-color-action-subtle-text);
 }
-
-
 
 .footer-violations {
   display: inline-flex;
@@ -1395,54 +657,6 @@ details[open] > summary::before {
   margin-left: auto;
 }
 
-/* ==========================================================================
-   10. Shared component library (ported from the legacy app; layout-agnostic)
-   ========================================================================== */
-
-/* --- Badges --- */
-
-.badge-success {
-  background-color: var(--sys-color-success-surface);
-  color: var(--sys-color-success-text);
-  border: 1px solid var(--sys-color-success-border);
-  border-radius: var(--radius-full);
-  padding: var(--space-0-5) var(--space-2);
-}
-
-.badge-amber {
-  background-color: var(--sys-color-warning-surface);
-  color: var(--sys-color-warning-text);
-  border: 1px solid var(--sys-color-warning-border);
-  border-radius: var(--radius-full);
-  padding: var(--space-0-5) var(--space-2);
-}
-
-.badge-danger {
-  background-color: var(--sys-color-danger-surface);
-  color: var(--sys-color-danger-text);
-  border: 1px solid var(--sys-color-danger-border);
-  border-radius: var(--radius-full);
-  padding: var(--space-0-5) var(--space-2);
-}
-
-.badge-info {
-  background-color: var(--sys-color-info-surface);
-  color: var(--sys-color-info-text);
-  border: 1px solid var(--sys-color-info-border);
-  border-radius: var(--radius-full);
-  padding: var(--space-0-5) var(--space-2);
-}
-
-.badge-muted {
-  background-color: var(--sys-color-neutral-surface);
-  color: var(--sys-text-muted);
-  border: 1px solid var(--sys-color-neutral-border);
-  border-radius: var(--radius-full);
-  padding: var(--space-0-5) var(--space-2);
-}
-
-/* --- Catalog search & result counter --- */
-
 .catalog-search-wrapper {
   position: relative;
   display: flex;
@@ -1456,10 +670,8 @@ details[open] > summary::before {
   margin-bottom: var(--space-3);
 }
 
-/* --- Table & card component helpers --- */
-
 .empty-state {
-  padding: var(--space-8);
+  padding: var(--space-6);
   text-align: center;
   color: var(--sys-text-muted);
   font-family: var(--font-sans);
@@ -1473,12 +685,10 @@ details[open] > summary::before {
   gap: var(--space-1);
 }
 
-/* --- Boxed regions --- */
-
 .card-section {
   background-color: var(--sys-surface-subtle);
   border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-4);
   display: flex;
   flex-direction: column;
@@ -1503,7 +713,6 @@ details[open] > summary::before {
   gap: var(--space-1-5);
 }
 
-/* Yeast picker: one compact filter strip and row-level strain badges. */
 .yeast-filter-grid {
   display: grid;
   /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- EXCEPTION: auto-fit track threshold is component-tuned geometry, not a system size */
@@ -1533,7 +742,6 @@ details[open] > summary::before {
   margin-right: var(--space-2);
 }
 
-/* Yeast card: strain summary, attenuation target, details. */
 .yeast-summary-body {
   display: flex;
   flex-direction: column;
@@ -1554,7 +762,6 @@ details[open] > summary::before {
   gap: var(--space-2);
 }
 
-/* Yeast card: the selected row's detail and derate disclosures. */
 .yeast-more {
   border-top: 1px solid var(--sys-border-default);
   padding-top: var(--space-2);
@@ -1580,7 +787,6 @@ details[open] > summary::before {
   margin-block: var(--space-0);
 }
 
-/* Recipe-target group on the style card: fermentation navigator + 1-D sliders. */
 .target-cards {
   display: grid;
   /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- EXCEPTION: auto-fit track threshold is component-tuned geometry, not a system size */
@@ -1601,8 +807,6 @@ details[open] > summary::before {
   margin-top: var(--space-1);
 }
 
-/* --- Metric strip --- */
-
 .metric-strip {
   display: grid;
   /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- EXCEPTION: auto-fit track threshold is component-tuned geometry, not a system size */
@@ -1613,7 +817,7 @@ details[open] > summary::before {
 .metric-cell {
   background-color: var(--sys-surface-default);
   border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   padding: var(--space-3);
   display: flex;
   flex-direction: column;
@@ -1638,8 +842,6 @@ details[open] > summary::before {
   color: var(--sys-text-secondary);
 }
 
-/* --- Collapsible boxed regions --- */
-
 .card-section--collapsible {
   gap: var(--space-2);
 }
@@ -1652,36 +854,10 @@ details[open] > summary::before {
   gap: var(--space-3);
 }
 
-.section-toggle {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: var(--space-2);
-  min-width: 0;
-  padding: var(--space-0);
-  font-family: inherit;
-  font-size: inherit;
-  color: inherit;
-  text-align: left;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.section-toggle:focus-visible {
-  outline: 2px solid var(--sys-border-focus);
-  outline-offset: 2px;
-}
-
 .section-chevron {
   display: inline-block;
   color: var(--sys-text-muted);
   transition: transform var(--transition-fast);
-}
-
-.section-toggle[aria-expanded="true"] .section-chevron,
-.detail-toggle[aria-expanded="true"] .section-chevron {
-  transform: rotate(90deg);
 }
 
 .section-meta {
@@ -1709,8 +885,6 @@ details[open] > summary::before {
   padding-top: var(--space-2);
 }
 
-/* --- Brew day checklist card --- */
-
 .brew-day-step {
   display: flex;
   flex-direction: column;
@@ -1733,10 +907,6 @@ details[open] > summary::before {
 .brew-day-instructions {
   resize: vertical;
 }
-
-/* --- Tri-state control --- */
-
-/* --- Card internals --- */
 
 .boundary-status {
   display: flex;
@@ -1771,7 +941,6 @@ details[open] > summary::before {
   gap: var(--space-4);
 }
 
-/* EXCEPTION: container-query conditions cannot reference custom properties; 600px is the two-column breakpoint */
 @container (min-width: 600px) {
   .step-grid-2col {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1790,9 +959,6 @@ details[open] > summary::before {
   margin-top: var(--space-0);
 }
 
-/* A sectioned step card lays its readouts out two per row. EXCEPTION: media
-   conditions cannot reference custom properties; 60rem is where two name/value
-   pairs fit side by side. */
 .step-field-group--grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1805,8 +971,6 @@ details[open] > summary::before {
   }
 }
 
-/* In a paired row the unit belongs beside its label, not at the cell's far edge
-   where it reads as belonging to the neighbouring column. */
 .step-field-group--grid .field-label {
   justify-content: flex-start;
   gap: var(--space-2);
@@ -1819,7 +983,7 @@ details[open] > summary::before {
 .group-header::after {
   content: "";
   flex: 1;
-  /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- EXCEPTION: 1px is a hairline rule weight, not a spacing step */
+  /* stylelint-disable-next-line scale-unlimited/declaration-strict-value -- EXCEPTION: a hairline rule, not a system size */
   height: 1px;
   background-color: var(--sys-border-default);
 }
@@ -1835,12 +999,8 @@ details[open] > summary::before {
 
 .whirlpool-assumptions {
   margin: var(--space-0);
-  padding-left: var(--space-5);
+  padding-left: var(--space-6);
 }
-
-/* ==========================================================================
-   11. Reduced Motion
-   ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .modal-drawer-enter,
@@ -1858,10 +1018,6 @@ details[open] > summary::before {
     animation: none;
   }
 }
-
-/* ==========================================================================
-   Style target picker (OE/AE region navigator)
-   ========================================================================== */
 
 .extract-picker {
   display: flex;
@@ -1882,7 +1038,7 @@ details[open] > summary::before {
   width: 100%;
   height: auto;
   border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   background-color: var(--sys-surface-subtle);
 }
 
@@ -1997,17 +1153,13 @@ details[open] > summary::before {
   gap: var(--space-0-5);
 }
 
-/* ==========================================================================
-   Water chemistry card (target grid, telemetry)
-   ========================================================================== */
-
 .telemetry {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-3);
   border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   background-color: var(--sys-surface-default);
 }
 
@@ -2027,17 +1179,12 @@ details[open] > summary::before {
   color: var(--sys-text-muted);
 }
 
-
-/* --- Recipe import ---------------------------------------------------------- */
-
-/* Same contract as .chooser/.editor: the shell clips, this view owns the one
-   scroll region, and the footer stays pinned at the bottom. */
 .import-view {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-6);
 }
 
 .import-body {
@@ -2088,7 +1235,7 @@ details[open] > summary::before {
   gap: var(--space-0-5);
   padding: var(--space-2);
   border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   max-width: var(--size-content-md);
 }
 
@@ -2109,7 +1256,7 @@ details[open] > summary::before {
 }
 
 .pane-title {
-  margin-top: var(--space-5);
+  margin-top: var(--space-6);
   margin-bottom: var(--space-2);
   font-weight: var(--font-weight-semibold);
 }
@@ -2140,7 +1287,7 @@ details[open] > summary::before {
 }
 
 .import-unmodeled {
-  margin-top: var(--space-5);
+  margin-top: var(--space-6);
 }
 
 .import-queue-row {
@@ -2163,8 +1310,6 @@ details[open] > summary::before {
   background: var(--sys-color-warning-surface);
 }
 
-/* --- Import map ------------------------------------------------------------- */
-
 .region--spaced {
   margin-bottom: var(--space-4);
 }
@@ -2175,10 +1320,9 @@ details[open] > summary::before {
   gap: var(--space-1);
   padding: var(--space-2);
   border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
 }
 
-/* Undecided must read at a glance: a left rule, a tinted row and a badge. */
 .map-row.is-undecided {
   border-left: 3px solid var(--sys-color-warning-accent);
   border-color: var(--sys-color-warning-border);
@@ -2223,27 +1367,10 @@ details[open] > summary::before {
   margin: var(--space-1) 0;
 }
 
-/* --- Reading the document --------------------------------------------------- */
-
-.modal-busy {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-modal, 1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-6);
-  text-align: center;
-  border-radius: var(--radius-xl);
-  background: var(--sys-surface-elevated);
-}
-
 .spinner {
-  width: var(--space-8);
-  height: var(--space-8);
-  border-radius: var(--radius-circle);
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-full);
   border: 3px solid var(--sys-border-default);
   border-top-color: var(--sys-color-action-primary);
   animation: recipe-read-spin 0.9s linear infinite;
@@ -2265,7 +1392,7 @@ details.whirlpool-ceiling {
   padding: var(--space-3) var(--space-4);
   background-color: var(--sys-surface-subtle);
   border: 1px solid var(--sys-border-default);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
 }
 
 details.import-origin > summary,
@@ -2304,7 +1431,7 @@ details.whirlpool-ceiling[open] > summary {
 .hop-pane {
   padding: var(--space-2);
   border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
 }
 
 .hop-pane-wide {
@@ -2322,5 +1449,5 @@ details.whirlpool-ceiling[open] > summary {
   margin-bottom: var(--space-4);
   padding: var(--space-3);
   border: 1px solid var(--sys-border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
 }

@@ -25,10 +25,13 @@ const TYPE_KEYWORDS = new Set(["inherit", "initial", "unset", "revert", "smaller
 const SPACING_PROPERTY = /^(gap|row-gap|column-gap|padding|padding-[a-z-]+|margin|margin-[a-z-]+)$/;
 const COLOR_PROPERTY = /^(color|background|background-color|border|border-[a-z-]+|outline|outline-color|fill|stroke)$/;
 const STATUS_TOKEN = /^(danger|error|warning|success|info)/;
-const STATE_SELECTOR = /status|badge|finding|violation|error|warning|success|danger|invalid/;
+// Status tokens are confined to selectors that name a state: the status components,
+// the severity vocabulary, the is-* modifiers and the import/plot state surfaces.
+const STATE_SELECTOR =
+  /status|badge|finding|violation|error|warning|success|danger|invalid|alert|sev-|is-(?:ok|warn|failed|deleted|undecided|required-missing)|extract-pin|extract-safest|import-(?:verification|queue)|map-row/;
 
 function roleOf(path) {
-  if (path.includes("/styles/tokens/") || path.endsWith("/style.css")) return "exempt";
+  if (path.includes("/styles/tokens/")) return "exempt";
   if (/\/styles\/components\/control-[^/]+\.css$/.test(path)) return "control";
   if (/\/styles\/components\/group-[^/]+\.css$/.test(path)) return "group";
   if (/\/styles\/components\/overlay-[^/]+\.css$/.test(path)) return "overlay";
@@ -42,7 +45,7 @@ function refs(value) {
 }
 
 function microContext(selector) {
-  return /eyebrow|badge|\bth\b|cell-label|cell-sub|group-meta/.test(selector);
+  return /eyebrow|badge|\bth\b|cell-label|cell-sub|group-meta|extract-/.test(selector);
 }
 
 function failures(files) {
@@ -82,9 +85,15 @@ function failures(files) {
         }
 
         if (property === "box-shadow") {
-          const raised = variables.some((name) => name === "--sys-shadow-lg");
+          const raised = variables.some(
+            (name) => name === "--sys-shadow-lg" || name === "--sys-shadow-xl"
+          );
           const other = variables.filter(
-            (name) => name.startsWith("--sys-shadow-") && name !== "--sys-shadow-focus" && name !== "--sys-shadow-lg"
+            (name) =>
+              name.startsWith("--sys-shadow-") &&
+              name !== "--sys-shadow-focus" &&
+              name !== "--sys-shadow-lg" &&
+              name !== "--sys-shadow-xl"
           );
           if (other.length > 0) {
             found.push(`${path}:${rule.line}: ${property} uses ${other[0]} outside the overlay`);

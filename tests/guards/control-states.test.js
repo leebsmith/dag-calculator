@@ -2,8 +2,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { read, rel, walk } from "./util.js";
+import { styleText } from "./css-guard-util.js";
 
-const STYLE_PATH = "frontend/src/style.css";
+const STYLE_PATH = "the role stylesheets";
 const TAG = /<[a-zA-Z][^>]*>/gs;
 const STATE_CLASS = /\bis-(active|selected)\b/g;
 
@@ -24,7 +25,7 @@ test("every is-active toggle binds aria-pressed", () => {
 });
 
 test("state classes used in markup exist in the stylesheet", () => {
-  const css = read(STYLE_PATH);
+  const css = styleText();
   const used = new Set();
   for (const file of partials()) {
     for (const match of read(file).matchAll(STATE_CLASS)) used.add(match[0]);

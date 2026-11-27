@@ -35,7 +35,7 @@
       "selector": ".card-section",
       "declarations": [
         "background-color: var(--sys-surface-subtle)",
-        "border-radius: var(--radius-lg)",
+        "border-radius: var(--radius-xl)",
         "border: 1px solid var(--sys-border-default)",
         "display: flex",
         "flex-direction: column",
@@ -177,7 +177,7 @@
         "color: var(--sys-text-muted)",
         "font-family: var(--font-sans)",
         "font-style: italic",
-        "padding: var(--space-8)",
+        "padding: var(--space-6)",
         "text-align: center"
       ]
     },
@@ -234,7 +234,7 @@
       "declarations": [
         "align-items: center",
         "background-color: var(--sys-surface-default)",
-        "border-radius: var(--radius-md)",
+        "border-radius: var(--radius-xl)",
         "border: 1px solid var(--sys-border-subtle)",
         "display: flex",
         "gap: var(--space-3)",
@@ -247,7 +247,7 @@
       "selector": ".detail-panel",
       "declarations": [
         "background-color: var(--sys-surface-subtle)",
-        "border-radius: var(--radius-lg)",
+        "border-radius: var(--radius-xl)",
         "border: 1px solid var(--sys-border-default)",
         "margin-top: var(--space-2)",
         "padding: var(--space-3) var(--space-4)"
@@ -273,7 +273,7 @@
       "selector": ".data-table-container",
       "declarations": [
         "background-color: var(--sys-surface-default)",
-        "border-radius: var(--radius-lg)",
+        "border-radius: var(--radius-xl)",
         "border: 1px solid var(--sys-border-default)",
         "overflow-x: auto"
       ]

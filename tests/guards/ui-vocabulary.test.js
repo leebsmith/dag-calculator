@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { read, rel, walk } from "./util.js";
+import { styleText } from "./css-guard-util.js";
 
 // Retired UI class names: each was a second vocabulary for a concept the
 // stylesheet already had one name for. The mapping is the replacement.
@@ -41,7 +42,6 @@ const RETIRED = [
 const FILES = [
   "frontend/index.html",
   ...walk("frontend/src/partials", [".html"]).map(rel),
-  "frontend/src/style.css",
 ];
 
 function classTokens(file, text) {
@@ -60,6 +60,10 @@ function classTokens(file, text) {
 
 test("retired UI class names stay retired", () => {
   const offenders = [];
+  const sheets = classTokens("style.css", styleText());
+  for (const [retired, replacement] of RETIRED) {
+    if (sheets.has(retired)) offenders.push(`styles: ${retired} -> ${replacement}`);
+  }
   for (const file of FILES) {
     const tokens = classTokens(file, read(file));
     for (const [retired, replacement] of RETIRED) {

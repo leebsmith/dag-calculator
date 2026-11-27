@@ -45,7 +45,7 @@ test("the pre-paint script runs before the stylesheet and shares the key", () =>
   const script = index.indexOf('<script src="/theme-init.js"></script>');
   const primitives = index.indexOf('/src/styles/tokens/primitives.css');
   const semantic = index.indexOf('/src/styles/tokens/semantic.css');
-  const style = index.indexOf('/src/style.css');
+  const style = index.indexOf('/src/styles/utilities/text.css');
   assert.ok(script >= 0, "index.html must load theme-init.js");
   assert.ok(primitives > script, "theme-init.js must load before the primitives");
   assert.ok(primitives < semantic, "primitives must load before the semantics");

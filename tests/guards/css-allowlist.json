@@ -11,12 +11,30 @@
       "declarations": "outline-offset: 2px; outline: 2px solid var(--sys-border-focus)",
       "selectors": [
         ".btn:focus-visible, .btn-link:focus-visible, .btn-action-icon:focus-visible",
-        ".landing-title:focus-visible, .landing-kebab:focus-visible",
-        ".section-toggle:focus-visible",
         ".segmented-item:focus-visible",
-        ".wall-chip:focus-visible"
+        ".section-toggle:focus-visible",
+        ".wall-chip:focus-visible",
+        ".landing-title:focus-visible, .landing-kebab:focus-visible"
       ],
       "reason": "Shared focus-ring recipe; selectors differ by component."
+    },
+    {
+      "context": "",
+      "declarations": "cursor: not-allowed; opacity: 0.5; pointer-events: none",
+      "selectors": [
+        ":is(.btn, .btn-primary, .btn-secondary, .btn-outline):disabled, :is(.btn, .btn-primary, .btn-secondary, .btn-outline)[disabled], :is(.btn, .btn-primary, .btn-secondary, .btn-outline)[aria-disabled=\"true\"]",
+        ".segmented-item:disabled, .segmented-item[disabled]"
+      ],
+      "reason": "Shared disabled-control recipe for buttons and segments."
+    },
+    {
+      "context": "",
+      "declarations": "background-color: var(--sys-color-action-primary); border-color: var(--sys-color-action-primary); color: var(--sys-text-on-action)",
+      "selectors": [
+        ".btn-primary",
+        ".segmented-item.is-active.segmented-item--solid"
+      ],
+      "reason": "The solid action fill is shared by the primary button and the selected solid segment."
     },
     {
       "context": "",
@@ -26,7 +44,27 @@
         ".btn-close:hover",
         ".text-primary"
       ],
-      "reason": "Coincidental text-primary colour; button hover, the close control and the utility are independent."
+      "reason": "Coincidental primary text colour; the link hover, the close control and the utility are independent."
+    },
+    {
+      "context": "",
+      "declarations": "align-items: center; display: inline-flex; gap: var(--space-1)",
+      "selectors": [
+        ".detail-toggle",
+        ".theme-control"
+      ],
+      "reason": "Coincidental inline-control row; the probe toggle and the theme switch are independent."
+    },
+    {
+      "context": "",
+      "declarations": "color: var(--sys-text-secondary)",
+      "selectors": [
+        ".form-input.is-seeded, .form-select.is-seeded",
+        ".finding-message",
+        ".panel-fact dt",
+        ".text-secondary"
+      ],
+      "reason": "Seeded controls, finding messages, panel facts and the secondary-text utility share the secondary-text colour."
     },
     {
       "context": "",
@@ -39,16 +77,6 @@
     },
     {
       "context": "",
-      "declarations": "color: var(--sys-color-danger-text)",
-      "selectors": [
-        ".finding-error .finding-label",
-        ".sev-error",
-        ".text-danger"
-      ],
-      "reason": "Keep the text-danger utility, the dynamic sev-* telemetry exception, and the finding error label."
-    },
-    {
-      "context": "",
       "declarations": "cursor: not-allowed; opacity: 0.6; pointer-events: none",
       "selectors": [
         ".form-input:disabled, .form-input[disabled]",
@@ -58,60 +86,40 @@
     },
     {
       "context": "",
-      "declarations": "display: flex; flex-direction: column; gap: var(--space-1)",
-      "selectors": [
-        ".card-header",
-        ".summary-strip-item"
-      ],
-      "reason": "Coincidental column layout; card header and summary item are unrelated."
-    },
-    {
-      "context": "",
-      "declarations": "color: var(--sys-color-warning-text)",
-      "selectors": [
-        ".finding-warning .finding-label",
-        ".sev-warning",
-        ".text-warning"
-      ],
-      "reason": "Keep the text-warning utility, the dynamic sev-* telemetry exception, and the finding warning label."
-    },
-    {
-      "context": "",
       "declarations": "color: var(--sys-color-info-text)",
       "selectors": [
         ".status-badge-info",
         ".sev-info"
       ],
-      "reason": "Status colour and dynamic telemetry severity share the info token."
+      "reason": "Both information surfaces print the info text colour."
     },
     {
       "context": "",
-      "declarations": "align-items: center; display: flex; gap: var(--space-3)",
+      "declarations": "align-items: center; display: flex; flex-wrap: wrap; gap: var(--space-1)",
       "selectors": [
-        ".modal-workspace-header-title",
-        ".menu-actions"
+        ".form-actions",
+        ".yeast-row-badges"
       ],
-      "reason": "Coincidental row layout; workspace header and menu actions are unrelated."
+      "reason": "Two wrapping inline rows that share one alignment."
     },
     {
       "context": "",
-      "declarations": "align-items: center; display: flex; gap: var(--space-2)",
+      "declarations": "align-items: center; display: flex; flex-wrap: wrap; gap: var(--space-2)",
       "selectors": [
-        ".modal-workspace-header-actions",
-        ".recipes-actions",
-        ".library-header-actions",
-        ".boundary-status"
+        ".segmented-control",
+        ".import-queue-actions",
+        ".map-row-actions"
       ],
-      "reason": "Coincidental row layout across the workspace header, recipe actions, library header actions, and boundary status."
+      "reason": "Wrapping action rows on independent surfaces."
     },
     {
       "context": "",
-      "declarations": "align-items: center; display: inline-flex; gap: var(--space-1)",
+      "declarations": "transform: rotate(90deg)",
       "selectors": [
-        ".detail-toggle",
-        ".theme-control"
+        ".section-toggle[aria-expanded=\"true\"] .section-chevron, .detail-toggle[aria-expanded=\"true\"] .section-chevron",
+        "details[open] > summary::before"
       ],
-      "reason": "Coincidental inline row; the detail disclosure toggle and the theme label are unrelated."
+      "reason": "Two open-state chevrons rotate with the same transform."
     },
     {
       "context": "",
@@ -121,16 +129,63 @@
         ".landing-section-bar",
         ".wall-drawer-header"
       ],
-      "reason": "Coincidental row layout; unit row and landing section bar are unrelated."
+      "reason": "A label/action split row repeated by three independent surfaces."
     },
     {
       "context": "",
-      "declarations": "cursor: not-allowed; opacity: 0.5; pointer-events: none",
+      "declarations": "align-items: center; display: flex; gap: var(--space-2)",
       "selectors": [
-        ":is(.btn, .btn-primary, .btn-secondary, .btn-outline):disabled, :is(.btn, .btn-primary, .btn-secondary, .btn-outline)[disabled], :is(.btn, .btn-primary, .btn-secondary, .btn-outline)[aria-disabled=\"true\"]",
-        ".segmented-item:disabled, .segmented-item[disabled]"
+        ".recipes-actions",
+        ".library-header-actions",
+        ".boundary-status"
       ],
-      "reason": "Shared disabled interaction recipe for button variants and segmented items."
+      "reason": "Coincidental inline group; header actions and footer status are unrelated."
+    },
+    {
+      "context": "",
+      "declarations": "display: none",
+      "selectors": [
+        "details > summary::-webkit-details-marker",
+        "[x-cloak]"
+      ],
+      "reason": "Coincidental hidden rendering: the Alpine cloak and the native disclosure marker are unrelated."
+    },
+    {
+      "context": "",
+      "declarations": "color: var(--sys-text-primary); font-size: var(--text-lg); font-weight: var(--font-weight-semibold); margin: var(--space-0)",
+      "selectors": [
+        ".card-title",
+        ".landing-heading"
+      ],
+      "reason": "Coincidental section-title recipe; card and page headings are independent."
+    },
+    {
+      "context": "",
+      "declarations": "display: flex; flex-direction: column; gap: var(--space-1)",
+      "selectors": [
+        ".card-header",
+        ".summary-strip-item"
+      ],
+      "reason": "Two tight vertical stacks; the card header and a summary item are independent."
+    },
+    {
+      "context": "",
+      "declarations": "cursor: pointer",
+      "selectors": [
+        ".catalog-item-card-selectable",
+        ".yeast-row-details summary"
+      ],
+      "reason": "Two independent clickable rows share the pointer cursor."
+    },
+    {
+      "context": "",
+      "declarations": "display: flex; flex-direction: column; gap: var(--space-2)",
+      "selectors": [
+        ".inspector-partial",
+        ".yeast-summary-body",
+        ".brew-day-step"
+      ],
+      "reason": "Small vertical stacks in three unrelated cards."
     },
     {
       "context": "",
@@ -143,52 +198,23 @@
     },
     {
       "context": "",
-      "declarations": "color: var(--sys-text-muted)",
+      "declarations": "color: var(--sys-color-warning-text)",
       "selectors": [
-        ".text-muted",
-        ".sev-note"
+        ".finding-warning .finding-label",
+        ".sev-warning",
+        ".text-warning"
       ],
-      "reason": "The muted utility and the semantic severity note converge."
+      "reason": "The warning label, the severity utility class and the text-warning utility share the warning colour."
     },
     {
       "context": "",
-      "declarations": "color: var(--sys-text-secondary)",
+      "declarations": "color: var(--sys-color-danger-text)",
       "selectors": [
-        ".form-input.is-seeded, .form-select.is-seeded",
-        ".panel-fact dt",
-        ".finding-message",
-        ".text-secondary"
+        ".finding-error .finding-label",
+        ".sev-error",
+        ".text-danger"
       ],
-      "reason": "Seeded controls, finding messages, and the secondary-text utility share the secondary-text colour."
-    },
-    {
-      "context": "",
-      "declarations": "color: var(--sys-text-primary); font-size: var(--text-lg); font-weight: var(--font-weight-semibold); margin: var(--space-0)",
-      "selectors": [
-        ".card-title",
-        ".landing-heading"
-      ],
-      "reason": "Coincidental section-title recipe; the card heading and the page section heading are independent."
-    },
-    {
-      "context": "",
-      "declarations": "align-items: center; display: flex; flex-wrap: wrap; gap: var(--space-2)",
-      "selectors": [
-        ".segmented-control",
-        ".import-queue-actions",
-        ".map-row-actions"
-      ],
-      "reason": "One flex row layout shared by the segmented-control wrapper and the two small-actions rows."
-    },
-    {
-      "context": "",
-      "declarations": "display: flex; flex-direction: column; gap: var(--space-2)",
-      "selectors": [
-        ".inspector-partial",
-        ".yeast-summary-body",
-        ".brew-day-step"
-      ],
-      "reason": "Shared column layout; the nested partial stack, yeast summary, and brew-day step are independent."
+      "reason": "The error label, the severity utility class and the text-danger utility share the danger colour."
     },
     {
       "context": "",
@@ -201,48 +227,40 @@
     },
     {
       "context": "",
-      "declarations": "cursor: pointer",
+      "declarations": "color: var(--sys-text-muted)",
       "selectors": [
-        ".catalog-item-card-selectable",
-        ".yeast-row-details summary"
+        ".sev-note",
+        ".text-muted"
       ],
-      "reason": "Coincidental pointer cursor; the picker row disclosure and the selectable catalog card are unrelated."
-    },
-    {
-      "context": "",
-      "declarations": "align-items: center; display: flex; flex-wrap: wrap; gap: var(--space-1)",
-      "selectors": [
-        ".form-actions",
-        ".yeast-row-badges"
-      ],
-      "reason": "Coincidental wrap row; the field actions and picker badges are unrelated."
-    },
-    {
-      "context": "",
-      "declarations": "transform: rotate(90deg)",
-      "selectors": [
-        ".section-toggle[aria-expanded=\"true\"] .section-chevron, .detail-toggle[aria-expanded=\"true\"] .section-chevron",
-        "details[open] > summary::before"
-      ],
-      "reason": "Shared open-state chevron rotation for the disclosure primitives."
-    },
-    {
-      "context": "",
-      "declarations": "display: none",
-      "selectors": [
-        "[x-cloak]",
-        "details > summary::-webkit-details-marker"
-      ],
-      "reason": "Coincidental hidden rendering: the Alpine cloak and the native disclosure marker are unrelated."
+      "reason": "The severity note and the muted-text utility share the muted colour."
     },
     {
       "context": "",
       "declarations": "display: flex; flex-direction: column; flex: 1; gap: var(--space-6); min-height: 0",
       "selectors": [
+        ".import-view",
         ".chooser",
         ".editor"
       ],
-      "reason": "Two independent view stacks with the same structural recipe."
+      "reason": "Top-level view shell contract: each fills the app content and owns one scroll region."
+    },
+    {
+      "context": "",
+      "declarations": "background-color: var(--sys-surface-elevated); border-radius: var(--radius-xl); border: 1px solid var(--sys-border-subtle); box-shadow: var(--sys-shadow-xl); display: flex; flex-direction: column; gap: var(--space-4); max-width: var(--container-modal-dialog); padding: var(--space-6); width: 100%",
+      "selectors": [
+        ".modal-dialog",
+        ".modal-confirm"
+      ],
+      "reason": "The confirmation sheet reuses the dialog surface; both are overlays."
+    },
+    {
+      "context": "",
+      "declarations": "align-items: center; display: flex; gap: var(--space-4)",
+      "selectors": [
+        ".modal-workspace-header-title",
+        ".modal-workspace-header-actions"
+      ],
+      "reason": "The workspace header halves and other header rows share one row recipe."
     }
   ],
   "classes": []

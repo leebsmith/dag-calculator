@@ -10,7 +10,7 @@ export function styleFiles() {
     .map(rel)
     .filter((path) => !path.includes("/styles/tokens/"))
     .sort();
-  return ["frontend/src/style.css", ...role];
+  return role;
 }
 
 export function styleText() {
@@ -19,7 +19,7 @@ export function styleText() {
     .join("\n");
 }
 
-export const STYLE_PATH = "frontend/src/style.css";
+// style.css is gone; structural rules live in the role files.
 export const ALLOWLIST_PATH = "tests/guards/css-allowlist.json";
 
 export function loadAllowlist() {

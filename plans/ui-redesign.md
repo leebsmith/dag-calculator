@@ -147,7 +147,7 @@ view; at 1920×1080 at least three fieldsets and eighteen controls.
 32. **File roles.** Controls, groups, layout, overlays and utilities are separate
     file families; a file's role decides its allowed bands.
 33. **The grammar is guarded.** `tests/guards/visual-grammar.test.js` enforces
-    rules 26–30 by file role. Its only exemption is `frontend/src/style.css`, the
+    rules 26–30 by file role. Its only exemption is the token files (values, not structure). The legacy sheet is
     legacy monolith; the exemption shrinks as that file is dismantled and must be
     empty by the end of Stage 6. A stale exemption fails.
 
@@ -186,7 +186,7 @@ appears once. The fieldset inventory in §Locked decisions is the target shape.
 tokens (`--width-rail`, `--width-field-max`, `--size-control-h`, `--space-gutter`);
 establish the role file names (`control-*`, `group-*`, `layout/*`, `overlay-*`,
 `utilities/*`) and add `tests/guards/visual-grammar.test.js` with
-`frontend/src/style.css` as its only exemption.
+the token files as its only exemption.
 
 Component extraction is deferred to Stage 6: extracting now would put the old rules
 under the grammar guard, which they cannot pass until the visible remap. The two
@@ -199,7 +199,7 @@ No class renames, no visual change at the baseline.
 - `make check` green, with the CSS guards updated deliberately rather than
   bypassed: contrast, vocabulary, classes, duplication, theme tokens, allowlist.
 - `node scripts/run-tests.mjs --files tests/guards/visual-grammar.test.js` passes:
-  `frontend/src/style.css` is the only exempt file, every new file complies with
+  the token files are the only exempt files, every role file complies with
   its role, and a stale exemption fails.
 - Component CSS references only semantic tokens (strict-value rule; exceptions
   documented like the existing ones).
