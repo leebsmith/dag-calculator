@@ -162,14 +162,14 @@ export function compareSnapshots(before, after) {
 function materializeBase(ref, dir) {
   const archive = execFileSync(
     "git",
-    ["archive", "--format=tar", ref, "frontend/src/tokens.css", "frontend/src/style.css", "frontend/src/partials"],
+    ["archive", "--format=tar", ref, "frontend/src"],
     { maxBuffer: 64 * 1024 * 1024 }
   );
   const result = spawnSync("tar", ["-x", "-C", dir], { input: archive });
   if (result.status !== 0) throw new Error(`could not extract ${ref}`);
   return {
+    dir,
     style: path.join(dir, "frontend/src/style.css"),
-    tokens: path.join(dir, "frontend/src/tokens.css"),
     partials: path.join(dir, "frontend/src/partials"),
   };
 }
@@ -198,11 +198,22 @@ async function captureScreenshot(browser, fixture, theme, width, target) {
   }
 }
 
+function readTokens(dir) {
+  const split = [
+    "frontend/src/styles/tokens/primitives.css",
+    "frontend/src/styles/tokens/semantic.css",
+  ].map((file) => path.join(dir, file));
+  if (split.every((file) => fs.existsSync(file))) {
+    return split.map((file) => fs.readFileSync(file, "utf8")).join("\n");
+  }
+  return fs.readFileSync(path.join(dir, "frontend/src/tokens.css"), "utf8");
+}
+
 function writeFixture(target, tree, files, theme, hideModals) {
   fs.writeFileSync(
     target,
     buildFixture({
-      tokens: fs.readFileSync(tree.tokens, "utf8"),
+      tokens: readTokens(tree.dir),
       css: fs.readFileSync(tree.style, "utf8"),
       partialsDir: tree.partials,
       files,
@@ -297,8 +308,8 @@ async function main() {
   try {
     const before = materializeBase(options.base, baseDir);
     const after = {
+      dir: repo,
       style: path.join(repo, "frontend/src/style.css"),
-      tokens: path.join(repo, "frontend/src/tokens.css"),
       partials: path.join(repo, "frontend/src/partials"),
     };
     browser = await openBrowser();

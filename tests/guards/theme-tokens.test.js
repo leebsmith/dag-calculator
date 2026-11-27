@@ -5,7 +5,7 @@ import { read } from "./util.js";
 import { parseRules } from "./css-guard-util.js";
 import { STORAGE_KEY, THEMES } from "../../frontend/src/store/theme.js";
 
-const TOKENS = "frontend/src/tokens.css";
+const TOKENS = ["frontend/src/styles/tokens/primitives.css", "frontend/src/styles/tokens/semantic.css"];
 const INDEX = "frontend/index.html";
 const INIT = "frontend/public/theme-init.js";
 const CONTROL = "frontend/src/partials/ui-theme-control.html";
@@ -20,7 +20,7 @@ function rule(rules, selector, context) {
 }
 
 test("the media and manual dark blocks stay identical", () => {
-  const rules = parseRules(read(TOKENS));
+  const rules = parseRules(TOKENS.map(read).join("\n"));
   const media = rule(rules, ':root:not([data-theme="light"])', "@media (prefers-color-scheme: dark)");
   const manual = rule(rules, ':root[data-theme="dark"]');
   assert.ok(media, "missing the prefers-color-scheme dark block");
@@ -31,7 +31,7 @@ test("the media and manual dark blocks stay identical", () => {
 });
 
 test("the explicit theme modes set color-scheme", () => {
-  const rules = parseRules(read(TOKENS));
+  const rules = parseRules(TOKENS.map(read).join("\n"));
   const light = rule(rules, ':root[data-theme="light"]');
   const dark = rule(rules, ':root[data-theme="dark"]');
   assert.ok(light.declarations.includes("color-scheme: light"));
@@ -43,9 +43,13 @@ test("the explicit theme modes set color-scheme", () => {
 test("the pre-paint script runs before the stylesheet and shares the key", () => {
   const index = read(INDEX);
   const script = index.indexOf('<script src="/theme-init.js"></script>');
-  const stylesheet = index.indexOf('/src/tokens.css');
+  const primitives = index.indexOf('/src/styles/tokens/primitives.css');
+  const semantic = index.indexOf('/src/styles/tokens/semantic.css');
+  const style = index.indexOf('/src/style.css');
   assert.ok(script >= 0, "index.html must load theme-init.js");
-  assert.ok(stylesheet > script, "theme-init.js must load before the stylesheet");
+  assert.ok(primitives > script, "theme-init.js must load before the primitives");
+  assert.ok(primitives < semantic, "primitives must load before the semantics");
+  assert.ok(semantic < style, "semantic tokens must load before the structural stylesheet");
   assert.match(read(INIT), new RegExp(`"${STORAGE_KEY}"`));
 });
 

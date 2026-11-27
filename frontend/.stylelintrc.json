@@ -14,7 +14,8 @@
       true,
       {
         "importFrom": [
-          "src/tokens.css"
+          "src/styles/tokens/primitives.css",
+          "src/styles/tokens/semantic.css"
         ]
       }
     ],
@@ -97,7 +98,8 @@
   },
   "overrides": [
     {
-      "files": ["src/tokens.css"],
+      "files": ["src/styles/tokens/primitives.css",
+          "src/styles/tokens/semantic.css"],
       "rules": {
         "color-no-hex": null,
         "color-hex-length": null,

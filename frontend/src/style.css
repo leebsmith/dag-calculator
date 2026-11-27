@@ -1,6 +1,6 @@
 /**
  * Application Stylesheet (Pure Vanilla CSS)
- * Built on CSS Custom Properties defined in tokens.css.
+ * Built on CSS Custom Properties defined in styles/tokens/*.css.
  * Structural rules only: class selectors consuming semantic tokens.
  * No hex colors, no !important, no transition: all.
  */

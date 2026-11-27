@@ -184,7 +184,7 @@ appears once. The fieldset inventory in §Locked decisions is the target shape.
 
 **Scope.** Split `tokens.css` into primitives and semantic tokens; extract
 component files from `style.css`; delete the two non-theme media queries; add the
-layout tokens (`--rail-w`, `--field-max`, `--control-h`, `--gutter`). Name the new
+layout tokens (`--width-rail`, `--width-field-max`, `--size-control-h`, `--space-gutter`). Name the new
 files by role (`control-*`, `group-*`, `layout/*`, `overlay-*`, `utilities/*`) and
 add `tests/guards/visual-grammar.test.js` with `frontend/src/style.css` as its only
 exemption. No class renames, no visual change at the baseline.
@@ -198,7 +198,8 @@ exemption. No class renames, no visual change at the baseline.
   its role, and a stale exemption fails.
 - Component CSS references only semantic tokens (strict-value rule; exceptions
   documented like the existing ones).
-- No media query remains except `prefers-color-scheme`.
+- The reduced-motion query stays; the `min-width: 60rem` breakpoint is recorded
+  for Stage 7; the only other media query is the theme block.
 - Local visual check at 1920×1080 and 1280×720 is pixel-stable.
 
 ## Stage 2 — Alpine transition and shell
@@ -291,9 +292,10 @@ prose fields, the Checklist tab, shortcuts, and the modal sizing rules.
 
 ## Stage 6 — Density and themes
 
-**Scope.** Apply the role bands, the three radii, flat containers, the type roles
-and status discipline; burn the visual-grammar exemption to nothing; check every
-component in both themes; run the local visual harness against the baseline.
+**Scope.** Extract the component files into their role names; apply the role
+bands, the three radii, flat containers, the type roles and status discipline; burn
+the visual-grammar exemption to nothing; check every component in both themes; run
+the local visual harness against the baseline.
 
 **Exit criteria**
 
@@ -311,8 +313,9 @@ component in both themes; run the local visual harness against the baseline.
 
 ## Stage 7 — Retire the step shell
 
-**Scope.** Delete the stepper, the step-card shell and the CSS it owned; point the
-view at the wall; update docs and the readiness ledger. Retire the navigation
+**Scope.** Delete the stepper, the step-card shell, the `min-width: 60rem`
+step-field breakpoint and the CSS it owned; point the view at the wall; update docs
+and the readiness ledger. Retire the navigation
 state the audit names: `navigation.js` (`syncNav`, `selectStep`, `resetToStep`,
 `resetToDiscussion`, `next`, `prev`, `keyNav`), ui.activeIndex, ui.highwater,
 `stepperSteps`, `navDir`/`navClass`. `resetToDiscussion` becomes “scroll the wall

@@ -4,13 +4,13 @@ import assert from "node:assert/strict";
 import { read } from "./util.js";
 import { parseRules } from "./css-guard-util.js";
 
-const TOKENS = "frontend/src/tokens.css";
+const TOKENS = ["frontend/src/styles/tokens/primitives.css", "frontend/src/styles/tokens/semantic.css"];
 const BOUNDARY_MIN = 2.0;
 const DIVIDER_MIN = 1.1;
 const TEXT_MIN = 4.5;
 
 function tokenMaps() {
-  const rules = parseRules(read(TOKENS));
+  const rules = parseRules(TOKENS.map(read).join("\n"));
   const light = {};
   const dark = {};
   for (const rule of rules) {
