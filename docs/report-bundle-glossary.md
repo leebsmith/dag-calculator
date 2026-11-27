@@ -79,7 +79,7 @@ _148 paths_
 | `batch.extract_loss_retention` | Mash tun retention | derived | mass | kg | 2 | — |
 | `batch.extract_loss_transfer` | Mash transfer | derived | mass | kg | 2 | — |
 | `batch.fermentation` | Fermentation | choice | — | — | — | ale, lager, wild, mixed |
-| `batch.grain_moisture_fraction` | Fallback grain moisture (when a malt has none) | root | percentage | pct (%) | 1 | — |
+| `batch.grain_moisture_fraction` | Grain moisture | root | percentage | pct (%) | 1 | — |
 | `batch.hlt_starting_volume_l` | HLT starting volume | root | volume | L | 1 | — |
 | `batch.hop_allocation_mode` | Hop allocation | choice | — | — | — | ibu_split, mass_pool |
 | `batch.hop_boil_mass_share` | Hop Boil Mass Share | derived | percentage | pct (%) | 1 | — |

@@ -140,8 +140,8 @@
     }
   },
   "batch.grain_moisture_fraction": {
-    "label": "Fallback grain moisture (when a malt has none)",
-    "hint": "As-is moisture used for malts that publish none; feeds the solver's mass balance."
+    "label": "Grain moisture",
+    "hint": "As-is basis, used when a malt publishes none."
   },
   "batch.hlt_starting_volume_l": {
     "label": "HLT starting volume"

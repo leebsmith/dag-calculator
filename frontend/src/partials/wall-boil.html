@@ -7,9 +7,6 @@
   <div class="card-body">
     <template x-for="block in fieldsetBlocks['boil']" :key="block.id">
       <section class="card-section">
-        <div class="card-section-header">
-          <h3 class="eyebrow" x-text="block.title"></h3>
-        </div>
         <load src="src/partials/wall-block.html" />
       </section>
     </template>

@@ -43,7 +43,7 @@ export const generatedRegistry = {
   "batch.extract_loss_retention": {"label":"Mash tun retention","decimals":2},
   "batch.extract_loss_transfer": {"label":"Mash transfer","decimals":2},
   "batch.fermentation": {"label":"Fermentation","optionLabels":{"ale":"Ale","lager":"Lager","wild":"Wild","mixed":"Mixed"}},
-  "batch.grain_moisture_fraction": {"label":"Fallback grain moisture (when a malt has none)","hint":"As-is moisture used for malts that publish none; feeds the solver's mass balance."},
+  "batch.grain_moisture_fraction": {"label":"Grain moisture","hint":"As-is basis, used when a malt publishes none."},
   "batch.hlt_starting_volume_l": {"label":"HLT starting volume"},
   "batch.hop_allocation_mode": {"label":"Hop allocation","hint":"Split the IBU target into a boil and a whirlpool pool, or author one pool where each charge's share is a proportion of the boil + whirlpool mass.","optionLabels":{"ibu_split":"Two pools (boil / whirlpool)","mass_pool":"One pool (boil + whirlpool)"}},
   "batch.late_addition_intent": {"label":"Late addition mode","hint":"Dose by mass, or author the sugar share of total post-boil extract.","optionLabels":{"dose":"Dose by mass","share":"Share of extract"}},
