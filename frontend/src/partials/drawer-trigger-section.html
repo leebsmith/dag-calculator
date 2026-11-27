@@ -1,0 +1,21 @@
+<nav class="segmented-control segmented-control--tight wall-chrome-trigger" aria-label="Notes and checklist">
+  <button
+    type="button"
+    class="segmented-item segmented-item--pill"
+    :class="fmt.classWhen(drawerOpen && drawerTab === 'notes', 'is-active segmented-item--solid')"
+    :aria-pressed="drawerOpen && drawerTab === 'notes' ? 'true' : 'false'"
+    :aria-expanded="drawerOpen && drawerTab === 'notes' ? 'true' : 'false'"
+    @click="toggleDrawer('notes')"
+  >Notes</button>
+  <button
+    type="button"
+    class="segmented-item segmented-item--pill"
+    :class="fmt.classWhen(drawerOpen && drawerTab === 'checklist', 'is-active segmented-item--solid')"
+    :aria-pressed="drawerOpen && drawerTab === 'checklist' ? 'true' : 'false'"
+    :aria-expanded="drawerOpen && drawerTab === 'checklist' ? 'true' : 'false'"
+    @click="toggleDrawer('checklist')"
+  >
+    <span>Checklist</span>
+    <span class="wall-drawer-badge tabular-nums" x-text="drawerProgress"></span>
+  </button>
+</nav>

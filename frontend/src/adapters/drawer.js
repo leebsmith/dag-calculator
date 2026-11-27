@@ -68,6 +68,10 @@ export function createDrawerActions({
     closeDrawer,
     toggleDrawer,
     drawerKey,
+    get drawerTitle() {
+      const active = tabs.find((entry) => entry.id === getView().drawerTab);
+      return active?.title ?? "";
+    },
     get drawerProgress() {
       const rows = checklistRows();
       const done = rows.filter((row) => row.skipped === true || String(row.note ?? "").trim() !== "");
@@ -84,5 +88,6 @@ export const KEYS = [
   "closeDrawer",
   "toggleDrawer",
   "drawerKey",
+  "drawerTitle",
   "drawerProgress",
 ];

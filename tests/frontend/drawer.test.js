@@ -11,7 +11,7 @@ function install({ activeElement = null } = {}) {
     documentRef,
     isEditorActive: () => true,
   });
-  Object.assign(view, actions);
+  Object.defineProperties(view, Object.getOwnPropertyDescriptors(actions));
   return { view, actions, documentRef };
 }
 
@@ -58,6 +58,14 @@ test("escape closes an open drawer and does nothing when closed", () => {
   assert.equal(view.drawerOpen, false);
   view.drawerKey(key("Escape"));
   assert.equal(view.drawerOpen, false);
+});
+
+test("the drawer title follows the open tab", () => {
+  const { view } = install();
+  view.openDrawer("notes");
+  assert.equal(view.drawerTitle, "Notes");
+  view.openDrawer("checklist");
+  assert.equal(view.drawerTitle, "Checklist");
 });
 
 test("the checklist badge counts noted and skipped rows", () => {

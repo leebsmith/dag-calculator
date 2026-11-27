@@ -261,6 +261,24 @@
         ".modal-workspace-header-actions"
       ],
       "reason": "The workspace header halves and other header rows share one row recipe."
+    },
+    {
+      "context": "",
+      "declarations": "margin-left: auto",
+      "selectors": [
+        ".finding-action",
+        ".wall-chrome-trigger"
+      ],
+      "reason": "Both push themselves to the end of a row; the finding action and the drawer trigger are unrelated."
+    },
+    {
+      "context": "",
+      "declarations": "color: var(--sys-text-primary); font-size: var(--text-sm); font-weight: var(--font-weight-semibold)",
+      "selectors": [
+        ".wall-drawer-title",
+        ".panel-cell-value"
+      ],
+      "reason": "Coincidental emphasis text; the drawer title and a panel cell value are independent."
     }
   ],
   "classes": []

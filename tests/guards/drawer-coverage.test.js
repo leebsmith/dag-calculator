@@ -6,6 +6,7 @@ import { drawerTabs, notes } from "../../frontend/src/views/drawer.js";
 import { read } from "./util.js";
 
 const DRAWER = "frontend/src/partials/wall-drawer.html";
+const TRIGGER = "frontend/src/partials/drawer-trigger-section.html";
 
 test("the notes sections are exactly the drawer-homed prose fields", () => {
   assert.deepEqual(
@@ -31,6 +32,13 @@ test("the drawer renders the four notes schemas and the checklist surface", () =
     assert.match(markup, new RegExp(`proseIssues\\(${section.prose}\\)`), section.prose);
   }
   assert.match(markup, /<load src="src\/partials\/step-brew-day.html" \/>/);
-  assert.match(markup, /x-text="drawerProgress"/);
+  assert.match(markup, /x-text="drawerTitle"/);
   assert.match(markup, /@click="closeDrawer\(\)"/);
+  assert.doesNotMatch(markup, /openDrawer\(/, "the drawer does not trigger itself");
+
+  const trigger = read(TRIGGER);
+  assert.match(trigger, /x-text="drawerProgress"/);
+  assert.match(trigger, /@click="toggleDrawer\('notes'\)"/);
+  assert.match(trigger, /@click="toggleDrawer\('checklist'\)"/);
+  assert.match(trigger, /:aria-expanded=/);
 });

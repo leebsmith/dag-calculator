@@ -1,4 +1,5 @@
             <div class="editor">
+              <div class="editor-chrome">
               <header class="menu-bar">
                 <div class="editor-title">
                   <input
@@ -78,7 +79,11 @@
                 </div>
               </header>
 
-              <load src="src/partials/wall-chips.html" />
+              <div class="wall-chrome-row">
+                <load src="src/partials/wall-chips.html" />
+                <load src="src/partials/drawer-trigger-section.html" />
+              </div>
+              </div>
 
               <template x-if="$store.imports.originOf($store.recipes.activeId)">
                 <details class="import-origin" x-data="scopeAlias" data-origin="$store.imports.originOf" data-origin-arg="$store.recipes.activeId">

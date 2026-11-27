@@ -28,6 +28,7 @@ const EXTRA_PARTIALS = [
   "./src/partials/ui-theme-control.html",
   "./src/partials/wall-panel.html",
   "./src/partials/wall-drawer.html",
+  "./src/partials/drawer-trigger-section.html",
   "./src/partials/wall-chips.html",
   "./src/partials/water-notes-section.html",
   "./src/partials/step-brew-day.html",

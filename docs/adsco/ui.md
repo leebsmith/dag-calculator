@@ -456,6 +456,14 @@ an inline `details` (`yeast-more`, `yeast-row-details`, `map-search`) is a
 summary row with a chevron and no box. Both use the same chevron as
 `section-toggle`.
 
+The editor's chrome is one band: the menu bar and the chip row share a single
+`border-default` bottom edge, so the scroll region starts under a boundary at the
+2:1 tier rather than a divider. The sidecar trigger (`[ Notes | Checklist ]`)
+sits at the right end of the chip row and toggles the drawer; the drawer header
+carries only the active tab's title and a Close. The footer is a flush bar — no
+radius, `surface-default`, a single top boundary in `border-default` — so the page
+bottom reads as content, gap, boundary, bar.
+
 The page card, the boxed region, the unboxed region, the sheet, the wall panel
 and the drawer are the structural levels; `sheet` is the only one that is centred
 rather than placed in the document flow. The wall's surfaces are `wall-panel`

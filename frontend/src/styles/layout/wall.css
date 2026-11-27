@@ -8,6 +8,32 @@
   gap: var(--space-6);
 }
 
+.editor-chrome {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--sys-border-default);
+}
+
+/* The menu bar is shared with the importer and the chooser; inside the editor
+   its edge belongs to the chrome band, not to the bar itself. */
+.editor .menu-bar {
+  padding-bottom: var(--space-0);
+  border-bottom: 0;
+}
+
+.wall-chrome-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.wall-chrome-trigger {
+  margin-left: auto;
+}
+
 .editor-title {
   flex: 1;
   min-width: 0;
@@ -40,7 +66,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--width-rail);
   grid-template-rows: minmax(0, 1fr) auto;
-  gap: var(--space-4);
+  gap: 0 var(--space-4);
 }
 
 .wall-scroll {

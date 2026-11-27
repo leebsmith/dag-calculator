@@ -1,24 +1,6 @@
-<section class="wall-drawer" x-show="drawerOpen" aria-label="Notes and checklist">
+<section class="wall-drawer" id="wall-drawer" x-show="drawerOpen" aria-label="Notes and checklist">
   <header class="wall-drawer-header">
-    <div class="segmented" role="tablist" aria-label="Sidecars">
-      <button
-        type="button"
-        class="segmented-item"
-        role="tab"
-        :aria-selected="drawerTab === 'notes' ? 'true' : 'false'"
-        @click="openDrawer('notes')"
-      >Notes</button>
-      <button
-        type="button"
-        class="segmented-item"
-        role="tab"
-        :aria-selected="drawerTab === 'checklist' ? 'true' : 'false'"
-        @click="openDrawer('checklist')"
-      >
-        <span>Checklist</span>
-        <span class="wall-drawer-badge" x-text="drawerProgress"></span>
-      </button>
-    </div>
+    <h2 class="wall-drawer-title" x-text="drawerTitle"></h2>
     <button type="button" class="btn-link text-xs" @click="closeDrawer()">Close</button>
   </header>
 

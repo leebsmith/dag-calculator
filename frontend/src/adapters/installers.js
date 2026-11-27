@@ -86,7 +86,7 @@ const WATER = [
 const STYLE_PARTIALS = ["wall-targets.html"];
 export const INSTALLERS = [
   { name: "wall", modules: ["frontend/src/adapters/wall.js"], keys: wallKeys, partials: ["wall-chips.html", "wall-water.html"] },
-  { name: "drawer", modules: ["frontend/src/adapters/drawer.js"], keys: drawerKeys, partials: ["wall-drawer.html"] },
+  { name: "drawer", modules: ["frontend/src/adapters/drawer.js"], keys: drawerKeys, partials: ["wall-drawer.html", "drawer-trigger-section.html"] },
   { name: "fieldActions", modules: ["frontend/src/adapters/fieldActions.js"], keys: fieldActionsKeys, partials: ["wall-field.html", "wall-block.html", "wall-boil.html", "wall-panel.html"] },
   { name: "proseValidation", modules: ["frontend/src/adapters/proseValidation.js", "frontend/src/markdown/validate.js"], keys: proseValidationKeys, partials: ["wall-drawer.html"] },
   {
