@@ -18,6 +18,8 @@ const RADIUS = {
   overlay: new Set(["xl", "full"]),
   utility: new Set(["sm", "xl", "full"]),
 };
+// Hairline steps (0 to 6px) are alignment, not density: every role may use them.
+const HAIRLINE = new Set(["0", "0-25", "0-5", "1", "1-5"]);
 const TYPE = new Set(["xs", "sm", "base", "lg"]);
 const TYPE_KEYWORDS = new Set(["inherit", "initial", "unset", "revert", "smaller", "larger"]);
 const SPACING_PROPERTY = /^(gap|row-gap|column-gap|padding|padding-[a-z-]+|margin|margin-[a-z-]+)$/;
@@ -40,7 +42,7 @@ function refs(value) {
 }
 
 function microContext(selector) {
-  return /eyebrow|badge|\bth\b/.test(selector);
+  return /eyebrow|badge|\bth\b|cell-label|cell-sub|group-meta/.test(selector);
 }
 
 function failures(files) {
@@ -63,7 +65,8 @@ function failures(files) {
         if (SPACING_PROPERTY.test(property)) {
           for (const name of variables) {
             if (!name.startsWith("--space-")) continue;
-            if (!SPACING[role].has(name.slice("--space-".length))) {
+            const step = name.slice("--space-".length);
+            if (!HAIRLINE.has(step) && !SPACING[role].has(step)) {
               found.push(`${path}:${rule.line}: ${property} uses ${name} outside the ${role} band`);
             }
           }

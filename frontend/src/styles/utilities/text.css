@@ -1,0 +1,63 @@
+/* Utility role: typography scale, colour hierarchy and numeric alignment.
+   Utilities may use any type step at or above the 12px floor. */
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* --- Typography scale & color hierarchy helpers --- */
+
+.text-xs {
+  font-size: var(--text-xs);
+}
+
+.text-sm {
+  font-size: var(--text-sm);
+}
+
+.font-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.font-semibold {
+  font-weight: var(--font-weight-semibold);
+}
+
+.font-bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.text-primary {
+  color: var(--sys-text-primary);
+}
+
+.text-secondary {
+  color: var(--sys-text-secondary);
+}
+
+.text-muted {
+  color: var(--sys-text-muted);
+}
+
+.text-danger {
+  color: var(--sys-color-danger-text);
+}
+
+.text-warning {
+  color: var(--sys-color-warning-text);
+}
+
+.text-right {
+  text-align: right;
+}
+
+
+.eyebrow {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--text-tracking-wide);
+  color: var(--sys-text-secondary);
+  margin: var(--space-0);
+}

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { read, rel, walk } from "./util.js";
-import { STYLE_PATH, parseRules } from "./css-guard-util.js";
+import { parseRules, styleText } from "./css-guard-util.js";
 
 const REGISTRY_PATH = "tests/guards/container-recipes.json";
 
@@ -215,7 +215,7 @@ test("container modifiers carry their block", () => {
 
 test("container recipes stay pinned", () => {
   const registry = JSON.parse(read(REGISTRY_PATH));
-  const rules = parseRules(read(STYLE_PATH));
+  const rules = parseRules(styleText());
   const failures = [];
 
   for (const entry of registry.selectors) {

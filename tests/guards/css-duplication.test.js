@@ -2,13 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   ALLOWLIST_PATH,
-  STYLE_PATH,
   declarationText,
   duplicateGroups,
   loadAllowlist,
+  styleText,
   parseRules,
 } from "./css-guard-util.js";
-import { read } from "./util.js";
 
 const sortSelectors = (selectors) => [...selectors].sort();
 
@@ -23,7 +22,7 @@ function groupKey(group) {
 test("no duplicate declaration groups outside the allowlist", () => {
   const allowlist = loadAllowlist();
   const entries = allowlist.duplicateGroups ?? [];
-  const rules = parseRules(read(STYLE_PATH));
+  const rules = parseRules(styleText());
   const groups = duplicateGroups(rules);
 
   const entryByKey = new Map(entries.map((entry) => [entryKey(entry), entry]));

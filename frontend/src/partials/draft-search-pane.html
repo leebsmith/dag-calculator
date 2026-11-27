@@ -102,7 +102,7 @@
                 <div class="catalog-item-name">
                   <span x-text="item.name"></span>
                   <template x-if="isUserItem(item.id)">
-                    <span class="status-badge status-badge-info text-nano">mine</span>
+                    <span class="status-badge status-badge-info text-xs">mine</span>
                   </template>
                 </div>
                 <div class="catalog-item-meta" x-text="draftItemMeta(item)"></div>
@@ -137,10 +137,10 @@
                 <div class="catalog-item-name">
                   <span x-text="item.name"></span>
                   <template x-if="item.id.startsWith('std:')">
-                    <span class="status-badge status-badge-success text-nano">generic</span>
+                    <span class="status-badge status-badge-success text-xs">generic</span>
                   </template>
                   <template x-if="isUserItem(item.id)">
-                    <span class="status-badge status-badge-info text-nano">mine</span>
+                    <span class="status-badge status-badge-info text-xs">mine</span>
                   </template>
                 </div>
                 <div class="catalog-item-meta" x-text="draftItemMeta(item)"></div>
@@ -173,10 +173,10 @@
             <div class="catalog-item-name">
               <span x-text="item.name"></span>
               <template x-if="isUserItem(item.id)">
-                <span class="status-badge status-badge-info text-nano">mine</span>
+                <span class="status-badge status-badge-info text-xs">mine</span>
               </template>
               <span
-                class="status-badge status-badge-info text-nano"
+                class="status-badge status-badge-info text-xs"
                 x-show="draftCounts[item.id] > 0"
               >
                 <span x-text="draftCounts[item.id]"></span> in draft

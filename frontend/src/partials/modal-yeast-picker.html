@@ -100,15 +100,15 @@
                     <div class="yeast-row-badges">
                       <span class="font-medium" x-text="y.name"></span>
                       <template x-if="isUserItem(y.id)">
-                        <span class="status-badge status-badge-info text-nano">mine</span>
+                        <span class="status-badge status-badge-info text-xs">mine</span>
                       </template>
                       <span
-                        class="status-badge status-badge-info text-nano"
+                        class="status-badge status-badge-info text-xs"
                         x-text="yeastSta1(y)"
                       ></span>
                       <template x-if="yeastPof(y)">
                         <span
-                          class="status-badge status-badge-info text-nano"
+                          class="status-badge status-badge-info text-xs"
                           x-text="yeastPof(y)"
                         ></span>
                       </template>

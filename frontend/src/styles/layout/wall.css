@@ -1,0 +1,92 @@
+/* Layout role: the editor column, the wall grid and fieldset widths. */
+
+.editor {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.editor-title {
+  flex: 1;
+  min-width: 0;
+  margin-right: var(--space-4);
+}
+
+.editor-title-input {
+  width: 100%;
+  padding: var(--space-1) 0;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--sys-text-primary);
+}
+
+.editor-title-input:hover,
+.editor-title-input:focus {
+  border-bottom-color: var(--sys-border-subtle);
+  outline: none;
+}
+
+/* --- Wall: one scroll region over the fieldset column, the panel pinned --- */
+
+.wall-workspace {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--width-rail);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--space-4);
+}
+
+.wall-scroll {
+  grid-column: 1;
+  grid-row: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.wall-fieldsets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+.wall-fieldset {
+  flex: none;
+  min-inline-size: 0;
+  scroll-margin-top: var(--space-2);
+}
+
+.wall-fieldset--full {
+  flex: 1 0 100%;
+  width: 100%;
+}
+
+.wall-fieldset--narrow {
+  width: var(--width-fieldset-narrow);
+}
+
+.wall-fieldset--regular {
+  width: var(--width-fieldset-regular);
+}
+
+.wall-fieldset--wide {
+  width: var(--width-fieldset-wide);
+}
+
+.wall-fieldset.is-landing > .card {
+  outline: 2px solid var(--sys-color-action-primary);
+  outline-offset: 2px;
+}
+
+/* --- Panel: status, outcome strip, context, solver groups --- */
+
+/* --- Wall chips: the scroll cursor for the fieldset column --- */

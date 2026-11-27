@@ -2,19 +2,18 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   ALLOWLIST_PATH,
-  STYLE_PATH,
   cssClasses,
   loadAllowlist,
   parseRules,
   sourceTokens,
+  styleText,
 } from "./css-guard-util.js";
-import { read } from "./util.js";
 
 test("no unreferenced classes outside the allowlist", () => {
   const allowlist = loadAllowlist();
   const entries = allowlist.classes ?? [];
   const prefixes = allowlist.safelistPrefixes ?? [];
-  const classes = cssClasses(parseRules(read(STYLE_PATH)));
+  const classes = cssClasses(parseRules(styleText()));
   const tokens = sourceTokens();
 
   const entryByClass = new Map(entries.map((entry) => [entry.class, entry]));

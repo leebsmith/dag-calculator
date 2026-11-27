@@ -1,5 +1,23 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { ROOT, read, join } from "./util.js";
+import { ROOT, read, join, rel, walk } from "./util.js";
+
+const STYLE_ROOT = "frontend/src/styles";
+
+/** The structural stylesheets in cascade order: the legacy sheet first, then the
+ *  role files it is being split into. Tokens are not structural CSS. */
+export function styleFiles() {
+  const role = walk(STYLE_ROOT, [".css"])
+    .map(rel)
+    .filter((path) => !path.includes("/styles/tokens/"))
+    .sort();
+  return ["frontend/src/style.css", ...role];
+}
+
+export function styleText() {
+  return styleFiles()
+    .map((path) => read(path))
+    .join("\n");
+}
 
 export const STYLE_PATH = "frontend/src/style.css";
 export const ALLOWLIST_PATH = "tests/guards/css-allowlist.json";
@@ -122,14 +140,14 @@ export function cssClasses(rules) {
 
 export function sourceTokens() {
   const files = [join(ROOT, "frontend/index.html")];
-  const walk = (dir) => {
+  const visit = (dir) => {
     for (const entry of readdirSync(dir)) {
       const path = join(dir, entry);
-      if (statSync(path).isDirectory()) walk(path);
+      if (statSync(path).isDirectory()) visit(path);
       else if (path.endsWith(".html") || path.endsWith(".js")) files.push(path);
     }
   };
-  walk(join(ROOT, "frontend/src"));
+  visit(join(ROOT, "frontend/src"));
   const tokens = new Set();
   for (const file of files) {
     for (const token of readFileSync(file, "utf8").match(/[A-Za-z_][\w-]*/g) ?? []) tokens.add(token);

@@ -198,6 +198,23 @@ async function captureScreenshot(browser, fixture, theme, width, target) {
   }
 }
 
+function readStyles(dir) {
+  const base = path.join(dir, "frontend/src/style.css");
+  const roles = [
+    "styles/utilities/text.css",
+    "styles/layout/base.css",
+    "styles/layout/shell.css",
+    "styles/layout/wall.css",
+    "styles/components/group-chrome.css",
+    "styles/components/group-wall.css",
+    "styles/components/control-chips.css",
+    "styles/components/overlay-chrome.css",
+  ].map((file) => path.join(dir, "frontend/src", file));
+  return [base, ...roles.filter((file) => fs.existsSync(file))]
+    .map((file) => fs.readFileSync(file, "utf8"))
+    .join("\n");
+}
+
 function readTokens(dir) {
   const split = [
     "frontend/src/styles/tokens/primitives.css",
@@ -214,7 +231,7 @@ function writeFixture(target, tree, files, theme, hideModals) {
     target,
     buildFixture({
       tokens: readTokens(tree.dir),
-      css: fs.readFileSync(tree.style, "utf8"),
+      css: readStyles(tree.dir),
       partialsDir: tree.partials,
       files,
       theme,

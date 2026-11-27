@@ -42,13 +42,13 @@
       <template x-if="selectedYeast">
         <div class="yeast-summary-body">
           <div class="yeast-badges">
-            <span class="status-badge status-badge-info text-nano" x-text="selectedYeastSta1"></span>
+            <span class="status-badge status-badge-info text-xs" x-text="selectedYeastSta1"></span>
             <span
-              class="status-badge status-badge-info text-nano"
+              class="status-badge status-badge-info text-xs"
               x-show="selectedYeastPof"
               x-text="selectedYeastPof"
             ></span>
-            <span class="status-badge status-badge-info text-nano" x-show="isUserItem(selectedYeast.id)">mine</span>
+            <span class="status-badge status-badge-info text-xs" x-show="isUserItem(selectedYeast.id)">mine</span>
           </div>
           <div class="attenuation-summary-line">
             <span class="field-label">Published</span>

@@ -163,31 +163,12 @@
     },
     {
       "context": "",
-      "declarations": "display: flex; flex-direction: column; flex: 1; gap: var(--space-5); min-height: 0",
-      "selectors": [
-        ".chooser",
-        ".editor",
-        ".import-view"
-      ],
-      "reason": "Top-level view shell contract: each fills the app content, owns one scroll region and pins its footer. The import view joins deliberately."
-    },
-    {
-      "context": "",
       "declarations": "color: var(--sys-text-primary); font-size: var(--text-lg); font-weight: var(--font-weight-semibold); margin: var(--space-0)",
       "selectors": [
         ".card-title",
         ".landing-heading"
       ],
       "reason": "Coincidental section-title recipe; the card heading and the page section heading are independent."
-    },
-    {
-      "context": "",
-      "declarations": "display: flex; flex-direction: column; flex: 1; gap: var(--space-4); margin: 0 auto; max-width: var(--container-content-wide); min-height: 0; overflow-y: auto; padding: var(--space-2); width: 100%",
-      "selectors": [
-        ".chooser-body",
-        ".import-body"
-      ],
-      "reason": "The one scroll region of a top-level view: same measure, padding and gap as the chooser body, so the landing page and the import review share a rhythm."
     },
     {
       "context": "",
@@ -253,6 +234,15 @@
         "details > summary::-webkit-details-marker"
       ],
       "reason": "Coincidental hidden rendering: the Alpine cloak and the native disclosure marker are unrelated."
+    },
+    {
+      "context": "",
+      "declarations": "display: flex; flex-direction: column; flex: 1; gap: var(--space-6); min-height: 0",
+      "selectors": [
+        ".chooser",
+        ".editor"
+      ],
+      "reason": "Two independent view stacks with the same structural recipe."
     }
   ],
   "classes": []

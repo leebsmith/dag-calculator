@@ -1,0 +1,41 @@
+/* Control role: the chip row that drives the wall. */
+
+.wall-chip {
+  height: var(--size-control-h);
+  padding: 0 var(--space-3);
+  font-family: inherit;
+  font-size: var(--text-xs);
+  color: var(--sys-text-secondary);
+  background-color: var(--sys-surface-default);
+  border: 1px solid var(--sys-border-default);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.wall-chip:hover {
+  border-color: var(--sys-border-strong);
+  color: var(--sys-text-primary);
+}
+
+.wall-chip[aria-current="true"] {
+  background-color: var(--sys-color-action-subtle);
+  border-color: var(--sys-color-action-primary);
+  color: var(--sys-color-action-subtle-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.wall-chip:focus-visible {
+  outline: 2px solid var(--sys-border-focus);
+  outline-offset: 2px;
+}
+
+.wall-chips {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
