@@ -10,10 +10,12 @@ import { formatCell, cellLabel } from "./cell.js";
 export function createFindingFormatter(artifact, engine, ui) {
   const unitMode = ui?.unitMode ?? {};
   const nl = nonlinearFns(artifact, engine);
-  return ({ value, dimension }) => {
+  return ({ value, dimension, unit }) => {
     if (typeof value !== "number" || !Number.isFinite(value)) return "—";
     const dim = UNIT_DIMENSIONS.find((entry) => entry.id === dimension);
-    const unitId = dim ? unitMode[dimension] ?? dim.default ?? dim.units[0][0] : null;
+    const allowed = new Set((dim?.units ?? []).map(([id]) => id));
+    const forced = typeof unit === "string" && allowed.has(unit) ? unit : null;
+    const unitId = forced ?? (dim ? unitMode[dimension] ?? dim.default ?? dim.units[0][0] : null);
     if (!unitId) return formatCell(value).display;
     const shown = fromBase(artifact, dimension, unitId, value, nl);
     const decimals = unitDecimals(dimension, unitId);

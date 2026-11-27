@@ -109,6 +109,20 @@ test("the groups are one exclusive accordion", () => {
   assert.deepEqual(names, ["panel-groups"]);
 });
 
+test("dose rows carry their small unit", () => {
+  const water = groups.find((group) => group.id === "water");
+  const doses = water.rows.filter((row) => row.unit);
+  assert.deepEqual(
+    doses.map((row) => [row.path.split(".").pop(), row.unit]),
+    [
+      ["gypsum_kg", "g"],
+      ["cacl2_kg", "g"],
+      ["acid_l", "ml"],
+      ["acid_l", "ml"],
+    ]
+  );
+});
+
 test("the groups keep their declared shape", () => {
   assert.deepEqual(
     groups.map((group) => group.id),

@@ -14,20 +14,26 @@ const PIN_TARGETS = {
   fg: "batch.target_fg",
 };
 
-function display(read, format, artifact, path) {
+function display(read, format, artifact, path, unit) {
   if (!surfaceManifest.paths[path]) return DASH;
   const value = read(path);
   if (value === null) return DASH;
   if (typeof value === "string") return value === "" ? DASH : value;
-  return format({ value, dimension: dimensionOf(artifact, path) });
+  return format({ value, dimension: dimensionOf(artifact, path), unit });
 }
 
 function rowsOf(read, format, artifact, declared) {
-  return declared.map((row) => ({
-    path: row.path,
-    label: row.label,
-    display: display(read, format, artifact, row.path),
-  }));
+  const rows = [];
+  for (const row of declared) {
+    // A dosed addition is only listed when it is nonzero, like the water card.
+    if (row.unit && !(read(row.path) > 0)) continue;
+    rows.push({
+      path: row.path,
+      label: row.label,
+      display: display(read, format, artifact, row.path, row.unit),
+    });
+  }
+  return rows;
 }
 
 function pinResidual(read, format, artifact, axis, realizedPath) {
