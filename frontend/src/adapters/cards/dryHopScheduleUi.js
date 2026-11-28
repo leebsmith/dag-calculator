@@ -7,6 +7,7 @@ import {
   defaultApplication,
   defaultContact,
   renderSchedule,
+  validateCharge,
 } from "../../views/dryHopSchedule.js";
 
 function numberOrNull(value) {
@@ -57,7 +58,8 @@ function chargeOption(value) {
   return { value, label: `charge ${value.split(":")[1]}` };
 }
 
-function readActions(core) {
+function readActions(core, getView) {
+  const scheduleCheck = () => validateCharge(getView().draftRows ?? [], getView().dryHopActiveIndex);
   return {
     dryHopApplicationKindOptions: SCHEDULE_LANGUAGE.application,
     dryHopContactKindOptions: SCHEDULE_LANGUAGE.contact,
@@ -68,6 +70,8 @@ function readActions(core) {
     })),
     dryHopApplicationRefOptions: () => core.refOptions("earlier"),
     dryHopContactRefOptions: () => core.refOptions("later"),
+    dryHopScheduleErrors: () => scheduleCheck().errors,
+    dryHopScheduleWarnings: () => scheduleCheck().warnings,
     dryHopWhen: (row) => renderSchedule(row).when,
     dryHopContact: (row) => renderSchedule(row).contact,
     dryHopApplicationKind: () => core.application().kind,
@@ -153,7 +157,7 @@ function contactActions(core) {
 
 export function dryHopScheduleActions({ getView }) {
   const core = scheduleCore(getView);
-  return { ...readActions(core), ...applicationActions(core), ...contactActions(core) };
+  return { ...readActions(core, getView), ...applicationActions(core), ...contactActions(core) };
 }
 
 export const KEYS = [
@@ -163,6 +167,8 @@ export const KEYS = [
   "dryHopEventOptions",
   "dryHopApplicationRefOptions",
   "dryHopContactRefOptions",
+  "dryHopScheduleErrors",
+  "dryHopScheduleWarnings",
   "dryHopWhen",
   "dryHopContact",
   "dryHopApplicationKind",

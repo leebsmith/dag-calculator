@@ -321,6 +321,13 @@
                     </template>
                   </section>
 
+                  <template x-for="message in dryHopScheduleErrors()" :key="message">
+                    <p class="form-hint text-danger" x-text="message"></p>
+                  </template>
+                  <template x-for="message in dryHopScheduleWarnings()" :key="message">
+                    <p class="form-hint text-warning" x-text="message"></p>
+                  </template>
+
                   <div
                     x-data="formBuilder" data-schema="dryHopInspectorFields"
                     x-effect="setModel(dryHopActiveRow)"

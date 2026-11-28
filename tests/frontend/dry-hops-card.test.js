@@ -125,3 +125,21 @@ test("loadState migrates a legacy dry-hop row", withFreshApp(async (app) => {
   assert.match(row.notes, /day 3/);
   assert.equal("application_event" in row, false);
 }));
+
+test("the inspector surfaces the schedule diagnostics", withFreshApp((app) => {
+  app.openDryHopEditor();
+  app.addCatalogDryHop("citra");
+  app.inspectDryHopRow(0);
+
+  app.setDryHopApplicationKind("day");
+  app.setDryHopApplicationDay("5");
+  app.setDryHopContactKind("until");
+  app.setDryHopContactUntilKind("day");
+  app.setDryHopContactUntilDay("2");
+
+  assert.deepEqual(app.dryHopScheduleErrors(), ["Contact ends before it starts."]);
+
+  app.setDryHopContactUntilDay("9");
+  assert.deepEqual(app.dryHopScheduleErrors(), []);
+  assert.deepEqual(app.dryHopScheduleWarnings(), []);
+}));
