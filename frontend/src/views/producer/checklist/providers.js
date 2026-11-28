@@ -4,7 +4,7 @@
 
 import { BREW_DAY_NODES as N } from "../../registry/brew-day.js";
 import { getCanonicalRest } from "../../mash.js";
-import { DRY_HOP_VALUE_LABELS } from "../../registry/dry-hops.js";
+import { renderSchedule } from "../../dryHopSchedule.js";
 import { ignoreError } from "../../../observability.js";
 
 const TABLET_VOLUME_L = 15 * 3.785411784;
@@ -61,10 +61,6 @@ function enabledRests(engine) {
 
 function hopName(row) {
   return row?.name || row?.variety || "hop";
-}
-
-function dryHopLabel(group, value) {
-  return DRY_HOP_VALUE_LABELS[group]?.[value] ?? String(value ?? "").replaceAll("_", " ");
 }
 
 const PROVIDERS = {
@@ -141,10 +137,12 @@ const PROVIDERS = {
     const rows = engine.get(N.dryHops) ?? [];
     const list = rows.map((row) => {
       const quantity = fmt.field(N.dryHopQuantity, row.quantity);
-      return `${quantity} ${row.unit ?? "g"} ${hopName(row)} at ${dryHopLabel(
-        "hop_application_event",
-        row.application_event
-      )}; contact until ${dryHopLabel("hop_contact_until", row.contact_until)}`;
+      const schedule = renderSchedule(row);
+      const contact =
+        schedule.contact === "no end recorded"
+          ? "no contact end recorded"
+          : `contact ${schedule.contact}`;
+      return `${quantity} ${row.unit ?? "g"} ${hopName(row)} — ${schedule.when}; ${contact}`;
     });
     return list.length > 0 ? list.join("; ") : "No dry hops.";
   },
