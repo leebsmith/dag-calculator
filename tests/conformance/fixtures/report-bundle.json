@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:b767fb6aee24593dc1474ccc66533559acf97a3b4023911f008d1402a7d25d1a",
+    "hash": "sha256:3341cfb85697ce00bb646ebc2412e7cb9b3970eeebb5326e258790c6e47244ce",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -577,6 +577,99 @@
           "og",
           "fg"
         ]
+      },
+      "schedules": {
+        "dry_hop": {
+          "time": {
+            "unit": "day"
+          },
+          "events": [
+            {
+              "id": "pitch",
+              "rank": 0
+            },
+            {
+              "id": "high_krausen",
+              "rank": 1
+            },
+            {
+              "id": "mid_fermentation",
+              "rank": 2
+            },
+            {
+              "id": "terminal_gravity",
+              "rank": 3
+            },
+            {
+              "id": "post_diacetyl",
+              "rank": 4
+            },
+            {
+              "id": "vdk_clearance",
+              "rank": 5
+            },
+            {
+              "id": "hop_creep_plateau",
+              "rank": 6
+            },
+            {
+              "id": "biotransformation_equilibrium",
+              "rank": 7
+            },
+            {
+              "id": "cold_crash",
+              "rank": 8
+            },
+            {
+              "id": "packaging",
+              "rank": 9
+            }
+          ],
+          "application": [
+            {
+              "id": "event",
+              "value": "event",
+              "offset": true
+            },
+            {
+              "id": "day",
+              "value": "day"
+            },
+            {
+              "id": "after",
+              "value": "charge",
+              "offset": true
+            }
+          ],
+          "contact": [
+            {
+              "id": "for",
+              "value": "days"
+            },
+            {
+              "id": "until",
+              "value": "instant"
+            },
+            {
+              "id": "open"
+            }
+          ],
+          "references": [
+            {
+              "id": "previous",
+              "side": "earlier"
+            },
+            {
+              "id": "next",
+              "side": "later"
+            },
+            {
+              "id": "ordinal",
+              "side": "either",
+              "arg": "ordinal"
+            }
+          ]
+        }
       },
       "functions": {
         "calculate_strike_water_base_temp": {
@@ -8680,5 +8773,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:5955ea1287421c1a89145a871eba82251eeeb2385662a13a4b2c48340a152c88"
+  "content_hash": "sha256:9ef77c08de2dff5ee42d14f41621d3a858f2840cd3d1851a63a568ba5e48ad94"
 }

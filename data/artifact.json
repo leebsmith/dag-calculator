@@ -573,6 +573,99 @@
       "fg"
     ]
   },
+  "schedules": {
+    "dry_hop": {
+      "time": {
+        "unit": "day"
+      },
+      "events": [
+        {
+          "id": "pitch",
+          "rank": 0
+        },
+        {
+          "id": "high_krausen",
+          "rank": 1
+        },
+        {
+          "id": "mid_fermentation",
+          "rank": 2
+        },
+        {
+          "id": "terminal_gravity",
+          "rank": 3
+        },
+        {
+          "id": "post_diacetyl",
+          "rank": 4
+        },
+        {
+          "id": "vdk_clearance",
+          "rank": 5
+        },
+        {
+          "id": "hop_creep_plateau",
+          "rank": 6
+        },
+        {
+          "id": "biotransformation_equilibrium",
+          "rank": 7
+        },
+        {
+          "id": "cold_crash",
+          "rank": 8
+        },
+        {
+          "id": "packaging",
+          "rank": 9
+        }
+      ],
+      "application": [
+        {
+          "id": "event",
+          "value": "event",
+          "offset": true
+        },
+        {
+          "id": "day",
+          "value": "day"
+        },
+        {
+          "id": "after",
+          "value": "charge",
+          "offset": true
+        }
+      ],
+      "contact": [
+        {
+          "id": "for",
+          "value": "days"
+        },
+        {
+          "id": "until",
+          "value": "instant"
+        },
+        {
+          "id": "open"
+        }
+      ],
+      "references": [
+        {
+          "id": "previous",
+          "side": "earlier"
+        },
+        {
+          "id": "next",
+          "side": "later"
+        },
+        {
+          "id": "ordinal",
+          "side": "either",
+          "arg": "ordinal"
+        }
+      ]
+    }
+  },
   "functions": {
     "calculate_strike_water_base_temp": {
       "params": [
