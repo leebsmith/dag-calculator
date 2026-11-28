@@ -305,6 +305,15 @@
         ".wall-drawer-header"
       ],
       "reason": "Two independent single-line headers that share the row rhythm."
+    },
+    {
+      "context": "",
+      "declarations": "margin-right: auto",
+      "selectors": [
+        ".form-label > span:first-child, .field-label > span:first-child",
+        ".field-label-row > label"
+      ],
+      "reason": "Label text pads its trailing unit and reset controls to the right edge."
     }
   ],
   "classes": []

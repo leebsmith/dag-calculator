@@ -1,8 +1,10 @@
         <div class="form-group">
           <template x-if="f.control === 'number'">
             <div>
-              <label class="form-label" :for="f.id">
-                <span x-text="fmt.formatFieldLabel(f.label, f.toggleable ? null : f.unit)"></span>
+              <div class="field-label-row">
+                <label class="form-label" :for="f.id">
+                  <span x-text="fmt.formatFieldLabel(f.label, f.toggleable ? null : f.unit)"></span>
+                </label>
                 <button
                   type="button"
                   class="unit-badge"
@@ -25,7 +27,7 @@
                   :title="'Reset to ' + f.seededSource"
                   @click="resetField(f)"
                 >↺</button>
-              </label>
+              </div>
               <input
                 class="form-input"
                 :class="fmt.classWhen(f.seeded, 'is-seeded')"
@@ -45,8 +47,10 @@
 
           <template x-if="f.control === 'choice-select' || f.control === 'selection-picker'">
             <div>
-              <label class="form-label" :for="f.id">
-                <span x-text="f.label"></span>
+              <div class="field-label-row">
+                <label class="form-label" :for="f.id">
+                  <span x-text="f.label"></span>
+                </label>
                 <span
                   class="seed-badge"
                   x-show="f.seeded"
@@ -59,7 +63,7 @@
                   :title="'Reset to ' + f.seededSource"
                   @click="resetField(f)"
                 >↺</button>
-              </label>
+              </div>
               <select
                 class="form-select"
                 :class="fmt.classWhen(f.seeded, 'is-seeded')"

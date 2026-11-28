@@ -18,12 +18,14 @@
   </template>
 
   <template x-if="field.type !== 'checkbox' && field.type !== 'checkbox-group' && field.type !== 'readout'">
-    <label :class="field.labelClass" :for="field.id">
-      <span x-text="field.label"></span>
-      <span class="unit-badge" x-show="field.unit" x-text="field.unit"></span>
-      <template x-if="field.badge">
-        <span class="seed-badge" :title="field.badge.title" x-text="field.badge.text"></span>
-      </template>
+    <div class="field-label-row">
+      <label :class="field.labelClass" :for="field.id">
+        <span x-text="field.label"></span>
+        <span class="unit-badge" x-show="field.unit" x-text="field.unit"></span>
+        <template x-if="field.badge">
+          <span class="seed-badge" :title="field.badge.title" x-text="field.badge.text"></span>
+        </template>
+      </label>
       <template x-if="fmt.path(field.reset, 'show')">
         <button
           type="button"
@@ -32,7 +34,7 @@
           @click="field.reset.run()"
         >↺</button>
       </template>
-    </label>
+    </div>
   </template>
 
   <template x-if="field.type === 'checkbox-group'">

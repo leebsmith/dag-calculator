@@ -181,6 +181,16 @@
   margin-right: auto;
 }
 
+.field-label-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.field-label-row > label {
+  margin-right: auto;
+}
+
 .unit-badge {
   display: inline-flex;
   align-items: center;

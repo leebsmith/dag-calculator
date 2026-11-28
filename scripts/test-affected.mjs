@@ -55,7 +55,7 @@ export const RULES = [
       "ui-vocabulary", "container-vocabulary", "container-contrast", "theme-tokens",
       "engine-access", "engine-read-mirrors", "include-integrity", "mash-input-contract",
       "number-input-contract", "select-binding", "show-dereference", "store-surface",
-      "svg-length-bindings", "telemetry-classes", "template-scope",
+      "svg-length-bindings", "telemetry-classes", "template-scope", "html-nesting",
     ],
     "the guards read templates and stylesheets by path, not by import"
   ),
