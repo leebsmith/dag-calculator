@@ -304,6 +304,23 @@ no lupulin shows nothing. The ratio `batch.bract_floor_ratio` is a YCH benchmark
 held in the model with no wall control; the report prints the same composition in
 its overall-hops block.
 
+### Dry-hop schedule
+
+Dry hops are descriptive and outside the IBU and mass maths. Their timing is
+authored in the language defined by
+[`docs/hops/dry-hop-schedule.md`](../hops/dry-hop-schedule.md), not by calendar
+dates: each charge records an application instant (an event with a signed day
+offset, a fermentation day, or a position after another charge) and a contact
+span (`for` days, `until` an instant, or open).
+
+The editor table keeps hop, type, quantity and unit inline and prints the When
+and Contact sentences read-only; the row's pencil opens the inspector, where two
+blocks — Application and Contact — edit the variant. Every control comes from
+the artifact descriptor, so a new variant needs no bespoke branch. The old free
+text **Trigger** column is gone; its prose migrates into Notes. The read-only Dry
+Hops table and the report print the same sentences. Legacy rows translate on
+load, and nothing here is solved.
+
 ### Fermentation space (Targets fieldset)
 
 The Targets fieldset plots the batch in the extract plane from a read-only

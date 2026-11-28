@@ -90,6 +90,7 @@ export const FOREIGN = {
   collection: "the collection node record shape (collection.fields)",
   domain: "a domain spec key inside the artifact",
   artifact: "the artifact file and its top-level sections",
+  schedules: "the artifact's schedule descriptors (schedules.dry_hop)",
   catalog: "the report catalog record",
   engine: "the frontend interpreter module",
   report: "the rendered report file and its template",
