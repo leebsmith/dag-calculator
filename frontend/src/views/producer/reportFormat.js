@@ -14,6 +14,7 @@ import { sortWhirlpoolRows } from "./hopRows.js";
 import { hopPurchaseRows } from "./hopPurchaseRows.js";
 import { grainPurchaseRows } from "./grainPurchaseRows.js";
 import { DRY_HOP_NODES as D } from "../registry/dry-hops.js";
+import { renderSchedule } from "../dryHopSchedule.js";
 import { LATE_ADDITION_NODES as L } from "../registry/late-additions.js";
 import { BREW_DAY_NODES as B } from "../registry/brew-day.js";
 import { MASH_NODES as M } from "../registry/mash.js";
@@ -332,19 +333,17 @@ function dryHopRows(artifact, catalog, engine) {
   const nl = nonlinearFns(artifact, engine);
   const nodes = catalog.nodes ?? {};
   const cell = (field, value) => formatEntry(artifact, nodes[`${D.collection}.${field}`], value, nl);
-  return (engine.get(D.collection) ?? []).map((row) => ({
-    name: rowName({ name: row.variety }),
-    type: cell("product_type", row.product_type),
-    quantity: cell("quantity", row.quantity),
-    unit: cell("unit", row.unit),
-    applied: cell("application_event", row.application_event),
-    contact: row.contact_until
-      ? cell("contact_until", row.contact_until)
-      : cell("contact_duration_min", row.contact_duration_min),
-    detail: row.time_of_application
-      ? cell("time_of_application", row.time_of_application)
-      : { text: "—" },
-  }));
+  return (engine.get(D.collection) ?? []).map((row) => {
+    const schedule = renderSchedule(row);
+    return {
+      name: rowName({ name: row.variety }),
+      type: cell("product_type", row.product_type),
+      quantity: cell("quantity", row.quantity),
+      unit: cell("unit", row.unit),
+      applied: { text: schedule.when },
+      contact: { text: schedule.contact },
+    };
+  });
 }
 
 // Mass-weighted colour and extract yield per table, plus the overall aggregate.

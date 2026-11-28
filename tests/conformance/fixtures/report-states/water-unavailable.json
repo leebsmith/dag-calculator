@@ -1396,14 +1396,7 @@
           "dimension": null
         },
         "contact": {
-          "text": "Terminal gravity",
-          "number": null,
-          "unit": null,
-          "base": null,
-          "dimension": null
-        },
-        "detail": {
-          "text": "—",
+          "text": "until Terminal gravity",
           "number": null,
           "unit": null,
           "base": null,

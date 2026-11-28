@@ -534,24 +534,6 @@
       "ibu_split",
       "mass_pool"
     ],
-    "hop_application_event": [
-      "pitch",
-      "high_krausen",
-      "mid_fermentation",
-      "terminal",
-      "post_diacetyl",
-      "cold_crash",
-      "packaging"
-    ],
-    "hop_contact_until": [
-      "terminal_gravity",
-      "vdk_clearance",
-      "hop_creep_plateau",
-      "biotransformation_equilibrium",
-      "next_charge",
-      "cold_crash",
-      "packaging"
-    ],
     "hop_unit": [
       "oz",
       "g",
@@ -1630,20 +1612,9 @@
         "taxonomy": "hop_addition_stage",
         "default": "fermentation"
       },
-      "application_event": {
-        "taxonomy": "hop_application_event",
-        "default": "high_krausen"
-      },
-      "contact_duration_min": {
-        "dimension": "time",
-        "default": null
-      },
-      "contact_until": {
-        "taxonomy": "hop_contact_until",
-        "default": null
-      },
-      "time_of_application": {},
-      "notes": {}
+      "notes": {},
+      "application": {},
+      "contact": {}
     },
     "brew_checklist_step": {
       "step_id": {},

@@ -18,6 +18,7 @@ import { makeBoilRow } from "../views/producer/boilPolicy.js";
 import { makeRow as makeMaltRow } from "./cards/malt.js";
 import { makeRow as makeSugarRow } from "./cards/late-additions.js";
 import { makeDryHopRow } from "./cards/dry-hops.js";
+import { migrateLegacyRow } from "../views/dryHopSchedule.js";
 import { makeWhirlpoolRow } from "../views/producer/whirlpoolPolicy.js";
 import { WHIRLPOOL_ROW_DEFAULTS } from "../views/registry/hops.js";
 import { makeTraceMaltRow } from "../views/producer/traceMaltRows.js";
@@ -214,7 +215,7 @@ function dryHopRow(row, catalog) {
     ...makeDryHopRow(artifact, item),
     quantity: grams,
     unit: "g",
-    contact_duration_min: row.duration_min ?? null,
+    contact: migrateLegacyRow({ contact_duration_min: row.duration_min ?? null }).contact,
   };
 }
 

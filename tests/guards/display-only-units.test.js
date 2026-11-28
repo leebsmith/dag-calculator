@@ -85,20 +85,3 @@ test("A8d: registry displayUnit defaults the display (g/ml)", async () => {
   assert.equal(acid.unit, "mL");
   assert.equal(acid.customized, false);
 });
-
-// A8e: a collection column with a `displayUnit` renders in that unit, and the
-// write stores the base value (cell conversion for collection tables).
-test("A8e: collection cell displayUnit converts display; write stores base", async () => {
-  const app = await sharedTestApp();
-  const table = () => app.fieldsBySlice.hops.find((f) => f.id === "batch.dry_hops");
-
-  app.addRow(table());
-  app.editCell(table(), 0, "contact_duration_min", "48");
-
-  assert.equal(table().rows[0].contact_duration_min, "48.0", "cell displays in hours");
-  assert.equal(
-    app.draftState().collections["batch.dry_hops"][0].contact_duration_min,
-    2880,
-    "canonical value is stored in base minutes (48 hr)"
-  );
-});

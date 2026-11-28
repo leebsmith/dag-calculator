@@ -81,9 +81,8 @@
   ([Type], "type", left),
   ([Qty], "quantity", right),
   ([Unit], "unit", right),
-  ([Applied at], "applied", left),
+  ([When], "applied", left),
   ([Contact], "contact", left),
-  ([Detail], "detail", left),
 )
 
 #let render-hops() = {
@@ -153,9 +152,9 @@
       hop-table(DRY, dry-columns)
       v(2pt)
       note[
-        Applied in fermentation. The event and the contact record the intent; there
-        is no fermentation model behind them. Dry hops add no IBU and sit outside
-        the totals below.
+        Applied in fermentation. The application instant and the contact span record
+        intent; there is no fermentation model behind them. Dry hops add no IBU and
+        sit outside the totals below.
       ]
     })
   }

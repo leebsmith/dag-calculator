@@ -1,20 +1,18 @@
-// Dry-hop card: the schedule on three axes — application event, contact time,
-// and hop type. Descriptive only; the calculator has no fermentation model, so
-// an event or a termination trigger records intent, never a prediction.
+// Dry-hop card: the hop, quantity and unit stay inline; the schedule lives in
+// the language module and the inspector. Descriptive only — the calculator has
+// no fermentation model, so a schedule records intent, never a prediction.
 
-import { toBase } from "../../engine/index.js";
-import { displayValue } from "../../views/producer.js";
 import { rowDefaults } from "../../views/producer/authoring.js";
+import { defaultApplication, defaultContact } from "../../views/dryHopSchedule.js";
 import { DRY_HOP_NODES as N, DRY_HOP_VALUE_LABELS } from "../../views/registry/dry-hops.js";
 import { DRY_HOP_FORMS } from "../../views/producer/hopRows.js";
 import {
   countLabel,
   firstNonEmptyString,
-  formatWithDecimals,
-  isFiniteNumber,
   optionLabel,
   resultCounter,
 } from "../../utils.js";
+import { KEYS as scheduleUiKeys, dryHopScheduleActions } from "./dryHopScheduleUi.js";
 import {
   catalogDraftKeys,
   catalogDraftLayer,
@@ -33,6 +31,8 @@ export function makeDryHopRow(artifact, item) {
   row.hop_id = item.id;
   row.variety = item.name;
   row.product_type = item.product_form ?? "t90_pellet";
+  row.application = defaultApplication();
+  row.contact = defaultContact();
   return row;
 }
 
@@ -82,8 +82,6 @@ function dryHopActions({ artifact, getView }) {
     dryHopRows: [],
     dryHopSectionOpen: true,
     dryHopProductOptions: dryHopOptions(artifact, "hop_product_form", DRY_HOP_FORM_VALUES),
-    dryHopEventOptions: dryHopOptions(artifact, "hop_application_event"),
-    dryHopContactUntilOptions: dryHopOptions(artifact, "hop_contact_until"),
     dryHopUnitOptions: dryHopOptions(artifact, "hop_unit"),
 
     dryHopTitle,
@@ -95,27 +93,6 @@ function dryHopActions({ artifact, getView }) {
 
     dryHopTypeLabel(row) {
       return dryHopLabel("hop_product_form", row?.product_type);
-    },
-
-    dryHopEventLabel(row) {
-      return dryHopLabel("hop_application_event", row?.application_event);
-    },
-
-    dryHopUntilLabel(row) {
-      return dryHopLabel("hop_contact_until", row?.contact_until);
-    },
-
-    dryHopContactHours(row) {
-      const minutes = row?.contact_duration_min;
-      if (!isFiniteNumber(minutes)) return "";
-      return formatWithDecimals(displayValue(artifact, "time", "hr", minutes), 1, { dash: "" });
-    },
-
-    dryHopContactLabel(row) {
-      const hours = actions.dryHopContactHours(row);
-      if (hours) return `${hours} h`;
-      const until = actions.dryHopUntilLabel(row);
-      return until ? `until ${until}` : "—";
     },
 
     setDryHopDraftField(index, field, value) {
@@ -130,26 +107,6 @@ function dryHopActions({ artifact, getView }) {
       });
     },
 
-    setDryHopDraftContactHours(index, value) {
-      const view = getView();
-      const text = String(value ?? "").trim();
-      if (!text) {
-        view.patchDraftRow(index, { contact_duration_min: null });
-        return;
-      }
-      const minutes = toBase(artifact, "time", "hr", Number(text));
-      view.patchDraftRow(index, {
-        contact_duration_min: Number.isFinite(minutes) ? Math.max(0, minutes) : null,
-        contact_until: null,
-      });
-    },
-
-    setDryHopDraftContactUntil(index, value) {
-      getView().patchDraftRow(index, {
-        contact_until: value || null,
-        contact_duration_min: null,
-      });
-    },
   };
   return actions;
 }
@@ -236,56 +193,11 @@ function dryHopRowIdentitySchema(app) {
       options: app.dryHopUnitOptions,
       lazy: true,
     },
-    {
-      id: "dry-hop-row-event",
-      type: "select",
-      label: "Applied at",
-      modelKey: "application_event",
-      options: app.dryHopEventOptions,
-      lazy: true,
-    },
   ];
 }
 
-function dryHopContactModeOptions(app) {
+function dryHopRowNotesSchema() {
   return [
-    { value: "hours", label: "Hours" },
-    ...app.dryHopContactUntilOptions.map((opt) => ({ value: opt.value, label: opt.label })),
-    { value: "", label: "No contact limit" },
-  ];
-}
-
-function dryHopRowContactSchema(app) {
-  return [
-    {
-      id: "dry-hop-row-contact-mode",
-      type: "select",
-      label: "Contact ends",
-      read: () => app.dryHopContactMode(app.dryHopActiveRow),
-      options: dryHopContactModeOptions(app),
-      lazy: true,
-      hint: "A number of hours, or the event that ends contact.",
-    },
-    {
-      id: "dry-hop-row-contact",
-      type: "number",
-      label: "Hours",
-      read: () => app.dryHopContactHours(app.dryHopActiveRow),
-      min: 0,
-      step: 1,
-      lazy: true,
-      when: () => app.dryHopContactMode(app.dryHopActiveRow) === "hours",
-    },
-    {
-      id: "dry-hop-row-detail",
-      type: "text",
-      label: "Trigger",
-      modelKey: "time_of_application",
-      default: "",
-      placeholder: "e.g. 50% attenuation, day 3",
-      hint: "Free text: what you watch for. Not solved.",
-      lazy: true,
-    },
     {
       id: "dry-hop-row-notes",
       type: "text",
@@ -297,39 +209,13 @@ function dryHopRowContactSchema(app) {
   ];
 }
 
-function dryHopContactActions({ getView }) {
-  return {
-    dryHopContactMode(row) {
-      if (isFiniteNumber(row?.contact_duration_min)) return "hours";
-      return row?.contact_until ?? "";
-    },
-
-    setDryHopContactMode(index, value) {
-      if (value === "hours") {
-        const row = getView().draftRows?.[index];
-        const patch = { contact_until: null };
-        if (!isFiniteNumber(row?.contact_duration_min)) patch.contact_duration_min = 24 * 60;
-        getView().patchDraftRow(index, patch);
-        return;
-      }
-      getView().patchDraftRow(index, { contact_until: value || null, contact_duration_min: null });
-    },
-  };
-}
-
 function dryHopInspectorActions() {
   return {
     dryHopInspectorFields() {
       const app = this;
       return {
-        schema: [...dryHopRowIdentitySchema(app), ...dryHopRowContactSchema(app)],
+        schema: [...dryHopRowIdentitySchema(app), ...dryHopRowNotesSchema()],
         onChange: (field, value) => {
-          if (field.id === "dry-hop-row-contact-mode") {
-            return app.setDryHopContactMode(app.dryHopActiveIndex, value);
-          }
-          if (field.id === "dry-hop-row-contact") {
-            return app.setDryHopDraftContactHours(app.dryHopActiveIndex, value);
-          }
           if (field.type === "number") {
             return app.setDryHopDraftNumber(app.dryHopActiveIndex, field.modelKey, value);
           }
@@ -344,7 +230,7 @@ export function createDryHopCard({ artifact, getView }) {
   const actions = {
     ...dryHopActions({ artifact, getView }),
     ...dryHopEditorShellActions(),
-    ...dryHopContactActions({ getView }),
+    ...dryHopScheduleActions({ getView }),
     ...dryHopInspectorActions(),
   };
   Object.defineProperties(actions, dryHopDescriptors(getView));
@@ -369,23 +255,14 @@ export const KEYS = [
   "dryHopSectionMeta",
   "toggleDryHopSection",
   "dryHopProductOptions",
-  "dryHopEventOptions",
-  "dryHopContactUntilOptions",
   "dryHopUnitOptions",
   "dryHopTitle",
   "dryHopTypeLabel",
-  "dryHopEventLabel",
-  "dryHopUntilLabel",
-  "dryHopContactHours",
-  "dryHopContactMode",
-  "setDryHopContactMode",
-  "dryHopContactLabel",
   "setDryHopDraftField",
   "setDryHopDraftNumber",
-  "setDryHopDraftContactHours",
-  "setDryHopDraftContactUntil",
   "dryHopDraftSummary",
   "dryHopResultLabel",
   "dryHopEditorConfig",
   "dryHopInspectorFields",
+  ...scheduleUiKeys,
 ];

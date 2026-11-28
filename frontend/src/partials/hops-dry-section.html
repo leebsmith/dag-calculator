@@ -18,19 +18,18 @@
 
   <div class="section-body" id="hops-dry" x-show="dryHopSectionOpen">
     <p class="text-xs text-muted">
-      Application event, contact end, trigger and hop type. Nothing here is solved.
+      The application instant and contact span are recorded intent. Nothing here is solved.
     </p>
 
     <div class="data-table-container">
       <table class="data-table data-table--editor">
         <colgroup>
-          <col style="width: 22%" />
-          <col style="width: 13%" />
-          <col style="width: 8%" />
-          <col style="width: 8%" />
-          <col style="width: 15%" />
-          <col style="width: 22%" />
+          <col style="width: 20%" />
           <col style="width: 12%" />
+          <col style="width: 8%" />
+          <col style="width: 8%" />
+          <col style="width: 24%" />
+          <col style="width: 28%" />
         </colgroup>
         <thead>
           <tr>
@@ -38,9 +37,8 @@
             <th>Type</th>
             <th class="text-right">Qty</th>
             <th class="text-right">Unit</th>
-            <th>Applied at</th>
+            <th>When</th>
             <th>Contact</th>
-            <th>Trigger</th>
           </tr>
         </thead>
         <tbody>
@@ -50,14 +48,13 @@
               <td x-text="dryHopTypeLabel(row)"></td>
               <td class="text-right tabular-nums" x-text="row.quantity"></td>
               <td class="text-right" x-text="row.unit"></td>
-              <td x-text="dryHopEventLabel(row)"></td>
-              <td x-text="dryHopContactLabel(row)"></td>
-              <td x-text="row.time_of_application"></td>
+              <td x-text="dryHopWhen(row)"></td>
+              <td x-text="dryHopContact(row)"></td>
             </tr>
           </template>
           <template x-if="dryHopRows.length === 0">
             <tr>
-              <td colspan="7" class="empty-state">
+              <td colspan="6" class="empty-state">
                 No dry hops yet. Click “Configure Dry Hops” to add additions.
               </td>
             </tr>

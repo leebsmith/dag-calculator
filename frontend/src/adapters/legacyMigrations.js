@@ -6,6 +6,7 @@ import {
   convertWhirlpoolHopRows,
   filterDoughInRests,
 } from "../utils/migrationTransformers.js";
+import { migrateLegacyRows } from "../views/dryHopSchedule.js";
 
 export function dropLegacyDoughIn(engine) {
   const { rows, changed } = filterDoughInRests(engine.get("mash.rests"));
@@ -24,4 +25,15 @@ export function migrateWhirlpoolCoordinates(engine) {
     engine.setRoot("batch.whirlpool_knockout_min", knockout);
   }
   return true;
+}
+
+export function migrateDryHopSchedule(engine) {
+  const rows = engine.getAuthored("batch.dry_hops");
+  if (!Array.isArray(rows) || rows.length === 0) return false;
+  const migrated = migrateLegacyRows(rows);
+  const changed = migrated.some(
+    (row, index) => JSON.stringify(row) !== JSON.stringify(rows[index])
+  );
+  if (changed) engine.setCollection("batch.dry_hops", migrated);
+  return changed;
 }

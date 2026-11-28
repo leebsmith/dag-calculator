@@ -27,14 +27,13 @@
           <div class="data-table-container data-table-container--fit">
             <table class="data-table data-table--editor data-table--fixed">
               <colgroup>
-                <col style="width: 13%" />
+                <col style="width: 14%" />
                 <col style="width: 10%" />
+                <col style="width: 7%" />
                 <col style="width: 8%" />
-                <col style="width: 8.5%" />
-                <col style="width: 18%" />
-                <col style="width: 26.5%" />
-                <col style="width: 8.5%" />
-                <col style="width: 7.5%" />
+                <col style="width: 26%" />
+                <col style="width: 28%" />
+                <col style="width: 7%" />
               </colgroup>
               <thead>
                 <tr>
@@ -42,9 +41,8 @@
                   <th>Type</th>
                   <th class="text-right">Qty</th>
                   <th>Unit</th>
-                  <th>Applied at</th>
-                  <th>Contact ends</th>
-                  <th>Trigger</th>
+                  <th>When</th>
+                  <th>Contact</th>
                   <th class="text-right">Actions</th>
                 </tr>
               </thead>
@@ -82,60 +80,8 @@
                         </template>
                       </select>
                     </td>
-                    <td>
-                      <select
-                        class="form-select text-xs"
-                        :value="row.application_event"
-                        @change="setDryHopDraftField(ri, 'application_event', $event.target.value)"
-                        :aria-label="'Application event for ' + dryHopTitle(row)"
-                      >
-                        <template x-for="opt in dryHopEventOptions" :key="opt.value">
-                          <option
-                            :value="opt.value"
-                            :selected="opt.value === row.application_event"
-                            x-text="opt.label"
-                          ></option>
-                        </template>
-                      </select>
-                    </td>
-                    <td>
-                      <select
-                        class="form-select text-xs"
-                        :value="dryHopContactMode(row)"
-                        @change="setDryHopContactMode(ri, $event.target.value)"
-                        :aria-label="'Contact ends for ' + dryHopTitle(row)"
-                      >
-                        <option value="hours" :selected="dryHopContactMode(row) === 'hours'">Hours</option>
-                        <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
-                          <option
-                            :value="opt.value"
-                            :selected="dryHopContactMode(row) === opt.value"
-                            x-text="opt.label"
-                          ></option>
-                        </template>
-                        <option value="" :selected="dryHopContactMode(row) === ''">No contact limit</option>
-                      </select>
-                      <input
-                        x-show="dryHopContactMode(row) === 'hours'"
-                        type="number"
-                        step="1"
-                        min="0"
-                        class="form-input table-input-parts"
-                        :value="dryHopContactHours(row)"
-                        @change="setDryHopDraftContactHours(ri, $event.target.value)"
-                        :aria-label="'Contact hours for ' + dryHopTitle(row)"
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        class="form-input text-xs"
-                        :value="row.time_of_application"
-                        placeholder="e.g. 50% attenuation, day 3"
-                        @change="setDryHopDraftField(ri, 'time_of_application', $event.target.value)"
-                        :aria-label="'Trigger for ' + dryHopTitle(row)"
-                      />
-                    </td>
+                    <td x-text="dryHopWhen(row)"></td>
+                    <td x-text="dryHopContact(row)"></td>
                     <td class="text-right">
                       <div class="row-actions">
                         <button type="button" class="btn-action-icon" @click="inspectDryHopRow(ri)" title="Inspect">✎</button>
@@ -153,7 +99,7 @@
                 </template>
                 <template x-if="draftRows.length === 0">
                   <tr>
-                    <td colspan="8" class="empty-state">
+                    <td colspan="7" class="empty-state">
                       No dry hops in the draft. Click “＋ Add from Catalog”.
                     </td>
                   </tr>
@@ -196,12 +142,191 @@
 
             <template x-if="dryHopDrawer === 'inspect'">
               <template x-if="dryHopActiveRow">
-                <div
-                  class="inspector-form"
-                  x-data="formBuilder" data-schema="dryHopInspectorFields"
-                  x-effect="setModel(dryHopActiveRow)"
-                >
-                  <load src="src/partials/ui-form-fields.html" />
+                <div class="inspector-form">
+                  <section class="card-section">
+                    <div class="card-section-header">
+                      <h4 class="eyebrow">When</h4>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" for="dh-application-kind">Applied</label>
+                      <select
+                        id="dh-application-kind"
+                        class="form-select"
+                        :value="dryHopApplicationKind()"
+                        @change="setDryHopApplicationKind($event.target.value)"
+                      >
+                        <template x-for="opt in dryHopApplicationKindOptions" :key="opt.id">
+                          <option :value="opt.id" :selected="opt.id === dryHopApplicationKind()" x-text="opt.label"></option>
+                        </template>
+                      </select>
+                    </div>
+
+                    <div class="form-group" x-show="dryHopApplicationKind() === 'event'">
+                      <label class="form-label" for="dh-application-event">Event</label>
+                      <select
+                        id="dh-application-event"
+                        class="form-select"
+                        :value="dryHopApplicationEvent()"
+                        @change="setDryHopApplicationEvent($event.target.value)"
+                      >
+                        <template x-for="opt in dryHopEventOptions" :key="opt.value">
+                          <option :value="opt.value" :selected="opt.value === dryHopApplicationEvent()" x-text="opt.label"></option>
+                        </template>
+                      </select>
+                    </div>
+
+                    <div class="form-group" x-show="dryHopApplicationKind() === 'day'">
+                      <label class="form-label" for="dh-application-day">Day of fermentation</label>
+                      <input
+                        id="dh-application-day"
+                        type="number"
+                        min="0"
+                        step="0.25"
+                        class="form-input"
+                        :value="dryHopApplicationDay()"
+                        @change="setDryHopApplicationDay($event.target.value)"
+                      />
+                    </div>
+
+                    <div class="form-group" x-show="dryHopApplicationKind() === 'after'">
+                      <label class="form-label" for="dh-application-ref">Charge</label>
+                      <select
+                        id="dh-application-ref"
+                        class="form-select"
+                        :value="dryHopApplicationRefKey()"
+                        @change="setDryHopApplicationRef($event.target.value)"
+                      >
+                        <template x-for="opt in dryHopApplicationRefOptions()" :key="opt.value">
+                          <option :value="opt.value" :selected="opt.value === dryHopApplicationRefKey()" x-text="opt.label"></option>
+                        </template>
+                      </select>
+                    </div>
+
+                    <div class="form-group" x-show="dryHopApplicationKind() !== 'day'">
+                      <label class="form-label" for="dh-application-offset">Offset (days)</label>
+                      <input
+                        id="dh-application-offset"
+                        type="number"
+                        step="0.25"
+                        class="form-input"
+                        :value="dryHopApplicationOffset()"
+                        @change="setDryHopApplicationOffset($event.target.value)"
+                      />
+                      <span class="form-hint">Negative shifts earlier; 0.25 is six hours.</span>
+                    </div>
+                  </section>
+
+                  <section class="card-section">
+                    <div class="card-section-header">
+                      <h4 class="eyebrow">Contact</h4>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" for="dh-contact-kind">Ends</label>
+                      <select
+                        id="dh-contact-kind"
+                        class="form-select"
+                        :value="dryHopContactKind()"
+                        @change="setDryHopContactKind($event.target.value)"
+                      >
+                        <template x-for="opt in dryHopContactKindOptions" :key="opt.id">
+                          <option :value="opt.id" :selected="opt.id === dryHopContactKind()" x-text="opt.label"></option>
+                        </template>
+                      </select>
+                    </div>
+
+                    <div class="form-group" x-show="dryHopContactKind() === 'for'">
+                      <label class="form-label" for="dh-contact-days">Days</label>
+                      <input
+                        id="dh-contact-days"
+                        type="number"
+                        min="0.25"
+                        step="0.25"
+                        class="form-input"
+                        :value="dryHopContactDays()"
+                        @change="setDryHopContactDays($event.target.value)"
+                      />
+                    </div>
+
+                    <template x-if="dryHopContactKind() === 'until'">
+                      <div>
+                        <div class="form-group">
+                          <label class="form-label" for="dh-contact-until-kind">Until</label>
+                          <select
+                            id="dh-contact-until-kind"
+                            class="form-select"
+                            :value="dryHopContactUntilKind()"
+                            @change="setDryHopContactUntilKind($event.target.value)"
+                          >
+                            <template x-for="opt in dryHopInstantKindOptions" :key="opt.id">
+                              <option :value="opt.id" :selected="opt.id === dryHopContactUntilKind()" x-text="opt.label"></option>
+                            </template>
+                          </select>
+                        </div>
+
+                        <div class="form-group" x-show="dryHopContactUntilKind() === 'event'">
+                          <label class="form-label" for="dh-contact-until-event">Event</label>
+                          <select
+                            id="dh-contact-until-event"
+                            class="form-select"
+                            :value="dryHopContactUntilEvent()"
+                            @change="setDryHopContactUntilEvent($event.target.value)"
+                          >
+                            <template x-for="opt in dryHopEventOptions" :key="opt.value">
+                              <option :value="opt.value" :selected="opt.value === dryHopContactUntilEvent()" x-text="opt.label"></option>
+                            </template>
+                          </select>
+                        </div>
+
+                        <div class="form-group" x-show="dryHopContactUntilKind() === 'day'">
+                          <label class="form-label" for="dh-contact-until-day">Day of fermentation</label>
+                          <input
+                            id="dh-contact-until-day"
+                            type="number"
+                            min="0"
+                            step="0.25"
+                            class="form-input"
+                            :value="dryHopContactUntilDay()"
+                            @change="setDryHopContactUntilDay($event.target.value)"
+                          />
+                        </div>
+
+                        <div class="form-group" x-show="dryHopContactUntilKind() === 'after'">
+                          <label class="form-label" for="dh-contact-until-ref">Charge</label>
+                          <select
+                            id="dh-contact-until-ref"
+                            class="form-select"
+                            :value="dryHopContactUntilRefKey()"
+                            @change="setDryHopContactUntilRef($event.target.value)"
+                          >
+                            <template x-for="opt in dryHopContactRefOptions()" :key="opt.value">
+                              <option :value="opt.value" :selected="opt.value === dryHopContactUntilRefKey()" x-text="opt.label"></option>
+                            </template>
+                          </select>
+                        </div>
+
+                        <div class="form-group" x-show="dryHopContactUntilKind() !== 'day'">
+                          <label class="form-label" for="dh-contact-until-offset">Offset (days)</label>
+                          <input
+                            id="dh-contact-until-offset"
+                            type="number"
+                            step="0.25"
+                            class="form-input"
+                            :value="dryHopContactUntilOffset()"
+                            @change="setDryHopContactUntilOffset($event.target.value)"
+                          />
+                        </div>
+                      </div>
+                    </template>
+                  </section>
+
+                  <div
+                    x-data="formBuilder" data-schema="dryHopInspectorFields"
+                    x-effect="setModel(dryHopActiveRow)"
+                  >
+                    <load src="src/partials/ui-form-fields.html" />
+                  </div>
                 </div>
               </template>
             </template>

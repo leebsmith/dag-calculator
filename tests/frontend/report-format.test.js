@@ -253,10 +253,8 @@ const DRY_HOP = {
   quantity: 1,
   unit: "oz",
   application_stage: "fermentation",
-  application_event: "high_krausen",
-  contact_duration_min: null,
-  contact_until: "terminal_gravity",
-  time_of_application: "",
+  application: { kind: "event", event: "high_krausen" },
+  contact: { kind: "until", instant: { kind: "event", event: "terminal_gravity" } },
   notes: "",
 };
 
@@ -300,8 +298,7 @@ test("hop tables carry the charges, the solved cells and the choice labels", asy
   assert.equal(dry[0].quantity.text, "1");
   assert.equal(dry[0].unit.text, "oz");
   assert.equal(dry[0].applied.text, "High krausen");
-  assert.equal(dry[0].contact.text, "Terminal gravity");
-  assert.equal(dry[0].detail.text, "—");
+  assert.equal(dry[0].contact.text, "until Terminal gravity");
 
   const purchases = tables["report.hop_purchases"];
   assert.deepEqual(
@@ -378,23 +375,19 @@ test("a volume dry hop prints millilitres in the purchase table", async () => {
   assert.equal(purchases[0].purchase.text, "30 ml");
 });
 
-test("a dry hop duration and detail reach the report", async () => {
+test("a dry hop duration reaches the report in days", async () => {
   const app = await booted();
   app.engine.setCollection("batch.dry_hops", [
     {
       ...DRY_HOP,
-      contact_duration_min: 4320,
-      contact_until: null,
-      time_of_application: "day 3",
+      contact: { kind: "for", days: 3 },
     },
   ]);
   app.compute();
   const dry = app.reportFormattedTables()["batch.dry_hops"];
 
   assert.equal(dry.length, 1);
-  assert.equal(dry[0].contact.unit, "hr");
-  assert.match(dry[0].contact.text, /72/);
-  assert.equal(dry[0].detail.text, "day 3");
+  assert.equal(dry[0].contact.text, "for 3 d");
 });
 
 test("the IBU split shares are formatted from their artifact nodes", async () => {

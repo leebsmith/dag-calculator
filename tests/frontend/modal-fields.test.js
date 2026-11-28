@@ -42,41 +42,19 @@ test("the dry-hop editor shell maps the draft callbacks", () => {
   assert.deepEqual(context.calls, ["cancel", "save", "escape"]);
 });
 
-test("the dry-hop inspector keeps nine fields and dispatches writes by id and type", () => {
+test("the dry-hop inspector keeps the identity fields and notes", () => {
   const card = createDryHopCard({ artifact: { taxonomies: {} }, getView: () => ({}) });
   const context = dryHopApp();
   const config = card.dryHopInspectorFields.call(context);
 
   assert.deepEqual(
     config.schema.map((field) => field.id),
-    [
-      "dry-hop-row-variety",
-      "dry-hop-row-type",
-      "dry-hop-row-quantity",
-      "dry-hop-row-unit",
-      "dry-hop-row-event",
-      "dry-hop-row-contact-mode",
-      "dry-hop-row-contact",
-      "dry-hop-row-detail",
-      "dry-hop-row-notes",
-    ]
+    ["dry-hop-row-variety", "dry-hop-row-type", "dry-hop-row-quantity", "dry-hop-row-unit", "dry-hop-row-notes"]
   );
-  assert.equal(config.schema[5].read(), "keg");
-  assert.deepEqual(config.schema[5].options, [
-    { value: "hours", label: "Hours" },
-    { value: "keg", label: "Kegging" },
-    { value: "", label: "No contact limit" },
-  ]);
-  assert.equal(config.schema[6].when(), false, "hours only show while that mode is chosen");
-  assert.equal(config.schema[6].read(), "48");
 
-  config.onChange(config.schema[5], "hours");
-  assert.deepEqual(context.calls.at(-1), ["mode", 4, "hours"]);
-  config.onChange(config.schema[6], "36");
-  assert.deepEqual(context.calls.at(-1), ["hours", 4, "36"]);
   config.onChange(config.schema[2], "100");
   assert.deepEqual(context.calls.at(-1), ["number", 4, "quantity", "100"]);
-  config.onChange(config.schema[8], "citrus");
+  config.onChange(config.schema[4], "citrus");
   assert.deepEqual(context.calls.at(-1), ["field", 4, "notes", "citrus"]);
 });
 

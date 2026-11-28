@@ -79,18 +79,8 @@
   "batch.dry_hops": {
     "label": "Dry hops"
   },
-  "batch.dry_hops.application_event": {
-    "label": "Applied at"
-  },
   "batch.dry_hops.application_stage": {
     "label": "Stage"
-  },
-  "batch.dry_hops.contact_duration_min": {
-    "label": "Contact",
-    "displayUnit": "hr"
-  },
-  "batch.dry_hops.contact_until": {
-    "label": "Contact until"
   },
   "batch.dry_hops.notes": {
     "label": "Notes"
@@ -100,10 +90,6 @@
   },
   "batch.dry_hops.quantity": {
     "label": "Quantity"
-  },
-  "batch.dry_hops.time_of_application": {
-    "label": "Trigger",
-    "hint": "Free text: what you watch for. Not solved."
   },
   "batch.dry_hops.unit": {
     "label": "Unit"

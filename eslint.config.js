@@ -205,7 +205,7 @@ const FILE_LINE_PINS = {
   "engine/validate.js": 541,
   "store/persistence.js": 412,
   "store/recipes.js": 467,
-  "views/producer/reportFormat.js": 411,
+  "views/producer/reportFormat.js": 410,
 };
 
 const SCRIPT_COMPLEXITY = {

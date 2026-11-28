@@ -4,7 +4,7 @@ Generated from `frontend/src/adapters/installers.js` — do not edit by hand.
 Re-sync after any installer change: `node scripts/emit-ownership-index.mjs`.
 The full member table is on demand: `node scripts/emit-ownership-index.mjs --full`.
 
-- Declared members: **865** (600 enumerable, 265 hidden)
+- Declared members: **887** (622 enumerable, 265 hidden)
 - Installers: **24**
 - Card partials: **26**
 - Installers reading another installer's key: **17 of 24**
@@ -35,7 +35,7 @@ The full member table is on demand: `node scripts/emit-ownership-index.mjs --ful
 | `malt` | `frontend/src/adapters/cards/malt.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 56 | 2 | 18 |
 | `mash` | `frontend/src/adapters/cards/mash.js`, `frontend/src/adapters/cards/mashGetters.js` | 53 | 2 | 4 |
 | `brewDay` | `frontend/src/adapters/cards/brew-day.js` | 15 | 1 | 1 |
-| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 59 | 2 | 13 |
+| `dryHops` | `frontend/src/adapters/cards/dry-hops.js`, `frontend/src/adapters/cards/catalogDraft.js`, `frontend/src/adapters/cards/catalogDraftGetters.js` | 81 | 2 | 13 |
 | `water` | `frontend/src/adapters/cards/water.js`, `frontend/src/adapters/cards/waterCardActions.js` | 28 | 2 | 6 |
 | `modalFocus` | `frontend/src/adapters/modalFocus.js` | 2 | 0 | 0 |
 

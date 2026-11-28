@@ -15,7 +15,7 @@ import {
   migrateProcessNotes, seedFermenterIdentity, seedIdentityResiduals, seedSugarShareParts,
 } from "../store/batchMigrations.js";
 import { migrateChecklistCollections } from "../views/checklist/catalog.js";
-import { dropLegacyDoughIn, migrateWhirlpoolCoordinates } from "./legacyMigrations.js";
+import { dropLegacyDoughIn, migrateDryHopSchedule, migrateWhirlpoolCoordinates } from "./legacyMigrations.js";
 import { createLibrary } from "../store/library.js";
 import { isUserItem } from "../store/userCatalog.js";
 import { createAppStore } from "../store/index.js";
@@ -186,15 +186,15 @@ export function createStepApp(options = {}) {
       session.rebuild({ ...processNotes.state, collections: migratedChecklist.collections });
       const migratedDerate = this.migrateAttenuationDerate(legacyDerate);
       this.onBatchLoad?.();
-      const migrated = dropLegacyDoughIn(session.engine);
-      const migratedWhirlpool = migrateWhirlpoolCoordinates(session.engine);
+      const migrated = dropLegacyDoughIn(session.engine); const migratedWhirlpool = migrateWhirlpoolCoordinates(session.engine);
+      const migratedDryHopSchedule = migrateDryHopSchedule(session.engine);
       const fermenter = seedFermenterIdentity({ session, cache, defaultId: DEFAULT_FERMENTER_ID });
       const seeded = this.seedIdentityResiduals();
       const materialized = this.materializeSelections();
       const synced = this.syncWaterTargets?.() ?? false;
       const sugarParts = this.seedSugarShareParts();
       const changed = [
-        seeded, materialized, synced, migrated, migratedWhirlpool, fermenter,
+        seeded, materialized, synced, migrated, migratedWhirlpool, migratedDryHopSchedule, fermenter,
         migratedChecklist.changed, migratedDerate, processNotes.changed, sugarParts,
         migrateLegacyYeastCap({ session }), dropSugarRowPct({ engine: session.engine }),
       ].some(Boolean);

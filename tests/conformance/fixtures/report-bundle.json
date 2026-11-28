@@ -2,7 +2,7 @@
   "bundle_format": 7,
   "artifact": {
     "schema_version": 12,
-    "hash": "sha256:3341cfb85697ce00bb646ebc2412e7cb9b3970eeebb5326e258790c6e47244ce",
+    "hash": "sha256:cd47aa35166a85d0d3dc4065ad24ed42cef29c30912bee2ad91044015b30b436",
     "content": {
       "schema_version": 12,
       "meta": {
@@ -538,24 +538,6 @@
         "hop_allocation_mode": [
           "ibu_split",
           "mass_pool"
-        ],
-        "hop_application_event": [
-          "pitch",
-          "high_krausen",
-          "mid_fermentation",
-          "terminal",
-          "post_diacetyl",
-          "cold_crash",
-          "packaging"
-        ],
-        "hop_contact_until": [
-          "terminal_gravity",
-          "vdk_clearance",
-          "hop_creep_plateau",
-          "biotransformation_equilibrium",
-          "next_charge",
-          "cold_crash",
-          "packaging"
         ],
         "hop_unit": [
           "oz",
@@ -1635,20 +1617,9 @@
             "taxonomy": "hop_addition_stage",
             "default": "fermentation"
           },
-          "application_event": {
-            "taxonomy": "hop_application_event",
-            "default": "high_krausen"
-          },
-          "contact_duration_min": {
-            "dimension": "time",
-            "default": null
-          },
-          "contact_until": {
-            "taxonomy": "hop_contact_until",
-            "default": null
-          },
-          "time_of_application": {},
-          "notes": {}
+          "notes": {},
+          "application": {},
+          "contact": {}
         },
         "brew_checklist_step": {
           "step_id": {},
@@ -5785,70 +5756,18 @@
           "fermentation": "Fermentation"
         }
       },
-      "batch.dry_hops.application_event": {
-        "label": "Applied at",
+      "batch.dry_hops.application": {
+        "label": "When",
         "dimension": null,
         "unit": null,
         "symbol": null,
         "decimals": null,
-        "step": null,
-        "options": [
-          "pitch",
-          "high_krausen",
-          "mid_fermentation",
-          "terminal",
-          "post_diacetyl",
-          "cold_crash",
-          "packaging"
-        ],
-        "option_labels": {
-          "pitch": "At pitch",
-          "high_krausen": "High krausen",
-          "mid_fermentation": "Mid-fermentation",
-          "terminal": "Terminal gravity",
-          "post_diacetyl": "Post-diacetyl",
-          "cold_crash": "Cold crash",
-          "packaging": "Packaging"
-        }
-      },
-      "batch.dry_hops.contact_duration_min": {
-        "label": "Contact",
-        "dimension": "time",
-        "unit": "min",
-        "symbol": "min",
-        "decimals": 0,
         "step": null,
         "options": null,
         "option_labels": null
       },
-      "batch.dry_hops.contact_until": {
-        "label": "Contact until",
-        "dimension": null,
-        "unit": null,
-        "symbol": null,
-        "decimals": null,
-        "step": null,
-        "options": [
-          "terminal_gravity",
-          "vdk_clearance",
-          "hop_creep_plateau",
-          "biotransformation_equilibrium",
-          "next_charge",
-          "cold_crash",
-          "packaging"
-        ],
-        "option_labels": {
-          "terminal_gravity": "Terminal gravity",
-          "vdk_clearance": "VDK clearance",
-          "hop_creep_plateau": "Hop creep plateau",
-          "biotransformation_equilibrium": "Biotransformation equilibrium",
-          "next_charge": "Next charge",
-          "cold_crash": "Cold crash",
-          "packaging": "Packaging"
-        }
-      },
-      "batch.dry_hops.time_of_application": {
-        "label": "Detail",
+      "batch.dry_hops.contact": {
+        "label": "Contact",
         "dimension": null,
         "unit": null,
         "symbol": null,
@@ -6056,7 +5975,7 @@
         "option_labels": null
       }
     },
-    "hash": "sha256:e627bcb8d091abd4c5f6dc45c769f6cd52682b13891878195f37384eada201d9"
+    "hash": "sha256:807242254a2ccb2efd7e95423f7aa6181625592b02dba019c93852a01ca0ee54"
   },
   "batch": {
     "id": "frozen-1",
@@ -6233,10 +6152,17 @@
           "quantity": 1.0,
           "unit": "oz",
           "application_stage": "fermentation",
-          "application_event": "high_krausen",
-          "contact_duration_min": null,
-          "contact_until": "terminal_gravity",
-          "time_of_application": "",
+          "application": {
+            "kind": "event",
+            "event": "high_krausen"
+          },
+          "contact": {
+            "kind": "until",
+            "instant": {
+              "kind": "event",
+              "event": "terminal_gravity"
+            }
+          },
           "notes": ""
         }
       ],
@@ -6516,10 +6442,17 @@
           "quantity": 1.0,
           "unit": "oz",
           "application_stage": "fermentation",
-          "application_event": "high_krausen",
-          "contact_duration_min": null,
-          "contact_until": "terminal_gravity",
-          "time_of_application": "",
+          "application": {
+            "kind": "event",
+            "event": "high_krausen"
+          },
+          "contact": {
+            "kind": "until",
+            "instant": {
+              "kind": "event",
+              "event": "terminal_gravity"
+            }
+          },
           "notes": ""
         }
       ],
@@ -8126,14 +8059,7 @@
           "dimension": null
         },
         "contact": {
-          "text": "Terminal gravity",
-          "number": null,
-          "unit": null,
-          "base": null,
-          "dimension": null
-        },
-        "detail": {
-          "text": "\u2014",
+          "text": "until Terminal gravity",
           "number": null,
           "unit": null,
           "base": null,
@@ -8773,5 +8699,5 @@
       "notes": []
     }
   },
-  "content_hash": "sha256:9ef77c08de2dff5ee42d14f41621d3a858f2840cd3d1851a63a568ba5e48ad94"
+  "content_hash": "sha256:d050e853f1e307be6d8c3d8ab3d5cd5ece589c6046056a057e499cc41eda1908"
 }
