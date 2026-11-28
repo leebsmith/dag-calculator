@@ -57,7 +57,6 @@ const HOP = [
   "frontend/src/adapters/cards/hopsStrategy.js",
   "frontend/src/adapters/cards/hopAllocation.js", "frontend/src/adapters/cards/hopEditorFields.js",
 ];
-const PROSE_FIELDS = ["frontend/src/adapters/cards/proseFields.js"];
 const CATALOG_DRAFT = [
   "frontend/src/adapters/cards/catalogDraft.js",
   "frontend/src/adapters/cards/catalogDraftGetters.js",
@@ -134,7 +133,7 @@ export const INSTALLERS = [
       "modal-whirlpool-cooling-ceiling.html",
     ],
   },
-  { name: "proseFields", modules: PROSE_FIELDS, keys: proseFieldsKeys, partials: ["wall-drawer.html"] },
+  { name: "proseFields", modules: ["frontend/src/adapters/cards/proseFields.js"], keys: proseFieldsKeys, partials: ["wall-drawer.html"] },
   {
     name: "lateAdditions",
     modules: LATE_ADDITIONS_AND_CATALOG,
@@ -184,6 +183,7 @@ export const SHARED = [
   },
   { key: "hopStrategy", owners: ["proseFields", "proseValidation", "drawer"], reason: "the Notes drawer edits the hop card's strategy prose" },
   { key: "hopStrategyFields", owners: ["proseFields", "proseValidation", "drawer"], reason: "the Notes drawer renders the hop card's strategy field" },
+  { key: "setHopAllocationMode", owners: ["styleDeclaration", "styleNavigator", "styleConformance", "styleTargets"], reason: "the targets band select drives the hop allocation root" },
   {
     key: "proseIssues",
     owners: ["fieldActions", "brewDay"],

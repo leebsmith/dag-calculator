@@ -265,8 +265,11 @@ not implicit rewrites.
 
 ### Hop allocation mode
 
-The hop bill has two authoring modes, chosen in the Hops fieldset beside the
-stage targets and stored on the batch as `batch.hop_allocation_mode`. The mode is a
+The hop bill has two authoring modes, chosen in the Targets fieldset beside the
+IBU band and stored on the batch as `batch.hop_allocation_mode`. The band also
+carries the **Bitterness allocation** slider, which is the split itself: it reads
+back as the boil IBU, the whirlpool share and the whirlpool IBU and hides while
+the one-pool mode is selected, because the split is then emergent. The mode is a
 batch root, so it travels in the record, the import projection and the frozen
 report.
 

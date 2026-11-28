@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 
 import { steps } from "../../frontend/src/views/steps.js";
 import { drawer, fieldsets, homes, panel, retired } from "../../frontend/src/views/fieldsets.js";
-import { artifact, rel, walk } from "./util.js";
+import { artifact, read, rel, walk } from "./util.js";
 
 const ARTIFACT = artifact();
 const PROSE = ["discussion", "hop_strategy", "fermentation_strategy", "process_notes"];
@@ -141,6 +141,20 @@ test("the wall has the seven declared fieldsets", () => {
     fieldsets.map((fieldset) => fieldset.id),
     ["targets", "yeast", "grist", "hops", "mash", "water", "boil"]
   );
+});
+
+test("the allocation controls live in the targets bands", () => {
+  const markup = read("frontend/src/partials/wall-targets.html");
+  assert.match(markup, /setHopAllocationMode/);
+  assert.match(markup, /data-schema="whirlpoolFractionFields"/);
+  assert.equal(homes["batch.hop_allocation_mode"], "targets");
+  assert.equal(homes["batch.whirlpool_ibu_fraction"], "targets");
+});
+
+test("the scale explanation renders once", () => {
+  const markup = read("frontend/src/partials/wall-targets.html");
+  assert.equal((markup.match(/Free target\./g) ?? []).length, 1);
+  assert.equal((markup.match(/class="form-hint text-warning" x-show="scaleTargetMismatch"/g) ?? []).length, 1);
 });
 
 test("an unassigned root fails", () => {

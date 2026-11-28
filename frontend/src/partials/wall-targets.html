@@ -72,11 +72,6 @@
     </div>
         </div>
       </div>
-      <span class="form-hint">
-        Free target. Style conflicts are warnings; the solver realizes the other two
-        gravity/strength axes.
-      </span>
-      <span class="form-hint text-warning" x-show="scaleTargetMismatch" x-text="scaleTargetMismatch"></span>
       <span class="form-hint" x-show="!stylePreview">The fermentation target needs a solved batch.</span>
     </section>
 
@@ -97,26 +92,45 @@
       <div class="card-section-header">
         <h3 class="eyebrow">Bands</h3>
       </div>
-<!-- Color & bitterness targets (style-envelope bounded) -->
-<section class="card-section">
-  <div class="card-section-header">
-    <h3 class="eyebrow">Color &amp; Bitterness targets</h3>
-  </div>
+      <div
+        x-data="formBuilder" data-schema="styleSrmFields"
+      >
+        <load src="src/partials/ui-form-fields.html" />
+        <span class="form-hint" x-show="!styleSrmSliderBounds">No SRM range in this style's envelope.</span>
+      </div>
 
-  <div
-    x-data="formBuilder" data-schema="styleSrmFields"
-  >
-    <load src="src/partials/ui-form-fields.html" />
-    <span class="form-hint" x-show="!styleSrmSliderBounds">No SRM range in this style's envelope.</span>
-  </div>
+      <div
+        x-data="formBuilder" data-schema="styleIbuFields"
+      >
+        <load src="src/partials/ui-form-fields.html" />
+        <span class="form-hint" x-show="!styleIbuSliderBounds">No IBU range in this style's envelope.</span>
+      </div>
 
-  <div
-    x-data="formBuilder" data-schema="styleIbuFields"
-  >
-    <load src="src/partials/ui-form-fields.html" />
-    <span class="form-hint" x-show="!styleIbuSliderBounds">No IBU range in this style's envelope.</span>
-  </div>
-    </section>
+      <div class="form-group">
+        <label class="form-label" for="hop-allocation-mode">Hop allocation</label>
+        <select
+          id="hop-allocation-mode"
+          class="form-select"
+          :value="hopAllocationTarget"
+          @change="setHopAllocationMode($event.target.value)"
+        >
+          <option value="ibu_split">Two pools (boil / whirlpool)</option>
+          <option value="mass_pool">One pool (boil + whirlpool)</option>
+        </select>
+        <span class="form-hint" x-show="hopAllocationTarget !== 'mass_pool'">
+          Each charge's parts are a share of its stage's IBU target.
+        </span>
+        <span class="form-hint" x-show="hopAllocationTarget === 'mass_pool'">
+          One hot-side pool: parts are a share of the boil + whirlpool mass, and the IBU split falls out.
+        </span>
+      </div>
+
+      <div
+        x-show="hopAllocationTarget !== 'mass_pool'"
+        x-data="formBuilder" data-schema="whirlpoolFractionFields"
+      >
+        <load src="src/partials/ui-form-fields.html" />
+      </div>
 
     <details class="wall-popover">
       <summary>
