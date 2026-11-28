@@ -99,10 +99,20 @@ test("contact cannot point backwards", () => {
 
 test("numeric contact must end after it starts", () => {
   const charges = [charge(on(5), until(on(5)))];
-  assert.deepEqual(validateCharges(charges)[0].warnings, ["Contact ends before it starts."]);
+  assert.deepEqual(validateCharges(charges)[0].errors, ["Contact ends before it starts."]);
 
   const duration = [charge(on(5), forDays(1))];
-  assert.deepEqual(validateCharges(duration)[0].warnings, []);
+  assert.deepEqual(validateCharges(duration)[0].errors, []);
+});
+
+test("a sub-day contact on an event anchor warns, and a day anchor does not", () => {
+  const event = [charge(at("high_krausen"), forDays(0.5))];
+  assert.deepEqual(validateCharges(event)[0].warnings, [
+    "Contact is shorter than a day; the event anchor is coarse.",
+  ]);
+
+  const day = [charge(on(2), forDays(0.5))];
+  assert.deepEqual(validateCharges(day)[0].warnings, []);
 });
 
 test("event rank violations are warnings, not errors", () => {
@@ -182,6 +192,12 @@ test("legacy end events and next charge migrate", () => {
   const open = migrateLegacyRow({ application_event: "terminal_gravity" });
   assert.deepEqual(open.contact, { kind: "open" });
   assert.deepEqual(open.application, { kind: "event", event: "terminal_gravity" });
+});
+
+test("a blank schedule migrates to the defaults", () => {
+  const row = migrateLegacyRow({ application: "", contact: "", notes: "" });
+  assert.deepEqual(row.application, { kind: "event", event: "high_krausen" });
+  assert.deepEqual(row.contact, { kind: "open" });
 });
 
 test("migration is idempotent and maps rows", () => {

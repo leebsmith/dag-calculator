@@ -254,6 +254,20 @@ function compareAnchors(start, end) {
   return null;
 }
 
+function comparisonProblems(start, end, span) {
+  const errors = [];
+  const warnings = [];
+  const problem = compareAnchors(start, end);
+  if (problem) {
+    const numeric = start.kind === "day" && end?.kind === "day";
+    (numeric ? errors : warnings).push(problem);
+  }
+  if (start.kind === "event" && span?.kind === "duration" && span.days < 1) {
+    warnings.push("Contact is shorter than a day; the event anchor is coarse.");
+  }
+  return { errors, warnings };
+}
+
 export function validateCharge(charges, index) {
   const application = resolveApplication(charges, index);
   const contact = resolveContact(charges, index);
@@ -268,8 +282,9 @@ export function validateCharge(charges, index) {
         : contact.end.kind === "duration"
           ? null
           : contact.end;
-    const problem = compareAnchors(start, end);
-    if (problem) warnings.push(problem);
+    const check = comparisonProblems(start, end, contact.end);
+    errors.push(...check.errors);
+    warnings.push(...check.warnings);
   }
 
   return { errors, warnings };
@@ -281,8 +296,12 @@ export function validateCharges(charges) {
 
 export function migrateLegacyRow(row) {
   const next = { ...row };
-  const application = next.application ?? legacyApplication(next);
-  const contact = next.contact ?? legacyContact(next);
+  const application =
+    next.application && typeof next.application === "object"
+      ? next.application
+      : legacyApplication(next);
+  const contact =
+    next.contact && typeof next.contact === "object" ? next.contact : legacyContact(next);
   const trigger = typeof next.time_of_application === "string" ? next.time_of_application.trim() : "";
   const notes = [trigger, typeof next.notes === "string" ? next.notes.trim() : ""].filter(Boolean);
   delete next.application_event;

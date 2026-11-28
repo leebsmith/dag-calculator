@@ -31,9 +31,11 @@ function refKey(ref) {
 function scheduleCore(getView) {
   const active = () => getView().dryHopActiveRow ?? {};
   const index = () => getView().dryHopActiveIndex;
-  const application = () => active().application ?? defaultApplication();
-  const contact = () => active().contact ?? defaultContact();
-  const untilInstant = () => contact().instant ?? { kind: "event", event: "packaging" };
+  const scheduleValue = (value) => (value && typeof value === "object" ? value : null);
+  const application = () => scheduleValue(active().application) ?? defaultApplication();
+  const contact = () => scheduleValue(active().contact) ?? defaultContact();
+  const untilInstant = () =>
+    scheduleValue(contact().instant) ?? { kind: "event", event: "packaging" };
   const patch = (value) => getView().patchDraftRow(index(), value);
 
   function refOptions(side) {
