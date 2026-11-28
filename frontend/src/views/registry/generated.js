@@ -34,7 +34,7 @@ export const generatedRegistry = {
   "batch.dry_hops.notes": {"label":"Notes"},
   "batch.dry_hops.product_type": {"label":"Type","optionLabels":{"whole_cone":"Whole cone","t90_pellet":"T-90 pellet","lupulin_pellet":"Lupulin concentrate"}},
   "batch.dry_hops.quantity": {"label":"Quantity"},
-  "batch.dry_hops.time_of_application": {"label":"Detail"},
+  "batch.dry_hops.time_of_application": {"label":"Trigger","hint":"Free text: what you watch for. Not solved."},
   "batch.dry_hops.unit": {"label":"Unit"},
   "batch.dry_hops.variety": {"label":"Hop"},
   "batch.extract_loss_conversion": {"label":"Conversion inefficiency","decimals":2},

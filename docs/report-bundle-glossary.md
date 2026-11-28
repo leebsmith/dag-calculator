@@ -70,7 +70,7 @@ _148 paths_
 | `batch.dry_hops.notes` | Notes | field | — | — | — | — |
 | `batch.dry_hops.product_type` | Type | field | — | — | — | t90_pellet, flowable_extract, lupulin_pellet, whole_cone |
 | `batch.dry_hops.quantity` | Quantity | field | dimensionless | — | — | — |
-| `batch.dry_hops.time_of_application` | Detail | field | — | — | — | — |
+| `batch.dry_hops.time_of_application` | Trigger | field | — | — | — | — |
 | `batch.dry_hops.unit` | Unit | field | — | — | — | oz, g, ml |
 | `batch.dry_hops.variety` | Hop | field | — | — | — | — |
 | `batch.extract_loss_conversion` | Conversion inefficiency | derived | mass | kg | 2 | — |

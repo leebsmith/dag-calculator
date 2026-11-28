@@ -44,7 +44,7 @@
                   <th>Unit</th>
                   <th>Applied at</th>
                   <th>Contact</th>
-                  <th>Detail</th>
+                  <th>Trigger</th>
                   <th class="text-right">Actions</th>
                 </tr>
               </thead>
@@ -99,39 +99,41 @@
                       </select>
                     </td>
                     <td>
+                      <select
+                        class="form-select text-xs"
+                        :value="dryHopContactMode(row)"
+                        @change="setDryHopContactMode(ri, $event.target.value)"
+                        :aria-label="'Contact ends for ' + dryHopTitle(row)"
+                      >
+                        <option value="hours" :selected="dryHopContactMode(row) === 'hours'">By hours</option>
+                        <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
+                          <option
+                            :value="opt.value"
+                            :selected="dryHopContactMode(row) === opt.value"
+                            x-text="'Until ' + opt.label"
+                          ></option>
+                        </template>
+                        <option value="" :selected="dryHopContactMode(row) === ''">No contact limit</option>
+                      </select>
                       <input
+                        x-show="dryHopContactMode(row) === 'hours'"
                         type="number"
-                        step="0.1"
+                        step="1"
                         min="0"
                         class="form-input table-input-parts"
                         :value="dryHopContactHours(row)"
                         @change="setDryHopDraftContactHours(ri, $event.target.value)"
                         :aria-label="'Contact hours for ' + dryHopTitle(row)"
                       />
-                      <select
-                        class="form-select text-xs"
-                        :value="fmt.or(row.contact_until, '')"
-                        @change="setDryHopDraftContactUntil(ri, $event.target.value)"
-                        :aria-label="'Contact end for ' + dryHopTitle(row)"
-                      >
-                        <option value="" :selected="!row.contact_until">— no end event —</option>
-                        <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
-                          <option
-                            :value="opt.value"
-                            :selected="opt.value === row.contact_until"
-                            x-text="opt.label"
-                          ></option>
-                        </template>
-                      </select>
                     </td>
                     <td>
                       <input
                         type="text"
                         class="form-input text-xs"
                         :value="row.time_of_application"
-                        placeholder="e.g. day 3"
+                        placeholder="e.g. 50% attenuation, day 3"
                         @change="setDryHopDraftField(ri, 'time_of_application', $event.target.value)"
-                        :aria-label="'Time of application for ' + dryHopTitle(row)"
+                        :aria-label="'Trigger for ' + dryHopTitle(row)"
                       />
                     </td>
                     <td class="text-right">

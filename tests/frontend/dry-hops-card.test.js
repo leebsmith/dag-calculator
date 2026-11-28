@@ -71,6 +71,26 @@ test("an end event clears the contact duration", withFreshApp((app) => {
   assert.equal(app.dryHopContactLabel(app.draftRows[0]), "until Terminal gravity");
 }));
 
+test("one contact control chooses between hours and an end event", withFreshApp((app) => {
+  app.openDryHopEditor();
+  app.addCatalogDryHop("cascade");
+
+  app.setDryHopContactMode(0, "hours");
+  app.setDryHopDraftContactHours(0, "48");
+  assert.equal(app.dryHopContactMode(app.draftRows[0]), "hours");
+  assert.equal(app.draftRows[0].contact_duration_min, 2880);
+
+  app.setDryHopContactMode(0, "terminal_gravity");
+  assert.equal(app.dryHopContactMode(app.draftRows[0]), "terminal_gravity");
+  assert.equal(app.draftRows[0].contact_duration_min, null);
+  assert.equal(app.draftRows[0].contact_until, "terminal_gravity");
+
+  app.setDryHopContactMode(0, "");
+  assert.equal(app.dryHopContactMode(app.draftRows[0]), "");
+  assert.equal(app.draftRows[0].contact_until, null);
+  assert.equal(app.draftRows[0].contact_duration_min, null);
+}));
+
 test("quantity is numeric and removals drop the row", withFreshApp((app) => {
   app.openDryHopEditor();
   app.addCatalogDryHop("cascade");

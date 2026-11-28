@@ -247,34 +247,43 @@ function dryHopRowIdentitySchema(app) {
   ];
 }
 
+function dryHopContactModeOptions(app) {
+  return [
+    { value: "hours", label: "By hours" },
+    ...app.dryHopContactUntilOptions.map((opt) => ({ value: opt.value, label: `Until ${opt.label}` })),
+    { value: "", label: "No contact limit" },
+  ];
+}
+
 function dryHopRowContactSchema(app) {
   return [
     {
+      id: "dry-hop-row-contact-mode",
+      type: "select",
+      label: "Contact ends",
+      read: () => app.dryHopContactMode(app.dryHopActiveRow),
+      options: dryHopContactModeOptions(app),
+      lazy: true,
+      hint: "A duration, or the event that ends contact.",
+    },
+    {
       id: "dry-hop-row-contact",
       type: "number",
-      label: "Contact (hours)",
+      label: "Hours",
       read: () => app.dryHopContactHours(app.dryHopActiveRow),
       min: 0,
       step: 1,
       lazy: true,
-      hint: "Clears the end event below.",
-    },
-    {
-      id: "dry-hop-row-until",
-      type: "select",
-      label: "…or until",
-      read: () => app.dryHopActiveRow.contact_until ?? "",
-      options: [{ value: "", label: "— no end event —" }, ...app.dryHopContactUntilOptions],
-      lazy: true,
-      hint: "Clears the contact hours above.",
+      when: () => app.dryHopContactMode(app.dryHopActiveRow) === "hours",
     },
     {
       id: "dry-hop-row-detail",
       type: "text",
-      label: "Detail",
+      label: "Trigger",
       modelKey: "time_of_application",
       default: "",
       placeholder: "e.g. 50% attenuation, day 3",
+      hint: "Free text: what you watch for. Not solved.",
       lazy: true,
     },
     {
@@ -288,6 +297,23 @@ function dryHopRowContactSchema(app) {
   ];
 }
 
+function dryHopContactActions({ getView }) {
+  return {
+    dryHopContactMode(row) {
+      if (isFiniteNumber(row?.contact_duration_min)) return "hours";
+      return row?.contact_until ?? "";
+    },
+
+    setDryHopContactMode(index, value) {
+      if (value === "hours") {
+        getView().patchDraftRow(index, { contact_until: null });
+        return;
+      }
+      getView().patchDraftRow(index, { contact_until: value || null, contact_duration_min: null });
+    },
+  };
+}
+
 function dryHopInspectorActions() {
   return {
     dryHopInspectorFields() {
@@ -295,11 +321,11 @@ function dryHopInspectorActions() {
       return {
         schema: [...dryHopRowIdentitySchema(app), ...dryHopRowContactSchema(app)],
         onChange: (field, value) => {
+          if (field.id === "dry-hop-row-contact-mode") {
+            return app.setDryHopContactMode(app.dryHopActiveIndex, value);
+          }
           if (field.id === "dry-hop-row-contact") {
             return app.setDryHopDraftContactHours(app.dryHopActiveIndex, value);
-          }
-          if (field.id === "dry-hop-row-until") {
-            return app.setDryHopDraftContactUntil(app.dryHopActiveIndex, value);
           }
           if (field.type === "number") {
             return app.setDryHopDraftNumber(app.dryHopActiveIndex, field.modelKey, value);
@@ -315,6 +341,7 @@ export function createDryHopCard({ artifact, getView }) {
   const actions = {
     ...dryHopActions({ artifact, getView }),
     ...dryHopEditorShellActions(),
+    ...dryHopContactActions({ getView }),
     ...dryHopInspectorActions(),
   };
   Object.defineProperties(actions, dryHopDescriptors(getView));
@@ -347,6 +374,8 @@ export const KEYS = [
   "dryHopEventLabel",
   "dryHopUntilLabel",
   "dryHopContactHours",
+  "dryHopContactMode",
+  "setDryHopContactMode",
   "dryHopContactLabel",
   "setDryHopDraftField",
   "setDryHopDraftNumber",

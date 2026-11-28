@@ -15,10 +15,12 @@ function dryHopApp() {
     handleDryHopEscape: () => calls.push("escape"),
     dryHopActiveIndex: 4,
     dryHopActiveRow: { contact_until: "keg" },
+    dryHopContactMode: () => "keg",
+    setDryHopContactMode: (...args) => calls.push(["mode", ...args]),
     dryHopProductOptions: [{ value: "t90_pellet", label: "T-90" }],
     dryHopUnitOptions: [{ value: "g", label: "g" }],
     dryHopEventOptions: [{ value: "day_3", label: "Day 3" }],
-    dryHopContactUntilOptions: [{ value: "keg", label: "At kegging" }],
+    dryHopContactUntilOptions: [{ value: "keg", label: "Kegging" }],
     dryHopContactHours: () => "48",
     setDryHopDraftContactHours: (...args) => calls.push(["hours", ...args]),
     setDryHopDraftContactUntil: (...args) => calls.push(["until", ...args]),
@@ -53,22 +55,25 @@ test("the dry-hop inspector keeps nine fields and dispatches writes by id and ty
       "dry-hop-row-quantity",
       "dry-hop-row-unit",
       "dry-hop-row-event",
+      "dry-hop-row-contact-mode",
       "dry-hop-row-contact",
-      "dry-hop-row-until",
       "dry-hop-row-detail",
       "dry-hop-row-notes",
     ]
   );
-  assert.equal(config.schema[5].read(), "48");
-  assert.deepEqual(config.schema[6].options, [
-    { value: "", label: "— no end event —" },
-    { value: "keg", label: "At kegging" },
+  assert.equal(config.schema[5].read(), "keg");
+  assert.deepEqual(config.schema[5].options, [
+    { value: "hours", label: "By hours" },
+    { value: "keg", label: "Until Kegging" },
+    { value: "", label: "No contact limit" },
   ]);
+  assert.equal(config.schema[6].when(), false, "hours only show while that mode is chosen");
+  assert.equal(config.schema[6].read(), "48");
 
-  config.onChange(config.schema[5], "36");
+  config.onChange(config.schema[5], "hours");
+  assert.deepEqual(context.calls.at(-1), ["mode", 4, "hours"]);
+  config.onChange(config.schema[6], "36");
   assert.deepEqual(context.calls.at(-1), ["hours", 4, "36"]);
-  config.onChange(config.schema[6], "keg");
-  assert.deepEqual(context.calls.at(-1), ["until", 4, "keg"]);
   config.onChange(config.schema[2], "100");
   assert.deepEqual(context.calls.at(-1), ["number", 4, "quantity", "100"]);
   config.onChange(config.schema[8], "citrus");
