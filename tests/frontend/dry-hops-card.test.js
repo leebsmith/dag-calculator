@@ -76,8 +76,10 @@ test("one contact control chooses between hours and an end event", withFreshApp(
   app.addCatalogDryHop("cascade");
 
   app.setDryHopContactMode(0, "hours");
-  app.setDryHopDraftContactHours(0, "48");
   assert.equal(app.dryHopContactMode(app.draftRows[0]), "hours");
+  assert.equal(app.draftRows[0].contact_duration_min, 1440, "choosing hours seeds a 24h default");
+
+  app.setDryHopDraftContactHours(0, "48");
   assert.equal(app.draftRows[0].contact_duration_min, 2880);
 
   app.setDryHopContactMode(0, "terminal_gravity");

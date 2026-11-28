@@ -249,8 +249,8 @@ function dryHopRowIdentitySchema(app) {
 
 function dryHopContactModeOptions(app) {
   return [
-    { value: "hours", label: "By hours" },
-    ...app.dryHopContactUntilOptions.map((opt) => ({ value: opt.value, label: `Until ${opt.label}` })),
+    { value: "hours", label: "Hours" },
+    ...app.dryHopContactUntilOptions.map((opt) => ({ value: opt.value, label: opt.label })),
     { value: "", label: "No contact limit" },
   ];
 }
@@ -264,7 +264,7 @@ function dryHopRowContactSchema(app) {
       read: () => app.dryHopContactMode(app.dryHopActiveRow),
       options: dryHopContactModeOptions(app),
       lazy: true,
-      hint: "A duration, or the event that ends contact.",
+      hint: "A number of hours, or the event that ends contact.",
     },
     {
       id: "dry-hop-row-contact",
@@ -306,7 +306,10 @@ function dryHopContactActions({ getView }) {
 
     setDryHopContactMode(index, value) {
       if (value === "hours") {
-        getView().patchDraftRow(index, { contact_until: null });
+        const row = getView().draftRows?.[index];
+        const patch = { contact_until: null };
+        if (!isFiniteNumber(row?.contact_duration_min)) patch.contact_duration_min = 24 * 60;
+        getView().patchDraftRow(index, patch);
         return;
       }
       getView().patchDraftRow(index, { contact_until: value || null, contact_duration_min: null });

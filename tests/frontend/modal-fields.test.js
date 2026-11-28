@@ -63,8 +63,8 @@ test("the dry-hop inspector keeps nine fields and dispatches writes by id and ty
   );
   assert.equal(config.schema[5].read(), "keg");
   assert.deepEqual(config.schema[5].options, [
-    { value: "hours", label: "By hours" },
-    { value: "keg", label: "Until Kegging" },
+    { value: "hours", label: "Hours" },
+    { value: "keg", label: "Kegging" },
     { value: "", label: "No contact limit" },
   ]);
   assert.equal(config.schema[6].when(), false, "hours only show while that mode is chosen");

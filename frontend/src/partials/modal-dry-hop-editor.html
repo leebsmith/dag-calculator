@@ -27,14 +27,14 @@
           <div class="data-table-container data-table-container--fit">
             <table class="data-table data-table--editor data-table--fixed">
               <colgroup>
-                <col style="width: 22%" />
-                <col style="width: 12%" />
-                <col style="width: 7%" />
-                <col style="width: 7%" />
-                <col style="width: 16%" />
-                <col style="width: 18%" />
+                <col style="width: 13%" />
                 <col style="width: 10%" />
                 <col style="width: 8%" />
+                <col style="width: 8.5%" />
+                <col style="width: 18%" />
+                <col style="width: 26.5%" />
+                <col style="width: 8.5%" />
+                <col style="width: 7.5%" />
               </colgroup>
               <thead>
                 <tr>
@@ -43,7 +43,7 @@
                   <th class="text-right">Qty</th>
                   <th>Unit</th>
                   <th>Applied at</th>
-                  <th>Contact</th>
+                  <th>Contact ends</th>
                   <th>Trigger</th>
                   <th class="text-right">Actions</th>
                 </tr>
@@ -105,12 +105,12 @@
                         @change="setDryHopContactMode(ri, $event.target.value)"
                         :aria-label="'Contact ends for ' + dryHopTitle(row)"
                       >
-                        <option value="hours" :selected="dryHopContactMode(row) === 'hours'">By hours</option>
+                        <option value="hours" :selected="dryHopContactMode(row) === 'hours'">Hours</option>
                         <template x-for="opt in dryHopContactUntilOptions" :key="opt.value">
                           <option
                             :value="opt.value"
                             :selected="dryHopContactMode(row) === opt.value"
-                            x-text="'Until ' + opt.label"
+                            x-text="opt.label"
                           ></option>
                         </template>
                         <option value="" :selected="dryHopContactMode(row) === ''">No contact limit</option>
